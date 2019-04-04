@@ -10,10 +10,12 @@
 
 
 // #include "test_assert.h"
+
 #include "sylvan.h"
 #include "sylvan_seq.h"
 #include <sylvan_sog.h>
 #include <sylvan_int.h>
+
 using namespace sylvan;
 
 
@@ -203,7 +205,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
     //fclose(fp);
 
     //cout<<"Apres accessible epsilon \n";
-    fire=firable_obs2(Complete_meta_state);
+    fire=firable_obs(Complete_meta_state);
    // MDD canonised_initial=Canonize(Complete_meta_state,0);
     //ldd_refs_push(canonised_initial);
 
@@ -258,7 +260,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
 
                     //reached_class->blocage=Set_Bloc(Complete_meta_state);
                     //reached_class->boucle=Set_Div(Complete_meta_state);
-                    fire=firable_obs2(Complete_meta_state);
+                    fire=firable_obs(Complete_meta_state);
                     st.push(Pair(couple(reached_class,Complete_meta_state),fire));
                     //TabMeta[nbmetastate]=reached_class->m_lddstate;
                     m_nbmetastate++;
@@ -735,29 +737,13 @@ Set threadSOG::firable_obs(MDD State)
         MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
         if(succ!=lddmc_false)
         {
-            //cout<<"firable..."<<endl;
             res.insert(*i);
         }
 
     }
     return res;
 }
-Set threadSOG::firable_obs2(MDD State)
-{
-    Set res;
-    for(Set::const_iterator i=Observable.begin(); !(i==Observable.end()); i++)
-    {   // LACE_ME;
-        //cout<<"firable..."<<endl;
-        MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        if(succ!=lddmc_false)
-        {
-            //cout<<"firable..."<<endl;
-            res.insert(*i);
-        }
 
-    }
-    return res;
-}
 
 MDD threadSOG::get_successor(MDD From,int t)
 {
@@ -1077,6 +1063,42 @@ unsigned int threadSOG::getPlacesCount() {
 /******************* Functions computing SOG with Lace *****************/
 
 /***** Saturation with Lace *********/
+
+TASK_3 (MDD, ImageForwardLace,MDD, From, Set* , NonObservable, vector<TransSylvan>*, tb_relation)
+{
+    MDD Res=lddmc_false;
+
+    for(Set::const_iterator i=NonObservable->begin(); !(i==NonObservable->end()); i++)
+    {
+         lddmc_refs_spawn(SPAWN(lddmc_firing_lace,From,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus()));
+    }
+    for(Set::const_iterator i=NonObservable->begin(); !(i==NonObservable->end()); i++)
+    {
+        MDD succ=lddmc_refs_sync(SYNC(lddmc_firing_lace));
+        Res=lddmc_union(Res,succ);
+    }
+    return Res;
+}
+
+#define ImageForwardLace(state,nonobser,tb) CALL(ImageForwardLace, state, nonobser,tb)
+
+TASK_3 (Set, firable_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, tb_relation)
+{
+    Set res;
+    for(Set::const_iterator i=observable->begin(); !(i==observable->end()); i++)
+    {
+        MDD succ = lddmc_firing_lace(State,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
+        if(succ!=lddmc_false)
+        {
+            res.insert(*i);
+        }
+
+    }
+    return res;
+}
+
+#define firable_obs_lace(state,obser,tb) CALL(firable_obs_lace, state, obser,tb)
+
 TASK_3 (MDD, Accessible_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
 {
     MDD M1;
@@ -1089,8 +1111,6 @@ TASK_3 (MDD, Accessible_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tra
         for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
             SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
-
-            //M2=succ|M2;
         }
         for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
@@ -1102,6 +1122,8 @@ TASK_3 (MDD, Accessible_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tra
     while(M1!=M2);
     return M2;
 }
+
+
 /********************* Compute SOG with lace *********************************************/
 void threadSOG::computeSOGLace(LDDGraph &g)
 {
@@ -1119,7 +1141,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&NonObservable,&m_tb_relation));
 
 
-    fire=firable_obs(initial_meta_state);
+    fire=firable_obs_lace(initial_meta_state,&Observable,&m_tb_relation);
 
     c->m_lddstate=initial_meta_state;
 
@@ -1170,7 +1192,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
                 e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                 reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
                 m_nbmetastate++;
-                fire=firable_obs(Complete_meta_state);
+                fire=firable_obs_lace(Complete_meta_state,&Observable,&m_tb_relation);
                 m_st[0].push(Pair(couple(reached_class,Complete_meta_state),fire));
             }
             else
@@ -1189,6 +1211,12 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
 }
 
+Set * threadSOG::getNonObservable() {
+    return &NonObservable;
+}
+vector<TransSylvan>* threadSOG::getTBRelation() {
+    return &m_tb_relation;
+}
 /********************* Compute canonized SOG with lace *********************************************/
 
 /******************************Canonizer with lace framework  **********************************/
@@ -1198,6 +1226,7 @@ TASK_DECL_3(MDD, lddmc_canonize,MDD, unsigned int, threadSOG &)
 
 TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
 {
+
     if (level>ds.getPlacesCount() || s==lddmc_false)
         return lddmc_false;
     if(isSingleMDD(s))
@@ -1230,7 +1259,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
         do
         {
             // cout<<"premiere boucle interne \n";
-            Front=lddmc_minus(ds.ImageForward(Front),Reach);
+            Front=lddmc_minus(ImageForwardLace(Front,ds.getNonObservable(),ds.getTBRelation()),Reach);
             lddmc_refs_spawn(SPAWN(lddmc_union,Reach,Front));
             s0=CALL(lddmc_minus,s0,Front);
             Reach=lddmc_refs_sync(SYNC(lddmc_union));
@@ -1245,7 +1274,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
         do
         {
             //  cout<<"deuxieme boucle interne \n";
-            Front=lddmc_minus(ds.ImageForward(Front),Reach);
+            Front=lddmc_minus(ImageForwardLace(Front,ds.getNonObservable(),ds.getTBRelation()),Reach);
             lddmc_refs_spawn(SPAWN(lddmc_union,Reach,Front));
             s1=CALL(lddmc_minus,s1,Front);
             Reach=lddmc_refs_sync(SYNC(lddmc_union));
@@ -1258,20 +1287,29 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
     if (isSingleMDD(s0))
     {
         Repr=s0;
+        if (isSingleMDD(s1))
+            Repr=lddmc_union(Repr,s1);
+        else
+            Repr=lddmc_union(Repr,lddmc_canonize(s1,level,ds));
     }
     else
     {
 
-        Repr=lddmc_canonize(s0,level,ds);
+        if (isSingleMDD(s1)) {
+            /*lddmc_refs_spawn(SPAWN(lddmc_canonize,s0,level,ds));
+            Repr=lddmc_refs_sync(SYNC(lddmc_canonize));*/
+            Repr=CALL(lddmc_canonize,s0,level,ds);
+            Repr=lddmc_union(Repr,s1);
+            }
+        else {
+            //lddmc_refs_spawn(SPAWN(lddmc_canonize,s0,level,ds));
+            Repr=CALL(lddmc_canonize,s0,level,ds);
+            MDD temp=lddmc_canonize(s1,level,ds);
+            //MDD temp2=lddmc_refs_sync(SYNC(lddmc_canonize));
+            Repr=lddmc_union(Repr,temp);
+            }
 
     }
-
-    if (isSingleMDD(s1))
-        Repr=lddmc_union(Repr,s1);
-    else
-        Repr=lddmc_union(Repr,lddmc_canonize(s1,level,ds));
-
-
     return Repr;
 }
 
@@ -1296,15 +1334,15 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     LACE_ME;
     MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&NonObservable,&m_tb_relation));
 
-    //SPAWN(lddmc_canonize,initial_meta_state,0,*this);
+    //lddmc_refs_spawn(SPAWN(lddmc_canonize,initial_meta_state,0,*this));
 
-    MDD reduced_initial;
-    fire=firable_obs(initial_meta_state);
+
+    fire=firable_obs_lace(initial_meta_state,&Observable,&m_tb_relation);
     m_nbmetastate++;
     //m_old_size=lddmc_nodecount(c->m_lddstate);
-    reduced_initial=lddmc_canonize(initial_meta_state,0,*this);//SYNC(lddmc_canonize);
+    //reduced_initial=lddmc_refs_sync(SYNC(lddmc_canonize));
 
-    c->m_lddstate=reduced_initial;
+    c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
     //max_meta_state_size=bdd_pathcount(Complete_meta_state);
     m_st[0].push(Pair(couple(c,initial_meta_state),fire));
     m_graph->setInitialState(c);
@@ -1335,10 +1373,13 @@ cout<<"\n=========================================\n";
             int t = *e.second.end();
             e.second.erase(t);
             MDD Complete_meta_state=SYNC(Accessible_epsilon_lace);
-            //SPAWN(lddmc_canonize,Complete_meta_state,0,*this);
+            lddmc_refs_push(Complete_meta_state);
+
+
             reached_class=new LDDState;
 
-            reached_class->m_lddstate=lddmc_canonize(Complete_meta_state,0,*this);//lddmc_canonize(Complete_meta_state,0,*this);//SYNC(lddmc_canonize);
+            reached_class->m_lddstate=lddmc_canonize(Complete_meta_state,0,*this);
+
             LDDState* pos=m_graph->find(reached_class);
 
             if(!pos)
@@ -1349,7 +1390,7 @@ cout<<"\n=========================================\n";
                 e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                 reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
                 m_nbmetastate++;
-                fire=firable_obs(Complete_meta_state);
+                fire=firable_obs_lace(Complete_meta_state,&Observable,&m_tb_relation);
                 m_st[0].push(Pair(couple(reached_class,Complete_meta_state),fire));
             }
             else
@@ -1359,6 +1400,7 @@ cout<<"\n=========================================\n";
                 pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(e.first.first,t));
                 delete reached_class;
             }
+            lddmc_refs_pop(1);
         }
     }
     clock_gettime(CLOCK_REALTIME, &finish);

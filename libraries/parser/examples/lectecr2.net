@@ -1,0 +1,25 @@
+#place A mk(2*<..>)
+#place L 
+#place EX mk(2*<..>)
+#place C mk(1*<..>)
+#place E
+
+#trans t2
+in {A:<..>;EX:<..>;}
+out {L:<..>;}
+#endtr
+
+#trans t3
+in {L:<..>;}
+out {A:<..>;EX:<..>;}
+#endtr
+
+#trans t5
+in {C:<..>;EX:2*<..>;}
+out {E:<..>;}
+#endtr
+
+#trans t6
+in {E:<..>;}
+out {C:<..>;EX:2*<..>;}
+#endtr

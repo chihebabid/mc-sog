@@ -1,0 +1,59 @@
+#place off
+#place p_i1 mk(3<..>)
+#place p_i2
+#place r_stopped mk(2<..>)
+#place initialize
+#place initialized
+#place p_rdy
+#place p_sc
+#place move
+#place r_active
+#place p_m
+#place access mk(2<..>)
+#place r_moving
+#place p_rel
+#place moved
+#trans p_sop
+in {p_rdy:<..>;}
+out {off:<..>;p_i1:<..>;}
+#endtr
+#trans r_stops
+in {off:<..>;r_active:<..>;}
+out {r_stopped:<..>;}
+#endtr
+#trans p_start
+in {p_i1:<..>;}
+out {p_i2:<..>;initialize:<..>;}
+#endtr
+#trans p_started
+in {p_i2:<..>;initialized:<..>;}
+out {p_rdy:<..>;}
+#endtr
+#trans r_starts
+in {r_stopped:<..>;initialize:<..>;}
+out {r_active:<..>;initialized:<..>;}
+#endtr
+#trans p_intoSC
+in {p_rdy:<..>;access:<..>;}
+out {p_sc:<..>;}
+#endtr
+#trans p_move
+in {p_sc:<..>;}
+out {p_m:<..>;move:<..>;}
+#endtr
+#trans p_moved
+in {p_m:<..>;moved:<..>;}
+out {p_rel:<..>;}
+#endtr
+#trans p_relSC
+in {p_rel:<..>;}
+out {access:<..>;p_rdy:<..>;}
+#endtr
+#trans r_begin_move
+in {r_active:<..>;move:<..>;}
+out {r_moving:<..>;}
+#endtr
+#trans r_end_move
+in {r_moving:<..>;}
+out {r_active:<..>;moved:<..>;}
+#endtr

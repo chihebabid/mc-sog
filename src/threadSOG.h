@@ -36,6 +36,8 @@ class threadSOG {
   MDD ImageForward(MDD From);
   void computeSOGLace(LDDGraph &g);
   void computeSOGLaceCanonized(LDDGraph &g);
+  Set * getNonObservable();
+  vector<TransSylvan>* getTBRelation();
  protected:
  private:
  ////////////////////////////////
@@ -50,7 +52,6 @@ class threadSOG {
   MDD Accessible_epsilon(MDD From);
   MDD Accessible_epsilon2(MDD From);
   Set firable_obs(MDD State);
-  Set firable_obs2(MDD State);
   MDD get_successor(MDD From, int t);
   MDD get_successor2(MDD From, int t);
   int minCharge();

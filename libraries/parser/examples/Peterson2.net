@@ -1,0 +1,62 @@
+#place Init_0 mk (<..>) 
+#place Init_1 mk (<..>) 
+#place B_0_1 
+#place B_1_1 
+#place C_0_1_1 
+#place C_1_1_0 
+#place SC_0 
+#place SC_1 
+#place Q_0_0 mk(<..>)
+#place Q_0_1 
+#place Q_1_0 mk(<..>)
+#place Q_1_1 
+#place Turn_1_0 mk(<..>)
+#place Turn_1_1 
+#trans start_0
+in  { Init_0:<..>;Q_0_0:<..>;}
+out { B_0_1:<..>;Q_0_1:<..>;}
+#endtr
+#trans start_1
+in  { Init_1:<..>;Q_1_0:<..>;}
+out { B_1_1:<..>;Q_1_1:<..>;}
+#endtr
+#trans bc_0_1_0
+in  { B_0_1:<..>;Turn_1_0:<..>;}
+out { C_0_1_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans bc_0_1_1
+in  { B_0_1:<..>;Turn_1_1:<..>;}
+out { C_0_1_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans bc_1_1_0
+in  { B_1_1:<..>;Turn_1_0:<..>;}
+out { C_1_1_0:<..>;Turn_1_1:<..>;}
+#endtr
+#trans bc_1_1_1
+in  { B_1_1:<..>;Turn_1_1:<..>;}
+out { C_1_1_0:<..>;Turn_1_1:<..>;}
+#endtr
+#trans ccs_1_0_0
+in  { C_1_1_0:<..>;Q_0_0:<..>;}
+out { SC_1:<..>;Q_0_0:<..>;}
+#endtr
+#trans ccs_0_1_0
+in  { C_0_1_1:<..>;Q_1_0:<..>;}
+out { SC_0:<..>;Q_1_0:<..>;}
+#endtr
+#trans ccsturn_0_1_1
+in  { C_0_1_1:<..>;Turn_1_1:<..>;}
+out { SC_0:<..>;Turn_1_1:<..>;}
+#endtr
+#trans ccsturn_1_0_0
+in  { C_1_1_0:<..>;Turn_1_0:<..>;}
+out { SC_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans csinit_0
+in  { SC_0:<..>;Q_0_1:<..>;}
+out { Init_0:<..>;Q_0_0:<..>;}
+#endtr
+#trans csinit_1
+in  { SC_1:<..>;Q_1_1:<..>;}
+out { Init_1:<..>;Q_1_0:<..>;}
+#endtr

@@ -3,14 +3,29 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <fstream>
 //#include "bdd.h"
 //#include "fdd.h"
 #include <mpi.h>
+
 #include "DistributedSOG.h"
 #include "threadSOG.h"
 #include "HybridSOG.h"
 #include "LDDGraph.h"
+
+
+#include <spot/misc/version.hh>
+#include <spot/twaalgos/dot.hh>
+#include <spot/tl/parse.hh>
+#include <spot/tl/print.hh>
+#include <spot/twaalgos/translate.hh>
+#include <spot/twaalgos/emptiness.hh>
+#include <spot/tl/apcollect.hh>
 #include "Net.hpp"
+
+
+
+
 // #include "RdPBDD.h"
 
 using namespace std;
@@ -22,16 +37,49 @@ int Formula_transitions(const char * f, Set_mot& formula_trans, net Rv) ;
 unsigned int nb_th;
 int n_tasks, task_id;
 
+set<string> buildObsTransitions(const string &fileName) {
+    string input;
+    set<string> transitionSet;
+    ifstream file(fileName);
+    if (file.is_open()) {
+        getline (file,input);
+        cout<<"Loaded formula : "<<input<<endl;
+        file.close();
+
+    }
+    else {
+        cout<<"Can not open formula file"<<endl;
+        exit(0);
+    }
+
+    spot::parsed_formula pf = spot::parse_infix_psl(input);
+    if (pf.format_errors(std::cerr)) return transitionSet;
+    spot::formula fo = pf.f;
+    if (!fo.is_ltl_formula())    {
+      std::cerr << "Only LTL formulas are supported.\n";
+      return transitionSet;
+    }
+    spot::atomic_prop_set *p_list=spot::atomic_prop_collect(fo,0);
+    for (spot::atomic_prop_set::const_iterator i=p_list->begin();i!=p_list->end();i++) {
+        transitionSet.insert((*i).ap_name());
+    }
+    print_spin_ltl(std::cout, fo)<<'\n';
+    return transitionSet;
+
+}
+
 /***********************************************/
 int main(int argc, char** argv)
 {
     int choix;
+    /*string input=read_formula(argv[4]);
 
-    //nb_th;
+    exit(0);*/
+
     if(argc<3)  return 0;
     char Obs[100]="";
     char Int[100]="";
-    if (argc > 5) strcpy(Obs, argv[4]);
+    strcpy(Obs, argv[4]);
     if (argc > 6) strcpy(Int, argv[5]);
 
     int bound  = atoi(argv[argc - 1])==0?32:atoi(argv[argc - 1]);
@@ -54,7 +102,10 @@ int main(int argc, char** argv)
     }
 
     cout<<"______________________________________\n";
-    net R(argv[3],Obs,Int);
+    cout<<"Fetching formula..."<<endl;
+    set<string> list_transitions=buildObsTransitions(Obs);
+
+    net R(argv[3],list_transitions);
 
     MPI_Init (&argc, &argv );
     MPI_Comm_size(MPI_COMM_WORLD,&n_tasks);

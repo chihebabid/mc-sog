@@ -3,8 +3,10 @@
 #define REDUCE
 using namespace std;
 #include <stdio.h>
+
 #include "sylvan_seq.h"
 #include <sylvan_int.h>
+
 using namespace sylvan;
 #include <openssl/md5.h>
 #define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))

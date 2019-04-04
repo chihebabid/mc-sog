@@ -11,6 +11,19 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 
 include_directories("${CMAKE_SOURCE_DIR}/third-party/sylvan/src")
 
+
+add_library(spot SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(spot PROPERTIES
+  IMPORTED_LOCATION "/usr/lib/x86_64-linux-gnu/libspot.so"
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/include/spot/"
+)
+
+
+
+
+
+
+
 # Hybrid SOG executable
 add_executable(hybrid-sog main.cpp
   DistributedSOG.cpp
@@ -26,9 +39,11 @@ add_executable(hybrid-sog main.cpp
   )
 
 target_link_libraries(hybrid-sog
+  spot
   sylvan
-  bdd
   RdP
+
+
   ${MPI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
 )

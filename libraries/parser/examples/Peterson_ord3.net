@@ -1,0 +1,325 @@
+#place Init_0 mk (<..>) 
+#place A_0_2 
+#place B_0_1 
+#place B_0_2 
+#place C_0_1_1 
+#place C_0_1_2 
+#place C_0_2_1 
+#place C_0_2_2 
+#place Q_0_0 mk(<..>)
+#place Q_0_1 
+#place Q_0_2 
+#place SC_0 
+#place Init_1 mk (<..>) 
+#place A_1_2 
+#place B_1_1 
+#place B_1_2 
+#place C_1_1_0 
+#place C_1_1_2 
+#place C_1_2_0 
+#place C_1_2_2 
+#place SC_1 
+#place Q_1_0 mk(<..>)
+#place Q_1_1 
+#place Q_1_2 
+#place Turn_1_0 mk(<..>)
+#place Turn_1_1 
+#place Turn_1_2 
+#place Init_2 mk (<..>) 
+#place A_2_2 
+#place B_2_1 
+#place B_2_2 
+#place C_2_1_0 
+#place C_2_1_1 
+#place C_2_2_0 
+#place C_2_2_1 
+#place SC_2 
+#place Q_2_0 mk(<..>)
+#place Q_2_1 
+#place Q_2_2 
+#place Turn_2_0 mk(<..>)
+#place Turn_2_1 
+#place Turn_2_2 
+
+
+
+
+
+
+
+#trans start_0
+in  { Init_0:<..>;Q_0_0:<..>;}
+out { B_0_1:<..>;Q_0_1:<..>;}
+#endtr
+#trans start_1
+in  { Init_1:<..>;Q_1_0:<..>;}
+out { B_1_1:<..>;Q_1_1:<..>;}
+#endtr
+#trans start_2
+in  { Init_2:<..>;Q_2_0:<..>;}
+out { B_2_1:<..>;Q_2_1:<..>;}
+#endtr
+#trans ab_0_2
+in  { A_0_2:<..>;Q_0_1:<..>;}
+out { B_0_2:<..>;Q_0_2:<..>;}
+#endtr
+#trans ab_1_2
+in  { A_1_2:<..>;Q_1_1:<..>;}
+out { B_1_2:<..>;Q_1_2:<..>;}
+#endtr
+#trans ab_2_2
+in  { A_2_2:<..>;Q_2_1:<..>;}
+out { B_2_2:<..>;Q_2_2:<..>;}
+#endtr
+#trans bc_0_1_0
+in  { B_0_1:<..>;Turn_1_0:<..>;}
+out { C_0_1_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans bc_0_2_0
+in  { B_0_2:<..>;Turn_2_0:<..>;}
+out { C_0_2_1:<..>;Turn_2_0:<..>;}
+#endtr
+#trans bc_0_1_1
+in  { B_0_1:<..>;Turn_1_1:<..>;}
+out { C_0_1_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans bc_0_2_1
+in  { B_0_2:<..>;Turn_2_1:<..>;}
+out { C_0_2_1:<..>;Turn_2_0:<..>;}
+#endtr
+#trans bc_0_1_2
+in  { B_0_1:<..>;Turn_1_2:<..>;}
+out { C_0_1_1:<..>;Turn_1_0:<..>;}
+#endtr
+#trans bc_0_2_2
+in  { B_0_2:<..>;Turn_2_2:<..>;}
+out { C_0_2_1:<..>;Turn_2_0:<..>;}
+#endtr
+#trans bc_1_1_0
+in  { B_1_1:<..>;Turn_1_0:<..>;}
+out { C_1_1_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans bc_1_2_0
+in  { B_1_2:<..>;Turn_2_0:<..>;}
+out { C_1_2_2:<..>;Turn_2_1:<..>;}
+#endtr
+#trans bc_1_1_1
+in  { B_1_1:<..>;Turn_1_1:<..>;}
+out { C_1_1_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans bc_1_2_1
+in  { B_1_2:<..>;Turn_2_1:<..>;}
+out { C_1_2_2:<..>;Turn_2_1:<..>;}
+#endtr
+#trans bc_1_1_2
+in  { B_1_1:<..>;Turn_1_2:<..>;}
+out { C_1_1_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans bc_1_2_2
+in  { B_1_2:<..>;Turn_2_2:<..>;}
+out { C_1_2_2:<..>;Turn_2_1:<..>;}
+#endtr
+#trans bc_2_1_0
+in  { B_2_1:<..>;Turn_1_0:<..>;}
+out { C_2_1_0:<..>;Turn_1_2:<..>;}
+#endtr
+#trans bc_2_2_0
+in  { B_2_2:<..>;Turn_2_0:<..>;}
+out { C_2_2_0:<..>;Turn_2_2:<..>;}
+#endtr
+#trans bc_2_1_1
+in  { B_2_1:<..>;Turn_1_1:<..>;}
+out { C_2_1_0:<..>;Turn_1_2:<..>;}
+#endtr
+#trans bc_2_2_1
+in  { B_2_2:<..>;Turn_2_1:<..>;}
+out { C_2_2_0:<..>;Turn_2_2:<..>;}
+#endtr
+#trans bc_2_1_2
+in  { B_2_1:<..>;Turn_1_2:<..>;}
+out { C_2_1_0:<..>;Turn_1_2:<..>;}
+#endtr
+#trans bc_2_2_2
+in  { B_2_2:<..>;Turn_2_2:<..>;}
+out { C_2_2_0:<..>;Turn_2_2:<..>;}
+#endtr
+#trans cc_0_1_1_0
+in  { C_0_1_1:<..>;Q_1_0:<..>;}
+out { C_0_1_2:<..>;Q_1_0:<..>;}
+#endtr
+#trans cc_0_2_1_0
+in  { C_0_2_1:<..>;Q_1_0:<..>;}
+out { C_0_2_2:<..>;Q_1_0:<..>;}
+#endtr
+#trans cc_0_2_1_1
+in  { C_0_2_1:<..>;Q_1_1:<..>;}
+out { C_0_2_2:<..>;Q_1_1:<..>;}
+#endtr
+#trans cc_1_1_2_0
+in  { C_1_1_2:<..>;Q_2_0:<..>;}
+out { C_1_1_0:<..>;Q_2_0:<..>;}
+#endtr
+#trans cc_1_2_2_0
+in  { C_1_2_2:<..>;Q_2_0:<..>;}
+out { C_1_2_0:<..>;Q_2_0:<..>;}
+#endtr
+#trans cc_1_2_2_1
+in  { C_1_2_2:<..>;Q_2_1:<..>;}
+out { C_1_2_0:<..>;Q_2_1:<..>;}
+#endtr
+#trans cc_2_1_0_0
+in  { C_2_1_0:<..>;Q_0_0:<..>;}
+out { C_2_1_1:<..>;Q_0_0:<..>;}
+#endtr
+#trans cc_2_2_0_0
+in  { C_2_2_0:<..>;Q_0_0:<..>;}
+out { C_2_2_1:<..>;Q_0_0:<..>;}
+#endtr
+#trans cc_2_2_0_1
+in  { C_2_2_0:<..>;Q_0_1:<..>;}
+out { C_2_2_1:<..>;Q_0_1:<..>;}
+#endtr
+#trans cc_1_1_0_0
+in  { C_1_1_0:<..>;Q_0_0:<..>;}
+out { A_1_2:<..>;Q_0_0:<..>;}
+#endtr
+#trans cc_2_1_1_0
+in  { C_2_1_1:<..>;Q_1_0:<..>;}
+out { A_2_2:<..>;Q_1_0:<..>;}
+#endtr
+#trans cc_0_1_2_0
+in  { C_0_1_2:<..>;Q_2_0:<..>;}
+out { A_0_2:<..>;Q_2_0:<..>;}
+#endtr
+#trans ccs_1_0_0
+in  { C_1_2_0:<..>;Q_0_0:<..>;}
+out { SC_1:<..>;Q_0_0:<..>;}
+#endtr
+#trans ccs_1_0_1
+in  { C_1_2_0:<..>;Q_0_1:<..>;}
+out { SC_1:<..>;Q_0_1:<..>;}
+#endtr
+#trans ccs_2_1_0
+in  { C_2_2_1:<..>;Q_1_0:<..>;}
+out { SC_2:<..>;Q_1_0:<..>;}
+#endtr
+#trans ccs_2_1_1
+in  { C_2_2_1:<..>;Q_1_1:<..>;}
+out { SC_2:<..>;Q_1_1:<..>;}
+#endtr
+#trans ccs_0_2_0
+in  { C_0_2_2:<..>;Q_2_0:<..>;}
+out { SC_0:<..>;Q_2_0:<..>;}
+#endtr
+#trans ccs_0_2_1
+in  { C_0_2_2:<..>;Q_2_1:<..>;}
+out { SC_0:<..>;Q_2_1:<..>;}
+#endtr
+#trans caturn_0_1_1_1
+in  { C_0_1_1:<..>;Turn_1_1:<..>;}
+out { A_0_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans caturn_0_1_1_2
+in  { C_0_1_1:<..>;Turn_1_2:<..>;}
+out { A_0_2:<..>;Turn_1_2:<..>;}
+#endtr
+#trans caturn_0_1_2_1
+in  { C_0_1_2:<..>;Turn_1_1:<..>;}
+out { A_0_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans caturn_0_1_2_2
+in  { C_0_1_2:<..>;Turn_1_2:<..>;}
+out { A_0_2:<..>;Turn_1_2:<..>;}
+#endtr
+#trans caturn_1_1_0_0
+in  { C_1_1_0:<..>;Turn_1_0:<..>;}
+out { A_1_2:<..>;Turn_1_0:<..>;}
+#endtr
+#trans caturn_1_1_0_2
+in  { C_1_1_0:<..>;Turn_1_2:<..>;}
+out { A_1_2:<..>;Turn_1_2:<..>;}
+#endtr
+#trans caturn_1_1_2_0
+in  { C_1_1_2:<..>;Turn_1_0:<..>;}
+out { A_1_2:<..>;Turn_1_0:<..>;}
+#endtr
+#trans caturn_1_1_2_2
+in  { C_1_1_2:<..>;Turn_1_2:<..>;}
+out { A_1_2:<..>;Turn_1_2:<..>;}
+#endtr
+#trans caturn_2_1_0_0
+in  { C_2_1_0:<..>;Turn_1_0:<..>;}
+out { A_2_2:<..>;Turn_1_0:<..>;}
+#endtr
+#trans caturn_2_1_0_1
+in  { C_2_1_0:<..>;Turn_1_1:<..>;}
+out { A_2_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans caturn_2_1_1_0
+in  { C_2_1_1:<..>;Turn_1_0:<..>;}
+out { A_2_2:<..>;Turn_1_0:<..>;}
+#endtr
+#trans caturn_2_1_1_1
+in  { C_2_1_1:<..>;Turn_1_1:<..>;}
+out { A_2_2:<..>;Turn_1_1:<..>;}
+#endtr
+#trans ccsturn_0_1_1
+in  { C_0_2_1:<..>;Turn_2_1:<..>;}
+out { SC_0:<..>;Turn_2_1:<..>;}
+#endtr
+#trans ccsturn_0_1_2
+in  { C_0_2_1:<..>;Turn_2_2:<..>;}
+out { SC_0:<..>;Turn_2_2:<..>;}
+#endtr
+#trans ccsturn_0_2_1
+in  { C_0_2_2:<..>;Turn_2_1:<..>;}
+out { SC_0:<..>;Turn_2_1:<..>;}
+#endtr
+#trans ccsturn_0_2_2
+in  { C_0_2_2:<..>;Turn_2_2:<..>;}
+out { SC_0:<..>;Turn_2_2:<..>;}
+#endtr
+#trans ccsturn_1_0_0
+in  { C_1_2_0:<..>;Turn_2_0:<..>;}
+out { SC_1:<..>;Turn_2_0:<..>;}
+#endtr
+#trans ccsturn_1_0_2
+in  { C_1_2_0:<..>;Turn_2_2:<..>;}
+out { SC_1:<..>;Turn_2_2:<..>;}
+#endtr
+#trans ccsturn_1_2_0
+in  { C_1_2_2:<..>;Turn_2_0:<..>;}
+out { SC_1:<..>;Turn_2_0:<..>;}
+#endtr
+#trans ccsturn_1_2_2
+in  { C_1_2_2:<..>;Turn_2_2:<..>;}
+out { SC_1:<..>;Turn_2_2:<..>;}
+#endtr
+#trans ccsturn_2_0_0
+in  { C_2_2_0:<..>;Turn_2_0:<..>;}
+out { SC_2:<..>;Turn_2_0:<..>;}
+#endtr
+#trans ccsturn_2_0_1
+in  { C_2_2_0:<..>;Turn_2_1:<..>;}
+out { SC_2:<..>;Turn_2_1:<..>;}
+#endtr
+#trans ccsturn_2_1_0
+in  { C_2_2_1:<..>;Turn_2_0:<..>;}
+out { SC_2:<..>;Turn_2_0:<..>;}
+#endtr
+#trans ccsturn_2_1_1
+in  { C_2_2_1:<..>;Turn_2_1:<..>;}
+out { SC_2:<..>;Turn_2_1:<..>;}
+#endtr
+#trans csinit_0
+in  { SC_0:<..>;Q_0_2:<..>;}
+out { Init_0:<..>;Q_0_0:<..>;}
+#endtr
+#trans csinit_1
+in  { SC_1:<..>;Q_1_2:<..>;}
+out { Init_1:<..>;Q_1_0:<..>;}
+#endtr
+#trans csinit_2
+in  { SC_2:<..>;Q_2_2:<..>;}
+out { Init_2:<..>;Q_2_0:<..>;}
+#endtr
