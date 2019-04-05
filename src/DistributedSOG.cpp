@@ -129,7 +129,7 @@ void *DistributedSOG::doCompute()
 
     Pair S;
 //    pile m_st;
-    char msg[LENGTH_ID];
+    unsigned char msg[LENGTH_ID];
 
     int v_nbmetastate=0;
     int term=0;
@@ -150,7 +150,7 @@ void *DistributedSOG::doCompute()
 
         c->m_lddstate=Complete_meta_state;
 
-        lddmc_getsha(Complete_meta_state, msg);
+    //    lddmc_getsha(Complete_meta_state, msg);
          cout <<"nb task "<<n_tasks<<endl;
         int destination=(int)abs((msg[0])%n_tasks);
 
@@ -207,7 +207,7 @@ void *DistributedSOG::doCompute()
                 MDD marking=get_successorMDD(e.first.second,t);
                 MDD lddmarq=Accessible_epsilon(marking);
                 reached_class->m_lddstate=lddmarq;
-                lddmc_getsha(lddmarq, msg);
+//                lddmc_getsha(lddmarq, msg);
 
                 int destination=(int)abs((msg[0])%n_tasks);
 
@@ -639,7 +639,7 @@ char * DistributedSOG::concat_string(const char *s1,int longueur1,const char *s2
 }
 
 
-void DistributedSOG::strcpySHA(char *dest,const char *source)
+void DistributedSOG::strcpySHA(unsigned char *dest,const unsigned char *source)
 {
     for (int i=0; i<LENGTH_ID; i++)
     {

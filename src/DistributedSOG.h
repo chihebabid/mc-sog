@@ -69,7 +69,7 @@ class DistributedSOG {
   int minCharge();
   bool isNotTerminated();
   int Terminate();
-  void strcpySHA(char *dest, const char *source);
+  void strcpySHA(unsigned char *dest, const unsigned char *source);
   char *concat_string(const char *s1, int longueur1, const char *s2,
                       int longueur2, char *dest);
   void sha256(LDDState *state, char output[65]);

@@ -19,13 +19,11 @@ This repository hosts the experiments and results for the Hybrid (MPI/pthreads) 
 
 
 
-All experiments were performed on a [Magi cluster](http://www.univ-paris13.fr/calcul/wiki/) of Paris 13 university. Some results are reported in [Resutls directory](https://depot.lipn.univ-paris13.fr/PMC-SOG/hybrid-sog/blob/master/Results/Experiments-Hybrid.pdf).
-
 
 ## Building
 
 
-- `git clone --recursive https://depot.lipn.univ-paris13.fr/PMC-SOG/hybrid-sog.git`
+- `git clone --recursive https://depot.lipn.univ-paris13.fr/PMC-SOG/mc-sog.git`
 
 - `mkdir build`
 
@@ -37,10 +35,10 @@ All experiments were performed on a [Magi cluster](http://www.univ-paris13.fr/ca
 
 
 ## Testing
-Interactive submission of the job  (philo5 example) using 2 processes * 12 threads:
+SOG building from an LTL formula (philo3.net example)
 
 ```
-mpirun -n 2 ./hybrid-sog arg1 arg 2 arg3 arg4
+mpirun -n 2 hybrid-sog arg1 arg 2 arg3 arg4
 arg1: specifies method of creating threads. It can be set with one of the following values:
      * p : using pthread library
      * pc : using pthread library and applying canonization on nodes
@@ -48,20 +46,7 @@ arg1: specifies method of creating threads. It can be set with one of the follow
      * lc : using lace framework and applying canonization on nodes
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
-arg4: specifies the set of observable transitions
+arg4: specifies the LTL formula
 
 
-mpirun -n 2 ./hybrid-sog pc 12 philo5.net Obs5_philo
-```
-
-A sample job submission script for our home cluster using 2 nodes * 12 cores (for the same example in batch mode) :
-
-```
-#!/bin/bash
-#SBATCH --job-name=philo5
-#SBATCH --output=philo5.out
-#SBATCH --error=philo5.err
-#SBATCH --ntasks=2
-#SBATCH --cpus-per-task=12
-srun ./hybrid-sog pc 12 philo5.net Obs5_philo 32
 ```

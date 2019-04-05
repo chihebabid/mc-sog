@@ -15,11 +15,7 @@ message(STATUS "Building Petri Net parser ...")
 include_directories("${PARSER_DIR}/src")
 add_subdirectory(${PARSER_DIR})
 
-# add buddy
-set(BUDDY_DIR "${CMAKE_SOURCE_DIR}/third-party/buddy")
-message(STATUS "Building BuDDy library ...")
-include_directories("${BUDDY_DIR}/src")
-add_subdirectory(third-party/buddy)
+
 
 # add sylvan
 message(STATUS "Building Sylvan ...")
