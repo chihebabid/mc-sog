@@ -9,6 +9,8 @@ The [BuDDy](http://buddy.sourceforge.net/manual/main.html) BDD package and [Sylv
 
 BuDDy used for sequential version and Sylvan for both sequential and parallel construction.
 
+Spot [Spot](https://spot.lrde.epita.fr/install.html)
+
 # Hybrid-SOG
 ## Description
 This repository hosts the experiments and results for the Hybrid (MPI/pthreads) approach for the SOG construction and provides a short guide on how to install the tools and reproduce the results.
