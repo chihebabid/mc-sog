@@ -1,0 +1,3 @@
+[submodule "libraries/parser"]
+	path = libraries/parser
+	url = https://depot.lipn.univ-paris13.fr/PMC-SOG/pn-parser
