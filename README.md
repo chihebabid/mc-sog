@@ -9,7 +9,9 @@ The [BuDDy](http://buddy.sourceforge.net/manual/main.html) BDD package and [Sylv
 
 BuDDy used for sequential version and Sylvan for both sequential and parallel construction.
 
-Spot [Spot](https://spot.lrde.epita.fr/install.html)
+
+
+It is necessary to install Spot [Spot](https://spot.lrde.epita.fr/install.html).
 
 # Hybrid-SOG
 ## Description
