@@ -1,1 +1,0 @@
-/usr/bin/c++   -fpermissive   CMakeFiles/RdPtest.dir/test.cpp.o  -o RdPtest ../src/libRdP.a 
