@@ -16,6 +16,7 @@ class LDDState {
   virtual ~LDDState();
   Set firable;
   void* Class_Appartenance;
+  vector<pair<LDDState*, int>>* getSuccessors();
   vector<pair<LDDState*, int> > Predecessors, Successors;
   pair<LDDState*, int> LastEdge;
   void setLDDValue(MDD m);

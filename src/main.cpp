@@ -22,6 +22,7 @@
 #include <spot/twaalgos/emptiness.hh>
 #include <spot/tl/apcollect.hh>
 #include "Net.hpp"
+#include "SogTwa.h"
 
 
 
@@ -36,7 +37,7 @@ int Formula_transitions(const char * f, Set_mot& formula_trans, net Rv) ;
 
 unsigned int nb_th;
 int n_tasks, task_id;
-
+spot::formula not_f;
 set<string> buildObsTransitions(const string &fileName) {
     string input;
     set<string> transitionSet;
@@ -64,6 +65,8 @@ set<string> buildObsTransitions(const string &fileName) {
         transitionSet.insert((*i).ap_name());
     }
     print_spin_ltl(std::cout, fo)<<'\n';
+    cout<<"Building formula negation\n";
+    not_f = spot::formula::Not(pf.f);
     return transitionSet;
 
 }
@@ -154,6 +157,19 @@ int main(int argc, char** argv)
                 DR.computeSOGLaceCanonized(g);
                 g.printCompleteInformation();
             }
+            cout<<"Building automata for not(formula)\n";
+            auto d = spot::make_bdd_dict();
+            spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+            cout<<"Formula automata built.\n";
+            auto k = std::make_shared<SogTwa>(d,DR.getGraph());
+            spot::print_dot(std::cout, k);
+
+            /*
+            if (auto run = k->intersecting_run(af))
+                std::cout << "formula is violated by the following run:\n" << *run;
+            else
+                std::cout << "formula is verified\n";*/
+
         }
     }
 

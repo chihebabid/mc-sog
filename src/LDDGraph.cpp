@@ -2,7 +2,7 @@
 #include <sylvan.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <map>
 LDDGraph::~LDDGraph()
 {
     //dtor
@@ -13,6 +13,10 @@ void LDDGraph::setInitialState(LDDState *c)
 {
 	m_currentstate=m_initialstate=c;
 
+}
+
+LDDState* LDDGraph::getInitialState() const {
+    return m_GONodes.at(0);
 }
 /*----------------------find()----------------*/
 LDDState * LDDGraph::find(LDDState* c)
@@ -104,7 +108,7 @@ void LDDGraph::printCompleteInformation()
 	char c;
 	cin>>c;
 	//InitVisit(initialstate,n);
-	m_tab=new MDD[(int)m_nbStates];
+
 	size_t n=1;
 	//cout<<"NB BDD NODE : "<<NbBddNode(initialstate,n)<<endl;
 	NbBddNode(m_initialstate,n);
@@ -202,3 +206,25 @@ void LDDGraph::printpredecessors(LDDState *s)
 	}*/
 	cout<<"Not implemented yet!"<<endl;
 }
+/*** Giving a position in m_GONodes Returns an LDDState ****/
+LDDState *LDDGraph::getLDDStateById(unsigned int id) {
+    return m_GONodes.at(id);
+}
+
+string LDDGraph::getTransition(int pos) {
+    map<string,int>::iterator it=m_transition->begin();
+    while(it != m_transition->end())
+    {
+        if(it->second == pos)
+        return it->first;
+        it++;
+    }
+    return "";
+}
+
+void LDDGraph::setTransition(map<string,int>& list_transitions) {
+    m_transition=&list_transitions;
+}
+
+//void LDDGraph::setTransition(vector<string> list)
+

@@ -1,7 +1,7 @@
 #ifndef CLASS_OF_STATE
 #define CLASS_OF_STATE
 using namespace std;
-#include "bddx.h"
+#include "bdd.h"
 //#include <map.h>
 #include<unordered_map>
 #include <set>

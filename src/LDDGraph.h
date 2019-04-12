@@ -4,18 +4,21 @@
 //#include "LDDStateExtend.h"
 using namespace std;
 #include <iostream>
-
+#include <map>
 typedef set<int> Set;
 typedef vector<LDDState*> MetaLDDNodes;
 
 class LDDGraph
 {
     private:
-        MDD * m_tab;
+        map<string,int>* m_transition;
 		void printGraph(LDDState *, size_t &);
 
 	public:
+        string getTransition(int pos);
+        void setTransition(map<string,int>& list_transitions);
         MetaLDDNodes m_GONodes;
+        LDDState *getLDDStateById(unsigned int id);
 		void Reset();
 		LDDState *m_initialstate;
 		LDDState *m_currentstate;
@@ -35,6 +38,7 @@ class LDDGraph
 		void insert(LDDState*);
 		LDDGraph() {m_nbStates=m_nbArcs=m_nbMarking=0;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph
+		LDDState* getInitialState() const;
 		void printCompleteInformation();
 		virtual ~LDDGraph();
 };

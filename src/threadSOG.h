@@ -38,6 +38,7 @@ class threadSOG {
   void computeSOGLaceCanonized(LDDGraph &g);
   Set * getNonObservable();
   vector<TransSylvan>* getTBRelation();
+  LDDGraph *getGraph() const;
  protected:
  private:
  ////////////////////////////////

@@ -84,6 +84,7 @@ threadSOG::threadSOG(const net &R, int BOUND, int nbThread,bool uselace,bool ini
     NonObservable=R.NonObservable;
     Formula_Trans=R.Formula_Trans;
     transitionName=R.transitionName;
+
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -255,11 +256,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
                 {
                     //  cout<<"not found"<<endl;
                     reached_class->m_boucle=Set_Div(Complete_meta_state);
-                  //  cout<<"Divergence "<<Set_Div(Complete_meta_state)<<endl;
-                //    cout<<"blocage "<<Set_Bloc(Complete_meta_state)<<endl;
 
-                    //reached_class->blocage=Set_Bloc(Complete_meta_state);
-                    //reached_class->boucle=Set_Div(Complete_meta_state);
                     fire=firable_obs(Complete_meta_state);
                     st.push(Pair(couple(reached_class,Complete_meta_state),fire));
                     //TabMeta[nbmetastate]=reached_class->m_lddstate;
@@ -663,6 +660,7 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     cout << "number of threads "<<m_nb_thread<<endl;
     int rc;
     m_graph=&g;
+    m_graph->setTransition(transitionName);
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
@@ -1130,6 +1128,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     clock_gettime(CLOCK_REALTIME, &start);
     Set fire;
     m_graph=&g;
+    m_graph->setTransition(transitionName);
     m_nbmetastate=0;
     m_MaxIntBdd=0;
 
@@ -1322,6 +1321,7 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     clock_gettime(CLOCK_REALTIME, &start);
     Set fire;
     m_graph=&g;
+    m_graph->setTransition(transitionName);
 
 
     m_nbmetastate=0;
@@ -1410,4 +1410,8 @@ cout<<"\n=========================================\n";
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
 }
 
+
+LDDGraph *threadSOG::getGraph() const {
+    return m_graph;
+}
 
