@@ -35,9 +35,14 @@ SpotSogState* SpotSogIterator::dst() const
 bdd SpotSogIterator::cond()  const {
     bdd a=bddtrue;//1;
     string name=m_graph->getTransition(m_lddstate->getSuccessors()->at(m_current_edge).second);
-    cout<<"Transition name "<<name<<endl;
+    cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
+
+    spot::bdd_dict *p=m_dict_ptr->get();
+    spot::formula f=spot::formula::ap(name);
+    bdd   result=bdd_ithvar((p->var_map.find(f))->second);
+
     //cout<<"Iterator cond()"<<m_current_edge<<"\n";
-    return a;
+    return result;
 }
 
 spot::acc_cond::mark_t SpotSogIterator::acc() const {
@@ -50,3 +55,4 @@ SpotSogIterator::~SpotSogIterator()
 }
 
 static LDDGraph * SpotSogIterator::m_graph;
+static spot::bdd_dict_ptr* SpotSogIterator::m_dict_ptr;

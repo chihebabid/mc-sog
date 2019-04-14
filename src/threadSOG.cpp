@@ -81,10 +81,22 @@ threadSOG::threadSOG(const net &R, int BOUND, int nbThread,bool uselace,bool ini
     //_______________
     transitions=R.transitions;
     Observable=R.Observable;
+
     NonObservable=R.NonObservable;
     Formula_Trans=R.Formula_Trans;
     transitionName=R.transitionName;
 
+    cout<<"Toutes les Transitions:"<<endl;
+    map<string,int>::iterator it2=transitionName.begin();
+    for (;it2!=transitionName.end();it2++) {
+        cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
+
+
+
+    cout<<"Transitions observables :"<<endl;
+    Set::iterator it=Observable.begin();
+    for (;it!=Observable.end();it++) {cout<<*it<<"  ";}
+    cout<<endl;
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -1089,6 +1101,7 @@ TASK_3 (Set, firable_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*
         if(succ!=lddmc_false)
         {
             res.insert(*i);
+
         }
 
     }
@@ -1169,6 +1182,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
         while(iter!=e.second.end())
         {
             int t = *iter;
+            cout<<"Transition order1: "<<*iter<<endl;
             //e.second.erase(t);
             SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&NonObservable,&m_tb_relation);
             onb_it++;iter++;
@@ -1176,8 +1190,11 @@ void threadSOG::computeSOGLace(LDDGraph &g)
 
         for (unsigned int i=0; i<onb_it; i++)
         {
-            int t = *e.second.end();
-            e.second.erase(t);
+            Set::iterator it = e.second.end();
+            it--;
+            int t=*it;
+            cout<<"Transition order2: "<<t<<endl;
+            e.second.erase(it);
             MDD Complete_meta_state=SYNC(Accessible_epsilon_lace);
             reached_class=new LDDState;
             reached_class->m_lddstate=Complete_meta_state;
@@ -1371,6 +1388,7 @@ cout<<"\n=========================================\n";
         for (unsigned int i=0; i<onb_it; i++)
         {
             int t = *e.second.end();
+
             e.second.erase(t);
             MDD Complete_meta_state=SYNC(Accessible_epsilon_lace);
             lddmc_refs_push(Complete_meta_state);

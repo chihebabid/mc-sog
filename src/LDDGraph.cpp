@@ -212,6 +212,12 @@ LDDState *LDDGraph::getLDDStateById(unsigned int id) {
 }
 
 string LDDGraph::getTransition(int pos) {
+    //return m_transition->at(pos);
+  /*  map<string,int>::iterator it=m_transition->begin();
+    int i=0;
+    while (i<pos) {it++;i++;}
+    return it->first;*/
+    cout<<"********** Pos "<<pos<<endl;
     map<string,int>::iterator it=m_transition->begin();
     while(it != m_transition->end())
     {
@@ -219,7 +225,7 @@ string LDDGraph::getTransition(int pos) {
         return it->first;
         it++;
     }
-    return "";
+    return it->first;
 }
 
 void LDDGraph::setTransition(map<string,int>& list_transitions) {

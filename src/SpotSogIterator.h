@@ -7,6 +7,7 @@ class SpotSogIterator : public spot::twa_succ_iterator
 {
     public:
         static LDDGraph * m_graph;
+        static spot::bdd_dict_ptr* m_dict_ptr;
         SpotSogIterator(const LDDState *lddstate);
         virtual ~SpotSogIterator();
         bool first() override;

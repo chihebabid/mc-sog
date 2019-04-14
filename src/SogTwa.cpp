@@ -13,6 +13,7 @@ using namespace spot;
 SogTwa::SogTwa(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): twa(dict_ptr),m_sog(sog)
 {
     SpotSogIterator::m_graph=sog;
+    SpotSogIterator::m_dict_ptr=&dict_ptr;
 /*spot::bdd_dict *p=dict_ptr.get();
 cout<<"Taille du dictionnaire :"<<p->var_map.size()<<endl;
 
