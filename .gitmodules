@@ -1,7 +1,6 @@
 [submodule "libraries/parser"]
 	path = libraries/parser
 	url = https://depot.lipn.univ-paris13.fr/PMC-SOG/pn-parser.git
-	branch=master
 [submodule "third-party/sylvan"]
 	path = third-party/sylvan
 	url = https://depot.lipn.univ-paris13.fr/PMC-SOG/sylvan.git
