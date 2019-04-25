@@ -14,9 +14,7 @@ class SpotSogIterator : public spot::twa_succ_iterator
         bool next() override;
         bool done() const override;
         SpotSogState* dst() const override;
-//        const state * 	dst () const override;//
-        // a non derived function
- //       std::string format_transition() const;
+
         bdd cond() const override final;
         spot::acc_cond::mark_t acc() const override final;
 

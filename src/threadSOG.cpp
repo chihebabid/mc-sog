@@ -5,20 +5,12 @@
 //#define DEBUG_GC
 #include "threadSOG.h"
 
-
-// #include <vec.h>
-
-
-// #include "test_assert.h"
-
 #include "sylvan.h"
 #include "sylvan_seq.h"
 #include <sylvan_sog.h>
 #include <sylvan_int.h>
 
 using namespace sylvan;
-
-
 
 void write_to_dot(const char *ch,MDD m)
 {
@@ -29,20 +21,6 @@ void write_to_dot(const char *ch,MDD m)
 
 /*************************************************/
 
-//#include <boost/thread.hpp>
-const vector<class Place> *_places = NULL;
-
-/*void my_error_handler_dist(int errcode) {
-    cout<<"errcode = "<<errcode<<endl;
-	if (errcode == BDD_RANGE) {
-		// Value out of range : increase the size of the variables...
-		// but which one???
-		bdd_default_errhandler(errcode);
-	}
-	else {
-		bdd_default_errhandler(errcode);
-	}
-} */
 
 
 
@@ -80,36 +58,27 @@ threadSOG::threadSOG(const net &R, int BOUND, int nbThread,bool uselace,bool ini
 
     //_______________
     transitions=R.transitions;
-    Observable=R.Observable;
+    m_observable=R.Observable;
 
-    NonObservable=R.NonObservable;
+    m_nonObservable=R.NonObservable;
     Formula_Trans=R.Formula_Trans;
-    transitionName=R.transitionName;
+    m_transitionName=R.transitionName;
 
     cout<<"Toutes les Transitions:"<<endl;
-    map<string,int>::iterator it2=transitionName.begin();
-    for (;it2!=transitionName.end();it2++) {
+    map<string,int>::iterator it2=m_transitionName.begin();
+    for (;it2!=m_transitionName.end();it2++) {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
 
 
 
     cout<<"Transitions observables :"<<endl;
-    Set::iterator it=Observable.begin();
-    for (;it!=Observable.end();it++) {cout<<*it<<"  ";}
+    Set::iterator it=m_observable.begin();
+    for (;it!=m_observable.end();it++) {cout<<*it<<"  ";}
     cout<<endl;
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
     cout<<"Derniere place : "<<R.places[m_nbPlaces-1].name<<endl;
-    // place domain, place bvect, place initial marking and place name
-    // domains
-
-
-    // bvec
-
-
-    // Computing initial marking
-
 
     uint32_t * liste_marques=new uint32_t[R.places.size()];
     for(i=0,it_places=R.places.begin(); it_places!=R.places.end(); i++,it_places++)
@@ -119,10 +88,8 @@ threadSOG::threadSOG(const net &R, int BOUND, int nbThread,bool uselace,bool ini
 
     M0=lddmc_cube(liste_marques,R.places.size());
 
-   // ldd_refs_push(M0);
 
-    // place names
-    _places = &R.places;
+
 
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
@@ -211,7 +178,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
 
     // cout<<"Marquage initial :\n";
     //cout<<bddtable<<M0<<endl;
-    MDD Complete_meta_state=Accessible_epsilon2(M0);
+    MDD Complete_meta_state=Accessible_epsilon(M0);
    // write_to_dot("detectDiv.dot",Complete_meta_state);
     //cout<<" div "<<Set_Div(Complete_meta_state)<<endl;
     //lddmc_fprintdot(fp,Complete_meta_state);
@@ -219,15 +186,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
 
     //cout<<"Apres accessible epsilon \n";
     fire=firable_obs(Complete_meta_state);
-   // MDD canonised_initial=Canonize(Complete_meta_state,0);
-    //ldd_refs_push(canonised_initial);
 
-
-    //c->blocage=Set_Bloc(Complete_meta_state);
-    //c->boucle=Set_Div(Complete_meta_state);
-    //c->m_lddstate=CanonizeR(Complete_meta_state,0);
-    //cout<<"Apres CanonizeR nb representant : "<<bdd_pathcount(c->m_lddstate)<<endl;
-    //c->m_lddstate=canonised_initial;
     c->m_lddstate=Complete_meta_state;
     //TabMeta[m_nbmetastate]=c->m_lddstate;
     m_nbmetastate++;
@@ -254,7 +213,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
             reached_class=new LDDState;
             {
                 //  cout<<"Avant Accessible epsilon \n";
-                MDD Complete_meta_state=Accessible_epsilon2(get_successor(e.first.second,t));
+                MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
                 //MDD reduced_meta=Canonize(Complete_meta_state,0);
                 ldd_refs_push(Complete_meta_state);
                 //ldd_refs_push(reduced_meta);
@@ -345,11 +304,6 @@ void * threadSOG::doCompute()
         //ldd_refs_push(canonised_initial);
         fire=firable_obs(Complete_meta_state);
 
-        //c->blocage=Set_Bloc(Complete_meta_state);
-        //c->boucle=Set_Div(Complete_meta_state);
-        //c->m_lddstate=CanonizeR(Complete_meta_state,0);
-        //cout<<"Apres CanonizeR nb representant : "<<bdd_pathcount(c->m_lddstate)<<endl;
-        //c->m_lddstate=canonised_initial;
         c->m_lddstate=Complete_meta_state;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
         m_nbmetastate++;
@@ -515,11 +469,7 @@ void * threadSOG::doComputeCanonized()
         ldd_refs_push(canonised_initial);
         fire=firable_obs(Complete_meta_state);
 
-        //c->blocage=Set_Bloc(Complete_meta_state);
-        //c->boucle=Set_Div(Complete_meta_state);
-        //c->m_lddstate=CanonizeR(Complete_meta_state,0);
-        //cout<<"Apres CanonizeR nb representant : "<<bdd_pathcount(c->m_lddstate)<<endl;
-        //c->m_lddstate=canonised_initial;
+
         c->m_lddstate=canonised_initial;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
         m_nbmetastate++;
@@ -536,8 +486,7 @@ void * threadSOG::doComputeCanonized()
 
     LDDState* reached_class;
 
-    // size_t max_meta_state_size;
-    // int min_charge;
+
     do
     {
 
@@ -672,7 +621,7 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     cout << "number of threads "<<m_nb_thread<<endl;
     int rc;
     m_graph=&g;
-    m_graph->setTransition(transitionName);
+    m_graph->setTransition(m_transitionName);
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
@@ -721,110 +670,6 @@ void * threadSOG::threadHandlerCanonized(void *context)
     return ((threadSOG*)context)->doComputeCanonized();
 }
 
-
-void threadSOG::printhandler(ostream &o, int var)
-{
-    o << (*_places)[var/2].name;
-    if (var%2)
-        o << "_p";
-}
-
-
-
-
-
-
-
-
-
-
-Set threadSOG::firable_obs(MDD State)
-{
-    Set res;
-    for(Set::const_iterator i=Observable.begin(); !(i==Observable.end()); i++)
-    {
-        //cout<<"firable..."<<endl;
-        MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        if(succ!=lddmc_false)
-        {
-            res.insert(*i);
-        }
-
-    }
-    return res;
-}
-
-
-MDD threadSOG::get_successor(MDD From,int t)
-{
-    return lddmc_firing_mono(From,m_tb_relation[(t)].getMinus(),m_tb_relation[(t)].getPlus());
-}
-
-MDD threadSOG::get_successor2(MDD From,int t)
-{
-  //  LACE_ME;
-    return lddmc_firing_mono(From,m_tb_relation[(t)].getMinus(),m_tb_relation[(t)].getPlus());
-}
-
-MDD threadSOG::Accessible_epsilon2(MDD From)
-{
-    MDD M1;
-    MDD M2=From;
-    int it=0;
-
-
-    do
-    {
-
-        M1=M2;
-        for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
-        {    LACE_ME;
-
-            MDD succ= lddmc_firing_mono(M2,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-            M2=lddmc_union(succ,M2);
-
-        }
-
-        it++;
-
-        //	cout << bdd_nodecount(M2) << endl;
-    }
-    while(M1!=M2);
-
-    return M2;
-}
-
-MDD threadSOG::Accessible_epsilon(MDD From)
-{
-    MDD M1;
-    MDD M2=From;
-    int it=0;
-
-
-    do
-    {
-
-        M1=M2;
-        for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
-        {
-
-            MDD succ= lddmc_firing_mono(M2,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-            M2=lddmc_union_mono(succ,M2);
-
-        }
-
-        it++;
-
-        //	cout << bdd_nodecount(M2) << endl;
-    }
-    while(M1!=M2);
-
-    return M2;
-}
-
-
-
-
 int threadSOG::minCharge()
 {
     int pos=0;
@@ -842,155 +687,10 @@ int threadSOG::minCharge()
 }
 
 
-/*---------------------------  Set_Bloc()  -------*/
-/*bool DistributedSOG::Set_Bloc(MDD &S) const {
-
- cout<<"Ici detect blocage \n";
-int check_deadlocks = 0
-MDD cur;
-  for(vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i!=m_tb_relation.end();i++)
-  {
-
-      cur=TransSylvan(*i).getMinus();
-
-  }
-return ((S&cur)!=lddmc_false);
-	//BLOCAGE
-}
-
-
-/*-------------------------Set_Div() à revoir -----------------------------*/
-/*bool threadSOG::Set_Div(MDD &S) const
-{
-	Set::const_iterator i;
-	MDD To,Reached;
-	//cout<<"Ici detect divergence \n";
-	Reached=S;
-	do
-	{
-	        MDD From=Reached;
-		for(i=NonObservable.begin();!(i==NonObservable.end());i++)
-		{
-
-                To=lddmc_firing_mono(Reached,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-                Reached=lddmc_union_mono(Reached,To);
-				//To=m_tb_relation[*i](Reached);
-				//Reached=Reached|To; //Reached=To ???
-				//Reached=To;
-		}
-		if(Reached==From)
-			//cout<<"SEQUENCE DIVERGENTE \n";
-			return true;
-		//From=Reached;
-	}while(Reached!=bddfalse);
-	 return false;
-	//cout<<"PAS DE SEQUENCE DIVERGENTE \n";
-}
-*/
-
-MDD threadSOG::Canonize(MDD s,unsigned int level)
-{
-    if (level>m_nbPlaces || s==lddmc_false)
-        return lddmc_false;
-    if(isSingleMDD(s))
-        return s;
-    MDD s0=lddmc_false,s1=lddmc_false;
-
-    bool res=false;
-    do
-    {
-        if (get_mddnbr(s,level)>1)
-        {
-            s0=ldd_divide_rec(s,level);
-            s1=ldd_minus(s,s0);
-            res=true;
-        }
-        else
-            level++;
-    }
-    while(level<m_nbPlaces && !res);
-
-
-    if (s0==lddmc_false && s1==lddmc_false)
-        return lddmc_false;
-    // if (level==nbPlaces) return lddmc_false;
-    MDD Front,Reach;
-    if (s0!=lddmc_false && s1!=lddmc_false)
-    {
-        Front=s1;
-        Reach=s1;
-        do
-        {
-            // cout<<"premiere boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s0 = ldd_minus(s0,Front);
-        }
-        while((Front!=lddmc_false)&&(s0!=lddmc_false));
-    }
-    if((s0!=lddmc_false)&&(s1!=lddmc_false))
-    {
-        Front=s0;
-        Reach = s0;
-        do
-        {
-            //  cout<<"deuxieme boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s1 = ldd_minus(s1,Front);
-        }
-        while( Front!=lddmc_false && s1!=lddmc_false );
-    }
-
-
-
-    MDD Repr=lddmc_false;
-
-    if (isSingleMDD(s0))
-    {
-        Repr=s0;
-    }
-    else
-    {
-
-        Repr=Canonize(s0,level);
-
-    }
-
-    if (isSingleMDD(s1))
-        Repr=lddmc_union_mono(Repr,s1);
-    else
-        Repr=lddmc_union_mono(Repr,Canonize(s1,level));
-
-
-    return Repr;
-
-
-}
-MDD threadSOG::ImageForward(MDD From)
-{
-    MDD Res=lddmc_false;
-    for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
-    {
-        MDD succ= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        //        bdd succ = relation[(*i)](From);
-        Res=lddmc_union_mono(Res,succ);
-        // Res=Res|succ;
-
-    }
-    return Res;
-}
-
 
 bool threadSOG::Set_Bloc(MDD &M) const
 {
-  //bdd Mt = lddmc_true;
-  //for(vector<Trans>::const_iterator i = relation.begin(); i != relation.end(); ++i) {
-   // Mt = Mt & !(i->Precond);
-  //}
-  //return ((S & Mt) != bddfalse);
-   cout<<"Ici detect blocage \n";
-//int check_deadlocks = 0
+
    MDD cur=lddmc_true;
   for(vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i!=m_tb_relation.end();i++)
   {
@@ -1003,7 +703,7 @@ return ((M&cur)!=lddmc_false);
 }
 bool threadSOG::Set_Div2( const MDD &M) const
 {
-    if (NonObservable.empty())
+    if (m_nonObservable.empty())
     return false;
 	Set::const_iterator i;
 	MDD Reached,From;
@@ -1012,7 +712,7 @@ bool threadSOG::Set_Div2( const MDD &M) const
 	do
 	{
         From=Reached;
-		for(i=NonObservable.begin();!(i==NonObservable.end());i++)
+		for(i=m_nonObservable.begin();!(i==m_nonObservable.end());i++)
 		{
 		// To=relation[*i](Reached);
         // Reached=Reached|To; //Reached=To ???
@@ -1029,7 +729,7 @@ bool threadSOG::Set_Div2( const MDD &M) const
 //}
 bool threadSOG::Set_Div(MDD &M) const
 {
-    if (NonObservable.empty())
+    if (m_nonObservable.empty())
     return false;
 	Set::const_iterator i;
 	MDD Reached,From;
@@ -1038,7 +738,7 @@ bool threadSOG::Set_Div(MDD &M) const
 	do
 	{
         From=Reached;
-		for(i=NonObservable.begin();!(i==NonObservable.end());i++)
+		for(i=m_nonObservable.begin();!(i==m_nonObservable.end());i++)
 		{
 		// To=relation[*i](Reached);
         // Reached=Reached|To; //Reached=To ???
@@ -1046,12 +746,8 @@ bool threadSOG::Set_Div(MDD &M) const
         Reached=lddmc_union_mono(Reached,To);
 				//Reached=To;
 		}
-		if(Reached==From)
-		//{
-        //cout << " sequence divergente "<<endl;
-        return true;
-		//}
-		//From=Reached;
+		if(Reached==From) return true;
+
 	}while(Reached!=lddmc_false && Reached != From);
    //  cout<<"PAS DE SEQUENCE DIVERGENTE \n";
 	 return false;
@@ -1062,10 +758,6 @@ threadSOG::~threadSOG()
     //dtor
 }
 
-/*********Returns the count of places******************************************/
-unsigned int threadSOG::getPlacesCount() {
-    return m_nbPlaces;
-}
 
 
 
@@ -1141,7 +833,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     clock_gettime(CLOCK_REALTIME, &start);
     Set fire;
     m_graph=&g;
-    m_graph->setTransition(transitionName);
+    m_graph->setTransition(m_transitionName);
     m_nbmetastate=0;
     m_MaxIntBdd=0;
 
@@ -1150,10 +842,10 @@ void threadSOG::computeSOGLace(LDDGraph &g)
 
     //cout<<"Marquage initial is being built..."<<endl;
     LACE_ME;
-    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&NonObservable,&m_tb_relation));
+    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&m_nonObservable,&m_tb_relation));
 
 
-    fire=firable_obs_lace(initial_meta_state,&Observable,&m_tb_relation);
+    fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
 
     c->m_lddstate=initial_meta_state;
 
@@ -1166,10 +858,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     m_graph->insert(c);
     //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
     LDDState* reached_class;
-    //  MDD Complete_meta_state;*/
 
-    // size_t max_meta_state_size;
-    // int min_charge;
 
     while (!m_st[0].empty())
     {
@@ -1184,7 +873,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
             int t = *iter;
             cout<<"Transition order1: "<<*iter<<endl;
             //e.second.erase(t);
-            SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&NonObservable,&m_tb_relation);
+            SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&m_nonObservable,&m_tb_relation);
             onb_it++;iter++;
         }
 
@@ -1193,7 +882,6 @@ void threadSOG::computeSOGLace(LDDGraph &g)
             Set::iterator it = e.second.end();
             it--;
             int t=*it;
-            cout<<"Transition order2: "<<t<<endl;
             e.second.erase(it);
             MDD Complete_meta_state=SYNC(Accessible_epsilon_lace);
             reached_class=new LDDState;
@@ -1208,7 +896,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
                 e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                 reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
                 m_nbmetastate++;
-                fire=firable_obs_lace(Complete_meta_state,&Observable,&m_tb_relation);
+                fire=firable_obs_lace(Complete_meta_state,&m_observable,&m_tb_relation);
                 m_st[0].push(Pair(couple(reached_class,Complete_meta_state),fire));
             }
             else
@@ -1227,12 +915,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
 }
 
-Set * threadSOG::getNonObservable() {
-    return &NonObservable;
-}
-vector<TransSylvan>* threadSOG::getTBRelation() {
-    return &m_tb_relation;
-}
+
 /********************* Compute canonized SOG with lace *********************************************/
 
 /******************************Canonizer with lace framework  **********************************/
@@ -1338,7 +1021,7 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     clock_gettime(CLOCK_REALTIME, &start);
     Set fire;
     m_graph=&g;
-    m_graph->setTransition(transitionName);
+    m_graph->setTransition(m_transitionName);
 
 
     m_nbmetastate=0;
@@ -1349,12 +1032,12 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
 
     //cout<<"Marquage initial is being built..."<<endl;
     LACE_ME;
-    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&NonObservable,&m_tb_relation));
+    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&m_nonObservable,&m_tb_relation));
 
     //lddmc_refs_spawn(SPAWN(lddmc_canonize,initial_meta_state,0,*this));
 
 
-    fire=firable_obs_lace(initial_meta_state,&Observable,&m_tb_relation);
+    fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
     m_nbmetastate++;
     //m_old_size=lddmc_nodecount(c->m_lddstate);
     //reduced_initial=lddmc_refs_sync(SYNC(lddmc_canonize));
@@ -1381,15 +1064,17 @@ cout<<"\n=========================================\n";
         {
             int t = *iter;
             //e.second.erase(t);
-            SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&NonObservable,&m_tb_relation);
+            SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&m_nonObservable,&m_tb_relation);
             onb_it++;iter++;
         }
 
         for (unsigned int i=0; i<onb_it; i++)
         {
-            int t = *e.second.end();
+            Set::iterator it = e.second.end();
+            it--;
+            int t=*it;
+            e.second.erase(it);
 
-            e.second.erase(t);
             MDD Complete_meta_state=SYNC(Accessible_epsilon_lace);
             lddmc_refs_push(Complete_meta_state);
 
@@ -1408,7 +1093,7 @@ cout<<"\n=========================================\n";
                 e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                 reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
                 m_nbmetastate++;
-                fire=firable_obs_lace(Complete_meta_state,&Observable,&m_tb_relation);
+                fire=firable_obs_lace(Complete_meta_state,&m_observable,&m_tb_relation);
                 m_st[0].push(Pair(couple(reached_class,Complete_meta_state),fire));
             }
             else
@@ -1426,10 +1111,5 @@ cout<<"\n=========================================\n";
     tps = (finish.tv_sec - start.tv_sec);
     tps += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
-}
-
-
-LDDGraph *threadSOG::getGraph() const {
-    return m_graph;
 }
 

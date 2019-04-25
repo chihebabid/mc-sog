@@ -25,12 +25,6 @@ using namespace sylvan;
 /**************************************************/
 
 
-
-
-
-const vector<class Place> *__vplaces = NULL;
-
-
 DistributedSOG::DistributedSOG(const net &R, int BOUND,bool init)
 {
 
@@ -47,20 +41,20 @@ DistributedSOG::DistributedSOG(const net &R, int BOUND,bool init)
     m_net=R;
 
     m_init=init;
-    nbPlaces=R.places.size();
+
     int i, domain;
     vector<Place>::const_iterator it_places;
 
     //_______________
     transitions=R.transitions;
-    Observable=R.Observable;
-    NonObservable=R.NonObservable;
+    m_observable=R.Observable;
+    m_nonObservable=R.NonObservable;
     Formula_Trans=R.Formula_Trans;
-    transitionName=R.transitionName;
+    m_transitionName=R.transitionName;
     InterfaceTrans=R.InterfaceTrans;
-    Nb_places=R.places.size();
-    cout<<"Nombre de places : "<<Nb_places<<endl;
-    cout<<"Derniere place : "<<R.places[Nb_places-1].name<<endl;
+    m_nbPlaces=R.places.size();
+    cout<<"Nombre de places : "<<m_nbPlaces<<endl;
+    cout<<"Derniere place : "<<R.places[m_nbPlaces-1].name<<endl;
     // place domain, place bvect, place initial marking and place name
 
 
@@ -72,17 +66,17 @@ DistributedSOG::DistributedSOG(const net &R, int BOUND,bool init)
     M0=lddmc_cube(liste_marques,R.places.size());
     delete []liste_marques;
     // place names
-    __vplaces = &R.places;
+//    __vplaces = &R.places;
 
 
-    uint32_t *prec = new uint32_t[nbPlaces];
-    uint32_t *postc= new uint32_t [nbPlaces];
+    uint32_t *prec = new uint32_t[m_nbPlaces];
+    uint32_t *postc= new uint32_t [m_nbPlaces];
     // Transition relation
     for(vector<Transition>::const_iterator t=R.transitions.begin();
             t!=R.transitions.end(); t++)
     {
         // Initialisation
-        for(i=0; i<nbPlaces; i++)
+        for(i=0; i<m_nbPlaces; i++)
         {
             prec[i]=0;
             postc[i]=0;
@@ -103,8 +97,8 @@ DistributedSOG::DistributedSOG(const net &R, int BOUND,bool init)
             postc[it->first] = postc[it->first] + it->second;
         }
 
-        MDD _minus=lddmc_cube(prec,nbPlaces);
-        MDD _plus=lddmc_cube(postc,nbPlaces);
+        MDD _minus=lddmc_cube(prec,m_nbPlaces);
+        MDD _plus=lddmc_cube(postc,m_nbPlaces);
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
     delete [] prec;
@@ -158,7 +152,8 @@ void *DistributedSOG::doCompute()
         {
             m_nbmetastate++;
             //m_old_size=lddmc_nodecount(c->m_lddstate);
-            fire=firable_obs(Complete_meta_state);
+
+            Set fire=firable_obs(Complete_meta_state);
             m_st.push(Pair(couple(c,Complete_meta_state),fire));
             m_graph->setInitialState(c);
             m_graph->insert(c);
@@ -204,7 +199,7 @@ void *DistributedSOG::doCompute()
                 reached_class=new LDDState;
 
                 //  lddmc_fprintdot(fp,Complete_meta_state);
-                MDD marking=get_successorMDD(e.first.second,t);
+                MDD marking=get_successor(e.first.second,t);
                 MDD lddmarq=Accessible_epsilon(marking);
                 reached_class->m_lddstate=lddmarq;
                 lddmc_getsha(lddmarq, msg);
@@ -229,7 +224,7 @@ void *DistributedSOG::doCompute()
                         reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
                         m_nbmetastate++;
 
-                        fire=firable_obs(lddmarq);
+                        Set fire=firable_obs(lddmarq);
 
                         m_st.push(Pair(couple(reached_class,lddmarq),fire));
                         nb_success++;
@@ -458,7 +453,7 @@ void DistributedSOG::read_state_message()
         if (!m_graph->find(Agregate))
         {
             m_graph->insert(Agregate);
-            fire=firable_obs(MState);
+            Set fire=firable_obs(MState);
             m_nbmetastate++;
             m_old_size=lddmc_nodecount(Agregate->m_lddstate);
             m_st.push(Pair(couple(Agregate,MState),fire));
@@ -551,69 +546,7 @@ void DistributedSOG::computeDSOG(LDDGraph &g)
 
 
 
-void DistributedSOG::printhandler(ostream &o, int var)
-{
-    o << (*__vplaces)[var/2].name;
-    if (var%2)
-        o << "_p";
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Set DistributedSOG::firable_obs(MDD State)
-{
-    Set res;
-    for(Set::const_iterator i=Observable.begin(); !(i==Observable.end()); i++)
-    {
-
-        //cout<<"firable..."<<endl;
-        MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        if(succ!=lddmc_false)
-        {
-            //cout<<"firable..."<<endl;
-            res.insert(*i);
-        }
-
-    }
-    return res;
-}
-
-MDD DistributedSOG::get_successorMDD(MDD From,int t)
-{
-
-    MDD res=lddmc_firing_mono(From,m_tb_relation[(t)].getMinus(),m_tb_relation[(t)].getPlus());
-    return res;
-}
-
-
-MDD DistributedSOG::Accessible_epsilon(MDD From)
-{
-    MDD M1;
-    MDD M2=From;
-    int it=0;
-    do
-    {
-        M1=M2;
-        for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
-        {
-
-            MDD succ= lddmc_firing_mono(M2,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-            M2=lddmc_union_mono(M2,succ);
-            //M2=succ|M2;
-        }
-        //TabMeta[nbmetastate]=M2;
-        //int intsize=sylvan_anodecount(TabMeta,nbmetastate+1);
-        //if(m_MaxIntBdd<intsize)
-        //  m_MaxIntBdd=intsize;
-        it++;
-        //	cout << bdd_nodecount(M2) << endl;
-    }
-    while(M1!=M2);
-    return M2;
-}
 
 
 string to_hex(unsigned char s)
@@ -708,15 +641,15 @@ MDD DistributedSOG::decodage_message(char *chaine)
     nb_marq=(nb_marq<<8) | (unsigned char)chaine[0];
 
     unsigned int index=2;
-    uint32_t list_marq[nbPlaces];
+    uint32_t list_marq[m_nbPlaces];
     for (unsigned int i=0; i<nb_marq; i++)
     {
-        for (unsigned int j=0; j<nbPlaces; j++)
+        for (unsigned int j=0; j<m_nbPlaces; j++)
         {
             list_marq[j]=chaine[index];
             index++;
         }
-        MDD N=lddmc_cube(list_marq,nbPlaces);
+        MDD N=lddmc_cube(list_marq,m_nbPlaces);
         M=lddmc_union_mono(M,N);
     }
     return M;
@@ -730,7 +663,7 @@ void DistributedSOG::MarquageString(char *dest,const char *source)
     int index=1;
     for (int nb=0; nb<length; nb++)
     {
-        for (int i=0; i<nbPlaces; i++)
+        for (int i=0; i<m_nbPlaces; i++)
         {
             dest[index]=(unsigned char)source[index]+(unsigned char)'0';
             printf("%d",source[index]);
@@ -742,95 +675,6 @@ void DistributedSOG::MarquageString(char *dest,const char *source)
 }
 
 /******************************************************************************/
-MDD DistributedSOG::ImageForward(MDD From)
-{
-    MDD Res=lddmc_false;
-    for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
-    {
-        MDD succ= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-         Res=lddmc_union_mono(Res,succ);
-    }
-    return Res;
-}
 
-
-/*----------------------------------------------CanonizeR()------------------------------------*/
-MDD DistributedSOG::Canonize(MDD s,unsigned int level)
-{
-    if (level>nbPlaces || s==lddmc_false) return lddmc_false;
-    if(isSingleMDD(s))   return s;
-    MDD s0=lddmc_false,s1=lddmc_false;
-
-    bool res=false;
-    do
-    {
-        if (get_mddnbr(s,level)>1)
-        {
-            s0=ldd_divide_rec(s,level);
-            s1=ldd_minus(s,s0);
-            res=true;
-        }
-        else
-            level++;
-    }
-    while(level<nbPlaces && !res);
-
-
-    if (s0==lddmc_false && s1==lddmc_false)
-        return lddmc_false;
-    // if (level==nbPlaces) return lddmc_false;
-    MDD Front,Reach;
-    if (s0!=lddmc_false && s1!=lddmc_false)
-    {
-        Front=s1;
-        Reach=s1;
-        do
-        {
-            // cout<<"premiere boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s0 = ldd_minus(s0,Front);
-        }
-        while((Front!=lddmc_false)&&(s0!=lddmc_false));
-    }
-    if((s0!=lddmc_false)&&(s1!=lddmc_false))
-    {
-        Front=s0;
-        Reach = s0;
-        do
-        {
-            //  cout<<"deuxieme boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s1 = ldd_minus(s1,Front);
-        }
-        while( Front!=lddmc_false && s1!=lddmc_false );
-    }
-
-
-
-    MDD Repr=lddmc_false;
-
-    if (isSingleMDD(s0))
-    {
-        Repr=s0;
-    }
-    else
-    {
-
-        Repr=Canonize(s0,level);
-
-    }
-
-    if (isSingleMDD(s1))
-        Repr=lddmc_union_mono(Repr,s1);
-    else
-        Repr=lddmc_union_mono(Repr,Canonize(s1,level));
-
-
-    return Repr;
-
-
-}
 
 

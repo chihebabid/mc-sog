@@ -123,13 +123,10 @@ void LDDGraph::printCompleteInformation()
 		size_t n=1;
 		 printGraph(m_initialstate,n);
 	}
-
-
 }
 /*----------------------InitVisit()------------------------*/
 void LDDGraph::InitVisit(LDDState * S,size_t nb)
 {
-
 	if(nb<=m_nbStates)
 	{
 		S->m_visited=false;
@@ -176,34 +173,11 @@ void LDDGraph::printGraph(LDDState *s,size_t &nb)
 /*---------void print_successors_class(Class_Of_State *)------------*/
 void LDDGraph::printsuccessors(LDDState *s)
 {
-	/*Edges::const_iterator i;
-	cout<<bddtable<<s->class_state<<endl;
-	if(s->boucle)
-		cout<<"\n\tON BOUCLE DESSUS AVEC EPSILON\n";
-	if(s->blocage)
-		cout<<"\n\tEXISTENCE D'UN ETAT BLOCANT\n";
-	cout<<"\n\tSES SUCCESSEURS SONT  ( "<<s->Successors.size()<<" ) :\n\n";
-	getchar();
-	for(i =s->Successors.begin();!(i==s->Successors.end());i++)
-	{
-		cout<<" \t- t"<<(*i).second<<" ->";
-		cout<<bddtable<<(*i).first->class_state<<endl;
-		getchar();
-	}*/
 	cout<<"Not implemented yet!"<<endl;
 }
 /*---------void printpredescessors(Class_Of_State *)------------*/
 void LDDGraph::printpredecessors(LDDState *s)
 {
-	/*Edges::const_iterator i;
-	cout<<"\n\tSES PREDESCESSEURS SONT  ( "<<s->Predecessors.size()<<" ) :\n\n";
-	getchar();
-	for(i =s->Predecessors.begin();!(i==s->Predecessors.end());i++)
-	{
-		cout<<" \t- t"<<(*i).second<<" ->";
-		cout<<bddtable<<(*i).first->class_state<<endl;
-		getchar();
-	}*/
 	cout<<"Not implemented yet!"<<endl;
 }
 /*** Giving a position in m_GONodes Returns an LDDState ****/
@@ -212,11 +186,6 @@ LDDState *LDDGraph::getLDDStateById(unsigned int id) {
 }
 
 string LDDGraph::getTransition(int pos) {
-    //return m_transition->at(pos);
-  /*  map<string,int>::iterator it=m_transition->begin();
-    int i=0;
-    while (i<pos) {it++;i++;}
-    return it->first;*/
     cout<<"********** Pos "<<pos<<endl;
     map<string,int>::iterator it=m_transition->begin();
     while(it != m_transition->end())
