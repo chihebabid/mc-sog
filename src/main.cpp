@@ -22,7 +22,6 @@
 #include <spot/twaalgos/emptiness.hh>
 #include <spot/tl/apcollect.hh>
 #include "Net.hpp"
-#include "SogTwa.h"
 
 
 
@@ -37,66 +36,34 @@ int Formula_transitions(const char * f, Set_mot& formula_trans, net Rv) ;
 
 unsigned int nb_th;
 int n_tasks, task_id;
-spot::formula not_f;
-set<string> buildObsTransitions(const string &fileName, const net &p) {
+
+set<string> buildObsTransitions(const string &fileName) {
     string input;
     set<string> transitionSet;
-    vector<Place>::const_iterator it_Places;
     ifstream file(fileName);
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         getline (file,input);
         cout<<"Loaded formula : "<<input<<endl;
         file.close();
 
     }
-    else
-    {
+    else {
         cout<<"Can not open formula file"<<endl;
         exit(0);
     }
 
     spot::parsed_formula pf = spot::parse_infix_psl(input);
-    if (pf.format_errors(std::cerr))
-        return transitionSet;
+    if (pf.format_errors(std::cerr)) return transitionSet;
     spot::formula fo = pf.f;
-    if (!fo.is_ltl_formula())
-    {
-        std::cerr << "Only LTL formulas are supported.\n";
-        return transitionSet;
+    if (!fo.is_ltl_formula())    {
+      std::cerr << "Only LTL formulas are supported.\n";
+      return transitionSet;
     }
     spot::atomic_prop_set *p_list=spot::atomic_prop_collect(fo,0);
-    for (spot::atomic_prop_set::const_iterator i=p_list->begin(); i!=p_list->end(); i++)
-    {
-
-        for(it_Places=p.places.begin(); it_Places!=p.places.end();it_Places++)
-        {
-        //int pl = p.get_place_num((*it_Places)->name());
-
-        if (strcmp((*i).ap_name(),it_Places->name()))
-        if (p->get_incidence()[t].get(p) != 0)
-          transitionSet.insert(t);
-        }
+    for (spot::atomic_prop_set::const_iterator i=p_list->begin();i!=p_list->end();i++) {
         transitionSet.insert((*i).ap_name());
-
-    //
     }
-    /*places
-    for(it = sap->begin(); it != sap->end(); ++it) {
-      if(!p->place_exists( (*it)->name() )) {
-        std::string* s = new std::string((*it)->name());
-        delete sap;
-        sap = 0;
-        return s;
-      }
-      int pl = p->get_place_num((*it)->name());
-      for (int t = 0; t < p->t_size(); ++t)
-        if (p->get_incidence()[t].get(pl) != 0)
-          ob_tr.insert(t);
-    */
     print_spin_ltl(std::cout, fo)<<'\n';
-    cout<<"Building formula negation\n";
-    not_f = spot::formula::Not(pf.f);
     return transitionSet;
 
 }
@@ -109,16 +76,11 @@ int main(int argc, char** argv)
 
     exit(0);*/
 
-    if(argc<3)
-        return 0;
+    if(argc<3)  return 0;
     char Obs[100]="";
     char Int[100]="";
-    char pnet[100]="";
     strcpy(Obs, argv[4]);
-    strcpy(pnet, argv[3]);
-
-    if (argc > 6)
-        strcpy(Int, argv[5]);
+    if (argc > 6) strcpy(Int, argv[5]);
 
     int bound  = atoi(argv[argc - 1])==0?32:atoi(argv[argc - 1]);
     //if(argc>5)
@@ -141,8 +103,7 @@ int main(int argc, char** argv)
 
     cout<<"______________________________________\n";
     cout<<"Fetching formula..."<<endl;
-    net p(pnet);
-    set<string> list_transitions=buildObsTransitions(Obs,p);
+    set<string> list_transitions=buildObsTransitions(Obs);
 
     net R(argv[3],list_transitions);
 
@@ -169,73 +130,31 @@ int main(int argc, char** argv)
         else
         {
             cout<<"*******************Multithread version****************** \n" <<endl;
-            if (!strcmp(argv[1],"p"))
-            {
+            if (!strcmp(argv[1],"p")) {
                 cout<<"Construction with pthread library."<<endl;
                 cout<<"Count of threads to be created: "<<nb_th<<endl;
                 DR.computeDSOG(g,false);
                 g.printCompleteInformation();
             }
-            else if (!strcmp(argv[1],"pc"))
-            {
+            else if (!strcmp(argv[1],"pc")) {
                 cout<<"Canonized construction with pthread library."<<endl;
                 cout<<"Count of threads to be created: "<<nb_th<<endl;
                 DR.computeDSOG(g,true);
                 g.printCompleteInformation();
             }
-            else if (!strcmp(argv[1],"l"))
-            {
+            else if (!strcmp(argv[1],"l")) {
                 cout<<"Construction with lace framework."<<endl;
                 cout<<"Count of workers to be created: "<<nb_th<<endl;
                 DR.computeSOGLace(g);
                 g.printCompleteInformation();
             }
-            else if (!strcmp(argv[1],"lc"))
-            {
+             else if (!strcmp(argv[1],"lc")) {
                 cout<<"Canonised construction with lace framework."<<endl;
                 cout<<"Count of workers to be created: "<<nb_th<<endl;
                 DR.computeSOGLaceCanonized(g);
                 g.printCompleteInformation();
             }
-
-            cout<<"Perform Model checking ?";
-            char c;
-            cin>>c;
-            if (c='y')
-            {
-                cout<<"Building automata for not(formula)\n";
-                auto d = spot::make_bdd_dict();
-                spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                cout<<"Formula automata built.\n";
-                cout<<"Want to save the graph in a dot file ?";
-                cin>>c;
-                if (c=='y') {
-                    fstream file;
-                    string st(Obs);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, af);
-                    file.close();
-                }
-                auto k = std::make_shared<SogTwa>(d,DR.getGraph());
-                cout<<"SOG translated to SPOT succeeded.."<<endl;
-                cout<<"Want to save the graph in a dot file ?";
-                cin>>c;
-                if (c=='y') {
-                    fstream file;
-                    string st(argv[3]);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, k);
-                    file.close();
-                }
-                if (auto run = k->intersecting_run(af))
-                    std::cout << "formula is violated by the following run:\n" << *run;
-                else
-                    std::cout << "formula is verified\n";
-            }
-
-          }
+        }
     }
 
 

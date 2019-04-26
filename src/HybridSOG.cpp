@@ -35,7 +35,7 @@ using namespace sylvan;
 
 
 
-
+const vector<class Place> *_vplaces = NULL;
 
 /*void my_error_handler_dist(int errcode) {
     cout<<"errcode = "<<errcode<<endl;
@@ -74,10 +74,10 @@ HybridSOG::HybridSOG(const net &R, int BOUND,bool init)
     init_gc_seq();
     //_______________
     transitions=R.transitions;
-    m_observable=R.Observable;
-    m_nonObservable=R.NonObservable;
+    Observable=R.Observable;
+    NonObservable=R.NonObservable;
     Formula_Trans=R.Formula_Trans;
-    m_transitionName=R.transitionName;
+    transitionName=R.transitionName;
     InterfaceTrans=R.InterfaceTrans;
 
     m_nbPlaces=R.places.size();
@@ -95,7 +95,7 @@ HybridSOG::HybridSOG(const net &R, int BOUND,bool init)
 
     delete []liste_marques;
     // place names
-
+    _vplaces = &R.places;
 
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
@@ -829,6 +829,15 @@ void HybridSOG::computeDSOG(LDDGraph &g)
 }
 
 
+
+void HybridSOG::printhandler(ostream &o, int var)
+{
+    o << (*_vplaces)[var/2].name;
+    if (var%2)
+        o << "_p";
+}
+
+
 int HybridSOG::minCharge()
 {
     int pos=1;
@@ -843,6 +852,65 @@ int HybridSOG::minCharge()
     }
     return pos;
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Set HybridSOG::firable_obs(MDD State)
+{
+    Set res;
+    for(Set::const_iterator i=Observable.begin(); !(i==Observable.end()); i++)
+    {
+
+        //cout<<"firable..."<<endl;
+        MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
+        if(succ!=lddmc_false)
+        {
+            res.insert(*i);
+        }
+    }
+    return res;
+}
+
+
+
+
+MDD HybridSOG::get_successor(MDD From,int t)
+{
+    return lddmc_firing_mono(From,m_tb_relation[t].getMinus(),m_tb_relation[t].getPlus());
+}
+
+
+MDD HybridSOG::Accessible_epsilon(MDD From)
+{
+    MDD M1;
+    MDD M2=From;
+    do
+    {
+        M1=M2;
+        for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
+        {
+
+            MDD succ= lddmc_firing_mono(M2,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
+            M2=lddmc_union_mono(succ,M2);
+            //M2=succ|M2;
+        }
+        //	cout << bdd_nodecount(M2) << endl;
+    }
+    while(M1!=M2);
+    return M2;
+}
+
+
+/*string to_hex(unsigned char s)
+{
+    stringstream ss;
+    ss << hex << (int) s;
+    return ss.str();
+} */
 
 
 void HybridSOG::strcpySHA(unsigned char *dest,const unsigned char *source)
@@ -911,12 +979,107 @@ MDD HybridSOG::decodage_message(const char *chaine)
 
 
 
+/******************************************************************************/
+MDD HybridSOG::ImageForward(MDD From)
+{
+    MDD Res=lddmc_false;
+    for(Set::const_iterator i=NonObservable.begin(); !(i==NonObservable.end()); i++)
+    {
+        MDD succ= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
+        Res=lddmc_union_mono(Res,succ);
+    }
+    return Res;
+}
 
 
+/*----------------------------------------------CanonizeR()------------------------------------*/
+MDD HybridSOG::Canonize(MDD s,unsigned int level)
+{
+    if (level>m_nbPlaces || s==lddmc_false) return lddmc_false;
+    if(isSingleMDD(s))   return s;
+    MDD s0=lddmc_false,s1=lddmc_false;
+
+    bool res=false;
+    do
+    {
+        if (get_mddnbr(s,level)>1)
+        {
+            s0=ldd_divide_rec(s,level);
+            s1=ldd_minus(s,s0);
+            res=true;
+        }
+        else
+            level++;
+    }
+    while(level<m_nbPlaces && !res);
+
+
+    if (s0==lddmc_false && s1==lddmc_false)
+        return lddmc_false;
+    // if (level==nbPlaces) return lddmc_false;
+    MDD Front,Reach;
+    if (s0!=lddmc_false && s1!=lddmc_false)
+    {
+        Front=s1;
+        Reach=s1;
+        do
+        {
+            // cout<<"premiere boucle interne \n";
+            Front=ldd_minus(ImageForward(Front),Reach);
+            Reach = lddmc_union_mono(Reach,Front);
+            s0 = ldd_minus(s0,Front);
+        }
+        while((Front!=lddmc_false)&&(s0!=lddmc_false));
+    }
+    if((s0!=lddmc_false)&&(s1!=lddmc_false))
+    {
+        Front=s0;
+        Reach = s0;
+        do
+        {
+            //  cout<<"deuxieme boucle interne \n";
+            Front=ldd_minus(ImageForward(Front),Reach);
+            Reach = lddmc_union_mono(Reach,Front);
+            s1 = ldd_minus(s1,Front);
+        }
+        while( Front!=lddmc_false && s1!=lddmc_false );
+    }
+
+
+
+    MDD Repr=lddmc_false;
+
+    if (isSingleMDD(s0))
+    {
+        Repr=s0;
+    }
+    else
+    {
+
+        Repr=Canonize(s0,level);
+
+    }
+
+    if (isSingleMDD(s1))
+        Repr=lddmc_union_mono(Repr,s1);
+    else
+        Repr=lddmc_union_mono(Repr,Canonize(s1,level));
+
+
+    return Repr;
+
+
+}
 void * HybridSOG::threadHandler(void *context)
 {
 
     return ((HybridSOG*)context)->doCompute();
+}
+
+
+void printchaine(string *s) {
+    for (int i=0;i<s->size();i++)
+        printf("%d",(s->at(i)-1));
 }
 
 void HybridSOG::convert_wholemdd_stringcpp(MDD cmark,string &res)

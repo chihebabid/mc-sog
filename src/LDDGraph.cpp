@@ -2,7 +2,7 @@
 #include <sylvan.h>
 #include <stdio.h>
 #include <string.h>
-#include <map>
+
 LDDGraph::~LDDGraph()
 {
     //dtor
@@ -13,10 +13,6 @@ void LDDGraph::setInitialState(LDDState *c)
 {
 	m_currentstate=m_initialstate=c;
 
-}
-
-LDDState* LDDGraph::getInitialState() const {
-    return m_GONodes.at(0);
 }
 /*----------------------find()----------------*/
 LDDState * LDDGraph::find(LDDState* c)
@@ -108,7 +104,7 @@ void LDDGraph::printCompleteInformation()
 	char c;
 	cin>>c;
 	//InitVisit(initialstate,n);
-
+	m_tab=new MDD[(int)m_nbStates];
 	size_t n=1;
 	//cout<<"NB BDD NODE : "<<NbBddNode(initialstate,n)<<endl;
 	NbBddNode(m_initialstate,n);
@@ -123,10 +119,13 @@ void LDDGraph::printCompleteInformation()
 		size_t n=1;
 		 printGraph(m_initialstate,n);
 	}
+
+
 }
 /*----------------------InitVisit()------------------------*/
 void LDDGraph::InitVisit(LDDState * S,size_t nb)
 {
+
 	if(nb<=m_nbStates)
 	{
 		S->m_visited=false;
@@ -173,33 +172,33 @@ void LDDGraph::printGraph(LDDState *s,size_t &nb)
 /*---------void print_successors_class(Class_Of_State *)------------*/
 void LDDGraph::printsuccessors(LDDState *s)
 {
+	/*Edges::const_iterator i;
+	cout<<bddtable<<s->class_state<<endl;
+	if(s->boucle)
+		cout<<"\n\tON BOUCLE DESSUS AVEC EPSILON\n";
+	if(s->blocage)
+		cout<<"\n\tEXISTENCE D'UN ETAT BLOCANT\n";
+	cout<<"\n\tSES SUCCESSEURS SONT  ( "<<s->Successors.size()<<" ) :\n\n";
+	getchar();
+	for(i =s->Successors.begin();!(i==s->Successors.end());i++)
+	{
+		cout<<" \t- t"<<(*i).second<<" ->";
+		cout<<bddtable<<(*i).first->class_state<<endl;
+		getchar();
+	}*/
 	cout<<"Not implemented yet!"<<endl;
 }
 /*---------void printpredescessors(Class_Of_State *)------------*/
 void LDDGraph::printpredecessors(LDDState *s)
 {
+	/*Edges::const_iterator i;
+	cout<<"\n\tSES PREDESCESSEURS SONT  ( "<<s->Predecessors.size()<<" ) :\n\n";
+	getchar();
+	for(i =s->Predecessors.begin();!(i==s->Predecessors.end());i++)
+	{
+		cout<<" \t- t"<<(*i).second<<" ->";
+		cout<<bddtable<<(*i).first->class_state<<endl;
+		getchar();
+	}*/
 	cout<<"Not implemented yet!"<<endl;
 }
-/*** Giving a position in m_GONodes Returns an LDDState ****/
-LDDState *LDDGraph::getLDDStateById(unsigned int id) {
-    return m_GONodes.at(id);
-}
-
-string LDDGraph::getTransition(int pos) {
-    cout<<"********** Pos "<<pos<<endl;
-    map<string,int>::iterator it=m_transition->begin();
-    while(it != m_transition->end())
-    {
-        if(it->second == pos)
-        return it->first;
-        it++;
-    }
-    return it->first;
-}
-
-void LDDGraph::setTransition(map<string,int>& list_transitions) {
-    m_transition=&list_transitions;
-}
-
-//void LDDGraph::setTransition(vector<string> list)
-

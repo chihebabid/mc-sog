@@ -24,7 +24,3 @@ bool LDDState::isVirtual() {
 void LDDState::setVirtual() {
     m_virtual=true;
 }
-
-vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
-    return &Successors;
-}
