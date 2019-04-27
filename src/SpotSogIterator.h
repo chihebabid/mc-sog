@@ -6,6 +6,7 @@
 class SpotSogIterator : public spot::twa_succ_iterator
 {
     public:
+
         static LDDGraph * m_graph;
         static spot::bdd_dict_ptr* m_dict_ptr;
         SpotSogIterator(const LDDState *lddstate);
@@ -24,6 +25,7 @@ class SpotSogIterator : public spot::twa_succ_iterator
         // Associated SOG graph
 
         LDDState * m_lddstate;
+        vector<pair<LDDState*, int>> m_lsucc;
         unsigned int m_current_edge=0;
 };
 

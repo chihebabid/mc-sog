@@ -18,7 +18,11 @@ set_target_properties(spot PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "/usr/include/spot/"
 )
 
-
+add_library(bddx SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(bddx PROPERTIES
+  IMPORTED_LOCATION "/usr/lib/x86_64-linux-gnu/libbddx.so"
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/include/spot/"
+)
 
 
 
@@ -26,6 +30,10 @@ set_target_properties(spot PROPERTIES
 
 # Hybrid SOG executable
 add_executable(hybrid-sog main.cpp
+  NewNet.cpp
+  NewNet.h
+  CommonSOG.cpp
+  CommonSOG.h
   DistributedSOG.cpp
   DistributedSOG.h
   HybridSOG.cpp
@@ -33,12 +41,22 @@ add_executable(hybrid-sog main.cpp
   threadSOG.cpp
   threadSOG.h
   LDDGraph.cpp
+  LDDGraph.h
   LDDState.cpp
+  LDDState.h
   TransSylvan.cpp
   sylvan_sog.c
+  SpotSogState.cpp
+  SpotSogState.h
+  SpotSogIterator.cpp
+  SpotSogIterator.h
+  SogTwa.cpp
+  SogTwa.h
+
   )
 
 target_link_libraries(hybrid-sog
+  bddx
   spot
   sylvan
   RdP

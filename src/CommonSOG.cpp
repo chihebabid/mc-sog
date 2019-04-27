@@ -172,3 +172,44 @@ unsigned int CommonSOG::getPlacesCount() {
     return m_nbPlaces;
 }
 
+/**** Detect divergence in an agregate ****/
+bool CommonSOG::Set_Div(MDD &M) const
+{
+    if (m_nonObservable.empty())
+    return false;
+	Set::const_iterator i;
+	MDD Reached,From;
+	//cout<<"Ici detect divergence \n";
+	Reached=M;
+	do
+	{
+        From=Reached;
+		for(i=m_nonObservable.begin();!(i==m_nonObservable.end());i++)
+		{
+
+        MDD To= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
+        Reached=lddmc_union_mono(Reached,To);
+				//Reached=To;
+		}
+		if(Reached==From) return true;
+
+	}while(Reached!=lddmc_false && Reached != From);
+   //  cout<<"PAS DE SEQUENCE DIVERGENTE \n";
+	 return false;
+}
+
+/**** Detetc deadlocks ****/
+bool CommonSOG::Set_Bloc(MDD &M) const
+{
+
+   MDD cur=lddmc_true;
+  for(vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i!=m_tb_relation.end();i++)
+  {
+
+      cur=cur&(TransSylvan(*i).getMinus());
+
+  }
+return ((M&cur)!=lddmc_false);
+	//BLOCAGE
+}
+

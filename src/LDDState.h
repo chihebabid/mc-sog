@@ -16,6 +16,7 @@ class LDDState {
   virtual ~LDDState();
   Set firable;
   void* Class_Appartenance;
+  vector<pair<LDDState*, int>>* getSuccessors();
   vector<pair<LDDState*, int> > Predecessors, Successors;
   pair<LDDState*, int> LastEdge;
   void setLDDValue(MDD m);
@@ -28,7 +29,10 @@ class LDDState {
   bool m_visited;
   bool isVirtual();
   void setVirtual();
-
+  void setDiv(bool di) {m_boucle=di;}
+  bool isDiv() {return m_boucle;}
+  void setDeadLock(bool de) {m_blocage=de;}
+  bool isDeadLock() {return m_blocage;}
  protected:
  private:
   bool m_virtual = false;
