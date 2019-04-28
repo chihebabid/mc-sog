@@ -12,6 +12,7 @@ class LDDState {
   LDDState() {
     m_boucle = m_blocage = m_visited = false;
     m_virtual = false;
+    m_marked = false;
   }
   virtual ~LDDState();
   Set firable;
@@ -33,6 +34,8 @@ class LDDState {
   bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
+  bool isMarked();
+  void setMarked();
  protected:
  private:
   bool m_virtual = false;

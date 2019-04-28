@@ -2,7 +2,7 @@
 #define COMMONSOG_H
 #include "LDDGraph.h"
 #include "TransSylvan.h"
-#include "NewNet.h"
+#include "Net.hpp"
 #include <stack>
 
 typedef pair<LDDState *, MDD> couple;
@@ -19,7 +19,7 @@ class CommonSOG
         Set * getNonObservable();
         unsigned int getPlacesCount();
     protected:
-        NewNet m_net;
+        net m_net;
         int m_nbPlaces = 0;
         LDDGraph *m_graph;
         vector<TransSylvan> m_tb_relation;
@@ -39,6 +39,9 @@ class CommonSOG
         MDD Canonize(MDD s, unsigned int level);
         bool Set_Div(MDD &M) const;
         bool Set_Bloc(MDD &M) const;
+        bool is_marked(int p, const MDD & m) const;
+
+
     private:
 };
 

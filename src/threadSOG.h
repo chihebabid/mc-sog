@@ -3,7 +3,7 @@
 // #include "RdPBDD.h"
 #include <stack>
 #include <vector>
-#include "NewNet.h"
+#include "Net.hpp"
 // #include "MDD.h"
 //#include "MDGraph.h"
 //#include "bvec.h"
@@ -23,7 +23,7 @@ extern unsigned int nb_th;
 
 class threadSOG : public CommonSOG{
  public:
-  threadSOG(const NewNet &, int BOUND = 32, int nbThread=2,bool uselace=false,bool init = false);
+  threadSOG(const net &, int BOUND = 32, int nbThread=2,bool uselace=false,bool init = false);
   void buildFromNet(int index);
   void computeDSOG(LDDGraph &g,bool canonised);
   void computeSeqSOG(LDDGraph &g);

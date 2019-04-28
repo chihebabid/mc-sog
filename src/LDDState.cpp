@@ -28,3 +28,11 @@ void LDDState::setVirtual() {
 vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
     return &Successors;
 }
+
+void LDDState::setMarked() {
+    isMarked()=true;
+}
+
+bool LDDState::isMarked() {
+    return m_marked;
+}

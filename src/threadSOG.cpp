@@ -26,7 +26,7 @@ void write_to_dot(const char *ch,MDD m)
 
 /*************************************************/
 
-threadSOG::threadSOG(const NewNet &R, int BOUND, int nbThread,bool uselace,bool init)
+threadSOG::threadSOG(const net &R, int BOUND, int nbThread,bool uselace,bool init)
 {
     m_nb_thread=nbThread;
     if (uselace)  {
