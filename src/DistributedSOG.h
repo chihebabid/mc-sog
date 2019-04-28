@@ -3,7 +3,7 @@
 // #include "RdPBDD.h"
 #include <stack>
 #include <vector>
-#include "Net.hpp"
+#include "NewNet.h"
 // #include "MDD.h"
 //#include "MDGraph.h"
 //#include "bvec.h"
@@ -46,7 +46,7 @@ extern int n_tasks, task_id;
 // typedef vector<Trans> vec_trans;
 class DistributedSOG : public CommonSOG{
  public:
-  DistributedSOG(const net &, int BOUND = 32, bool init = false);
+  DistributedSOG(const NewNet &, int BOUND = 32, bool init = false);
   void buildFromNet(int index);
   void computeDSOG(LDDGraph &g);
   void BuildInitialState(LDDState *m_state, MDD mdd);

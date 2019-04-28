@@ -213,11 +213,3 @@ return ((M&cur)!=lddmc_false);
 	//BLOCAGE
 }
 
-/**************** isMarked **************/
-bool CommonSOG::is_marked(int p, const MDD& m) const {
-  if(0 <= p && p < m_place_proposition.size());
-  return
-  else
-  return false;
-}
-

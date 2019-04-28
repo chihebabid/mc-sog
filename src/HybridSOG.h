@@ -3,7 +3,7 @@
 
 #include <stack>
 #include <vector>
-#include "Net.hpp"
+#include "NewNet.h"
 // #include "MDD.h"
 //#include "MDGraph.h"
 //#include "bvec.h"
@@ -47,7 +47,7 @@ typedef stack<MSG> pile_msg;
 class HybridSOG : public CommonSOG
 {
 public:
-    HybridSOG(const net &, int BOUND = 32, bool init = false);
+    HybridSOG(const NewNet &, int BOUND = 32, bool init = false);
     void buildFromNet(int index);
     /// principal functions to construct the SOG
     void computeDSOG(LDDGraph &g);
