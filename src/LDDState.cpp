@@ -30,9 +30,7 @@ vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
 }
 
 void LDDState::setMarked() {
-    isMarked()=true;
+     m_marked=true;
 }
 
-bool LDDState::isMarked() {
-    return m_marked;
-}
+

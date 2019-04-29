@@ -136,21 +136,26 @@ NewNet::NewNet(const char *f, const set<string> & f_trans) {
     int pos_trans(TRANSITIONS T, string trans);
     for (set<string>::const_iterator i=list_t.begin();i!=list_t.end();i++) {
         int pos = pos_trans(transitions, *i);
+        Observable.clear();
         if (pos==-1) {
             cout<<"Error: "<<*i<<" is not a transition!"<<endl;
             // Check if the proposition corresponds to a place
             map<string, int>::iterator pi = placeName.find(*i);
             if (pi!=placeName.end()) cout<<"Place was found!"<<endl;
             m_formula_place.insert(pi->second);
+            Observable.insert(pi->first->pre);
+            //Observable.insert(pi->post);
 
         } else {
             Formula_Trans.insert(pos);
             cout<<"Transition found pos="<<pos<<endl;
             map<string,int>::iterator ti=transitionName.find(*i);
             cout<<"pos= "<<ti->second<<endl;
+            Observable.insert(pos);
+    }
         }
     }
- }
+
 
 /*---------------------------------Set_formula_trans()------------------*/
 bool NewNet::Set_Formula_Trans(const char *f) {

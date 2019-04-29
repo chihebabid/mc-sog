@@ -32,8 +32,6 @@ class threadSOG : public CommonSOG{
   static void *threadHandlerCanonized(void *context);
   void *doCompute();
   void *doComputeCanonized();
-
-
   void computeSOGLace(LDDGraph &g);
   void computeSOGLaceCanonized(LDDGraph &g);
 
