@@ -130,6 +130,7 @@ NewNet::NewNet(const char *f, const set<string> & f_trans) {
     for (unsigned int i = 0; i < transitions.size(); i++) Observable.insert(i);
   cout << "FIN CREATION \n";
 }
+
 /*---------------------------------Init Set of  transitions
  * ------------------------------*/
  void NewNet::setListObservable(const set<string> & list_t) {
@@ -143,8 +144,10 @@ NewNet::NewNet(const char *f, const set<string> & f_trans) {
             map<string, int>::iterator pi = placeName.find(*i);
             if (pi!=placeName.end()) cout<<"Place was found!"<<endl;
             m_formula_place.insert(pi->second);
-            Observable.insert(pi->first->pre);
-            //Observable.insert(pi->post);
+            for (unsigned int i = 0; i < transitions.size(); i++)
+             if (Observable.find(i) == Observable.end()) {
+               NonObservable.insert(i);
+              }
 
         } else {
             Formula_Trans.insert(pos);

@@ -104,6 +104,8 @@ class NewNet : public RdPMonteur {
   /* Visualisation */
   int nbPlace() const { return places.size(); };
   int nbTransition() const { return transitions.size(); };
+
+
 };
 
 ostream &operator<<(ostream &, const NewNet &);
