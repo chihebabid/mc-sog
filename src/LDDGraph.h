@@ -12,10 +12,12 @@ class LDDGraph
 {
     private:
         map<string,int>* m_transition;
+        map<int,string>* m_places;
 		void printGraph(LDDState *, size_t &);
 
 	public:
         string getTransition(int pos);
+        string getPlace(int pos);
         void setTransition(map<string,int>& list_transitions);
         MetaLDDNodes m_GONodes;
         LDDState *getLDDStateById(unsigned int id);

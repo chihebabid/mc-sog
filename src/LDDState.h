@@ -3,6 +3,7 @@
 #include <sylvan.h>
 #include <set>
 #include <vector>
+#include <string>
 using namespace std;
 using namespace sylvan;
 typedef set<int> Set;
@@ -27,17 +28,19 @@ class LDDState {
   bool m_boucle;
   bool m_blocage;
   bool m_visited;
-  bool m_marked;
+
   bool isVirtual();
   void setVirtual();
   void setDiv(bool di) {m_boucle=di;}
   bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
-  void setMarked();
+  vector<int> getMarkedPlaces();
+
  protected:
  private:
   bool m_virtual = false;
+
 };
 
 typedef pair<LDDState*, int> LDDEdge;
