@@ -135,19 +135,24 @@ NewNet::NewNet(const char *f, const set<string> & f_trans) {
  * ------------------------------*/
  void NewNet::setListObservable(const set<string> & list_t) {
     int pos_trans(TRANSITIONS T, string trans);
+    Observable.clear();
     for (set<string>::const_iterator i=list_t.begin();i!=list_t.end();i++) {
         int pos = pos_trans(transitions, *i);
-        Observable.clear();
         if (pos==-1) {
             cout<<"Error: "<<*i<<" is not a transition!"<<endl;
             // Check if the proposition corresponds to a place
             map<string, int>::iterator pi = placeName.find(*i);
             if (pi!=placeName.end()) cout<<"Place was found!"<<endl;
             m_formula_place.insert(pi->second);
-            for (unsigned int i = 0; i < transitions.size(); i++)
-             if (Observable.find(i) == Observable.end()) {
-               NonObservable.insert(i);
-              }
+
+            // Adding adjacent transitions of a place as observable transitions
+            Place p=places.at(pi->second);
+            for (auto  iter=p.post.begin();iter!=p.post.end();iter++) {
+                Observable.insert((*iter).first);
+            }
+            for (auto  iter=p.pre.begin();iter!=p.pre.end();iter++) {
+                Observable.insert((*iter).first);
+            }
 
         } else {
             Formula_Trans.insert(pos);
@@ -156,6 +161,11 @@ NewNet::NewNet(const char *f, const set<string> & f_trans) {
             cout<<"pos= "<<ti->second<<endl;
             Observable.insert(pos);
     }
+        }
+
+        cout<<"Diplaying list of observable transitions :"<<endl;
+        for (auto iter=Observable.begin();iter!=Observable.end();iter++) {
+            cout<<"Transition position : "<<*iter<<endl;
         }
     }
 
