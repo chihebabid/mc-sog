@@ -23,6 +23,7 @@
 #include <spot/tl/apcollect.hh>
 #include "NewNet.h"
 #include "SogTwa.h"
+#include "SogKripke.h"
 
 
 
