@@ -221,8 +221,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
                   //sylvan_gc_seq();
 
                 reached_class->m_lddstate=Complete_meta_state;
-                if (is_marcked())
-                reached_class->setMarked();
+
                // reached_class->m_lddstate=reduced_meta;
                 LDDState* pos=g.find(reached_class);
                 //nbnode=sylvan_pathcount(reached_class->m_lddstate);
@@ -1057,12 +1056,4 @@ cout<<"\n=========================================\n";
 }
 
 
-bool LDDState::isMarked() {
 
-        for (set<string>::const_iterator i=m_place_proposition.begin();i!=m_place_proposition.end();i++)
-        {
-        if (i->marking>0)
-        return true;
-        }
-        return false;
-}
