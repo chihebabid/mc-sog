@@ -18,6 +18,7 @@ class LDDGraph
 	public:
         string getTransition(int pos);
         string getPlace(int pos);
+        void setPlace(map<int,string>& list_places);
         void setTransition(map<string,int>& list_transitions);
         MetaLDDNodes m_GONodes;
         LDDState *getLDDStateById(unsigned int id);

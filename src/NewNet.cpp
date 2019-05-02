@@ -187,7 +187,7 @@ void NewNet::setListObservable(const set<string> & list_t)
             if (pi!=placeName.end())
                 cout<<"Place was found!"<<endl;
             m_formula_place.insert(pi->second);
-
+            m_lplaceAP.insert(*i);
             // Adding adjacent transitions of a place as observable transitions
             Place p=places.at(pi->second);
             for (auto  iter=p.post.begin(); iter!=p.post.end(); iter++)

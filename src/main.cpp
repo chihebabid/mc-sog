@@ -189,7 +189,7 @@ int main(int argc, char** argv)
                     spot::print_dot(file, af);
                     file.close();
                 }
-                auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP());
+                auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
                 cin>>c;

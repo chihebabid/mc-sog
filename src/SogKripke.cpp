@@ -16,10 +16,12 @@ SogKripke::SogKripke(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): spot::kripke(d
     SogKripkeIterator::m_dict_ptr=&dict_ptr;
 }
 
-SogKripke::SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap):SogKripke(dict_ptr,sog) {
+SogKripke::SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap,set<string> &l_placeap):SogKripke(dict_ptr,sog) {
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
     }
+    for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
+        register_ap(*it);
 }
 
 
@@ -50,15 +52,18 @@ SogKripkeIterator* SogKripke::succ_iter(const spot::state* s) const {
 
 bdd SogKripke::state_condition(const spot::state* s) const
   {
-    /*auto ss = static_cast<const SogKripkeState*>(s);
+    auto ss = static_cast<const SogKripkeState*>(s);
+    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces();
+    spot::formula f=spot::formula::ap("jhkh");
+    //dict_->var_map.find(f);
+    bdd result=bddtrue;
+    for (auto it=marked_place.begin();it!=marked_place.end();it++) {
+    string name=m_sog->getPlace(*it);
+    spot::formula f=spot::formula::ap(name);
+    result&=bdd_ithvar((dict_->var_map.find(f))->second);
+    }
 
-  MDD res = lddmc_true;
-  std::map<int, int>::const_iterator it;
-  for (it = place_prop.begin(); it != place_prop.end(); ++it)
-    if (m_sog->is_marked(it->first, m))
-
-  return res;*/
-  return bddtrue;
+  return result;
   }
 
 

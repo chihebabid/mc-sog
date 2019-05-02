@@ -25,6 +25,7 @@ class CommonSOG
         vector<TransSylvan> m_tb_relation;
         LDDState m_M0;
         map<string, int> m_transitionName;
+        map<int,string> m_placeName;
         Set m_observable;
         Set m_nonObservable;
         Set InterfaceTrans;

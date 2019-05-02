@@ -197,8 +197,15 @@ string LDDGraph::getTransition(int pos) {
     return it->first;
 }
 
+string LDDGraph::getPlace(int pos) {
+    return m_places->find(pos)->second;
+}
+
 void LDDGraph::setTransition(map<string,int>& list_transitions) {
     m_transition=&list_transitions;
+}
+void LDDGraph::setPlace(map<int,string>& list_places) {
+    m_places=&list_places;
 }
 
 //void LDDGraph::setTransition(vector<string> list)

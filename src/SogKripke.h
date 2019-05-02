@@ -9,7 +9,7 @@ class SogKripke: public spot::kripke {
 
 
         SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog);
-        SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap);
+        SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap,set<string> &l_placeap);
         virtual ~SogKripke();
         spot::state* get_init_state() const;
         SogKripkeIterator* succ_iter(const spot::state* s) const override;

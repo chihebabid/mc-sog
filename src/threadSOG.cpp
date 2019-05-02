@@ -624,6 +624,7 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     int rc;
     m_graph=&g;
     m_graph->setTransition(m_transitionName);
+
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
