@@ -1,19 +1,19 @@
 #include <spot/twaalgos/dot.hh>
 #include <spot/twaalgos/hoa.hh>
-#include <spot/twa/twa.hh>
+#include <spot/kripke/kripke.hh>
 #include <spot/twa/bdddict.hh>
 
 
-#include "SpotSogIterator.h"
-#include "SpotSogState.h"
+#include "SogKripkeIterator.h"
+#include "SogKripkeState.h"
 
 #include "SogKripke.h"
 #include <map>
 using namespace spot;
-SogKripke::SogKripke(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): twa(dict_ptr),m_sog(sog)
+SogKripke::SogKripke(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): spot::kripke(dict_ptr),m_sog(sog)
 {
-    SpotSogIterator::m_graph=sog;
-    SpotSogIterator::m_dict_ptr=&dict_ptr;
+    SogKripkeIterator::m_graph=sog;
+    SogKripkeIterator::m_dict_ptr=&dict_ptr;
 /*spot::bdd_dict *p=dict_ptr.get();
 cout<<"Taille du dictionnaire :"<<p->var_map.size()<<endl;
 
@@ -34,28 +34,28 @@ std::ostringstream stream;
 }
 state* SogKripke::get_init_state() const {
     //cout<<"Initial state given...\n";
-    return new SpotSogState(m_sog->getInitialState());//new SpotSogState();
+    return new SogKripkeState(m_sog->getInitialState());//new SpotSogState();
 
 }
 // Allows to print state label representing its id
 std::string SogKripke::format_state(const spot::state* s) const
   {
-    auto ss = static_cast<const SpotSogState*>(s);
+    auto ss = static_cast<const SogKripkeState*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
 
-SpotSogIterator* SogKripke::succ_iter(const spot::state* s) const {
+SogKripkeIterator* SogKripke::succ_iter(const spot::state* s) const {
 
-    auto ss = static_cast<const SpotSogState*>(s);
+    auto ss = static_cast<const SogKripkeState*>(s);
     bdd b=bddfalse;
-    return new SpotSogIterator(ss->getLDDState());//,b);//s state_condition(ss));
+    return new SogKripkeIterator(ss->getLDDState());//,b);//s state_condition(ss));
 }
 
-   MDD state_condition(const spot::state* s) const override
+  /* MDD state_condition(const spot::state* s) const override
   {
-    auto ss = static_cast<const SpotSogState*>(s);
+    auto ss = static_cast<const SogKripkeState*>(s);
 
   MDD res = lddmc_true;
   std::map<int, int>::const_iterator it;
@@ -63,7 +63,7 @@ SpotSogIterator* SogKripke::succ_iter(const spot::state* s) const {
     if (m_sog->is_marked(it->first, m))
 
   return res;
-  }
+  }*/
 
 
 SogKripke::~SogKripke()

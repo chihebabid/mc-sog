@@ -52,7 +52,12 @@ add_executable(hybrid-sog main.cpp
   SpotSogIterator.h
   SogTwa.cpp
   SogTwa.h
-
+  SogKripkeState.cpp
+  SogKripkeState.h
+  SogKripkeIterator.cpp
+  SogKripkeIterator.h
+  SogKripke.cpp
+  SogKripke.h
   )
 
 target_link_libraries(hybrid-sog

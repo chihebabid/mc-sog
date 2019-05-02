@@ -2,8 +2,8 @@
 #define SOGKRIPKE_H_INCLUDED
 #include "LDDGraph.h"
 #include "SogKripkeIterator.h"
-class SogKripke : public spot::kripke
-{
+#include <spot/kripke/kripke.hh>
+class SogKripke: public spot::kripke {
     public:
 
 
@@ -13,7 +13,7 @@ class SogKripke : public spot::kripke
         spot::state* get_init_state() const;
         SogKripkeIterator* succ_iter(const spot::state* s) const override;
         std::string format_state(const spot::state* s) const override;
-        MDD state_condition(const spot::state* s) const override;
+      //  MDD state_condition(const spot::state* s) const override;
 
 
     protected:

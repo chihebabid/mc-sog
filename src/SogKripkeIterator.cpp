@@ -37,9 +37,9 @@ bool SogKripkeIterator::done() const {
     return m_current_edge==m_lsucc.size();
 }
 
-SpotSogState* SogKripkeIterator::dst() const
+SogKripkeState* SogKripkeIterator::dst() const
   {
-    return new SpotSogState(m_lsucc.at(m_current_edge).first);
+    return new SogKripkeState(m_lsucc.at(m_current_edge).first);
   }
 
 bdd SogKripkeIterator::cond()  const {
