@@ -104,6 +104,14 @@ class NewNet : public RdPMonteur {
   /* Visualisation */
   int nbPlace() const { return places.size(); };
   int nbTransition() const { return transitions.size(); };
+  set<string>& getListTransitionAP() {return m_ltransitionAP;}
+  set<string>& getListPlaceAP() {return m_lplaceAP;}
+  private:
+  map<int,string> m_transitionPosName;
+  map<int,string> m_placePosName;
+
+  set<string> m_ltransitionAP;
+  set<string> m_lplaceAP;
 
 
 };
