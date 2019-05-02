@@ -49,8 +49,12 @@ std::string SogKripke::format_state(const spot::state* s) const
 SogKripkeIterator* SogKripke::succ_iter(const spot::state* s) const {
 
     auto ss = static_cast<const SogKripkeState*>(s);
-    bdd b=bddfalse;
-    return new SogKripkeIterator(ss->getLDDState());//,b);//s state_condition(ss));
+   //////////////////////////////////////////////
+    // Must be changed
+    // State condition ????
+    ///////////////////////
+    bdd b=bddtrue;
+    return new SogKripkeIterator(ss->getLDDState(),b);//,b);//s state_condition(ss));
 }
 
   /* MDD state_condition(const spot::state* s) const override

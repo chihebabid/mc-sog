@@ -1,10 +1,10 @@
-#include <spot/twa/twa.hh>
+#include <spot/kripke/kripke.hh>
 #include "LDDGraph.h"
 #include "SogKripkeState.h"
 #include "SogKripkeIterator.h"
 
 
-SogKripkeIterator::SogKripkeIterator(const LDDState* lddstate):m_lddstate(lddstate)
+SogKripkeIterator::SogKripkeIterator(const LDDState* lddstate, bdd cond):kripke_succ_iterator(cond),m_lddstate(lddstate)
 {
     //vector<pair<LDDState*, int>>
     m_lddstate->setDiv(true);

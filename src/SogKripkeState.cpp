@@ -1,4 +1,4 @@
-#include <spot/twa/twa.hh>
+#include <spot/kripke/kripke.hh>
 #include "LDDState.h"
 #include "SogKripkeState.h"
 
