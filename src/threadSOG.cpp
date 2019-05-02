@@ -63,6 +63,7 @@ threadSOG::threadSOG(const NewNet &R, int BOUND, int nbThread,bool uselace,bool 
     m_nonObservable=R.NonObservable;
 
     m_transitionName=R.transitionName;
+    m_placeName=R.m_placePosName;
 
     cout<<"Toutes les Transitions:"<<endl;
     map<string,int>::iterator it2=m_transitionName.begin();
@@ -624,7 +625,7 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     int rc;
     m_graph=&g;
     m_graph->setTransition(m_transitionName);
-
+    m_graph->setPlace(m_placeName);
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
@@ -777,6 +778,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     Set fire;
     m_graph=&g;
     m_graph->setTransition(m_transitionName);
+    m_graph->setPlace(m_placeName);
     m_nbmetastate=0;
     m_MaxIntBdd=0;
 
@@ -965,7 +967,7 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     Set fire;
     m_graph=&g;
     m_graph->setTransition(m_transitionName);
-
+    m_graph->setPlace(m_placeName);
 
     m_nbmetastate=0;
     m_MaxIntBdd=0;

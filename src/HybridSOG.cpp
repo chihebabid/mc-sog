@@ -78,6 +78,7 @@ HybridSOG::HybridSOG(const NewNet &R, int BOUND,bool init)
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
     m_transitionName=R.transitionName;
+    m_placeName=R.m_placePosName;
     InterfaceTrans=R.InterfaceTrans;
 
     m_nbPlaces=R.places.size();

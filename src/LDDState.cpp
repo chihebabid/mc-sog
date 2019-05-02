@@ -39,7 +39,8 @@ vector<int> LDDState::getMarkedPlaces() {
     int depth=0;
     while (mdd>lddmc_true)
     {
-        mddnode_t node=GETNODE(m_lddstate);
+        //printf("mddd : %d \n",mdd);
+        mddnode_t node=GETNODE(mdd);
         if (mddnode_getvalue(node)==1) {
             result.push_back(depth);
         }

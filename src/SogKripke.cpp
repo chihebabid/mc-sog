@@ -43,22 +43,21 @@ SogKripkeIterator* SogKripke::succ_iter(const spot::state* s) const {
 
     auto ss = static_cast<const SogKripkeState*>(s);
    //////////////////////////////////////////////
-    // Must be changed
-    // State condition ????
-    ///////////////////////
-    bdd b=bddtrue;
-    return new SogKripkeIterator(ss->getLDDState(),b);//,b);//s state_condition(ss));
+
+    return new SogKripkeIterator(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));
 }
 
 bdd SogKripke::state_condition(const spot::state* s) const
   {
+   cout<<"yessss "<<endl;
     auto ss = static_cast<const SogKripkeState*>(s);
     vector<int> marked_place=ss->getLDDState()->getMarkedPlaces();
-    spot::formula f=spot::formula::ap("jhkh");
-    //dict_->var_map.find(f);
+
+    cout<<"function name :"<<__func__<<endl;
     bdd result=bddtrue;
     for (auto it=marked_place.begin();it!=marked_place.end();it++) {
     string name=m_sog->getPlace(*it);
+    cout<<"Place name marked : "<<*it<<endl;
     spot::formula f=spot::formula::ap(name);
     result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
