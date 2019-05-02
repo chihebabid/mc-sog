@@ -14,23 +14,13 @@ SogTwa::SogTwa(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): twa(dict_ptr),m_sog(
 {
     SpotSogIterator::m_graph=sog;
     SpotSogIterator::m_dict_ptr=&dict_ptr;
-/*spot::bdd_dict *p=dict_ptr.get();
-cout<<"Taille du dictionnaire :"<<p->var_map.size()<<endl;
+}
 
-map<spot::formula,int>::iterator  i=(p->var_map).begin();
 
-while (i!=(p->var_map).end()) {
-    cout<<" test :"<<(*i).first.ap_name()<<endl;
-std::ostringstream stream;
-     stream << (*i).first;
-     std::string str =  stream.str();
-  cout<<" formule 1: "<<str<<endl;
-  cout<<" formule 2: "<<str<<endl;
-  i++;
-}*/
-//spot::bdd_format_formula(dict_ptr,"test");
-//map<bdd,spot::ltl::formula>.iterator it=p->vf_map.begin();
-
+SogTwa::SogTwa(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap):SogTwa(dict_ptr,sog) {
+    for (auto it=l_transap.begin();it!=l_transap.end();it++) {
+        register_ap(*it);
+    }
 }
 state* SogTwa::get_init_state() const {
     //cout<<"Initial state given...\n";

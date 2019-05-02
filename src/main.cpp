@@ -176,6 +176,7 @@ int main(int argc, char** argv)
             {
                 cout<<"Building automata for not(formula)\n";
                 auto d = spot::make_bdd_dict();
+               // d->register_ap("jbhkj");
                 spot::twa_graph_ptr af = spot::translator(d).run(not_f);
                 cout<<"Formula automata built.\n";
                 cout<<"Want to save the graph in a dot file ?";
@@ -188,7 +189,7 @@ int main(int argc, char** argv)
                     spot::print_dot(file, af);
                     file.close();
                 }
-                auto k = std::make_shared<SogTwa>(d,DR.getGraph());
+                auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP());
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
