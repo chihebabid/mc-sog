@@ -1,21 +1,25 @@
 #ifndef LDDGRAPH_H
 #define LDDGRAPH_H
 #include "LDDState.h"
+#include "CommonSOG.h"
+
 //#include "LDDStateExtend.h"
 using namespace std;
 #include <iostream>
 #include <map>
+
 typedef set<int> Set;
 typedef vector<LDDState*> MetaLDDNodes;
-
+class CommonSOG;
 class LDDGraph
 {
     private:
         map<string,int>* m_transition;
         map<int,string>* m_places;
 		void printGraph(LDDState *, size_t &);
-
+        CommonSOG *m_constructor;
 	public:
+        CommonSOG* getConstructor() {return m_constructor;}
         string getTransition(int pos);
         string getPlace(int pos);
         void setPlace(map<int,string>& list_places);
@@ -39,7 +43,7 @@ class LDDGraph
 		void printpredecessors(LDDState *);
 		void addArc(){m_nbArcs++;}
 		void insert(LDDState*);
-		LDDGraph() {m_nbStates=m_nbArcs=m_nbMarking=0;}
+		LDDGraph(CommonSOG *constuctor) {m_nbStates=m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph
 		LDDState* getInitialState() const;
 		void printCompleteInformation();

@@ -51,13 +51,13 @@ bdd SogKripke::state_condition(const spot::state* s) const
   {
    cout<<"yessss "<<endl;
     auto ss = static_cast<const SogKripkeState*>(s);
-    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces();
+    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_sog->getConstructor()->getPlaceProposition());
 
     cout<<"function name :"<<__func__<<endl;
     bdd result=bddtrue;
     for (auto it=marked_place.begin();it!=marked_place.end();it++) {
     string name=m_sog->getPlace(*it);
-    cout<<"Place name marked : "<<*it<<endl;
+    cout<<"Place name marked : "<<*it<<"  "<<name<<endl;
     spot::formula f=spot::formula::ap(name);
     result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }

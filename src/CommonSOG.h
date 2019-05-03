@@ -1,13 +1,16 @@
 #ifndef COMMONSOG_H
 #define COMMONSOG_H
+#include "LDDState.h"
 #include "LDDGraph.h"
+
 #include "TransSylvan.h"
 #include "NewNet.h"
 #include <stack>
-
+class LDDState;
 typedef pair<LDDState *, MDD> couple;
 typedef pair<couple, Set> Pair;
 typedef stack<Pair> pile;
+class LDDGraph;
 class CommonSOG
 {
     public:
@@ -18,6 +21,7 @@ class CommonSOG
         vector<TransSylvan>* getTBRelation();
         Set * getNonObservable();
         unsigned int getPlacesCount();
+        Set & getPlaceProposition() {return m_place_proposition;}
     protected:
         NewNet m_net;
         int m_nbPlaces = 0;

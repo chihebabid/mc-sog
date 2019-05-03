@@ -129,7 +129,7 @@ int main(int argc, char** argv)
         cout<<"number of task = 1 \n " <<endl;
         bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
         threadSOG DR(R, bound,nb_th,uselace);
-        LDDGraph g;
+        LDDGraph g(&DR);
 
         if (nb_th==1)
         {
@@ -218,7 +218,7 @@ int main(int argc, char** argv)
             cout<<"**************Hybrid version**************** \n" <<endl;
             HybridSOG DR(R, bound);
 
-            LDDGraph g;
+            LDDGraph g(&DR);
             DR.computeDSOG(g);
         }
         else
@@ -228,7 +228,7 @@ int main(int argc, char** argv)
 
             {
                 DistributedSOG DR(R, bound);
-                LDDGraph g;
+                LDDGraph g(nullptr);
                 DR.computeDSOG(g);
             }
 

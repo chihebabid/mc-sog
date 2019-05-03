@@ -2,7 +2,8 @@
 
 #include <sylvan_int.h>
 #include "LDDState.h"
-
+#include "LDDGraph.h"
+#include <iostream>
 #define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
 LDDState::~LDDState()
 {
@@ -32,7 +33,7 @@ vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
     return &Successors;
 }
 
-vector<int> LDDState::getMarkedPlaces() {
+vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
     vector<int> result;
     MDD mdd=m_lddstate;
 
@@ -41,8 +42,10 @@ vector<int> LDDState::getMarkedPlaces() {
     {
         //printf("mddd : %d \n",mdd);
         mddnode_t node=GETNODE(mdd);
+        if (lplacesAP.find(depth)!=lplacesAP.end())
         if (mddnode_getvalue(node)==1) {
             result.push_back(depth);
+            cout<<"depth "<<depth<<endl;
         }
 
         mdd=mddnode_getdown(node);
@@ -51,5 +54,6 @@ vector<int> LDDState::getMarkedPlaces() {
     }
     return result;
 }
+
 
 

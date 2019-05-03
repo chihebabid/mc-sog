@@ -4,12 +4,14 @@
 #include <set>
 #include <vector>
 #include <string>
+
 using namespace std;
 using namespace sylvan;
 typedef set<int> Set;
 
 class LDDState {
  public:
+
   LDDState() {
     m_boucle = m_blocage = m_visited = false;
     m_virtual = false;
@@ -35,7 +37,7 @@ class LDDState {
   bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
-  vector<int> getMarkedPlaces();
+  vector<int> getMarkedPlaces(set<int>& lplacesAP);
 
  protected:
  private:
