@@ -55,5 +55,26 @@ vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
     return result;
 }
 
+vector<int> LDDState::getUnmarkedPlaces(set<int>& lplacesAP) {
+    vector<int> result;
+    MDD mdd=m_lddstate;
+
+    int depth=0;
+    while (mdd>lddmc_true)
+    {
+        //printf("mddd : %d \n",mdd);
+        mddnode_t node=GETNODE(mdd);
+        if (lplacesAP.find(depth)!=lplacesAP.end())
+        if (mddnode_getvalue(node)==0) {
+            result.push_back(depth);
+            cout<<"depth "<<depth<<endl;
+        }
+
+        mdd=mddnode_getdown(node);
+        depth++;
+
+    }
+    return result;
+}
 
 

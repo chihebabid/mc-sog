@@ -38,6 +38,7 @@ class LDDState {
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
   vector<int> getMarkedPlaces(set<int>& lplacesAP);
+  vector<int> getUnmarkedPlaces(set<int>& lplacesAP);
 
  protected:
  private:
