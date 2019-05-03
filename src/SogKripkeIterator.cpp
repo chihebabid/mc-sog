@@ -51,14 +51,15 @@ bdd SogKripkeIterator::cond()  const {
     spot::formula f=spot::formula::ap(name);
     bdd   result=bdd_ithvar((p->var_map.find(f))->second);
 
-    //cout<<"Iterator "<<__func__<<"  "<<m_current_edge<<"\n";
-    return result;
+    //cout<<"Iterator "<<__func__<<"  "<<m_current_edge<<"\n";*/
+    //return result;
+    return result & spot::kripke_succ_iterator::cond();
 }
 
-spot::acc_cond::mark_t SogKripkeIterator::acc() const {
+/*spot::acc_cond::mark_t SogKripkeIterator::acc() const {
   //cout<<"Iterator acc()\n";
-  return 1U;
-}
+  return 0U;
+}*/
 SogKripkeIterator::~SogKripkeIterator()
 {
     //dtor

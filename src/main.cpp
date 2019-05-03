@@ -189,20 +189,34 @@ int main(int argc, char** argv)
                     spot::print_dot(file, af);
                     file.close();
                 }
-                auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
+                //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
+
+                spot::twa_graph_ptr k =
+    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),
+                         spot::twa::prop_set::all(), true);
+
+
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
                 if (c=='y') {
                     fstream file;
+
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, k);
+                    spot::print_dot(file, k,"ka");
                     file.close();
                 }
-                if (auto run = k->intersecting_run(af))
-                    std::cout << "formula is violated by the following run:\n" << *run;
+                if (auto run = k->intersecting_run(af)) {
+                    /*std::cout << "formula is violated by the following run:\n" << *run;*/
+                    run->highlight(5); // 5 is a color number.
+                    fstream file;
+                    file.open("violated.dot",fstream::out);
+                    cout<<"xxxxxxxxxxxxxxxxxx"<<endl;
+                    spot::print_dot(file, k, ".kA");
+                    file.close();
+                    }
                 else
                     std::cout << "formula is verified\n";
             }

@@ -36,6 +36,7 @@ std::string SogKripke::format_state(const spot::state* s) const
     auto ss = static_cast<const SogKripkeState*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
+    cout << "( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
 
@@ -49,17 +50,18 @@ SogKripkeIterator* SogKripke::succ_iter(const spot::state* s) const {
 
 bdd SogKripke::state_condition(const spot::state* s) const
   {
-   cout<<"yessss "<<endl;
+
     auto ss = static_cast<const SogKripkeState*>(s);
     vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_sog->getConstructor()->getPlaceProposition());
 
-    cout<<"function name :"<<__func__<<endl;
+
     bdd result=bddtrue;
     for (auto it=marked_place.begin();it!=marked_place.end();it++) {
     string name=m_sog->getPlace(*it);
-    cout<<"Place name marked : "<<*it<<"  "<<name<<endl;
+    //cout<<"Place name marked : "<<"  "<<name<<endl;
     spot::formula f=spot::formula::ap(name);
-    result&=bdd_ithvar((dict_->var_map.find(f))->second);
+    result=bdd_ithvar((dict_->var_map.find(f))->second);
+    cout<<"verified ldd : "<<ss->getLDDState()->getLDDValue()<<"Place name marked : "<<name<<endl;
     }
 
   return result;

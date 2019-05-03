@@ -16,9 +16,8 @@ class SogKripkeIterator : public spot::kripke_succ_iterator
         bool next() override;
         bool done() const override;
         SogKripkeState* dst() const override;
-
         bdd cond() const override final;
-        spot::acc_cond::mark_t acc() const override final;
+      /*  spot::acc_cond::mark_t acc() const override final;*/
 
     protected:
 
