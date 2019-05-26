@@ -50,7 +50,7 @@ arg1: specifies method of creating threads. It can be set with one of the follow
      * lc : using lace framework and applying canonization on nodes
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
-arg4: specifies the LTL formula
+arg4: specifies the LTL formula file
 
 
 ```

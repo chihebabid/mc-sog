@@ -124,7 +124,28 @@ int main(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD,&task_id);
 
     //
-    if (n_tasks==1)
+    if (n_tasks==1 && !strcmp(argv[1],"otf"))
+    {
+        cout<<"Multi-threaded on the fly Model checking..."<<endl;
+        cout<<"Building automata for not(formula)\n";
+        auto d = spot::make_bdd_dict();
+        // d->register_ap("jbhkj");
+        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+        cout<<"Formula automata built.\n";
+        cout<<"Want to save the graph in a dot file ?";
+        char c;
+        cin>>c;
+        if (c=='y')
+        {
+            fstream file;
+            string st(formula);
+            st+=".dot";
+            file.open(st.c_str(),fstream::out);
+            spot::print_dot(file, af);
+            file.close();
+        }
+    }
+    else if (n_tasks==1)
     {
         cout<<"number of task = 1 \n " <<endl;
         bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
@@ -176,12 +197,13 @@ int main(int argc, char** argv)
             {
                 cout<<"Building automata for not(formula)\n";
                 auto d = spot::make_bdd_dict();
-               // d->register_ap("jbhkj");
+                // d->register_ap("jbhkj");
                 spot::twa_graph_ptr af = spot::translator(d).run(not_f);
                 cout<<"Formula automata built.\n";
                 cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
-                if (c=='y') {
+                if (c=='y')
+                {
                     fstream file;
                     string st(formula);
                     st+=".dot";
@@ -192,14 +214,15 @@ int main(int argc, char** argv)
                 //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
 
                 spot::twa_graph_ptr k =
-    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),
-                         spot::twa::prop_set::all(), true);
+                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),
+                                         spot::twa::prop_set::all(), true);
 
 
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
-                if (c=='y') {
+                if (c=='y')
+                {
                     fstream file;
 
                     string st(argv[3]);
@@ -208,7 +231,8 @@ int main(int argc, char** argv)
                     spot::print_dot(file, k,"ka");
                     file.close();
                 }
-                if (auto run = k->intersecting_run(af)) {
+                if (auto run = k->intersecting_run(af))
+                {
                     /*std::cout << "formula is violated by the following run:\n" << *run;*/
                     run->highlight(5); // 5 is a color number.
                     fstream file;
@@ -216,12 +240,12 @@ int main(int argc, char** argv)
                     cout<<"xxxxxxxxxxxxxxxxxx"<<endl;
                     spot::print_dot(file, k, ".kA");
                     file.close();
-                    }
+                }
                 else
                     std::cout << "formula is verified\n";
             }
 
-          }
+        }
     }
 
 
