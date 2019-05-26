@@ -58,13 +58,13 @@ bdd SogKripkeOTF::state_condition(const spot::state* s) const
     bdd result=bddtrue;
     // Marked places
     for (auto it=marked_place.begin();it!=marked_place.end();it++) {
-    string name=m_sog->getPlace(*it);
+    string name=m_builder->getPlace(*it);
     spot::formula f=spot::formula::ap(name);
     result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
-    vector<int> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_sog->getConstructor()->getPlaceProposition());
+    vector<int> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
     for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
-    string name=m_sog->getPlace(*it);
+    string name=m_builder->getPlace(*it);
     spot::formula f=spot::formula::ap(name);
     result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }

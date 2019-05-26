@@ -6,6 +6,7 @@ public:
         ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
         LDDState * buildInitialMetaState();
         string getTransition(int pos);
+        string getPlace(int pos);
 private:
     int m_nb_thread;
     MDD m_initalMarking;

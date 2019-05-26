@@ -120,3 +120,8 @@ string ModelCheckLace::getTransition(int pos) {
 string temp;
 return temp;
 }
+
+string ModelCheckLace::getPlace(int pos) {
+string temp;
+return temp;
+}
