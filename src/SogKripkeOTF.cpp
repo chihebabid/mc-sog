@@ -10,13 +10,13 @@
 #include "SogKripkeOTF.h"
 #include <map>
 using namespace spot;
-SogKripkeOTF::SogKripkeOTF(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): spot::kripke(dict_ptr),m_sog(sog)
+SogKripkeOTF::SogKripkeOTF(const bdd_dict_ptr &dict_ptr,ModelCheckLace *builder): spot::kripke(dict_ptr),m_builder(builder)
 {
-    SogKripkeIteratorOTF::m_graph=sog;
+    SogKripkeIteratorOTF::m_builder=builder;
     SogKripkeIteratorOTF::m_dict_ptr=&dict_ptr;
 }
 
-SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap,set<string> &l_placeap):SogKripkeOTF(dict_ptr,sog) {
+SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeOTF(dict_ptr,builder) {
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
     }

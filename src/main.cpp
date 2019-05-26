@@ -24,6 +24,7 @@
 #include "NewNet.h"
 #include "SogTwa.h"
 #include "SogKripke.h"
+#include "SogKripkeOTF.h"
 
 
 
@@ -146,6 +147,9 @@ int main(int argc, char** argv)
         }
         // Initialize SOG builder
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
+        spot::twa_graph_ptr k =
+                    spot::make_twa_graph(std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                                         spot::twa::prop_set::all(), true);
         // Performing on the fly Modelchecking
     }
     else if (n_tasks==1)

@@ -114,3 +114,9 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
     delete [] prec;
     delete [] postc;
 }
+
+
+string ModelCheckLace::getTransition(int pos) {
+string temp;
+return temp;
+}

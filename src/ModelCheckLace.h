@@ -4,7 +4,8 @@
 class ModelCheckLace : public CommonSOG {
 public:
         ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
-        LDDState & getInitialMetaState();
+        LDDState & buildInitialMetaState();
+        string getTransition(int pos);
 private:
     int m_nb_thread;
     MDD m_initalMarking;

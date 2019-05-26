@@ -4,7 +4,7 @@
 #include "SogKripkeIteratorOTF.h"
 
 
-SogKripkeIteratorOTF::SogKripkeIteratorOTF(const LDDGraph& m_gr, const SogKripkeStateOTF& lddstate, bdd cnd):m_sog(m_gr),m_lddstate(lddstate), kripke_succ_iterator(cnd)
+SogKripkeIteratorOTF::SogKripkeIteratorOTF(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
 {
     //vector<pair<LDDState*, int>>
     m_lddstate->setDiv(true);
@@ -44,7 +44,7 @@ SogKripkeStateOTF* SogKripkeIteratorOTF::dst() const
 
 bdd SogKripkeIteratorOTF::cond()  const {
     if (m_lsucc.at(m_current_edge).second==-1) return bddtrue;
-    string name=m_graph->getTransition(m_lsucc.at(m_current_edge).second);
+    string name=m_builder->getTransition(m_lsucc.at(m_current_edge).second);
     //cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
 
     spot::bdd_dict *p=m_dict_ptr->get();
@@ -65,3 +65,5 @@ SogKripkeIteratorOTF::~SogKripkeIteratorOTF()
     //dtor
 }
 
+static ModelCheckLace * SogKripkeIteratorOTF::m_builder;
+static spot::bdd_dict_ptr* SogKripkeIteratorOTF::m_dict_ptr;
