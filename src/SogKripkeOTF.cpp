@@ -27,7 +27,7 @@ SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *bu
 
 state* SogKripkeOTF::get_init_state() const {
     //cout<<"Initial state given...\n";
-    return new SogKripkeStateOTF(m_sog->getInitialState());//new SpotSogState();
+    return new SogKripkeStateOTF(m_builder->buildInitialMetaState());//new SpotSogState();
 
 }
 // Allows to print state label representing its id
@@ -52,7 +52,7 @@ bdd SogKripkeOTF::state_condition(const spot::state* s) const
   {
 
     auto ss = static_cast<const SogKripkeStateOTF*>(s);
-    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_sog->getConstructor()->getPlaceProposition());
+    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
 
     bdd result=bddtrue;

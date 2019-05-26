@@ -10,7 +10,7 @@
 class SogKripkeOTF: public spot::kripke {
     public:
 
-        //SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog);
+        SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *builder);
         SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *builder,set<string> &l_transap,set<string> &l_placeap);
         virtual ~SogKripkeOTF();
         spot::state* get_init_state() const;
