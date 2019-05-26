@@ -43,11 +43,12 @@ SOG building from an LTL formula (philo3.net example)
 
 ```
 mpirun -n 2 hybrid-sog arg1 arg 2 arg3 arg4
-arg1: specifies method of creating threads. It can be set with one of the following values:
+arg1: specifies method of creating threads or/and specifies if modelchecking should be performed on the fly. It can be set with one of the following values:
      * p : using pthread library
      * pc : using pthread library and applying canonization on nodes
      * l : using lace framework
      * lc : using lace framework and applying canonization on nodes
+     * otf : perform modelchecking on the fly using laceframework
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
