@@ -12,7 +12,7 @@
 #include "threadSOG.h"
 #include "HybridSOG.h"
 #include "LDDGraph.h"
-
+#include "ModelCheckLace.h"
 
 #include <spot/misc/version.hh>
 #include <spot/twaalgos/dot.hh>
@@ -144,6 +144,9 @@ int main(int argc, char** argv)
             spot::print_dot(file, af);
             file.close();
         }
+        // Initialize SOG builder
+        ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
+        // Performing on the fly Modelchecking
     }
     else if (n_tasks==1)
     {

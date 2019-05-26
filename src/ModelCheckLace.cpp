@@ -6,29 +6,18 @@
 #include <sylvan_int.h>
 
 using namespace sylvan;
-ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND)
+ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
 {
- m_nb_thread=nbThread;
-    if (uselace)  {
+    m_nb_thread=nbThread;
     lace_init(m_nb_thread, 10000000);
-    }
-    else lace_init(1, 10000000);
     lace_startup(0, NULL, NULL);
-
-    // Simple Sylvan initialization, also initialize MDD support
-    //sylvan_set_sizes(1LL<<27, 1LL<<27, 1LL<<20, 1LL<<22);
     sylvan_set_limits(2LL<<30, 16, 3);
-    //sylvan_set_sizes(1LL<<30, 2LL<<20, 1LL<<18, 1LL<<20);
-    //sylvan_init_bdd(1);
     sylvan_init_package();
     sylvan_init_ldd();
     LACE_ME;
-    /*sylvan_gc_hook_pregc(TASK(gc_start));
-    sylvan_gc_hook_postgc(TASK(gc_end));
-    sylvan_gc_enable();*/
-       m_net=R;
+    m_net=R;
 
-    m_init=init;
+
     int  i;
     vector<Place>::const_iterator it_places;
 
@@ -47,14 +36,19 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND)
 
     cout<<"Toutes les Transitions:"<<endl;
     map<string,int>::iterator it2=m_transitionName.begin();
-    for (;it2!=m_transitionName.end();it2++) {
-        cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
+    for (; it2!=m_transitionName.end(); it2++)
+    {
+        cout<<(*it2).first<<" : "<<(*it2).second<<endl;
+    }
 
 
 
     cout<<"Transitions observables :"<<endl;
     Set::iterator it=m_observable.begin();
-    for (;it!=m_observable.end();it++) {cout<<*it<<"  ";}
+    for (; it!=m_observable.end(); it++)
+    {
+        cout<<*it<<"  ";
+    }
     cout<<endl;
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
@@ -67,7 +61,7 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND)
         liste_marques[i] =it_places->marking;
     }
 
-    M0=lddmc_cube(liste_marques,R.places.size());
+    m_initalMarking=lddmc_cube(liste_marques,R.places.size());
 
 
 
@@ -114,7 +108,7 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND)
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
 
-   // sylvan_gc_seq();
+    // sylvan_gc_seq();
 
 
     delete [] prec;

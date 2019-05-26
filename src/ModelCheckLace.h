@@ -1,5 +1,12 @@
-#ifndef THREADSOG_H
-#define THREADSOG_H
+#ifndef MODELCHECKLACE_H
+#define MODELCHECKLACE_H
+#include "CommonSOG.h"
 class ModelCheckLace : public CommonSOG {
+public:
+        ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
+        LDDState & getInitialMetaState();
+private:
+    int m_nb_thread;
+    MDD m_initalMarking;
 };
 #endif

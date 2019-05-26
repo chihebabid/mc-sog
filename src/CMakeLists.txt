@@ -58,6 +58,8 @@ add_executable(hybrid-sog main.cpp
   SogKripkeIterator.h
   SogKripke.cpp
   SogKripke.h
+  ModelCheckLace.cpp
+  ModelCheckLace.h
   )
 
 target_link_libraries(hybrid-sog
