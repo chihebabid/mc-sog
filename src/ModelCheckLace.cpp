@@ -116,14 +116,16 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
 }
 
 
-string ModelCheckLace::getTransition(int pos) {
-string temp;
-return temp;
+string ModelCheckLace::getTransition(int pos)
+{
+    string temp;
+    return temp;
 }
 
-string ModelCheckLace::getPlace(int pos) {
-string temp;
-return temp;
+string ModelCheckLace::getPlace(int pos)
+{
+    string temp;
+    return temp;
 }
 
 TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
@@ -168,8 +170,10 @@ TASK_3 (Set, fire_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, t
 
 #define fire_obs_lace(state,obser,tb) CALL(fire_obs_lace, state, obser,tb)
 
-LDDState * ModelCheckLace::buildInitialMetaState() {
+LDDState * ModelCheckLace::buildInitialMetaState()
+{
     LDDState *c=new LDDState;
+    LDDState *reached_class;
     LACE_ME;
     MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initalMarking,&m_nonObservable,&m_tb_relation));
     Set fire=fire_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
@@ -177,11 +181,37 @@ LDDState * ModelCheckLace::buildInitialMetaState() {
     // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
     m_graph->setInitialState(c);
     m_graph->insert(c);
+    // Compute successors
+    unsigned int onb_it=0;
+    Set::const_iterator iter=fire.begin();
+    while(iter!=fire.end())
+    {
+        int t = *iter;
+
+        SPAWN(Aggregate_epsilon_lace,get_successor(initial_meta_state,t),&m_nonObservable,&m_tb_relation);
+        onb_it++;
+        iter++;
+    }
+
+    for (unsigned int i=0; i<onb_it; i++)
+    {
+        Set::iterator it = fire.end();
+        it--;
+        int t=*it;
+        fire.erase(it);
+        MDD Complete_meta_state=SYNC(Aggregate_epsilon_lace);
+        reached_class=new LDDState;
+        reached_class->m_lddstate=Complete_meta_state;
+        m_graph->addArc();
+        m_graph->insert(reached_class);
+        c->Successors.insert(c->Successors.begin(),LDDEdge(reached_class,t));
+        reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(c,t));
+    }
     return c;
 }
 
-LDDState * ModelCheckLace::buildSucc(LDDState *agregate) {
-
+LDDState * ModelCheckLace::buildSucc(LDDState *agregate)
+{
     LDDState *trmp=nullptr;
     return trmp;
 }

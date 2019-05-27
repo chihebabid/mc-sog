@@ -816,7 +816,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
         while(iter!=e.second.end())
         {
             int t = *iter;
-            cout<<"Transition order1: "<<*iter<<endl;
+            //cout<<"Transition order1: "<<*iter<<endl;
             //e.second.erase(t);
             SPAWN(Accessible_epsilon_lace,get_successor(e.first.second,t),&m_nonObservable,&m_tb_relation);
             onb_it++;iter++;

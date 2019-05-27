@@ -8,8 +8,6 @@ SogKripkeStateOTF::~SogKripkeStateOTF()
     //dtor
 }
 
-
-
 SogKripkeStateOTF* SogKripkeStateOTF::clone() const
 {
     return new SogKripkeStateOTF(*this);
@@ -30,8 +28,3 @@ int SogKripkeStateOTF::compare(const spot::state* other) const
     else
         return h > oh;
 }
-
-const MDD& SogKripkeStateOTF::get_marking() const
-{
-    return ma;
-} //

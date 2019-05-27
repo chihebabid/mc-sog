@@ -19,13 +19,8 @@ public:
     {
         return m_state;
     }
-    const MDD& get_marking() const;
-    double limit_marking(const bdd& m);
-
-
 private:
     LDDState *m_state;
-    MDD ma;
 };
 
 
