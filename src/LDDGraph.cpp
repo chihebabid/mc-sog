@@ -49,7 +49,7 @@ LDDState * LDDGraph::findSHA(unsigned char* c)
 /*----------------------insert() ------------*/
 void LDDGraph::insert(LDDState *c)
 {
-	c->m_visited=false;
+
 	this->m_GONodes.push_back(c);
 	m_nbStates++;
 }
@@ -58,7 +58,7 @@ void LDDGraph::insert(LDDState *c)
 /*----------------------insert() ------------*/
 void LDDGraph::insertSHA(LDDState *c)
 {
-	c->m_visited=false;
+
 	c->setVirtual();
 	this->m_GONodes.push_back(c);
 
@@ -129,11 +129,11 @@ void LDDGraph::InitVisit(LDDState * S,size_t nb)
 {
 	if(nb<=m_nbStates)
 	{
-		S->m_visited=false;
+
 		for(LDDEdges::const_iterator i=S->Successors.begin();!(i==S->Successors.end());i++)
 		{
 
-				if((*i).first->m_visited==true)
+				if((*i).first->isVisited()==true)
 				{
 					nb++;
 					InitVisit((*i).first,nb);
@@ -150,7 +150,7 @@ void LDDGraph::printGraph(LDDState *s,size_t &nb)
 	{
 		cout<<"\nSTATE NUMBER "<<nb<<" sha : "<<s->getSHAValue()<<" LDD v :"<<s->getLDDValue()<<endl;
 
-		s->m_visited=true;
+		s->setVisited();
 		/*printsuccessors(s);
 		getchar();
 		printpredecessors(s);
@@ -158,7 +158,7 @@ void LDDGraph::printGraph(LDDState *s,size_t &nb)
 		LDDEdges::const_iterator i;
 		for(i=s->Successors.begin();!(i==s->Successors.end());i++)
 		{
-			if((*i).first->m_visited==false)
+			if((*i).first->isVisited()==false)
 			{
 				nb++;
 				printGraph((*i).first, nb);

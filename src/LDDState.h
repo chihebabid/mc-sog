@@ -29,7 +29,7 @@ class LDDState {
   unsigned char* getSHAValue();
   bool m_boucle;
   bool m_blocage;
-  bool m_visited;
+
 
   bool isVirtual();
   void setVirtual();
@@ -37,12 +37,15 @@ class LDDState {
   bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
+  void setVisited() {m_visited=true;}
+  bool isVisited() {return m_visited;}
   vector<int> getMarkedPlaces(set<int>& lplacesAP);
   vector<int> getUnmarkedPlaces(set<int>& lplacesAP);
 
  protected:
  private:
   bool m_virtual = false;
+  bool m_visited=false;
 
 };
 

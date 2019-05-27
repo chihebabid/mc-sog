@@ -210,10 +210,13 @@ LDDState * ModelCheckLace::buildInitialMetaState()
     return c;
 }
 
-LDDState * ModelCheckLace::buildSucc(LDDState *agregate)
+void ModelCheckLace::buildSucc(LDDState *agregate)
 {
-    LDDState *trmp=nullptr;
-    return trmp;
+   if (!agregate->isVisited()) {
+   // It's first time to visit agregate, then we have to build its successors
+
+
+   }
 }
 
 
