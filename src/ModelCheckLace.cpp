@@ -125,3 +125,13 @@ string ModelCheckLace::getPlace(int pos) {
 string temp;
 return temp;
 }
+
+LDDState * ModelCheckLace::buildInitialMetaState() {
+    LDDState *c=new LDDState;
+    LACE_ME;
+    MDD initial_meta_state(CALL(Accessible_epsilon_lace,m_initalMarking,&m_nonObservable,&m_tb_relation));
+    fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
+    m_nbmetastate++;
+    c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
+    return c;
+}
