@@ -7,10 +7,7 @@ SogKripkeStateOTF::~SogKripkeStateOTF()
 {
     //dtor
 }
-SogKripkeStateOTF::SogKripkeStateOTF(const MDD& m)
-    : spot::state(), ma(m)
-{
-} //
+
 
 
 SogKripkeStateOTF* SogKripkeStateOTF::clone() const

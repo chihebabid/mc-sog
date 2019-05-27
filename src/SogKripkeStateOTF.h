@@ -7,7 +7,7 @@
 class SogKripkeStateOTF : public spot::state
 {
 public:
-    SogKripkeStateOTF(const MDD &m);
+    SogKripkeStateOTF(LDDState *st):m_state(st) {};
     virtual ~SogKripkeStateOTF();
 
     SogKripkeStateOTF* clone() const override;
