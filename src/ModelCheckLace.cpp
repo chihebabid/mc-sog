@@ -126,12 +126,62 @@ string temp;
 return temp;
 }
 
+TASK_3 (MDD, Accessible_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
+{
+    MDD M1;
+    MDD M2=From;
+    int it=0;
+    //cout<<"worker "<<lace_get_worker()->worker<<endl;
+    do
+    {
+        M1=M2;
+        for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
+        {
+            SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
+        }
+        for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
+        {
+            MDD succ=SYNC(lddmc_firing_lace);
+            M2=lddmc_union(succ,M2);
+        }
+
+    }
+    while(M1!=M2);
+    return M2;
+}
+
+TASK_3 (Set, firable_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, tb_relation)
+{
+    Set res;
+    for(Set::const_iterator i=observable->begin(); !(i==observable->end()); i++)
+    {
+        MDD succ = lddmc_firing_lace(State,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
+        if(succ!=lddmc_false)
+        {
+            res.insert(*i);
+
+        }
+
+    }
+    return res;
+}
+
+#define firable_obs_lace(state,obser,tb) CALL(firable_obs_lace, state, obser,tb)
+
 LDDState * ModelCheckLace::buildInitialMetaState() {
     LDDState *c=new LDDState;
     LACE_ME;
     MDD initial_meta_state(CALL(Accessible_epsilon_lace,m_initalMarking,&m_nonObservable,&m_tb_relation));
-    fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
-    m_nbmetastate++;
-    c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
+    Set fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
+
+    // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
     return c;
 }
+
+LDDState * ModelCheckLace::buildSucc(LDDState *agregate) {
+
+    LDDState *trmp=nullptr;
+    return trmp;
+}
+
+

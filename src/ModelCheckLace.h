@@ -7,6 +7,7 @@ public:
         LDDState * buildInitialMetaState();
         string getTransition(int pos);
         string getPlace(int pos);
+        LDDState * buildSucc(LDDState *agregate);
 private:
     int m_nb_thread;
     MDD m_initalMarking;
