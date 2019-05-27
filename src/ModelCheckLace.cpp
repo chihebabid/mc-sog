@@ -107,25 +107,22 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
         ldd_refs_push(_plus);
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
-
-    // sylvan_gc_seq();
-
-
     delete [] prec;
     delete [] postc;
+    m_graph=new LDDGraph(this);
+    m_graph->setTransition(m_transitionName);
+    m_graph->setPlace(m_placeName);
 }
 
 
 string ModelCheckLace::getTransition(int pos)
 {
-    string temp;
-    return temp;
+    m_graph->getTransition(pos);
 }
 
 string ModelCheckLace::getPlace(int pos)
 {
-    string temp;
-    return temp;
+    m_graph->getPlace(pos);
 }
 
 TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
