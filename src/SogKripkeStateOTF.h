@@ -3,11 +3,15 @@
 
 
 #include "LDDState.h"
+#include "ModelCheckLace.h"
 
 class SogKripkeStateOTF : public spot::state
 {
 public:
-    SogKripkeStateOTF(LDDState *st):m_state(st) {};
+    static ModelCheckLace * m_builder;
+    SogKripkeStateOTF(LDDState *st):m_state(st) {
+            m_builder->buildSucc(st);
+    };
     virtual ~SogKripkeStateOTF();
 
     SogKripkeStateOTF* clone() const override

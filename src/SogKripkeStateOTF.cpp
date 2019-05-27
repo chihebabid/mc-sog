@@ -8,3 +8,4 @@ SogKripkeStateOTF::~SogKripkeStateOTF()
     //dtor
 }
 
+static ModelCheckLace * SogKripkeStateOTF::m_builder;

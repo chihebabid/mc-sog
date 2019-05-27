@@ -13,6 +13,7 @@ using namespace spot;
 SogKripkeOTF::SogKripkeOTF(const bdd_dict_ptr &dict_ptr,ModelCheckLace *builder): spot::kripke(dict_ptr),m_builder(builder)
 {
     SogKripkeIteratorOTF::m_builder=builder;
+    SogKripkeStateOTF::m_builder=builder;
     SogKripkeIteratorOTF::m_dict_ptr=&dict_ptr;
 }
 
