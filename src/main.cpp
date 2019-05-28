@@ -149,11 +149,35 @@ int main(int argc, char** argv)
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
         cout<<"Created"<<endl;
         spot::twa_graph_ptr k =
-                    spot::make_twa_graph(std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
-                                         spot::twa::prop_set::all(), true);
+            spot::make_twa_graph(std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                                 spot::twa::prop_set::all(), true);
         // Performing on the fly Modelchecking
         cout<<"Performing on the fly Modelchecking"<<endl;
-        exit(0);
+        cout<<"Want to save the graph in a dot file ?";
+        cin>>c;
+        if (c=='y')
+        {
+            fstream file;
+
+            string st(argv[3]);
+            st+=".dot";
+            file.open(st.c_str(),fstream::out);
+            spot::print_dot(file, k,"ka");
+            file.close();
+        }
+        if (auto run = k->intersecting_run(af))
+        {
+            /*std::cout << "formula is violated by the following run:\n" << *run;*/
+            run->highlight(5); // 5 is a color number.
+            fstream file;
+            file.open("violated.dot",fstream::out);
+            cout<<"xxxxxviolatedxxxxxxx"<<endl;
+            spot::print_dot(file, k, ".kA");
+            file.close();
+        }
+        else
+            std::cout << "formula is verified\n";
+        //  exit(0);
     }
     else if (n_tasks==1)
     {
