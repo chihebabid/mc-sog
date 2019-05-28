@@ -18,30 +18,34 @@ SogKripkeOTF::SogKripkeOTF(const bdd_dict_ptr &dict_ptr,ModelCheckLace *builder)
 }
 
 SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeOTF(dict_ptr,builder) {
+
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
     }
     for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
         register_ap(*it);
+
 }
 
 
 state* SogKripkeOTF::get_init_state() const {
-    //cout<<"Initial state given...\n";
+    cout<<__func__<<endl;
     return new SogKripkeStateOTF(m_builder->buildInitialMetaState());//new SpotSogState();
 
 }
 // Allows to print state label representing its id
 std::string SogKripkeOTF::format_state(const spot::state* s) const
   {
+    cout<<__func__<<endl;
     auto ss = static_cast<const SogKripkeStateOTF*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
-    cout << "( " << ss->getLDDState()->getLDDValue() <<  ")";
+    cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
 
 SogKripkeIteratorOTF* SogKripkeOTF::succ_iter(const spot::state* s) const {
+   cout<<__func__<<endl;
 
     auto ss = static_cast<const SogKripkeStateOTF*>(s);
    //////////////////////////////////////////////
@@ -69,6 +73,7 @@ bdd SogKripkeOTF::state_condition(const spot::state* s) const
     spot::formula f=spot::formula::ap(name);
     result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }
+
   return result;
   }
 

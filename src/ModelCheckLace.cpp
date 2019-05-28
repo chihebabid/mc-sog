@@ -117,12 +117,12 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
 
 string ModelCheckLace::getTransition(int pos)
 {
-    m_graph->getTransition(pos);
+    return m_graph->getTransition(pos);
 }
 
 string ModelCheckLace::getPlace(int pos)
 {
-    m_graph->getPlace(pos);
+    return m_graph->getPlace(pos);
 }
 
 TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
@@ -169,6 +169,7 @@ TASK_3 (Set, fire_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, t
 
 LDDState * ModelCheckLace::buildInitialMetaState()
 {
+
     LDDState *c=new LDDState;
     LDDState *reached_class;
     LACE_ME;
@@ -204,6 +205,7 @@ LDDState * ModelCheckLace::buildInitialMetaState()
         c->Successors.insert(c->Successors.begin(),LDDEdge(reached_class,t));
         reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(c,t));
     }
+
     return c;
 }
 

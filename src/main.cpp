@@ -147,10 +147,13 @@ int main(int argc, char** argv)
         }
         // Initialize SOG builder
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
+        cout<<"Created"<<endl;
         spot::twa_graph_ptr k =
                     spot::make_twa_graph(std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
                                          spot::twa::prop_set::all(), true);
         // Performing on the fly Modelchecking
+        cout<<"Performing on the fly Modelchecking"<<endl;
+        exit(0);
     }
     else if (n_tasks==1)
     {
