@@ -186,7 +186,7 @@ LDDState *LDDGraph::getLDDStateById(unsigned int id) {
 }
 
 string LDDGraph::getTransition(int pos) {
-    cout<<"********** Pos "<<pos<<endl;
+
     map<string,int>::iterator it=m_transition->begin();
     while(it != m_transition->end())
     {

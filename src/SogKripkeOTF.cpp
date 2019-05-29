@@ -36,16 +36,16 @@ state* SogKripkeOTF::get_init_state() const {
 // Allows to print state label representing its id
 std::string SogKripkeOTF::format_state(const spot::state* s) const
   {
-    cout<<__func__<<endl;
+    //cout<<__func__<<endl;
     auto ss = static_cast<const SogKripkeStateOTF*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
-    cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
+   // cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
 
 SogKripkeIteratorOTF* SogKripkeOTF::succ_iter(const spot::state* s) const {
-   cout<<__func__<<endl;
+ //  cout<<__func__<<endl;
 
     auto ss = static_cast<const SogKripkeStateOTF*>(s);
    //////////////////////////////////////////////

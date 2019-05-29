@@ -36,7 +36,6 @@ vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
 vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
     vector<int> result;
     MDD mdd=m_lddstate;
-
     int depth=0;
     while (mdd>lddmc_true)
     {
@@ -45,7 +44,7 @@ vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
         if (lplacesAP.find(depth)!=lplacesAP.end())
         if (mddnode_getvalue(node)==1) {
             result.push_back(depth);
-            cout<<"depth "<<depth<<endl;
+
         }
 
         mdd=mddnode_getdown(node);
@@ -67,7 +66,7 @@ vector<int> LDDState::getUnmarkedPlaces(set<int>& lplacesAP) {
         if (lplacesAP.find(depth)!=lplacesAP.end())
         if (mddnode_getvalue(node)==0) {
             result.push_back(depth);
-            cout<<"depth "<<depth<<endl;
+
         }
 
         mdd=mddnode_getdown(node);

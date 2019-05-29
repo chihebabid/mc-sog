@@ -20,11 +20,10 @@ SogKripkeIteratorOTF::SogKripkeIteratorOTF(const LDDState* lddstate, bdd cnd):m_
 
 }
 bool SogKripkeIteratorOTF::first() {
-  //  m_sog->getLDDStateById(m_id)->Successors().
-    //return m_sog->get_successor()
-    cout<<"entering "<<__func__<<endl;
+
+    //cout<<"entering "<<__func__<<endl;
     m_current_edge=0;
-    cout<<"exciting "<<__func__<<endl;
+    //cout<<"exciting "<<__func__<<endl;
     return m_lsucc.size()!=0;
 
 }
