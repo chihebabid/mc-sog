@@ -15,6 +15,7 @@ SogKripkeOTF::SogKripkeOTF(const bdd_dict_ptr &dict_ptr,ModelCheckLace *builder)
     SogKripkeIteratorOTF::m_builder=builder;
     SogKripkeStateOTF::m_builder=builder;
     SogKripkeIteratorOTF::m_dict_ptr=&dict_ptr;
+    //cout<<__func__<<endl;
 }
 
 SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeOTF(dict_ptr,builder) {

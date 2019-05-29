@@ -21,7 +21,7 @@ SogKripkeIteratorOTF::SogKripkeIteratorOTF(const LDDState* lddstate, bdd cnd):m_
 }
 bool SogKripkeIteratorOTF::first() {
 
-    //cout<<"entering "<<__func__<<endl;
+   // cout<<"entering "<<__func__<<endl;
     m_current_edge=0;
     //cout<<"exciting "<<__func__<<endl;
     return m_lsucc.size()!=0;
@@ -43,7 +43,7 @@ bool SogKripkeIteratorOTF::done() const {
 
 SogKripkeStateOTF* SogKripkeIteratorOTF::dst() const
   {
-    //out<<"enter/excit "<<__func__<<endl;
+    //cout<<"enter/excit "<<__func__<<endl;
     return new SogKripkeStateOTF(m_lsucc.at(m_current_edge).first);
   }
 
