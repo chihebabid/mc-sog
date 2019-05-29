@@ -178,6 +178,7 @@ LDDState * ModelCheckLace::buildInitialMetaState()
 
     // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
     initalAggregate->m_lddstate=initial_meta_state;
+    initalAggregate->setVisited();
     m_graph->setInitialState(initalAggregate);
     m_graph->insert(initalAggregate);
     // Compute successors
@@ -214,6 +215,7 @@ void ModelCheckLace::buildSucc(LDDState *agregate)
 {
    if (!agregate->isVisited()) {
    // It's first time to visit agregate, then we have to build its successors
+        agregate->setVisited();
         LDDState *reached_class=nullptr;
         LACE_ME;
         MDD meta_state(CALL(Aggregate_epsilon_lace,agregate->getLDDValue(),&m_nonObservable,&m_tb_relation));
