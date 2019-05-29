@@ -30,38 +30,37 @@ bool SogKripkeIteratorOTF::first() {
 }
 
 bool SogKripkeIteratorOTF::next() {
-    cout<<"entering "<<__func__<<endl;
+    //cout<<"entering "<<__func__<<endl;
     m_current_edge++;
     return m_current_edge<m_lsucc.size();
 
 }
 
 bool SogKripkeIteratorOTF::done() const {
-cout<<"entring /excit"<<__func__<<endl;
+    //cout<<"entring /excit"<<__func__<<endl;
     return m_current_edge==m_lsucc.size();
 
 }
 
 SogKripkeStateOTF* SogKripkeIteratorOTF::dst() const
   {
-    cout<<"enter/excit "<<__func__<<endl;
+    //out<<"enter/excit "<<__func__<<endl;
     return new SogKripkeStateOTF(m_lsucc.at(m_current_edge).first);
   }
 
 bdd SogKripkeIteratorOTF::cond()  const {
-    cout<<"entering "<<__func__<<endl;
+    //cout<<"entering "<<__func__<<endl;
     if (m_lsucc.at(m_current_edge).second==-1) return bddtrue;
-    cout<<"step 0"<<endl;
+
     string name=m_builder->getTransition(m_lsucc.at(m_current_edge).second);
     //cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
-    cout<<"step 1 "<<name<<endl;
+
     spot::bdd_dict *p=m_dict_ptr->get();
-    cout<<"step 2"<<endl;
     spot::formula f=spot::formula::ap(name);
     bdd   result=bdd_ithvar((p->var_map.find(f))->second);
 
     //cout<<"Iterator "<<__func__<<"  "<<m_current_edge<<"\n";*/
-    cout<<"exciting "<<__func__<<endl;
+    //cout<<"exciting "<<__func__<<endl;
     return result & spot::kripke_succ_iterator::cond();
 }
 

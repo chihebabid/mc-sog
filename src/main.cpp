@@ -171,13 +171,14 @@ int main(int argc, char** argv)
             run->highlight(5); // 5 is a color number.
             fstream file;
             file.open("violated.dot",fstream::out);
-            cout<<"xxxxxviolatedxxxxxxx"<<endl;
+            cout<<"Property is violated!"<<endl;
+            cout<<"Check the dot file."<<endl;
             spot::print_dot(file, k, ".kA");
             file.close();
         }
         else
             std::cout << "formula is verified\n";
-        //  exit(0);
+
     }
     else if (n_tasks==1)
     {

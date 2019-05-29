@@ -29,7 +29,7 @@ SogKripkeOTF::SogKripkeOTF(const spot::bdd_dict_ptr& dict_ptr,ModelCheckLace *bu
 
 
 state* SogKripkeOTF::get_init_state() const {
-    cout<<__func__<<endl;
+   // cout<<__func__<<endl;
     return new SogKripkeStateOTF(m_builder->buildInitialMetaState());//new SpotSogState();
 
 }

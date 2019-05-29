@@ -170,15 +170,16 @@ TASK_3 (Set, fire_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, t
 LDDState * ModelCheckLace::buildInitialMetaState()
 {
 
-    LDDState *c=new LDDState;
+    LDDState *initalAggregate=new LDDState;
     LDDState *reached_class;
     LACE_ME;
     MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initalMarking,&m_nonObservable,&m_tb_relation));
     Set fire=fire_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
 
     // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
-    m_graph->setInitialState(c);
-    m_graph->insert(c);
+    initalAggregate->m_lddstate=initial_meta_state;
+    m_graph->setInitialState(initalAggregate);
+    m_graph->insert(initalAggregate);
     // Compute successors
     unsigned int onb_it=0;
     Set::const_iterator iter=fire.begin();
@@ -202,11 +203,11 @@ LDDState * ModelCheckLace::buildInitialMetaState()
         reached_class->m_lddstate=Complete_meta_state;
         m_graph->addArc();
         m_graph->insert(reached_class);
-        c->Successors.insert(c->Successors.begin(),LDDEdge(reached_class,t));
-        reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(c,t));
+        initalAggregate->Successors.insert(initalAggregate->Successors.begin(),LDDEdge(reached_class,t));
+        reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(initalAggregate,t));
     }
 
-    return c;
+    return initalAggregate;
 }
 
 void ModelCheckLace::buildSucc(LDDState *agregate)
