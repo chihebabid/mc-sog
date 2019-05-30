@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     //
     if (n_tasks==1 && !strcmp(argv[1],"otfL"))
     {
-        cout<<"Multi-threaded on the fly Model checking..."<<endl;
+        cout<<"Multi-threaded on the fly Model checking (Lace)..."<<endl;
         cout<<"Building automata for not(formula)\n";
         auto d = spot::make_bdd_dict();
         // d->register_ap("jbhkj");
@@ -170,9 +170,9 @@ int main(int argc, char** argv)
             std::cout << "formula is verified\n";
 
     }
-    else if (n_tasks==1 && !strcmp(argv[1],"otfTh"))
+    else if (n_tasks==1 && !strcmp(argv[1],"otfP"))
     {
-     cout<<"Multi-threaded on the fly Model checking..."<<endl;
+     cout<<"Multi-threaded on the fly Model checking (Pthread)..."<<endl;
         cout<<"Building automata for not(formula)\n";
         auto d = spot::make_bdd_dict();
         // d->register_ap("jbhkj");
