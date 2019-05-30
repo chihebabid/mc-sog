@@ -1,6 +1,8 @@
 #ifndef MODELCHECKERTH_H
 #define MODELCHECKERTH_H
 #include "CommonSOG.h"
+typedef stack<LDDState *> pile_t;
+
 class ModelCheckerTh : public CommonSOG
 {
 public:
@@ -9,18 +11,21 @@ public:
     string getTransition(int pos);
     string getPlace(int pos);
     void buildSucc(LDDState *agregate);
-   // static void *threadHandler(void *context);
-   // void *Compute_successors();
-
+    static void *threadHandler(void *context);
+    void *Compute_successors();
+    void ComputeTh_Succ();
+    int minCharge();
+    bool isNotTerminated();
 
 
 private:
     int m_nb_thread;
     MDD m_initalMarking;
-
-    pile m_st[128];
+    int m_min_charge;
+    pile_t m_st[128];
     int m_charge[128];
     bool m_terminaison[128];
+    int m_id_thread;
 
 
     pthread_mutex_t m_mutex;

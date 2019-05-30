@@ -6,6 +6,7 @@
 #include <sylvan_int.h>
 
 using namespace sylvan;
+
 ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread)
 {
     m_nb_thread=nbThread;
@@ -128,49 +129,37 @@ string ModelCheckerTh::getPlace(int pos)
 
 
 LDDState * ModelCheckerTh::buildInitialMetaState()
-{        Set fire;
+{
+    Set fire;
 
-        LDDState *c=new LDDState;
-        LDDState *reached_class;
-         MDD initial_meta_state(Accessible_epsilon(m_initalMarking));
-        ldd_refs_push(initial_meta_state);
-        fire=firable_obs(initial_meta_state);
+    LDDState *c=new LDDState;
+    LDDState *reached_class;
+    MDD initial_meta_state(Accessible_epsilon(m_initalMarking));
+    ldd_refs_push(initial_meta_state);
+    fire=firable_obs(initial_meta_state);
 
-        c->m_lddstate=initial_meta_state;
-       // m_old_size=lddmc_nodecount(c->m_lddstate);
-        m_graph->setInitialState(c);
-        m_graph->insert(c);
-
-    // Compute successors
-
-   /* for (unsigned int i=0; i<onb_it; i++)
-    {
-        Set::iterator it = fire.end();
-        it--;
-        int t=*it;
-        fire.erase(it);
-        MDD Complete_meta_state=Accessible_epsilon(it);
-        reached_class=new LDDState;
-        reached_class->m_lddstate=Complete_meta_state;
-        m_graph->addArc();
-        m_graph->insert(reached_class);
-        c->Successors.insert(c->Successors.begin(),LDDEdge(reached_class,t));
-        reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(c,t));
-    } */
-
+    c->m_lddstate=initial_meta_state;
+    m_graph->setInitialState(c);
+    m_graph->insert(c);
+    m_st[0].push(c);
+    ComputeTh_Succ();
     return c;
 }
 
 void ModelCheckerTh::buildSucc(LDDState *agregate)
 {
-   if (!agregate->isVisited()) {
-   agregate->setVisited();
-   LDDState *reached_class=nullptr;
+    if (!agregate->isVisited())
+    {
+        agregate->setVisited();
+        m_min_charge=minCharge();
+        pthread_spin_lock(&m_spin_stack[m_min_charge]);
+        m_st[m_min_charge].push(agregate);
+        pthread_spin_unlock(&m_spin_stack[m_min_charge]);
 
-}
+    }
 }
 
-/*void * ModelCheckerTh::Compute_successors()
+void * ModelCheckerTh::Compute_successors()
 {
     int id_thread;
     int nb_it=0,nb_failed=0,max_succ=0;
@@ -178,7 +167,7 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
     id_thread=m_id_thread++;
     pthread_mutex_unlock(&m_mutex);
     Set fire;
-    LDDState* reached_class;
+    LDDState* reached_class=nullptr;
     // size_t max_meta_state_size;
     // int min_charge;
     do
@@ -190,87 +179,49 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
             nb_it++;
             m_terminaison[id_thread]=false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
-            Pair  e=m_st[id_thread].top();
+            LDDState* agregate=m_st[id_thread].top();
             //pthread_spin_lock(&m_accessible);
             m_st[id_thread].pop();
 
             pthread_spin_unlock(&m_spin_stack[id_thread]);
-            m_nbmetastate--;
+           // m_nbmetastate--;
+            MDD meta_state=agregate->getLDDValue();
+            Set fire=firable_obs(meta_state);
 
-            m_charge[id_thread]--;
-            while(!e.second.empty())
+            //compute successors
+            Set::const_iterator iter=fire.begin();
+            while(iter!=fire.end())
             {
-                int t = *e.second.begin();
-                e.second.erase(t);
-                reached_class=new LDDState();
-                if (id_thread)
-                {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc++;
-                    if (m_gc==1) {
-                        pthread_mutex_lock(&m_gc_mutex);
-                    }
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
-                }
+                int t = *iter;
 
-
-                MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
-
-                ldd_refs_push(Complete_meta_state);
-
-                if (id_thread==0)
-                {
-                    pthread_mutex_lock(&m_gc_mutex);
-                    sylvan_gc_seq();
-
-                    pthread_mutex_unlock(&m_gc_mutex);
-                }
-                reached_class->m_lddstate=Complete_meta_state;
-
+                MDD complete_state=Accessible_epsilon(get_successor(meta_state,t));
+                iter++;
+                reached_class=new LDDState;
+                reached_class->m_lddstate=complete_state;
                 pthread_mutex_lock(&m_graph_mutex);
-
                 LDDState* pos=m_graph->find(reached_class);
 
                 if(!pos)
                 {
-
                     m_graph->addArc();
                     m_graph->insert(reached_class);
                     pthread_mutex_unlock(&m_graph_mutex);
 
-                    e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
-                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
-                    m_nbmetastate++;
-                    //pthread_mutex_lock(&m_mutex);
-                    fire=firable_obs(Complete_meta_state);
-                    //if (max_succ<fire.size()) max_succ=fire.size();
-                    //pthread_mutex_unlock(&m_mutex);
-                    m_min_charge= minCharge();
-                    //m_min_charge=(m_min_charge+1) % m_nb_thread;
-                    pthread_spin_lock(&m_spin_stack[m_min_charge]);
-                    m_st[m_min_charge].push(Pair(couple(reached_class,Complete_meta_state),fire));
-                    pthread_spin_unlock(&m_spin_stack[m_min_charge]);
-                    m_charge[m_min_charge]++;
+                    agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(reached_class,t));
+                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(agregate,t));
+
                 }
                 else
                 {
-                    nb_failed++;
                     m_graph->addArc();
                     pthread_mutex_unlock(&m_graph_mutex);
-
-                    e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(pos,t));
-                    pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(e.first.first,t));
+                    agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(pos,t));
+                    pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(agregate,t));
                     delete reached_class;
-
-                }
-                if (id_thread)
-                {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc--;
-                    if (m_gc==0) pthread_mutex_unlock(&m_gc_mutex);
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
                 }
             }
+
+
         }
         m_terminaison[id_thread]=true;
 
@@ -278,12 +229,75 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
 
     }
     while (isNotTerminated());
-    //cout<<"Thread :"<<id_thread<<"  has performed "<<nb_it<<" itérations avec "<<nb_failed<<" échecs"<<endl;
-    //cout<<"Max succ :"<<max_succ<<endl;
+
 }
 
+bool ModelCheckerTh::isNotTerminated()
+{
+    bool res=true;
+    int i=0;
+    while (i<m_nb_thread && res)
+    {
+        res=m_terminaison[i];
+        i++;
+    }
+    return !res;
+}
+
+int ModelCheckerTh::minCharge()
+{
+    int pos=0;
+    int min_charge=m_charge[0];
+    for (int i=1; i<m_nb_thread; i++)
+    {
+        if (m_charge[i]<min_charge)
+        {
+            min_charge=m_charge[i];
+            pos=i;
+        }
+    }
+    return pos;
+
+}
 
 void * ModelCheckerTh::threadHandler(void *context)
 {
     return ((ModelCheckerTh*)context)->Compute_successors();
-} */
+}
+
+void ModelCheckerTh::ComputeTh_Succ(){
+
+    cout << "number of threads "<<m_nb_thread<<endl;
+    int rc;
+ //   m_graph=&g;
+ //   m_graph->setTransition(m_transitionName);
+ //   m_graph->setPlace(m_placeName);
+    m_id_thread=0;
+
+    pthread_mutex_init(&m_mutex, NULL);
+    pthread_mutex_init(&m_gc_mutex,NULL);
+    pthread_mutex_init(&m_graph_mutex,NULL);
+    pthread_mutex_init(&m_supervise_gc_mutex,NULL);
+    m_gc=0;
+    for (int i=0; i<m_nb_thread; i++)
+    {
+        pthread_spin_init(&m_spin_stack[i], NULL);
+        m_charge[i]=0;
+        m_terminaison[i]=false;
+    }
+
+    for (int i=0; i<m_nb_thread-1; i++)
+    {
+        if ((rc = pthread_create(&m_list_thread[i], NULL,threadHandler,this)))
+        {
+            cout<<"error: pthread_create, rc: "<<rc<<endl;
+        }
+    }
+    Compute_successors();
+    for (int i = 0; i < m_nb_thread-1; i++)
+    {
+        pthread_join(m_list_thread[i], NULL);
+    }
+
+
+}
