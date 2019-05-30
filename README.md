@@ -13,7 +13,6 @@ BuDDy used for sequential version and Sylvan for both sequential and parallel co
 
 It is necessary to install Spot [Spot](https://spot.lrde.epita.fr/install.html).
 
-# Hybrid-SOG
 ## Description
 This repository hosts the experiments and results for the Hybrid (MPI/pthreads) approach for the SOG construction and provides a short guide on how to install the tools and reproduce the results.
 
@@ -48,7 +47,8 @@ arg1: specifies method of creating threads or/and specifies if modelchecking sho
      * pc : using pthread library and applying canonization on nodes
      * l : using lace framework
      * lc : using lace framework and applying canonization on nodes
-     * otf : perform modelchecking on the fly using laceframework
+     * otfL : perform modelchecking on the fly using laceframework
+     * otfP : perform modelchecking on the fly using pthread
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
