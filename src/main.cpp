@@ -13,6 +13,7 @@
 #include "HybridSOG.h"
 #include "LDDGraph.h"
 #include "ModelCheckLace.h"
+#include "ModelCheckerTh.h"
 
 #include <spot/misc/version.hh>
 #include <spot/twaalgos/dot.hh>
@@ -25,6 +26,7 @@
 #include "SogTwa.h"
 #include "SogKripke.h"
 #include "SogKripkeOTF.h"
+#include "SogKripkeTh.h"
 
 
 
@@ -125,9 +127,9 @@ int main(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD,&task_id);
 
     //
-    if (n_tasks==1 && !strcmp(argv[1],"otf"))
+    if (n_tasks==1 && !strcmp(argv[1],"otfL"))
     {
-        cout<<"Multi-threaded on the fly Model checking..."<<endl;
+        cout<<"Multi-threaded on the fly Model checking (Lace)..."<<endl;
         cout<<"Building automata for not(formula)\n";
         auto d = spot::make_bdd_dict();
         // d->register_ap("jbhkj");
@@ -168,6 +170,50 @@ int main(int argc, char** argv)
             std::cout << "formula is verified\n";
 
     }
+    else if (n_tasks==1 && !strcmp(argv[1],"otfP"))
+    {
+     cout<<"Multi-threaded on the fly Model checking (Pthread)..."<<endl;
+        cout<<"Building automata for not(formula)\n";
+        auto d = spot::make_bdd_dict();
+        // d->register_ap("jbhkj");
+        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+        cout<<"Formula automata built.\n";
+        cout<<"Want to save the graph in a dot file ?";
+        char c;
+        cin>>c;
+        if (c=='y')
+        {
+            fstream file;
+            string st(formula);
+            st+=".dot";
+            file.open(st.c_str(),fstream::out);
+            spot::print_dot(file, af);
+            file.close();
+        }
+        // Initialize SOG builder
+        ModelCheckerTh* mcl=new ModelCheckerTh(R,bound,nb_th);
+        cout<<"Created"<<endl;
+        auto k =
+            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                 ;
+        // Performing on the fly Modelchecking
+        cout<<"Performing on the fly Modelchecking"<<endl;
+
+        if (auto run = k->intersecting_run(af))
+        {
+            std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+            /*run->highlight(5); // 5 is a color number.
+            fstream file;
+            file.open("violated.dot",fstream::out);
+            cout<<"Property is violated!"<<endl;
+            cout<<"Check the dot file."<<endl;
+            spot::print_dot(file, k, ".kA");
+            file.close();*/
+        }
+        else
+            std::cout << "formula is verified\n";
+
+    }
+
     else if (n_tasks==1)
     {
         cout<<"number of task = 1 \n " <<endl;

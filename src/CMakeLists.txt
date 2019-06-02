@@ -66,6 +66,14 @@ add_executable(hybrid-sog main.cpp
   SogKripkeIteratorOTF.h
   SogKripkeOTF.cpp
   SogKripkeOTF.h
+  SogKripkeTh.cpp
+  SogKripkeTh.h
+  SogKripkeStateTh.cpp
+  SogKripkeStateTh.h
+  SogKripkeIteratorTh.cpp
+  SogKripkeIteratorTh.h
+  ModelCheckerTh.cpp
+  ModelCheckerTh.h
   )
 
 target_link_libraries(hybrid-sog
