@@ -260,7 +260,8 @@ int main(int argc, char** argv)
                     run->highlight(5); // 5 is a color number.
                     fstream file;
                     file.open("violated.dot",fstream::out);
-                    cout<<"xxxxxxxxxxxxxxxxxx"<<endl;
+                    cout<<"Property is violated"<<endl;
+                    cout<<"Check the dot file to get a violation run"<<endl;
                     spot::print_dot(file, k, ".kA");
                     file.close();
                 }
