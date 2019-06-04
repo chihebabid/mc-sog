@@ -130,14 +130,11 @@ string ModelCheckerTh::getPlace(int pos)
 
 LDDState * ModelCheckerTh::buildInitialMetaState()
 {
-    Set fire;
 
     LDDState *c=new LDDState;
-    LDDState *reached_class;
-    MDD initial_meta_state(Accessible_epsilon(m_initalMarking));
+    cout<<"Initial marking : "<<m_initalMarking<<endl;
+    MDD initial_meta_state=Accessible_epsilon(m_initalMarking);
     ldd_refs_push(initial_meta_state);
-    fire=firable_obs(initial_meta_state);
-
     c->m_lddstate=initial_meta_state;
     m_graph->setInitialState(c);
     m_graph->insert(c);
@@ -175,7 +172,7 @@ void * ModelCheckerTh::Compute_successors()
 
         while (!m_st[id_thread].empty())
         {
-
+            cout<<"Entering thread "<<endl;
             nb_it++;
             m_terminaison[id_thread]=false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
@@ -206,7 +203,6 @@ void * ModelCheckerTh::Compute_successors()
                     m_graph->addArc();
                     m_graph->insert(reached_class);
                     pthread_mutex_unlock(&m_graph_mutex);
-
                     agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(reached_class,t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(agregate,t));
 
@@ -220,15 +216,10 @@ void * ModelCheckerTh::Compute_successors()
                     delete reached_class;
                 }
             }
-
-
         }
         m_terminaison[id_thread]=true;
-
-
-
     }
-    while (isNotTerminated());
+    while (1);
 
 }
 
@@ -267,7 +258,7 @@ void * ModelCheckerTh::threadHandler(void *context)
 
 void ModelCheckerTh::ComputeTh_Succ(){
 
-    cout << "number of threads "<<m_nb_thread<<endl;
+
     int rc;
  //   m_graph=&g;
  //   m_graph->setTransition(m_transitionName);
@@ -293,11 +284,11 @@ void ModelCheckerTh::ComputeTh_Succ(){
             cout<<"error: pthread_create, rc: "<<rc<<endl;
         }
     }
-    Compute_successors();
+   /* Compute_successors();
     for (int i = 0; i < m_nb_thread-1; i++)
     {
         pthread_join(m_list_thread[i], NULL);
-    }
+    }*/
 
 
 }

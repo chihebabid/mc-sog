@@ -193,8 +193,31 @@ int main(int argc, char** argv)
         // Initialize SOG builder
         ModelCheckerTh* mcl=new ModelCheckerTh(R,bound,nb_th);
         cout<<"Created"<<endl;
+        /********************************************************************/
+        spot::twa_graph_ptr kk =
+                    spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                                         spot::twa::prop_set::all(), true);
+
+
+                cout<<"SOG translated to SPOT succeeded.."<<endl;
+                cout<<"Want to save the graph in a dot file ?";
+                cin>>c;
+                if (c=='y')
+                {
+                    fstream file;
+
+                    string st(argv[3]);
+                    st+=".dot";
+                    file.open(st.c_str(),fstream::out);
+                    spot::print_dot(file, kk,"ka");
+                    file.close();
+                }
+
+        /********************************************************************/
+
+
         auto k =
-            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                 ;
+            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                             ;
         // Performing on the fly Modelchecking
         cout<<"Performing on the fly Modelchecking"<<endl;
 
