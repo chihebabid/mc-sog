@@ -229,11 +229,8 @@ int main(int argc, char** argv)
 
 
         auto k =
-<<<<<<< HEAD
             std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                             ;
-=======
-            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
->>>>>>> 8a83ddf40bff014aa15b8f24670733207dbbd072
+
         // Performing on the fly Modelchecking
         cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
