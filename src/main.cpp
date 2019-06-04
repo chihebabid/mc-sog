@@ -151,7 +151,19 @@ int main(int argc, char** argv)
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
         cout<<"Created"<<endl;
         auto k =
-            std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                 ;
+            std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
+                            cout<<"Want to save the graph in a dot file ?";
+                cin>>c;
+                if (c=='y')
+                {
+                    fstream file;
+
+                    string st(argv[3]);
+                    st+=".dot";
+                    file.open(st.c_str(),fstream::out);
+                    spot::print_dot(file, k,"ka");
+                    file.close();
+                }                                ;
         // Performing on the fly Modelchecking
         cout<<"Performing on the fly Modelchecking"<<endl;
 
@@ -217,8 +229,24 @@ int main(int argc, char** argv)
 
 
         auto k =
+<<<<<<< HEAD
             std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                             ;
+=======
+            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
+>>>>>>> 8a83ddf40bff014aa15b8f24670733207dbbd072
         // Performing on the fly Modelchecking
+        cout<<"Want to save the graph in a dot file ?";
+                cin>>c;
+                if (c=='y')
+                {
+                    fstream file;
+
+                    string st(argv[3]);
+                    st+=".dot";
+                    file.open(st.c_str(),fstream::out);
+                    spot::print_dot(file, k,"ka");
+                    file.close();
+                }
         cout<<"Performing on the fly Modelchecking"<<endl;
 
         if (auto run = k->intersecting_run(af))

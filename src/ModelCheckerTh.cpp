@@ -152,6 +152,10 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
         pthread_spin_lock(&m_spin_stack[m_min_charge]);
         m_st[m_min_charge].push(agregate);
         pthread_spin_unlock(&m_spin_stack[m_min_charge]);
+        if(!isNotTerminated())
+        {
+             ComputeTh_Succ();
+        }
 
     }
 }
