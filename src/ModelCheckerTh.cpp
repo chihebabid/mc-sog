@@ -142,7 +142,11 @@ LDDState * ModelCheckerTh::buildInitialMetaState()
     int j=0;
     for(auto it=fire.begin();it!=fire.end();it++,j++)
     m_st[j%m_nb_thread].push(couple_th(c,*it));
-
+    cout<<"Before barrier 1 "<<__func__<<endl;
+    pthread_barrier_wait(&m_barrier_threads);
+    cout<<"Before barrier 2 "<<__func__<<endl;
+    pthread_barrier_wait(&m_barrier_builder);
+    cout<<"Leaving "<<__func__<<endl;
     return c;
 }
 
@@ -150,13 +154,15 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
 {
     if (!agregate->isVisited())
     {
-        agregate->setVisited();
+       agregate->setVisited();
 
 
        Set fire=firable_obs(agregate->getLDDValue());
         int j=0;
         for(auto it=fire.begin();it!=fire.end();it++,j++)
         m_st[j%m_nb_thread].push(couple_th(agregate,*it));
+        pthread_barrier_wait(&m_barrier_threads);
+        pthread_barrier_wait(&m_barrier_builder);
         //Wait for all threads to finish their work
 
     }
@@ -169,18 +175,18 @@ void * ModelCheckerTh::Compute_successors()
     pthread_mutex_lock(&m_mutex);
     id_thread=m_id_thread++;
     pthread_mutex_unlock(&m_mutex);
-    Set fire;
+
     LDDState* reached_class=nullptr;
     // size_t max_meta_state_size;
     // int min_charge;
+    cout<<"Thread id : "<<id_thread<<endl;
     do
     {
-
+        cout<<"Before barrier threads "<<__func__<<" Thread id "<<id_thread<<endl;
+        pthread_barrier_wait(&m_barrier_threads);
         while (!m_st[id_thread].empty())
         {
-            cout<<"Entering thread "<<endl;
-            nb_it++;
-            m_terminaison[id_thread]=false;
+
             pthread_spin_lock(&m_spin_stack[id_thread]);
             couple_th elt=m_st[id_thread].top();
             //pthread_spin_lock(&m_accessible);
@@ -222,7 +228,9 @@ void * ModelCheckerTh::Compute_successors()
                 }
 
         }
-        m_terminaison[id_thread]=true;
+        cout<<"Before barrier builder "<<__func__<<" Thread id "<<id_thread<<endl;
+        pthread_barrier_wait(&m_barrier_builder);
+
     }
     while (1);
 
@@ -275,12 +283,9 @@ void ModelCheckerTh::ComputeTh_Succ(){
     pthread_mutex_init(&m_graph_mutex,NULL);
     pthread_mutex_init(&m_supervise_gc_mutex,NULL);
     m_gc=0;
-    for (int i=0; i<m_nb_thread; i++)
-    {
-        pthread_spin_init(&m_spin_stack[i], NULL);
-        m_charge[i]=0;
-        m_terminaison[i]=false;
-    }
+
+    pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread);
+    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread);
 
     for (int i=0; i<m_nb_thread-1; i++)
     {
