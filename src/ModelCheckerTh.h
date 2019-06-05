@@ -15,20 +15,13 @@ public:
     static void *threadHandler(void *context);
     void *Compute_successors();
     void ComputeTh_Succ();
-    int minCharge();
-    bool isNotTerminated();
-
-
 private:
     int m_nb_thread;
     MDD m_initalMarking;
     int m_min_charge;
     pile_t m_st[128];
     int m_charge[128];
-    bool m_terminaison[128];
     int m_id_thread;
-
-
     pthread_mutex_t m_mutex;
     pthread_mutex_t m_graph_mutex;
     pthread_mutex_t m_gc_mutex;
@@ -38,7 +31,6 @@ private:
     unsigned int m_gc;
 
     pthread_mutex_t m_mutex_stack[128];
-    pthread_spinlock_t m_spin_stack[128];
     pthread_t m_list_thread[128];
 };
 #endif
