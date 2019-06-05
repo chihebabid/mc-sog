@@ -8,6 +8,7 @@ class ModelCheckerTh : public CommonSOG
 {
 public:
     ModelCheckerTh(const NewNet &R, int BOUND,int nbThread);
+    ~ModelCheckerTh();
     LDDState * buildInitialMetaState();
     string getTransition(int pos);
     string getPlace(int pos);
@@ -18,17 +19,16 @@ public:
 private:
     int m_nb_thread;
     MDD m_initalMarking;
-    int m_min_charge;
     pile_t m_st[128];
-    int m_charge[128];
     int m_id_thread;
     pthread_mutex_t m_mutex;
     pthread_mutex_t m_graph_mutex;
-    pthread_mutex_t m_gc_mutex;
-    pthread_mutex_t m_supervise_gc_mutex;
+    //pthread_mutex_t m_gc_mutex;
+    //pthread_mutex_t m_supervise_gc_mutex;
 
     pthread_barrier_t m_barrier_threads,m_barrier_builder;
-    unsigned int m_gc;
+    //unsigned int m_gc;
+    bool m_finish=false;
 
     pthread_mutex_t m_mutex_stack[128];
     pthread_t m_list_thread[128];

@@ -36,22 +36,14 @@ ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread)
     m_transitionName=R.transitionName;
     m_placeName=R.m_placePosName;
 
-    cout<<"Toutes les Transitions:"<<endl;
+   /* cout<<"Toutes les Transitions:"<<endl;
     map<string,int>::iterator it2=m_transitionName.begin();
     for (; it2!=m_transitionName.end(); it2++)
     {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;
-    }
+    }*/
 
 
-
-    cout<<"Transitions observables :"<<endl;
-    Set::iterator it=m_observable.begin();
-    for (; it!=m_observable.end(); it++)
-    {
-        cout<<*it<<"  ";
-    }
-    cout<<endl;
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -64,10 +56,6 @@ ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread)
     }
 
     m_initalMarking=lddmc_cube(liste_marques,R.places.size());
-
-
-
-
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];
@@ -132,7 +120,6 @@ LDDState * ModelCheckerTh::buildInitialMetaState()
 {
     ComputeTh_Succ();
     LDDState *c=new LDDState;
-    cout<<"Initial marking : "<<m_initalMarking<<endl;
     MDD initial_meta_state=Accessible_epsilon(m_initalMarking);
     ldd_refs_push(initial_meta_state);
     c->m_lddstate=initial_meta_state;
@@ -171,11 +158,8 @@ void * ModelCheckerTh::Compute_successors()
     pthread_mutex_lock(&m_mutex);
     id_thread=m_id_thread++;
     pthread_mutex_unlock(&m_mutex);
-
     LDDState* reached_class=nullptr;
-    // size_t max_meta_state_size;
-    // int min_charge;
-    cout<<"Thread id : "<<id_thread<<endl;
+
     do
     {
         pthread_barrier_wait(&m_barrier_threads);
@@ -211,8 +195,7 @@ void * ModelCheckerTh::Compute_successors()
         }
         pthread_barrier_wait(&m_barrier_builder);
     }
-    while (1);
-
+    while (!m_finish);
 }
 
 
@@ -233,15 +216,13 @@ void ModelCheckerTh::ComputeTh_Succ()
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
-    pthread_mutex_init(&m_gc_mutex,NULL);
+    //pthread_mutex_init(&m_gc_mutex,NULL);
     pthread_mutex_init(&m_graph_mutex,NULL);
-    pthread_mutex_init(&m_supervise_gc_mutex,NULL);
-    m_gc=0;
+    //pthread_mutex_init(&m_supervise_gc_mutex,NULL);
+    pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);
+    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread+1);
 
-    pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread);
-    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread);
-
-    for (int i=0; i<m_nb_thread-1; i++)
+    for (int i=0; i<m_nb_thread; i++)
     {
         if ((rc = pthread_create(&m_list_thread[i], NULL,threadHandler,this)))
         {
@@ -255,4 +236,14 @@ void ModelCheckerTh::ComputeTh_Succ()
      }*/
 
 
+}
+ModelCheckerTh::~ModelCheckerTh() {
+    m_finish=true;
+    pthread_barrier_wait(&m_barrier_threads);
+    pthread_barrier_wait(&m_barrier_builder);
+    for (int i = 0; i < m_nb_thread-1; i++)
+     {
+         pthread_join(m_list_thread[i], NULL);
+     }
+     cout<<"Destructor "<<endl;
 }
