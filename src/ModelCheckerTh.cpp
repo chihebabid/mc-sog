@@ -130,7 +130,7 @@ string ModelCheckerTh::getPlace(int pos)
 
 LDDState * ModelCheckerTh::buildInitialMetaState()
 {
-
+    ComputeTh_Succ();
     LDDState *c=new LDDState;
     cout<<"Initial marking : "<<m_initalMarking<<endl;
     MDD initial_meta_state=Accessible_epsilon(m_initalMarking);
@@ -138,8 +138,11 @@ LDDState * ModelCheckerTh::buildInitialMetaState()
     c->m_lddstate=initial_meta_state;
     m_graph->setInitialState(c);
     m_graph->insert(c);
-    m_st[0].push(c);
-    ComputeTh_Succ();
+    Set fire=firable_obs(initial_meta_state);
+    int j=0;
+    for(auto it=fire.begin();it!=fire.end();it++,j++)
+    m_st[j%m_nb_thread].push(couple_th(c,*it));
+
     return c;
 }
 
@@ -148,10 +151,13 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
     if (!agregate->isVisited())
     {
         agregate->setVisited();
-        m_min_charge=minCharge();
-        pthread_spin_lock(&m_spin_stack[m_min_charge]);
-        m_st[m_min_charge].push(agregate);
-        pthread_spin_unlock(&m_spin_stack[m_min_charge]);
+
+
+       Set fire=firable_obs(agregate->getLDDValue());
+        int j=0;
+        for(auto it=fire.begin();it!=fire.end();it++,j++)
+        m_st[j%m_nb_thread].push(couple_th(agregate,*it));
+        //Wait for all threads to finish their work
 
     }
 }
@@ -176,23 +182,22 @@ void * ModelCheckerTh::Compute_successors()
             nb_it++;
             m_terminaison[id_thread]=false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
-            LDDState* agregate=m_st[id_thread].top();
+            couple_th elt=m_st[id_thread].top();
             //pthread_spin_lock(&m_accessible);
             m_st[id_thread].pop();
 
             pthread_spin_unlock(&m_spin_stack[id_thread]);
-           // m_nbmetastate--;
-            MDD meta_state=agregate->getLDDValue();
-            Set fire=firable_obs(meta_state);
+            LDDState *aggregate=elt.first;
+            MDD meta_state=aggregate->getLDDValue();
+            int transition=elt.second;
 
             //compute successors
-            Set::const_iterator iter=fire.begin();
-            while(iter!=fire.end())
-            {
-                int t = *iter;
 
-                MDD complete_state=Accessible_epsilon(get_successor(meta_state,t));
-                iter++;
+
+
+
+                MDD complete_state=Accessible_epsilon(get_successor(meta_state,transition));
+
                 reached_class=new LDDState;
                 reached_class->m_lddstate=complete_state;
                 pthread_mutex_lock(&m_graph_mutex);
@@ -203,19 +208,19 @@ void * ModelCheckerTh::Compute_successors()
                     m_graph->addArc();
                     m_graph->insert(reached_class);
                     pthread_mutex_unlock(&m_graph_mutex);
-                    agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(reached_class,t));
-                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(agregate,t));
+                    aggregate->Successors.insert(aggregate->Successors.begin(),LDDEdge(reached_class,transition));
+                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(aggregate,transition));
 
                 }
                 else
                 {
                     m_graph->addArc();
                     pthread_mutex_unlock(&m_graph_mutex);
-                    agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(pos,t));
-                    pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(agregate,t));
+                    aggregate->Successors.insert(aggregate->Successors.begin(),LDDEdge(pos,transition));
+                    pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(aggregate,transition));
                     delete reached_class;
                 }
-            }
+
         }
         m_terminaison[id_thread]=true;
     }

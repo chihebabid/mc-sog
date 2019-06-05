@@ -1,7 +1,8 @@
 #ifndef MODELCHECKERTH_H
 #define MODELCHECKERTH_H
 #include "CommonSOG.h"
-typedef stack<LDDState *> pile_t;
+typedef pair<LDDState *, int> couple_th;
+typedef stack<pair<LDDState *,int>> pile_t;
 
 class ModelCheckerTh : public CommonSOG
 {
