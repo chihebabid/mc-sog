@@ -24,10 +24,10 @@ class LDDState {
   pair<LDDState*, int> LastEdge;
   void setLDDValue(MDD m);
   MDD getLDDValue();
-  MDD m_lddstate;
+  MDD m_lddstate=0;
   unsigned char m_SHA2[81];
   unsigned char* getSHAValue();
-  bool m_boucle;
+  bool m_boucle=false;
   bool m_blocage;
 
 

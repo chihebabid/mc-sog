@@ -7,13 +7,14 @@
 SogKripkeIteratorTh::SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
 {
 
-    m_lddstate->setDiv(true);
+    //m_lddstate->setDiv(true);
+    //if (m_lddstate->getLDDValue()) m_lddstate->setDeadLock(true);
     for (int i=0;i<m_lddstate->getSuccessors()->size();i++) {
         m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
     }
-   /* if (lddstate->isDeadLock()) {
-        m_lsucc.push_back(pair(,-1));
-    }*/
+   if (lddstate->isDeadLock()) {
+     m_lsucc.push_back(pair<LDDState*,int>(&m_deadlock,-1));
+    }
     if (lddstate->isDiv()) {
         m_lsucc.push_back(pair<LDDState*,int>(m_lddstate,-1));
     }
@@ -58,8 +59,6 @@ bdd SogKripkeIteratorTh::cond()  const {
     spot::formula f=spot::formula::ap(name);
     bdd   result=bdd_ithvar((p->var_map.find(f))->second);
 
-    //cout<<"Iterator "<<__func__<<"  "<<m_current_edge<<"\n";*/
-    //cout<<"exciting "<<__func__<<endl;
     return result & spot::kripke_succ_iterator::cond();
 }
 
@@ -74,3 +73,4 @@ SogKripkeIteratorTh::~SogKripkeIteratorTh()
 
 static ModelCheckerTh * SogKripkeIteratorTh::m_builder;
 static spot::bdd_dict_ptr* SogKripkeIteratorTh::m_dict_ptr;
+static LDDState SogKripkeIteratorTh::m_deadlock;

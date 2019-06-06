@@ -74,3 +74,4 @@ SogKripkeIteratorOTF::~SogKripkeIteratorOTF()
 
 static ModelCheckLace * SogKripkeIteratorOTF::m_builder;
 static spot::bdd_dict_ptr* SogKripkeIteratorOTF::m_dict_ptr;
+static LDDState SogKripkeIteratorOTF::m_deadlock;

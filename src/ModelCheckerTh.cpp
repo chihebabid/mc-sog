@@ -245,5 +245,4 @@ ModelCheckerTh::~ModelCheckerTh() {
      {
          pthread_join(m_list_thread[i], NULL);
      }
-     cout<<"Destructor "<<endl;
 }
