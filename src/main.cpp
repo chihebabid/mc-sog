@@ -101,7 +101,7 @@ int main(int argc, char** argv)
     //if(argc>5)
     nb_th = atoi(argv[2])==0 ? 1 : atoi(argv[2]);
 
-
+    cout<<"Bonjour..."<<endl;
     cout<<"Fichier net : "<<argv[3]<<endl;
     cout<<"Fichier formule : "<<formula<<endl;
     cout<<"Fichier Interface : "<<Int<<endl;

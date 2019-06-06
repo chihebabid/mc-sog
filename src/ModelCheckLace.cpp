@@ -61,7 +61,7 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
         liste_marques[i] =it_places->marking;
     }
 
-    m_initalMarking=lddmc_cube(liste_marques,R.places.size());
+    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
 
 
 
@@ -165,7 +165,7 @@ LDDState * ModelCheckLace::buildInitialMetaState()
     LDDState *initalAggregate=new LDDState;
     LDDState *reached_class;
     LACE_ME;
-    MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initalMarking,&m_nonObservable,&m_tb_relation));
+    MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
     Set fire=fire_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
 
     // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);

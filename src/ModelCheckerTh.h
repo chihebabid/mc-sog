@@ -16,7 +16,7 @@ public:
     void ComputeTh_Succ();
 private:
     int m_nb_thread;
-    MDD m_initalMarking;
+
     pile_t m_st[128];
     int m_id_thread;
     pthread_mutex_t m_mutex;

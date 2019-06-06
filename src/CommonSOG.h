@@ -29,7 +29,7 @@ class CommonSOG
         int m_nbPlaces = 0;
         LDDGraph *m_graph;
         vector<TransSylvan> m_tb_relation;
-        LDDState m_M0;
+        MDD m_initialMarking;
         map<string, int> m_transitionName;
         map<int,string> m_placeName;
         Set m_observable;

@@ -55,7 +55,7 @@ ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread)
         liste_marques[i] =it_places->marking;
     }
 
-    m_initalMarking=lddmc_cube(liste_marques,R.places.size());
+    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];
@@ -112,7 +112,7 @@ LDDState * ModelCheckerTh::buildInitialMetaState()
 {
     ComputeTh_Succ();
     LDDState *c=new LDDState;
-    MDD initial_meta_state=Accessible_epsilon(m_initalMarking);
+    MDD initial_meta_state=Accessible_epsilon(m_initialMarking);
     ldd_refs_push(initial_meta_state);
     c->m_lddstate=initial_meta_state;
     m_graph->setInitialState(c);
