@@ -10,8 +10,6 @@ public:
     ModelCheckerTh(const NewNet &R, int BOUND,int nbThread);
     ~ModelCheckerTh();
     LDDState * buildInitialMetaState();
-    string getTransition(int pos);
-    string getPlace(int pos);
     void buildSucc(LDDState *agregate);
     static void *threadHandler(void *context);
     void *Compute_successors();

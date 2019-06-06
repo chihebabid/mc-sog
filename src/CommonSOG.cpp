@@ -213,3 +213,13 @@ return ((M&cur)!=lddmc_false);
 	//BLOCAGE
 }
 
+string CommonSOG::getTransition(int pos)
+{
+    return m_graph->getTransition(pos);
+}
+
+string CommonSOG::getPlace(int pos)
+{
+    return m_graph->getPlace(pos);
+}
+

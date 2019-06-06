@@ -115,15 +115,7 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
 }
 
 
-string ModelCheckLace::getTransition(int pos)
-{
-    return m_graph->getTransition(pos);
-}
 
-string ModelCheckLace::getPlace(int pos)
-{
-    return m_graph->getPlace(pos);
-}
 
 TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<TransSylvan>*, tb_relation)
 {

@@ -1,4 +1,4 @@
-#include "ModelCheckerTh.h"
+#include "ModelCheckerBase.h"
 
 #include "sylvan.h"
 #include "sylvan_seq.h"
@@ -105,7 +105,15 @@ ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread)
 }
 
 
+string ModelCheckerTh::getTransition(int pos)
+{
+    return m_graph->getTransition(pos);
+}
 
+string ModelCheckerTh::getPlace(int pos)
+{
+    return m_graph->getPlace(pos);
+}
 
 
 LDDState * ModelCheckerTh::buildInitialMetaState()

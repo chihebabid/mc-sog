@@ -22,6 +22,8 @@ class CommonSOG
         Set * getNonObservable();
         unsigned int getPlacesCount();
         Set & getPlaceProposition() {return m_place_proposition;}
+        string getTransition(int pos);
+        string getPlace(int pos);
     protected:
         NewNet m_net;
         int m_nbPlaces = 0;
