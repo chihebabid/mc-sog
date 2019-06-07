@@ -6,18 +6,18 @@
 #include <sylvan_int.h>
 
 using namespace sylvan;
-ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
+ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread):ModelCheckBaseMT(R,BOUND,nbThread)
 {
-    m_nb_thread=nbThread;
+}
+void ModelCheckLace::preConfigure() {
+    cout<<__func__<<endl;
     lace_init(m_nb_thread, 10000000);
     lace_startup(0, NULL, NULL);
     sylvan_set_limits(2LL<<30, 16, 3);
     sylvan_init_package();
     sylvan_init_ldd();
     LACE_ME;
-    m_net=R;
-
-
+    
     int  i;
     vector<Place>::const_iterator it_places;
 
@@ -26,13 +26,13 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
 
 
     //_______________
-    transitions=R.transitions;
-    m_observable=R.Observable;
-    m_place_proposition=R.m_formula_place;
-    m_nonObservable=R.NonObservable;
+    transitions=m_net.transitions;
+    m_observable=m_net.Observable;
+    m_place_proposition=m_net.m_formula_place;
+    m_nonObservable=m_net.NonObservable;
 
-    m_transitionName=R.transitionName;
-    m_placeName=R.m_placePosName;
+    m_transitionName=m_net.transitionName;
+    m_placeName=m_net.m_placePosName;
 
     cout<<"Toutes les Transitions:"<<endl;
     map<string,int>::iterator it2=m_transitionName.begin();
@@ -50,18 +50,18 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
         cout<<*it<<"  ";
     }
     cout<<endl;
-    InterfaceTrans=R.InterfaceTrans;
-    m_nbPlaces=R.places.size();
+    InterfaceTrans=m_net.InterfaceTrans;
+    
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
-    cout<<"Derniere place : "<<R.places[m_nbPlaces-1].name<<endl;
+    cout<<"Derniere place : "<<m_net.places[m_nbPlaces-1].name<<endl;
 
-    uint32_t * liste_marques=new uint32_t[R.places.size()];
-    for(i=0,it_places=R.places.begin(); it_places!=R.places.end(); i++,it_places++)
+    uint32_t * liste_marques=new uint32_t[m_net.places.size()];
+    for(i=0,it_places=m_net.places.begin(); it_places!=m_net.places.end(); i++,it_places++)
     {
         liste_marques[i] =it_places->marking;
     }
 
-    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
+    m_initialMarking=lddmc_cube(liste_marques,m_net.places.size());
 
 
 
@@ -70,8 +70,8 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];
     // Transition relation
-    for(vector<Transition>::const_iterator t=R.transitions.begin();
-            t!=R.transitions.end(); t++)
+    for(auto t=m_net.transitions.begin();
+            t!=m_net.transitions.end(); t++)
     {
         // Initialisation
         for(i=0; i<m_nbPlaces; i++)
@@ -109,9 +109,6 @@ ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread)
     }
     delete [] prec;
     delete [] postc;
-    m_graph=new LDDGraph(this);
-    m_graph->setTransition(m_transitionName);
-    m_graph->setPlace(m_placeName);
 }
 
 

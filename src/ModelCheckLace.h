@@ -1,13 +1,13 @@
 #ifndef MODELCHECKLACE_H
 #define MODELCHECKLACE_H
-#include "CommonSOG.h"
-class ModelCheckLace : public CommonSOG {
+#include "ModelCheckBaseMT.h"
+class ModelCheckLace : public ModelCheckBaseMT {
 public:
         ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
         LDDState * buildInitialMetaState();
         void buildSucc(LDDState *agregate);
 private:
-    int m_nb_thread;
+    void preConfigure();
 
 };
 #endif

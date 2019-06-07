@@ -58,6 +58,8 @@ add_executable(hybrid-sog main.cpp
   SogKripkeIterator.h
   SogKripke.cpp
   SogKripke.h
+  ModelCheckBaseMT.cpp
+  ModelCheckBaseMT.h
   ModelCheckLace.cpp
   ModelCheckLace.h
   SogKripkeStateOTF.cpp

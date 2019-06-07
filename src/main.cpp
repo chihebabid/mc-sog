@@ -149,7 +149,7 @@ int main(int argc, char** argv)
         }
         // Initialize SOG builder
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
-        cout<<"Created"<<endl;
+        mcl->loadNet();        
         auto k =
             std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
                             cout<<"Want to save the graph in a dot file ?";
