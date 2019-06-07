@@ -7,7 +7,7 @@ public:
         LDDState * buildInitialMetaState();
         void buildSucc(LDDState *agregate);
 private:
-    void preConfigure();
+        void preConfigure();
 
 };
 #endif
