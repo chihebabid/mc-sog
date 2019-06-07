@@ -15,7 +15,7 @@ SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckerTh *builder): 
     SogKripkeIteratorTh::m_builder=builder;
     SogKripkeStateTh::m_builder=builder;
     SogKripkeIteratorTh::m_dict_ptr=&dict_ptr;
-    //cout<<__func__<<endl;
+    
 }
 
 SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckerTh *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeTh(dict_ptr,builder) {

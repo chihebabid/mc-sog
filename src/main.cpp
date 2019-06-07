@@ -362,7 +362,6 @@ int main(int argc, char** argv)
         {
             //cout<<" sequential version using Sylvan : 1 with BuDDy : 2 \n" <<endl;
             cout<<"*************Distibuted version******************* \n" <<endl;
-
             {
                 DistributedSOG DR(R, bound);
                 LDDGraph g(nullptr);
