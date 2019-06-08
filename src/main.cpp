@@ -184,10 +184,10 @@ int main(int argc, char** argv)
     }
     else if (n_tasks==1 && !strcmp(argv[1],"otfP"))
     {
-     cout<<"Multi-threaded on the fly Model checking (Pthread)..."<<endl;
+        cout<<"Multi-threaded on the fly Model checking (Pthread)..."<<endl;
         cout<<"Building automata for not(formula)\n";
         auto d = spot::make_bdd_dict();
-        // d->register_ap("jbhkj");
+        
         spot::twa_graph_ptr af = spot::translator(d).run(not_f);
         cout<<"Formula automata built.\n";
         cout<<"Want to save the graph in a dot file ?";
@@ -204,10 +204,7 @@ int main(int argc, char** argv)
         }
         // Initialize SOG builder
         ModelCheckerTh* mcl=new ModelCheckerTh(R,bound,nb_th);
-
-
-
-
+        mcl->loadNet();
         auto k =
             std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());                                             ;
 

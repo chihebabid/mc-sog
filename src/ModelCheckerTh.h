@@ -1,10 +1,10 @@
 #ifndef MODELCHECKERTH_H
 #define MODELCHECKERTH_H
-#include "CommonSOG.h"
+#include "ModelCheckBaseMT.h"
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
 
-class ModelCheckerTh : public CommonSOG
+class ModelCheckerTh : public ModelCheckBaseMT
 {
 public:
     ModelCheckerTh(const NewNet &R, int BOUND,int nbThread);
@@ -15,7 +15,7 @@ public:
     void *Compute_successors();
     void ComputeTh_Succ();
 private:
-    int m_nb_thread;
+    void preConfigure();
 
     pile_t m_st[128];
     int m_id_thread;
