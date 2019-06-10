@@ -28,7 +28,7 @@ class LDDState {
   unsigned char m_SHA2[81];
   unsigned char* getSHAValue();
   bool m_boucle=false;
-  bool m_blocage;
+  bool m_blocage=false;
 
 
   bool isVirtual();

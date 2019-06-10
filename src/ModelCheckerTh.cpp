@@ -230,7 +230,7 @@ ModelCheckerTh::~ModelCheckerTh() {
     m_finish=true;
     pthread_barrier_wait(&m_barrier_threads);
     pthread_barrier_wait(&m_barrier_builder);
-    for (int i = 0; i < m_nb_thread-1; i++)
+    for (int i = 0; i < m_nb_thread; i++)
      {
          pthread_join(m_list_thread[i], NULL);
      }
