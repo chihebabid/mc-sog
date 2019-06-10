@@ -1,14 +1,14 @@
 #ifndef SOGKRIPKEITERATORTH_H_INCLUDED
 #define SOGKRIPKEITERATORTH_H_INCLUDED
 #include "SogKripkeStateTh.h"
-#include "ModelCheckerTh.h"
+#include "ModelCheckBaseMT.h"
 #include <spot/kripke/kripke.hh>
 // Iterator for a SOG graph
 class SogKripkeIteratorTh : public spot::kripke_succ_iterator
 {
 public:
     static LDDState m_deadlock;
-    static ModelCheckerTh * m_builder;
+    static ModelCheckBaseMT * m_builder;
     static spot::bdd_dict_ptr* m_dict_ptr;
   //  sog_succ_iterator(const RdPBDD& pn, const SogKripkeState& s, const bdd& c);
     SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd);

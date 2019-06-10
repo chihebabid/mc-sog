@@ -151,7 +151,7 @@ int main(int argc, char** argv)
         ModelCheckLace* mcl=new ModelCheckLace(R,bound,nb_th);
         mcl->loadNet();        
         auto k =
-            std::make_shared<SogKripkeOTF>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
+            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
                             cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
                 if (c=='y')

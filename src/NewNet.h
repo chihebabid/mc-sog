@@ -10,8 +10,8 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "RdPMonteur.hpp"
-typedef set<int> Set;
+#include "RdPMonteur.hpp"   
+typedef set<int> Set;  
 class Node {
  public:
   Node(){};

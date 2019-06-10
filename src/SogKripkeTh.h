@@ -10,8 +10,8 @@
 class SogKripkeTh: public spot::kripke {
     public:
 
-        SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckerTh *builder);
-        SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckerTh *builder,set<string> &l_transap,set<string> &l_placeap);
+        SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder);
+        SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap);
         virtual ~SogKripkeTh();
         spot::state* get_init_state() const;
         SogKripkeIteratorTh* succ_iter(const spot::state* s) const override;
