@@ -157,18 +157,17 @@ int main(int argc, char** argv)
         mcl->loadNet();        
         auto k =
             std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
-                            cout<<"Want to save the graph in a dot file ?";
+        /*                    cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
                 if (c=='y')
                 {
                     fstream file;
-
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
                     file.close();
-                }                                ;
+                }     */                           ;
         // Performing on the fly Modelchecking
         cout<<"Performing on the fly Modelchecking"<<endl;
 

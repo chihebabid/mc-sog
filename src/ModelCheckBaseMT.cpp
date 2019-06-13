@@ -22,7 +22,7 @@ void ModelCheckBaseMT::loadNet()
 
 ModelCheckBaseMT::~ModelCheckBaseMT()
 {
-    cout<<__func__<<endl;
+   
 }
 
 

@@ -228,16 +228,13 @@ void ModelCheckerTh::ComputeTh_Succ()
 
 }
 ModelCheckerTh::~ModelCheckerTh() {
-    m_finish=true;
-    cout<<"Destructor"<<endl;
-    pthread_barrier_wait(&m_barrier_threads);
-    cout<<"Before builder..."<<endl;
-    pthread_barrier_wait(&m_barrier_builder);
-    cout<<"After barrier..."<<endl;
+    m_finish=true;    
+    pthread_barrier_wait(&m_barrier_threads);    
+    pthread_barrier_wait(&m_barrier_builder);    
     for (int i = 0; i < m_nb_thread; i++)
      {
          cout<<"thread "<<i<<endl;
          pthread_join(m_list_thread[i], NULL);
      }
-     cout<<"Exit Destructor"<<endl;
+     
 }
