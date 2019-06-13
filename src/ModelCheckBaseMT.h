@@ -7,6 +7,7 @@ public:
         virtual LDDState * buildInitialMetaState()=0;
         virtual void buildSucc(LDDState *agregate)=0;
         void loadNet();
+        virtual ~ModelCheckBaseMT();
 protected:
     int m_nb_thread;
 private:

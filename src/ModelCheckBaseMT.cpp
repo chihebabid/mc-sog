@@ -20,6 +20,12 @@ void ModelCheckBaseMT::loadNet()
     m_graph->setPlace(m_placeName);
 }
 
+ModelCheckBaseMT::~ModelCheckBaseMT()
+{
+    cout<<__func__<<endl;
+}
+
+
   
 
 
