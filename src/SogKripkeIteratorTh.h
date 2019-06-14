@@ -8,6 +8,7 @@ class SogKripkeIteratorTh : public spot::kripke_succ_iterator
 {
 public:
     static LDDState m_deadlock;
+    static LDDState m_div;
     static ModelCheckBaseMT * m_builder;
     static spot::bdd_dict_ptr* m_dict_ptr;
   //  sog_succ_iterator(const RdPBDD& pn, const SogKripkeState& s, const bdd& c);

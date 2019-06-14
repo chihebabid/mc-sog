@@ -74,3 +74,4 @@ SogKripkeIteratorTh::~SogKripkeIteratorTh()
 static ModelCheckBaseMT * SogKripkeIteratorTh::m_builder;
 static spot::bdd_dict_ptr* SogKripkeIteratorTh::m_dict_ptr;
 static LDDState SogKripkeIteratorTh::m_deadlock;
+static LDDState SogKripkeIteratorTh::m_div;

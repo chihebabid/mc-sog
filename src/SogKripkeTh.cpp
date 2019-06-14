@@ -15,7 +15,9 @@ SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder)
     SogKripkeIteratorTh::m_builder=builder;
     SogKripkeStateTh::m_builder=builder;
     SogKripkeIteratorTh::m_dict_ptr=&dict_ptr;
-    
+    SogKripkeIteratorTh::m_deadlock.setLDDValue(1);
+    SogKripkeIteratorTh::m_div.setLDDValue(0);
+    SogKripkeIteratorTh::m_div.Successors.push_back(pair<LDDState*,int>(&SogKripkeIteratorTh::m_div,-1));
 }
 
 SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeTh(dict_ptr,builder) {
