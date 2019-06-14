@@ -25,7 +25,7 @@
 #include "NewNet.h"
 #include "SogTwa.h"
 #include "SogKripke.h"
-#include "SogKripkeOTF.h"
+
 #include "SogKripkeTh.h"
 
 
