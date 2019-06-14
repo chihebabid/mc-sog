@@ -958,7 +958,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
 }
 
 
-
+ 
 
 
 void threadSOG::computeSOGLaceCanonized(LDDGraph &g)

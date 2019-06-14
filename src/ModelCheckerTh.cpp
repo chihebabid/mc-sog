@@ -162,6 +162,8 @@ void * ModelCheckerTh::Compute_successors()
             MDD complete_state=Accessible_epsilon(get_successor(meta_state,transition));
             reached_class=new LDDState;
             reached_class->m_lddstate=complete_state;
+            reached_class->setDiv(Set_Div(complete_state));
+            reached_class->setDeadLock(Set_Bloc(complete_state));
             pthread_mutex_lock(&m_graph_mutex);
             LDDState* pos=m_graph->find(reached_class);
             if(!pos)
