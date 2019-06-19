@@ -4,7 +4,7 @@
 class ModelCheckBaseMT : public CommonSOG {
 public:
         ModelCheckBaseMT(const NewNet &R, int BOUND,int nbThread);
-        virtual LDDState * buildInitialMetaState()=0;
+        virtual LDDState * getInitialMetaState()=0;
         virtual void buildSucc(LDDState *agregate)=0;
         void loadNet();
         virtual ~ModelCheckBaseMT();

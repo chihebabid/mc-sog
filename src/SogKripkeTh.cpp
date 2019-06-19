@@ -33,7 +33,7 @@ SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *bu
 
 state* SogKripkeTh::get_init_state() const {
    // cout<<__func__<<endl;
-    return new SogKripkeStateTh(m_builder->buildInitialMetaState());//new SpotSogState();
+    return new SogKripkeStateTh(m_builder->getInitialMetaState());//new SpotSogState();
 
 }
 // Allows to print state label representing its id

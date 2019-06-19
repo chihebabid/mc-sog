@@ -39,6 +39,8 @@ class LDDState {
   bool isDeadLock() {return m_blocage;}
   void setVisited() {m_visited=true;}
   bool isVisited() {return m_visited;}
+  void setCompletedSucc() {m_completed=true;}
+  bool isCompletedSucc() {return m_completed;}
   vector<int> getMarkedPlaces(set<int>& lplacesAP);
   vector<int> getUnmarkedPlaces(set<int>& lplacesAP);
 
@@ -46,6 +48,7 @@ class LDDState {
  private:
   bool m_virtual = false;
   bool m_visited=false;
+  bool m_completed=false;
 
 };
 

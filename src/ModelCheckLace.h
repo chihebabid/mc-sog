@@ -4,7 +4,7 @@
 class ModelCheckLace : public ModelCheckBaseMT {
 public:
         ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
-        LDDState * buildInitialMetaState();
+        LDDState * getInitialMetaState();
         void buildSucc(LDDState *agregate);
 private:
         void preConfigure();

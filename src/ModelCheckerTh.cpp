@@ -105,23 +105,14 @@ void ModelCheckerTh::preConfigure()
 
 
 
-LDDState * ModelCheckerTh::buildInitialMetaState()
+LDDState * ModelCheckerTh::getInitialMetaState()
 {
     ComputeTh_Succ();
-    LDDState *c=new LDDState;
-    MDD initial_meta_state=Accessible_epsilon(m_initialMarking);
-    ldd_refs_push(initial_meta_state);
-    c->m_lddstate=initial_meta_state;
-    m_graph->setInitialState(c);
-    m_graph->insert(c);
-    Set fire=firable_obs(initial_meta_state);
-    int j=0;
-    for(auto it=fire.begin(); it!=fire.end(); it++,j++)
-        m_st[j%m_nb_thread].push(couple_th(c,*it));
-    pthread_barrier_wait(&m_barrier_threads);
-    pthread_barrier_wait(&m_barrier_builder);
-    c->setVisited();
-    return c;
+    while (!m_finish_initial);
+    LDDState *initial_metastate=m_graph->getInitialState();    
+    while (!initial_metastate->isCompletedSucc());    
+    initial_metastate->setVisited();    
+    return  initial_metastate;
 }
 
 void ModelCheckerTh::buildSucc(LDDState *agregate)
@@ -129,65 +120,159 @@ void ModelCheckerTh::buildSucc(LDDState *agregate)
     if (!agregate->isVisited())
     {
         agregate->setVisited();
-        Set fire=firable_obs(agregate->getLDDValue());
-        int j=0;
-        for(auto it=fire.begin(); it!=fire.end(); it++,j++)
-            m_st[j%m_nb_thread].push(couple_th(agregate,*it));
-        pthread_barrier_wait(&m_barrier_threads);
-        pthread_barrier_wait(&m_barrier_builder);
-        //Wait for all threads to finish their work
-
+        while (!agregate->isCompletedSucc());              
     }
 }
 
 void * ModelCheckerTh::Compute_successors()
 {
     int id_thread;
-    int nb_it=0,nb_failed=0,max_succ=0;
+    
     pthread_mutex_lock(&m_mutex);
     id_thread=m_id_thread++;
     pthread_mutex_unlock(&m_mutex);
-    LDDState* reached_class=nullptr;
+    Set fire;
+    int min_charge=0;
+    if (id_thread==0)
+    {   
+        LDDState *c=new LDDState;
+
+        MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
+        ldd_refs_push(Complete_meta_state);
+        MDD canonised_initial=Canonize(Complete_meta_state,0);
+        ldd_refs_push(canonised_initial);
+        fire=firable_obs(Complete_meta_state);
+
+
+        c->m_lddstate=canonised_initial;
+                
+        m_st[0].push(Pair(couple(c,Complete_meta_state),fire));
+        m_graph->setInitialState(c);
+        m_graph->insert(c);
+        //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
+        m_charge[0]=1;
+        m_finish_initial=true;
+
+    }
+
+    LDDState* reached_class;
+
 
     do
     {
-        pthread_barrier_wait(&m_barrier_threads);
+
         while (!m_st[id_thread].empty())
         {
-            couple_th elt=m_st[id_thread].top();
+            m_terminaison[id_thread]=false;
+            pthread_spin_lock(&m_spin_stack[id_thread]);
+            Pair  e=m_st[id_thread].top();
+            //pthread_spin_lock(&m_accessible);
             m_st[id_thread].pop();
-            LDDState *aggregate=elt.first;
-            MDD meta_state=aggregate->getLDDValue();
-            int transition=elt.second;
-            MDD complete_state=Accessible_epsilon(get_successor(meta_state,transition));
-            reached_class=new LDDState;
-            reached_class->m_lddstate=complete_state;
-            reached_class->setDiv(Set_Div(complete_state));
-            reached_class->setDeadLock(Set_Bloc(complete_state));
-            pthread_mutex_lock(&m_graph_mutex);
-            LDDState* pos=m_graph->find(reached_class);
-            if(!pos)
-            {
-                m_graph->addArc();
-                m_graph->insert(reached_class);
-                pthread_mutex_unlock(&m_graph_mutex);
-                aggregate->Successors.insert(aggregate->Successors.begin(),LDDEdge(reached_class,transition));
-                reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(aggregate,transition));
-            }
-            else
-            {
-                m_graph->addArc();
-                pthread_mutex_unlock(&m_graph_mutex);
-                aggregate->Successors.insert(aggregate->Successors.begin(),LDDEdge(pos,transition));
-                pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(aggregate,transition));
-                delete reached_class;
-            }
 
+            pthread_spin_unlock(&m_spin_stack[id_thread]);
+            
+
+            m_charge[id_thread]--;
+            while(!e.second.empty())
+            {
+                int t = *e.second.begin();
+                e.second.erase(t);
+                reached_class=new LDDState();
+                if (id_thread)
+                {
+                    pthread_mutex_lock(&m_supervise_gc_mutex);
+                    m_gc++;
+                    if (m_gc==1) {
+                        pthread_mutex_lock(&m_gc_mutex);
+                    }
+                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                }
+
+
+                MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
+
+                ldd_refs_push(Complete_meta_state);
+
+                MDD reduced_meta=Canonize(Complete_meta_state,0);
+                ldd_refs_push(reduced_meta);
+
+                if (id_thread==0)
+                {
+                    pthread_mutex_lock(&m_gc_mutex);
+               //     #ifdef DEBUG_GC
+                 //   displayMDDTableInfo();
+                 //   #endif // DEBUG_GC
+                    sylvan_gc_seq();
+                 //   #ifdef DEBUG_GC
+                 //   displayMDDTableInfo();
+                 //   #endif // DEBUG_GC
+                    pthread_mutex_unlock(&m_gc_mutex);
+                }
+                reached_class->m_lddstate=reduced_meta;
+                //reached_class->m_lddstate=reduced_meta;
+                //nbnode=bdd_pathcount(reached_class->m_lddstate);
+
+                //pthread_spin_lock(&m_accessible);
+                pthread_mutex_lock(&m_graph_mutex);
+
+                LDDState* pos=m_graph->find(reached_class);
+
+                if(!pos)
+                {
+                    //  cout<<"not found"<<endl;
+                    //reached_class->blocage=Set_Bloc(Complete_meta_state);
+                    //reached_class->boucle=Set_Div(Complete_meta_state);
+
+                    m_graph->addArc();
+                    m_graph->insert(reached_class);
+                    pthread_mutex_unlock(&m_graph_mutex);
+
+                    e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
+                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
+                    //pthread_mutex_lock(&m_mutex);
+                    fire=firable_obs(Complete_meta_state);
+                    //if (max_succ<fire.size()) max_succ=fire.size();
+                    //pthread_mutex_unlock(&m_mutex);
+                    min_charge= minCharge();
+                    //m_min_charge=(m_min_charge+1) % m_nb_thread;
+                    pthread_spin_lock(&m_spin_stack[min_charge]);
+                    m_st[min_charge].push(Pair(couple(reached_class,Complete_meta_state),fire));
+                    pthread_spin_unlock(&m_spin_stack[min_charge]);
+                    m_charge[min_charge]++;
+                }
+                else
+                {
+                    m_graph->addArc();
+                    pthread_mutex_unlock(&m_graph_mutex);
+
+                    e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(pos,t));
+                    pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(e.first.first,t));
+                    delete reached_class;
+
+                }
+                if (id_thread)
+                {
+                    pthread_mutex_lock(&m_supervise_gc_mutex);
+                    m_gc--;
+                    if (m_gc==0) pthread_mutex_unlock(&m_gc_mutex);
+                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                }
+            }
+            e.first.first->setCompletedSucc();
         }
-        pthread_barrier_wait(&m_barrier_builder);
+        m_terminaison[id_thread]=true;
+
+
+
     }
-    while (!m_finish);
-    cout<<"exit thread i"<<id_thread<<endl;
+    while (isNotTerminated());
+    
+    
+        
+    
+    
+    
+   
 }
 
 
@@ -208,12 +293,22 @@ void ModelCheckerTh::ComputeTh_Succ()
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);
-    //pthread_mutex_init(&m_gc_mutex,NULL);
+    pthread_mutex_init(&m_gc_mutex,NULL);
     pthread_mutex_init(&m_graph_mutex,NULL);
-    //pthread_mutex_init(&m_supervise_gc_mutex,NULL);
-    pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);
-    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread+1);
+    pthread_mutex_init(&m_supervise_gc_mutex,NULL);
+ /*   pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);
+    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread+1);*/
 
+    for (int i=0; i<m_nb_thread; i++)
+    {
+        pthread_spin_init(&m_spin_stack[i], NULL);
+        m_charge[i]=0;
+        m_terminaison[i]=false;
+    }
+    
+    
+    
+    
     for (int i=0; i<m_nb_thread; i++)
     {
         if ((rc = pthread_create(&m_list_thread[i], NULL,threadHandler,this)))
@@ -231,12 +326,40 @@ void ModelCheckerTh::ComputeTh_Succ()
 }
 ModelCheckerTh::~ModelCheckerTh() {
     m_finish=true;    
-    pthread_barrier_wait(&m_barrier_threads);    
-    pthread_barrier_wait(&m_barrier_builder);    
+   /* pthread_barrier_wait(&m_barrier_threads);    
+    pthread_barrier_wait(&m_barrier_builder);   */ 
     for (int i = 0; i < m_nb_thread; i++)
      {
          cout<<"thread "<<i<<endl;
          pthread_join(m_list_thread[i], NULL);
      }
      
+}
+
+int ModelCheckerTh::minCharge()
+{
+    int pos=0;
+    int min_charge=m_charge[0];
+    for (int i=1; i<m_nb_thread; i++)
+    {
+        if (m_charge[i]<min_charge)
+        {
+            min_charge=m_charge[i];
+            pos=i;
+        }
+    }
+    return pos;
+
+}
+
+bool ModelCheckerTh::isNotTerminated()
+{
+    bool res=true;
+    int i=0;
+    while (i<m_nb_thread && res)
+    {
+        res=m_terminaison[i];
+        i++;
+    }
+    return !res;
 }

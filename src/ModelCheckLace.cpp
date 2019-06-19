@@ -156,7 +156,7 @@ TASK_3 (Set, fire_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, t
 
 #define fire_obs_lace(state,obser,tb) CALL(fire_obs_lace, state, obser,tb)
 
-LDDState * ModelCheckLace::buildInitialMetaState()
+LDDState * ModelCheckLace::getInitialMetaState()
 {
 
     LDDState *initalAggregate=new LDDState;
