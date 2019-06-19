@@ -139,17 +139,17 @@ void * ModelCheckerTh::Compute_successors()
 
         MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
         ldd_refs_push(Complete_meta_state);
-        MDD canonised_initial=Canonize(Complete_meta_state,0);
+        MDD canonised_initial=Complete_meta_state;//Canonize(Complete_meta_state,0);
         ldd_refs_push(canonised_initial);
         fire=firable_obs(Complete_meta_state);
 
 
         c->m_lddstate=canonised_initial;
-                
+        c->setDeadLock(Set_Bloc(Complete_meta_state));   
+        c->setDiv(Set_Div(Complete_meta_state));
         m_st[0].push(Pair(couple(c,Complete_meta_state),fire));
         m_graph->setInitialState(c);
         m_graph->insert(c);
-        //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
         m_charge[0]=1;
         m_finish_initial=true;
 
@@ -193,7 +193,7 @@ void * ModelCheckerTh::Compute_successors()
 
                 ldd_refs_push(Complete_meta_state);
 
-                MDD reduced_meta=Canonize(Complete_meta_state,0);
+                MDD reduced_meta=Complete_meta_state;//Canonize(Complete_meta_state,0);
                 ldd_refs_push(reduced_meta);
 
                 if (id_thread==0)
@@ -225,6 +225,8 @@ void * ModelCheckerTh::Compute_successors()
 
                     m_graph->addArc();
                     m_graph->insert(reached_class);
+                    reached_class->setDiv(Set_Div(Complete_meta_state));
+                    reached_class->setDeadLock(Set_Bloc(Complete_meta_state));
                     pthread_mutex_unlock(&m_graph_mutex);
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
