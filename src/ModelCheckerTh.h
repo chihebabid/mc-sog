@@ -27,7 +27,7 @@ private:
     pthread_mutex_t m_gc_mutex;
     pthread_mutex_t m_supervise_gc_mutex;
 
-    //pthread_barrier_t m_barrier_builder;
+    pthread_barrier_t m_barrier_builder;
     unsigned int m_gc;
     bool m_finish=false;
     bool m_finish_initial=false;

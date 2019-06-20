@@ -175,15 +175,17 @@ unsigned int CommonSOG::getPlacesCount() {
 /**** Detect divergence in an agregate ****/
 bool CommonSOG::Set_Div(MDD &M) const
 {
+    
     if (m_nonObservable.empty())
     return false;
 	Set::const_iterator i;
 	MDD Reached,From;
 	//cout<<"Ici detect divergence \n";
-	Reached=M;
+	Reached=lddmc_false;
+    From=M;
 	do
 	{
-        From=Reached;
+        
 		for(i=m_nonObservable.begin();!(i==m_nonObservable.end());i++)
 		{
 
@@ -191,10 +193,13 @@ bool CommonSOG::Set_Div(MDD &M) const
         Reached=lddmc_union_mono(Reached,To);
 				//Reached=To;
 		}
+		
 		if(Reached==From) return true;
+        From=Reached;
+        Reached=lddmc_false;
 
-	}while(Reached!=lddmc_false && Reached != From);
-   //  cout<<"PAS DE SEQUENCE DIVERGENTE \n";
+	} while(Reached!=lddmc_false && Reached != lddmc_true);
+     
 	 return false;
 }
 

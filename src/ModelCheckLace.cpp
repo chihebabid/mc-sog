@@ -34,22 +34,19 @@ void ModelCheckLace::preConfigure() {
     m_transitionName=m_net.transitionName;
     m_placeName=m_net.m_placePosName;
 
-    cout<<"Toutes les Transitions:"<<endl;
+   /* cout<<"Toutes les Transitions:"<<endl;
     map<string,int>::iterator it2=m_transitionName.begin();
     for (; it2!=m_transitionName.end(); it2++)
     {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;
-    }
-
-
-
-    cout<<"Transitions observables :"<<endl;
+    }*/
+    //cout<<"Transitions observables :"<<endl;
     Set::iterator it=m_observable.begin();
-    for (; it!=m_observable.end(); it++)
+    /*for (; it!=m_observable.end(); it++)
     {
         cout<<*it<<"  ";
     }
-    cout<<endl;
+    cout<<endl;*/
     InterfaceTrans=m_net.InterfaceTrans;
     
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -156,6 +153,41 @@ TASK_3 (Set, fire_obs_lace,MDD, State, Set*, observable, vector<TransSylvan>*, t
 
 #define fire_obs_lace(state,obser,tb) CALL(fire_obs_lace, state, obser,tb)
 
+/// Compute divergence 
+
+TASK_3 (bool, SetDivL, MDD, M, Set*, nonObservable, vector<TransSylvan>*, tb_relation) 
+{
+    
+    if (nonObservable->empty()) return false;
+	Set::iterator i;
+	MDD Reached,From;
+	//cout<<"Ici detect divergence \n";
+	Reached=lddmc_false;
+    From=M;
+	do
+	{
+        
+		for(i=nonObservable->begin();!(i==nonObservable->end());i++)
+            SPAWN(lddmc_firing_lace,From,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
+        
+        
+		for(i=nonObservable->begin();!(i==nonObservable->end());i++) 
+        {
+            MDD To=SYNC(lddmc_firing_lace);
+            Reached=lddmc_union(Reached,To);
+        }
+		if(Reached==From) return true;
+        From=Reached;
+        Reached=lddmc_false;
+
+	} while(Reached!=lddmc_false && Reached != lddmc_true);
+     
+	 return false;
+}
+
+#define SetDivL(M, nonObservable,tb) CALL(SetDivL, M, nonObservable,tb)
+
+
 LDDState * ModelCheckLace::getInitialMetaState()
 {
 
@@ -170,6 +202,7 @@ LDDState * ModelCheckLace::getInitialMetaState()
     initalAggregate->setVisited();
     m_graph->setInitialState(initalAggregate);
     m_graph->insert(initalAggregate);
+    initalAggregate->setDiv(SetDivL(initial_meta_state,&m_nonObservable,&m_tb_relation));
     // Compute successors
     unsigned int onb_it=0;
     Set::const_iterator iter=fire.begin();
@@ -191,6 +224,7 @@ LDDState * ModelCheckLace::getInitialMetaState()
         MDD Complete_meta_state=SYNC(Aggregate_epsilon_lace);
         reached_class=new LDDState;
         reached_class->m_lddstate=Complete_meta_state;
+        reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
         m_graph->addArc();
         m_graph->insert(reached_class);
         initalAggregate->Successors.insert(initalAggregate->Successors.begin(),LDDEdge(reached_class,t));
@@ -233,6 +267,7 @@ void ModelCheckLace::buildSucc(LDDState *agregate)
 
             if(!pos)
             {
+                reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
                 m_graph->addArc();
                 m_graph->insert(reached_class);
                 agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(reached_class,t));
@@ -252,5 +287,8 @@ void ModelCheckLace::buildSucc(LDDState *agregate)
    }
 
 }
+
+
+
 
 

@@ -16,7 +16,7 @@ SogKripkeIteratorTh::SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd):m_ld
      m_lsucc.push_back(pair<LDDState*,int>(&m_deadlock,-1));
     }
     if (lddstate->isDiv()) {
-        m_lsucc.push_back(pair<LDDState*,int>(m_lddstate,-1));
+        m_lsucc.push_back(pair<LDDState*,int>(&m_div,-1));
     }
 
 }

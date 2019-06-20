@@ -98,6 +98,7 @@ void ModelCheckerTh::preConfigure()
     }
     delete [] prec;
     delete [] postc;
+    ComputeTh_Succ();
    
 }
 
@@ -107,11 +108,14 @@ void ModelCheckerTh::preConfigure()
 
 LDDState * ModelCheckerTh::getInitialMetaState()
 {
-    ComputeTh_Succ();
+    cout<<"**********************************"<<endl;
+    
     while (!m_finish_initial);
-    LDDState *initial_metastate=m_graph->getInitialState();    
-    while (!initial_metastate->isCompletedSucc());    
-    initial_metastate->setVisited();    
+    LDDState *initial_metastate=m_graph->getInitialState(); 
+    if (!initial_metastate->isVisited()) {
+        initial_metastate->setVisited();
+        while (!initial_metastate->isCompletedSucc());    
+    }
     return  initial_metastate;
 }
 
@@ -156,11 +160,8 @@ void * ModelCheckerTh::Compute_successors()
     }
 
     LDDState* reached_class;
-
-
     do
     {
-
         while (!m_st[id_thread].empty())
         {
             m_terminaison[id_thread]=false;
@@ -267,13 +268,9 @@ void * ModelCheckerTh::Compute_successors()
 
 
     }
-    while (isNotTerminated());
-    
-    
-        
-    
-    
-    
+    while (isNotTerminated() && !m_finish);
+    cout<<"Thread id :"<<id_thread<<endl;
+    pthread_barrier_wait(&m_barrier_builder);      
    
 }
 
@@ -298,8 +295,8 @@ void ModelCheckerTh::ComputeTh_Succ()
     pthread_mutex_init(&m_gc_mutex,NULL);
     pthread_mutex_init(&m_graph_mutex,NULL);
     pthread_mutex_init(&m_supervise_gc_mutex,NULL);
- /*   pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);
-    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread+1);*/
+ /*   pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);*/
+    pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread+1);
 
     for (int i=0; i<m_nb_thread; i++)
     {
@@ -318,21 +315,14 @@ void ModelCheckerTh::ComputeTh_Succ()
             cout<<"error: pthread_create, rc: "<<rc<<endl;
         }
     }
-    /* Compute_successors();
-     for (int i = 0; i < m_nb_thread-1; i++)
-     {
-         pthread_join(m_list_thread[i], NULL);
-     }*/
-
-
 }
+
 ModelCheckerTh::~ModelCheckerTh() {
     m_finish=true;    
-   /* pthread_barrier_wait(&m_barrier_threads);    
-    pthread_barrier_wait(&m_barrier_builder);   */ 
+   cout<<__func__<<endl;
+    pthread_barrier_wait(&m_barrier_builder);   
     for (int i = 0; i < m_nb_thread; i++)
-     {
-         cout<<"thread "<<i<<endl;
+     {       
          pthread_join(m_list_thread[i], NULL);
      }
      
