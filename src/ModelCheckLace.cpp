@@ -190,8 +190,8 @@ TASK_3 (bool, SetDivL, MDD, M, Set*, nonObservable, vector<TransSylvan>*, tb_rel
 
 LDDState * ModelCheckLace::getInitialMetaState()
 {
-
-    LDDState *initalAggregate=new LDDState;
+    
+    LDDState *initalAggregate=new LDDState();
     LDDState *reached_class;
     LACE_ME;
     MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
@@ -202,27 +202,28 @@ LDDState * ModelCheckLace::getInitialMetaState()
     initalAggregate->setVisited();
     m_graph->setInitialState(initalAggregate);
     m_graph->insert(initalAggregate);
+    
     initalAggregate->setDiv(SetDivL(initial_meta_state,&m_nonObservable,&m_tb_relation));
+    initalAggregate->setDeadLock(Set_Bloc(initial_meta_state));
     // Compute successors
     unsigned int onb_it=0;
-    Set::const_iterator iter=fire.begin();
+    Set::iterator iter=fire.begin();
     while(iter!=fire.end())
     {
         int t = *iter;
-
         SPAWN(Aggregate_epsilon_lace,get_successor(initial_meta_state,t),&m_nonObservable,&m_tb_relation);
         onb_it++;
         iter++;
     }
-
+    MDD Complete_meta_state;
     for (unsigned int i=0; i<onb_it; i++)
     {
         Set::iterator it = fire.end();
         it--;
         int t=*it;
         fire.erase(it);
-        MDD Complete_meta_state=SYNC(Aggregate_epsilon_lace);
-        reached_class=new LDDState;
+        Complete_meta_state=SYNC(Aggregate_epsilon_lace);
+        reached_class=new LDDState();
         reached_class->m_lddstate=Complete_meta_state;
         reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
         m_graph->addArc();
@@ -231,18 +232,18 @@ LDDState * ModelCheckLace::getInitialMetaState()
         reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(initalAggregate,t));
     }
 
-    return initalAggregate;
+    return m_graph->getInitialState();
 }
 
 void ModelCheckLace::buildSucc(LDDState *agregate)
 {
-
+   
    if (!agregate->isVisited()) {
    // It's first time to visit agregate, then we have to build its successors
         agregate->setVisited();
         LDDState *reached_class=nullptr;
         LACE_ME;
-        MDD meta_state(CALL(Aggregate_epsilon_lace,agregate->getLDDValue(),&m_nonObservable,&m_tb_relation));
+        MDD meta_state=agregate->getLDDValue();//(CALL(Aggregate_epsilon_lace,agregate->getLDDValue(),&m_nonObservable,&m_tb_relation));
 
         Set fire=fire_obs_lace(meta_state,&m_observable,&m_tb_relation);
         unsigned int onb_it=0;
@@ -261,13 +262,14 @@ void ModelCheckLace::buildSucc(LDDState *agregate)
             int t=*it;
             fire.erase(it);
             MDD Complete_meta_state=SYNC(Aggregate_epsilon_lace);
-            reached_class=new LDDState;
+            reached_class=new LDDState();
             reached_class->m_lddstate=Complete_meta_state;
             LDDState* pos=m_graph->find(reached_class);
 
             if(!pos)
             {
                 reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
+                reached_class->setDeadLock(Set_Bloc(Complete_meta_state));
                 m_graph->addArc();
                 m_graph->insert(reached_class);
                 agregate->Successors.insert(agregate->Successors.begin(),LDDEdge(reached_class,t));

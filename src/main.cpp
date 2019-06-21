@@ -154,10 +154,14 @@ int main(int argc, char** argv)
         if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(R,bound,nb_th);
         else 
             mcl=new ModelCheckerTh(R,bound,nb_th);
-        mcl->loadNet();        
+        mcl->loadNet();   
+        
         auto k =
             std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
-           /*  cout<<"Want to save the graph in a dot file ?";
+   /*     spot::twa_graph_ptr k =
+    spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                         spot::twa::prop_set::all(), true);*/
+       /*      cout<<"Want to save the graph in a dot file ?";
                 cin>>c;
                 if (c=='y')
                 {
@@ -167,8 +171,9 @@ int main(int argc, char** argv)
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
                     file.close();
-                }  */                          ;
-        // Performing on the fly Modelchecking
+                }                           
+        mcl->getGraph()->printCompleteInformation();
+        // Performing on the fly Modelchecking*/
         cout<<"Performing on the fly Modelchecking"<<endl;
 
         if (auto run = k->intersecting_run(af))
@@ -185,6 +190,8 @@ int main(int argc, char** argv)
         }
         else
             std::cout << "formula is verified\n";
+        //cin>>c;
+        //mcl->getGraph()->printCompleteInformation();
         delete mcl;
     }
     else if (n_tasks==1)

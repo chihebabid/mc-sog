@@ -6,9 +6,6 @@
 
 SogKripkeIteratorTh::SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
 {
-
-    //m_lddstate->setDiv(true);
-    //if (m_lddstate->getLDDValue()) m_lddstate->setDeadLock(true);
     for (int i=0;i<m_lddstate->getSuccessors()->size();i++) {
         m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
     }
@@ -30,7 +27,7 @@ bool SogKripkeIteratorTh::first() {
 }
 
 bool SogKripkeIteratorTh::next() {
-    //cout<<"entering "<<__func__<<endl;
+    //cout<<"entering "<<__func__<<"   "<<m_current_edge<<endl;
     m_current_edge++;
     return m_current_edge<m_lsucc.size();
 
@@ -44,7 +41,7 @@ bool SogKripkeIteratorTh::done() const {
 
 SogKripkeStateTh* SogKripkeIteratorTh::dst() const
   {
-    //cout<<"enter/excit "<<__func__<<endl;
+    /*cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;*/
     return new SogKripkeStateTh(m_lsucc.at(m_current_edge).first);
   }
 
@@ -69,6 +66,12 @@ bdd SogKripkeIteratorTh::cond()  const {
 SogKripkeIteratorTh::~SogKripkeIteratorTh()
 {
     //dtor
+}
+
+void SogKripkeIteratorTh::recycle(LDDState* aggregate, bdd cond)
+{
+        m_lddstate=aggregate;
+        spot::kripke_succ_iterator::recycle(cond);
 }
 
 static ModelCheckBaseMT * SogKripkeIteratorTh::m_builder;

@@ -3,12 +3,12 @@
 
 
 #include "LDDState.h"
-#include "ModelCheckerTh.h"
+#include "ModelCheckBaseMT.h"
 
 class SogKripkeStateTh : public spot::state
 {
 public:
-    static ModelCheckerTh * m_builder;
+    static ModelCheckBaseMT * m_builder;
     SogKripkeStateTh(LDDState *st):m_state(st) {
             m_builder->buildSucc(st);
     };
@@ -28,6 +28,7 @@ public:
         auto o = static_cast<const SogKripkeStateTh*>(other);
         size_t oh = o->hash();
         size_t h = hash();
+        //return (h!=oh);
         if (h < oh)
             return -1;
         else

@@ -22,11 +22,11 @@ public:
 
     SogKripkeStateTh* current_state() const;
 
-    bdd current_condition() const;
+     void recycle(LDDState *aggregate, bdd cond);
 
-    int current_transition() const;
+    //int current_transition() const;
 
-    bdd current_acceptance_conditions() const;
+    //bdd current_acceptance_conditions() const;
 
     std::string format_transition() const;
 

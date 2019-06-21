@@ -36,8 +36,8 @@ SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *bu
 
 
 state* SogKripkeTh::get_init_state() const {
-   // cout<<__func__<<endl;
-    return new SogKripkeStateTh(m_builder->getInitialMetaState());//new SpotSogState();
+   LDDState *ss=m_builder->getInitialMetaState();   
+    return new SogKripkeStateTh(ss);//new SpotSogState();
 
 }
 // Allows to print state label representing its id
@@ -52,12 +52,26 @@ std::string SogKripkeTh::format_state(const spot::state* s) const
   }
 
 SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
- //  cout<<__func__<<endl;
-
+   
     auto ss = static_cast<const SogKripkeStateTh*>(s);
+    LDDState *aggregate=ss->getLDDState();
+    bdd cond = state_condition(ss);
+    if (iter_cache_)
+    {
+      auto it = static_cast<SogKripkeIteratorTh*>(iter_cache_);
+      iter_cache_ = nullptr;    // empty the cache
+      it->recycle(aggregate, cond);
+      return it;
+    }
+  return new SogKripkeIteratorTh(aggregate,cond);
+
+    
+    
+    
+/*    auto ss = static_cast<const SogKripkeStateTh*>(s);
    //////////////////////////////////////////////
 
-    return new SogKripkeIteratorTh(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));
+    return new SogKripkeIteratorTh(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));*/
 }
 
 bdd SogKripkeTh::state_condition(const spot::state* s) const

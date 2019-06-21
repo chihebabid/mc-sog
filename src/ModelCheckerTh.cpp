@@ -108,8 +108,6 @@ void ModelCheckerTh::preConfigure()
 
 LDDState * ModelCheckerTh::getInitialMetaState()
 {
-    cout<<"**********************************"<<endl;
-    
     while (!m_finish_initial);
     LDDState *initial_metastate=m_graph->getInitialState(); 
     if (!initial_metastate->isVisited()) {
@@ -264,17 +262,12 @@ void * ModelCheckerTh::Compute_successors()
             e.first.first->setCompletedSucc();
         }
         m_terminaison[id_thread]=true;
-
-
-
     }
     while (isNotTerminated() && !m_finish);
-    cout<<"Thread id :"<<id_thread<<endl;
+    //cout<<"Thread id :"<<id_thread<<endl;
     pthread_barrier_wait(&m_barrier_builder);      
    
 }
-
-
 
 void * ModelCheckerTh::threadHandler(void *context)
 {
@@ -319,7 +312,7 @@ void ModelCheckerTh::ComputeTh_Succ()
 
 ModelCheckerTh::~ModelCheckerTh() {
     m_finish=true;    
-   cout<<__func__<<endl;
+  
     pthread_barrier_wait(&m_barrier_builder);   
     for (int i = 0; i < m_nb_thread; i++)
      {       

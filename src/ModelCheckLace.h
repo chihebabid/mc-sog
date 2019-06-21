@@ -4,8 +4,8 @@
 class ModelCheckLace : public ModelCheckBaseMT {
 public:
         ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
-        LDDState * getInitialMetaState();
-        void buildSucc(LDDState *agregate);
+        LDDState * getInitialMetaState() override;
+        void buildSucc(LDDState *agregate) override;
 private:
         void preConfigure();
 

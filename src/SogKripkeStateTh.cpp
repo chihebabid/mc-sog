@@ -8,4 +8,4 @@ SogKripkeStateTh::~SogKripkeStateTh()
     //dtor
 }
 
-static ModelCheckerTh * SogKripkeStateTh::m_builder;
+static ModelCheckBaseMT * SogKripkeStateTh::m_builder;
