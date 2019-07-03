@@ -70,6 +70,8 @@ add_executable(hybrid-sog main.cpp
   SogKripkeIteratorTh.h
   ModelCheckerTh.cpp
   ModelCheckerTh.h
+  MCHybridSOG.cpp
+  MCHybridSOG.h
   )
 
 target_link_libraries(hybrid-sog
