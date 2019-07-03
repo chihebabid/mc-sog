@@ -3,13 +3,13 @@
 
 # compile C with /usr/bin/cc
 # compile CXX with /usr/bin/c++
-C_FLAGS =  
+C_FLAGS = -g  
 
 C_DEFINES = 
 
 C_INCLUDES = -I/home/chiheb/ProjectCPP/mc-sog/libraries/parser/src -I/home/chiheb/ProjectCPP/mc-sog/third-party/sylvan -I/home/chiheb/ProjectCPP/mc-sog/src -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/home/chiheb/ProjectCPP/mc-sog/third-party/sylvan/src -isystem /usr/include/spot 
 
-CXX_FLAGS =  -fpermissive  
+CXX_FLAGS =  -fpermissive -g  
 
 CXX_DEFINES = 
 

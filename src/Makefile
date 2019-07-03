@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -260,6 +260,33 @@ LDDState.cpp.s:
 	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/LDDState.cpp.s
 .PHONY : LDDState.cpp.s
 
+ModelCheckBaseMT.o: ModelCheckBaseMT.cpp.o
+
+.PHONY : ModelCheckBaseMT.o
+
+# target to build an object file
+ModelCheckBaseMT.cpp.o:
+	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o
+.PHONY : ModelCheckBaseMT.cpp.o
+
+ModelCheckBaseMT.i: ModelCheckBaseMT.cpp.i
+
+.PHONY : ModelCheckBaseMT.i
+
+# target to preprocess a source file
+ModelCheckBaseMT.cpp.i:
+	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.i
+.PHONY : ModelCheckBaseMT.cpp.i
+
+ModelCheckBaseMT.s: ModelCheckBaseMT.cpp.s
+
+.PHONY : ModelCheckBaseMT.s
+
+# target to generate assembly for a file
+ModelCheckBaseMT.cpp.s:
+	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.s
+.PHONY : ModelCheckBaseMT.cpp.s
+
 ModelCheckLace.o: ModelCheckLace.cpp.o
 
 .PHONY : ModelCheckLace.o
@@ -395,33 +422,6 @@ SogKripkeIterator.cpp.s:
 	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeIterator.cpp.s
 .PHONY : SogKripkeIterator.cpp.s
 
-SogKripkeIteratorOTF.o: SogKripkeIteratorOTF.cpp.o
-
-.PHONY : SogKripkeIteratorOTF.o
-
-# target to build an object file
-SogKripkeIteratorOTF.cpp.o:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o
-.PHONY : SogKripkeIteratorOTF.cpp.o
-
-SogKripkeIteratorOTF.i: SogKripkeIteratorOTF.cpp.i
-
-.PHONY : SogKripkeIteratorOTF.i
-
-# target to preprocess a source file
-SogKripkeIteratorOTF.cpp.i:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.i
-.PHONY : SogKripkeIteratorOTF.cpp.i
-
-SogKripkeIteratorOTF.s: SogKripkeIteratorOTF.cpp.s
-
-.PHONY : SogKripkeIteratorOTF.s
-
-# target to generate assembly for a file
-SogKripkeIteratorOTF.cpp.s:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.s
-.PHONY : SogKripkeIteratorOTF.cpp.s
-
 SogKripkeIteratorTh.o: SogKripkeIteratorTh.cpp.o
 
 .PHONY : SogKripkeIteratorTh.o
@@ -449,33 +449,6 @@ SogKripkeIteratorTh.cpp.s:
 	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.s
 .PHONY : SogKripkeIteratorTh.cpp.s
 
-SogKripkeOTF.o: SogKripkeOTF.cpp.o
-
-.PHONY : SogKripkeOTF.o
-
-# target to build an object file
-SogKripkeOTF.cpp.o:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o
-.PHONY : SogKripkeOTF.cpp.o
-
-SogKripkeOTF.i: SogKripkeOTF.cpp.i
-
-.PHONY : SogKripkeOTF.i
-
-# target to preprocess a source file
-SogKripkeOTF.cpp.i:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.i
-.PHONY : SogKripkeOTF.cpp.i
-
-SogKripkeOTF.s: SogKripkeOTF.cpp.s
-
-.PHONY : SogKripkeOTF.s
-
-# target to generate assembly for a file
-SogKripkeOTF.cpp.s:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.s
-.PHONY : SogKripkeOTF.cpp.s
-
 SogKripkeState.o: SogKripkeState.cpp.o
 
 .PHONY : SogKripkeState.o
@@ -502,33 +475,6 @@ SogKripkeState.s: SogKripkeState.cpp.s
 SogKripkeState.cpp.s:
 	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeState.cpp.s
 .PHONY : SogKripkeState.cpp.s
-
-SogKripkeStateOTF.o: SogKripkeStateOTF.cpp.o
-
-.PHONY : SogKripkeStateOTF.o
-
-# target to build an object file
-SogKripkeStateOTF.cpp.o:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o
-.PHONY : SogKripkeStateOTF.cpp.o
-
-SogKripkeStateOTF.i: SogKripkeStateOTF.cpp.i
-
-.PHONY : SogKripkeStateOTF.i
-
-# target to preprocess a source file
-SogKripkeStateOTF.cpp.i:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.i
-.PHONY : SogKripkeStateOTF.cpp.i
-
-SogKripkeStateOTF.s: SogKripkeStateOTF.cpp.s
-
-.PHONY : SogKripkeStateOTF.s
-
-# target to generate assembly for a file
-SogKripkeStateOTF.cpp.s:
-	cd /home/chiheb/ProjectCPP/mc-sog && $(MAKE) -f src/CMakeFiles/hybrid-sog.dir/build.make src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.s
-.PHONY : SogKripkeStateOTF.cpp.s
 
 SogKripkeStateTh.o: SogKripkeStateTh.cpp.o
 
@@ -797,6 +743,9 @@ help:
 	@echo "... LDDState.o"
 	@echo "... LDDState.i"
 	@echo "... LDDState.s"
+	@echo "... ModelCheckBaseMT.o"
+	@echo "... ModelCheckBaseMT.i"
+	@echo "... ModelCheckBaseMT.s"
 	@echo "... ModelCheckLace.o"
 	@echo "... ModelCheckLace.i"
 	@echo "... ModelCheckLace.s"
@@ -812,21 +761,12 @@ help:
 	@echo "... SogKripkeIterator.o"
 	@echo "... SogKripkeIterator.i"
 	@echo "... SogKripkeIterator.s"
-	@echo "... SogKripkeIteratorOTF.o"
-	@echo "... SogKripkeIteratorOTF.i"
-	@echo "... SogKripkeIteratorOTF.s"
 	@echo "... SogKripkeIteratorTh.o"
 	@echo "... SogKripkeIteratorTh.i"
 	@echo "... SogKripkeIteratorTh.s"
-	@echo "... SogKripkeOTF.o"
-	@echo "... SogKripkeOTF.i"
-	@echo "... SogKripkeOTF.s"
 	@echo "... SogKripkeState.o"
 	@echo "... SogKripkeState.i"
 	@echo "... SogKripkeState.s"
-	@echo "... SogKripkeStateOTF.o"
-	@echo "... SogKripkeStateOTF.i"
-	@echo "... SogKripkeStateOTF.s"
 	@echo "... SogKripkeStateTh.o"
 	@echo "... SogKripkeStateTh.i"
 	@echo "... SogKripkeStateTh.s"

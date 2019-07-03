@@ -265,9 +265,22 @@ src/CMakeFiles/hybrid-sog.dir/SogKripke.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/SogKripke.cpp.s"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/SogKripke.cpp -o CMakeFiles/hybrid-sog.dir/SogKripke.cpp.s
 
+src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
+src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o: src/ModelCheckBaseMT.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o"
+	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckBaseMT.cpp
+
+src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.i"
+	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckBaseMT.cpp > CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.i
+
+src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.s"
+	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckBaseMT.cpp -o CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.s
+
 src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
 src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o: src/ModelCheckLace.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckLace.cpp
 
 src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.i: cmake_force
@@ -278,48 +291,9 @@ src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.s"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckLace.cpp -o CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.s
 
-src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
-src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o: src/SogKripkeStateOTF.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeStateOTF.cpp
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.i"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeStateOTF.cpp > CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.i
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.s"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeStateOTF.cpp -o CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.s
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
-src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o: src/SogKripkeIteratorOTF.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeIteratorOTF.cpp
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.i"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeIteratorOTF.cpp > CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.i
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.s"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeIteratorOTF.cpp -o CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.s
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
-src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o: src/SogKripkeOTF.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeOTF.cpp
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.i"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeOTF.cpp > CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.i
-
-src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.s"
-	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeOTF.cpp -o CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.s
-
 src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
 src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o: src/SogKripkeTh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeTh.cpp
 
 src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.i: cmake_force
@@ -332,7 +306,7 @@ src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.s: cmake_force
 
 src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
 src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o: src/SogKripkeStateTh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeStateTh.cpp
 
 src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.i: cmake_force
@@ -345,7 +319,7 @@ src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.s: cmake_force
 
 src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
 src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o: src/SogKripkeIteratorTh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/SogKripkeIteratorTh.cpp
 
 src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.i: cmake_force
@@ -358,7 +332,7 @@ src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.s: cmake_force
 
 src/CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.o: src/CMakeFiles/hybrid-sog.dir/flags.make
 src/CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.o: src/ModelCheckerTh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object src/CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object src/CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.o"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.o -c /home/chiheb/ProjectCPP/mc-sog/src/ModelCheckerTh.cpp
 
 src/CMakeFiles/hybrid-sog.dir/ModelCheckerTh.cpp.i: cmake_force
@@ -387,10 +361,8 @@ hybrid__sog_OBJECTS = \
 "CMakeFiles/hybrid-sog.dir/SogKripkeState.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/SogKripkeIterator.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/SogKripke.cpp.o" \
+"CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o" \
-"CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o" \
-"CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o" \
-"CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o" \
 "CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o" \
@@ -415,10 +387,8 @@ src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogTwa.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeState.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeIterator.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripke.cpp.o
+src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/ModelCheckBaseMT.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/ModelCheckLace.cpp.o
-src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeStateOTF.cpp.o
-src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorOTF.cpp.o
-src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeOTF.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeTh.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeStateTh.cpp.o
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/SogKripkeIteratorTh.cpp.o
@@ -433,7 +403,7 @@ src/hybrid-sog: /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so
 src/hybrid-sog: /usr/lib/x86_64-linux-gnu/libssl.so
 src/hybrid-sog: /usr/lib/x86_64-linux-gnu/libcrypto.so
 src/hybrid-sog: src/CMakeFiles/hybrid-sog.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX executable hybrid-sog"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/chiheb/ProjectCPP/mc-sog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Linking CXX executable hybrid-sog"
 	cd /home/chiheb/ProjectCPP/mc-sog/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/hybrid-sog.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -303,15 +303,19 @@ int main(int argc, char** argv)
     {
         if(nb_th>1)
         {
-            cout<<"**************Hybrid version**************** \n" <<endl;
+            if (task_id==0) cout<<"**************Hybrid version**************** \n" <<endl;
             if (strcmp(argv[1],"otf")) {
                 HybridSOG DR(R, bound);
                 LDDGraph g(&DR);
-                cout<<"Building the Distributed SOG"<<endl;
+                if (task_id==0) cout<<"Building the Distributed SOG by "<<n_tasks<<" processes..."<<endl;
                 DR.computeDSOG(g);
             }
             else {
-                cout<<"Model checking on the fly..."<<endl;
+                if (task_id==0) {
+                    cout<<"Model checking on the fly..."<<endl;
+                    cout<<" One process will perform Model checking"<<endl;
+                    cout<<n_tasks-1<<" process will build the Distributed SOG"<<endl;
+                }
             }
             
         }
