@@ -304,10 +304,16 @@ int main(int argc, char** argv)
         if(nb_th>1)
         {
             cout<<"**************Hybrid version**************** \n" <<endl;
-            HybridSOG DR(R, bound);
-
-            LDDGraph g(&DR);
-            DR.computeDSOG(g);
+            if (strcmp(argv[1],"otf")) {
+                HybridSOG DR(R, bound);
+                LDDGraph g(&DR);
+                cout<<"Building the Distributed SOG"<<endl;
+                DR.computeDSOG(g);
+            }
+            else {
+                cout<<"Model checking on the fly..."<<endl;
+            }
+            
         }
         else
         {
