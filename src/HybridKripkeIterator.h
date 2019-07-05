@@ -17,10 +17,10 @@ public:
     bool first() override;
     bool next() override;
     bool done() const override;
-    SogKripkeStateTh* dst() const override;
+    HybridKripkeState* dst() const override;
     bdd cond() const override final;
 
-    SogKripkeStateTh* current_state() const;
+    HybridKripkeState* current_state() const;
 
     void recycle(LDDState *aggregate, bdd cond);
 

@@ -1,11 +1,11 @@
 #include <spot/kripke/kripke.hh>
 #include "LDDState.h"
-#include "SogKripkeStateTh.h"
+#include "HybridKripkeState.h"
 
 
-SogKripkeStateTh::~SogKripkeStateTh()
+HybridKripkeState::~HybridKripkeState()
 {
     //dtor
 }
 
-static ModelCheckBaseMT * SogKripkeStateTh::m_builder;
+static ModelCheckBaseMT * HybridKripkeState::m_builder;

@@ -10,21 +10,21 @@
 #include "HybridKripke.h"
 #include <map>
 using namespace spot;
-SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder): spot::kripke(dict_ptr),m_builder(builder)
+HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder): spot::kripke(dict_ptr),m_builder(builder)
 {
-    SogKripkeIteratorTh::m_builder=builder;
-    SogKripkeStateTh::m_builder=builder;
-    SogKripkeIteratorTh::m_dict_ptr=&dict_ptr;
-    SogKripkeIteratorTh::m_deadlock.setLDDValue(1);
-    SogKripkeIteratorTh::m_deadlock.setVisited();
-    SogKripkeIteratorTh::m_deadlock.setCompletedSucc();
-    SogKripkeIteratorTh::m_div.setLDDValue(0);
-    SogKripkeIteratorTh::m_div.setVisited();
-    SogKripkeIteratorTh::m_div.setCompletedSucc();
-    SogKripkeIteratorTh::m_div.Successors.push_back(pair<LDDState*,int>(&SogKripkeIteratorTh::m_div,-1));
+    HybridKripkeIterator::m_builder=builder;
+    HybridKripkeIterator::m_builder=builder;
+    HybridKripkeIterator::m_dict_ptr=&dict_ptr;
+    HybridKripkeIterator::m_deadlock.setLDDValue(1);
+    HybridKripkeIterator::m_deadlock.setVisited();
+    HybridKripkeIterator::m_deadlock.setCompletedSucc();
+    HybridKripkeIterator::m_div.setLDDValue(0);
+    HybridKripkeIterator::m_div.setVisited();
+    HybridKripkeIterator::m_div.setCompletedSucc();
+    HybridKripkeIterator::m_div.Successors.push_back(pair<LDDState*,int>(&HybridKripkeIterator::m_div,-1));
 }
 
-SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeTh(dict_ptr,builder) {
+HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):HybridKripke(dict_ptr,builder) {
 
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
@@ -35,35 +35,35 @@ SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *bu
 }
 
 
-state* SogKripkeTh::get_init_state() const {
+state* HybridKripke::get_init_state() const {
    LDDState *ss=m_builder->getInitialMetaState();   
-    return new SogKripkeStateTh(ss);//new SpotSogState();
+    return new HybridKripkeState(ss);//new SpotSogState();
 
 }
 // Allows to print state label representing its id
-std::string SogKripkeTh::format_state(const spot::state* s) const
+std::string HybridKripke::format_state(const spot::state* s) const
   {
     //cout<<__func__<<endl;
-    auto ss = static_cast<const SogKripkeStateTh*>(s);
+    auto ss = static_cast<const HybridKripkeState*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
    // cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
 
-SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
+HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
    
-    auto ss = static_cast<const SogKripkeStateTh*>(s);
+    auto ss = static_cast<const HybridKripkeState*>(s);
     LDDState *aggregate=ss->getLDDState();
     bdd cond = state_condition(ss);
     if (iter_cache_)
     {
-      auto it = static_cast<SogKripkeIteratorTh*>(iter_cache_);
+      auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
       it->recycle(aggregate, cond);
       return it;
     }
-  return new SogKripkeIteratorTh(aggregate,cond);
+  return new HybridKripkeIterator(aggregate,cond);
 
     
     
@@ -74,10 +74,10 @@ SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
     return new SogKripkeIteratorTh(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));*/
 }
 
-bdd SogKripkeTh::state_condition(const spot::state* s) const
+bdd HybridKripke::state_condition(const spot::state* s) const
   {
 
-    auto ss = static_cast<const SogKripkeStateTh*>(s);
+    auto ss = static_cast<const HybridKripkeState*>(s);
     vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
 
@@ -99,7 +99,7 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
   }
 
 
-SogKripkeTh::~SogKripkeTh()
+HybridKripke::~HybridKripke()
 {
     //dtor
 }

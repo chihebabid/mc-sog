@@ -4,7 +4,7 @@
 #include "HybridKripkeIterator.h"
 
 
-SogKripkeIteratorTh::SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
+HybridKripkeIterator::HybridKripkeIterator(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
 {
     for (int i=0;i<m_lddstate->getSuccessors()->size();i++) {
         m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
@@ -17,7 +17,7 @@ SogKripkeIteratorTh::SogKripkeIteratorTh(const LDDState* lddstate, bdd cnd):m_ld
     }
 
 }
-bool SogKripkeIteratorTh::first() {
+bool HybridKripkeIterator::first() {
 
    // cout<<"entering "<<__func__<<endl;
     m_current_edge=0;
@@ -26,26 +26,26 @@ bool SogKripkeIteratorTh::first() {
 
 }
 
-bool SogKripkeIteratorTh::next() {
+bool HybridKripkeIterator::next() {
     //cout<<"entering "<<__func__<<"   "<<m_current_edge<<endl;
     m_current_edge++;
     return m_current_edge<m_lsucc.size();
 
 }
 
-bool SogKripkeIteratorTh::done() const {
+bool HybridKripkeIterator::done() const {
     //cout<<"entring /excit"<<__func__<<endl;
     return m_current_edge==m_lsucc.size();
 
 }
 
-SogKripkeStateTh* SogKripkeIteratorTh::dst() const
+HybridKripkeState* HybridKripkeIterator::dst() const
   {
     /*cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;*/
-    return new SogKripkeStateTh(m_lsucc.at(m_current_edge).first);
+    return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
   }
 
-bdd SogKripkeIteratorTh::cond()  const {
+bdd HybridKripkeIterator::cond()  const {
     //cout<<"entering "<<__func__<<endl;
     if (m_lsucc.at(m_current_edge).second==-1) return bddtrue;
 
@@ -63,18 +63,18 @@ bdd SogKripkeIteratorTh::cond()  const {
   //cout<<"Iterator acc()\n";
   return 0U;
 }*/
-SogKripkeIteratorTh::~SogKripkeIteratorTh()
+HybridKripkeIterator::~HybridKripkeIterator()
 {
     //dtor
 }
 
-void SogKripkeIteratorTh::recycle(LDDState* aggregate, bdd cond)
+void HybridKripkeIterator::recycle(LDDState* aggregate, bdd cond)
 {
         m_lddstate=aggregate;
         spot::kripke_succ_iterator::recycle(cond);
 }
 
-static ModelCheckBaseMT * SogKripkeIteratorTh::m_builder;
-static spot::bdd_dict_ptr* SogKripkeIteratorTh::m_dict_ptr;
-static LDDState SogKripkeIteratorTh::m_deadlock;
-static LDDState SogKripkeIteratorTh::m_div;
+static ModelCheckBaseMT * HybridKripkeIterator::m_builder;
+static spot::bdd_dict_ptr* HybridKripkeIterator::m_dict_ptr;
+static LDDState HybridKripkeIterator::m_deadlock;
+static LDDState HybridKripkeIterator::m_div;

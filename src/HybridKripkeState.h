@@ -1,22 +1,22 @@
-#ifndef SOGKRIPKESTATETH_H_INCLUDED
-#define SOGKRIPKESTATETH_H_INCLUDED
+#ifndef HYBRIDKRIPKESTATETH_H_INCLUDED
+#define HYBRIDKRIPKESTATETH_H_INCLUDED
 
 
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
 
-class SogKripkeStateTh : public spot::state
+class HybridKripkeState : public spot::state
 {
 public:
     static ModelCheckBaseMT * m_builder;
-    SogKripkeStateTh(LDDState *st):m_state(st) {
+    HybridKripkeState(LDDState *st):m_state(st) {
             m_builder->buildSucc(st);
     };
-    virtual ~SogKripkeStateTh();
+    virtual ~HybridKripkeState();
 
-    SogKripkeStateTh* clone() const override
+    HybridKripkeState* clone() const override
     {
-        return new SogKripkeStateTh(m_state);
+        return new HybridKripkeState(m_state);
     }
     size_t hash() const override
     {
@@ -25,7 +25,7 @@ public:
 
     int compare(const spot::state* other) const override
     {
-        auto o = static_cast<const SogKripkeStateTh*>(other);
+        auto o = static_cast<const HybridKripkeState*>(other);
         size_t oh = o->hash();
         size_t h = hash();
         //return (h!=oh);
