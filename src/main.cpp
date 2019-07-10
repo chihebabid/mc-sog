@@ -11,6 +11,7 @@
 #include "DistributedSOG.h"
 #include "threadSOG.h"
 #include "HybridSOG.h"
+#include "MCHybridSOG.h"
 #include "LDDGraph.h"
 #include "ModelCheckLace.h"
 #include "ModelCheckerTh.h"
@@ -263,9 +264,7 @@ int main(int argc, char** argv)
                 //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
 
                 spot::twa_graph_ptr k =
-                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),
-                                         spot::twa::prop_set::all(), true);
-
+                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),spot::twa::prop_set::all(), true);
 
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
@@ -273,7 +272,6 @@ int main(int argc, char** argv)
                 if (c=='y')
                 {
                     fstream file;
-
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
@@ -311,12 +309,28 @@ int main(int argc, char** argv)
                 DR.computeDSOG(g);
             }
             else {
-                if (task_id==0) {
+                n_tasks--;
+                if (task_id==n_tasks) {
                     cout<<"Model checking on the fly..."<<endl;
                     cout<<" One process will perform Model checking"<<endl;
-                    cout<<n_tasks-1<<" process will build the Distributed SOG"<<endl;
+                    cout<<n_tasks<<" process will build the Distributed SOG"<<endl;
+                }  
+                MPI_Comm gprocess;
+                MPI_Comm_split(MPI_COMM_WORLD,task_id==n_tasks?0:1,task_id,&gprocess);
+                cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
+                    if (task_id!=n_tasks)  {
+                        cout<<"N task :"<<n_tasks<<endl;
+                        MCHybridSOG DR(R,gprocess, bound,false);
+                        LDDGraph g(&DR);
+                        DR.computeDSOG(g);
+                        
+                    }
+                    else {
+                        
+                        cout<<"On the fly Model checker by process "<<task_id<<endl;
+                    }
                 }
-            }
+           
             
         }
         else

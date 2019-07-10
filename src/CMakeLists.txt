@@ -85,8 +85,6 @@ target_link_libraries(hybrid-sog
   spot
   sylvan
   RdP
-
-
   ${MPI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
 )

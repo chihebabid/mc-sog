@@ -47,7 +47,7 @@ typedef stack<MSG> pile_msg;
 class MCHybridSOG : public CommonSOG
 {
 public:
-    MCHybridSOG(const NewNet &, int BOUND = 32, bool init = false);
+    MCHybridSOG(const NewNet &,MPI_Comm &, int BOUND = 32, bool init = false);
     void buildFromNet(int index);
     /// principal functions to construct the SOG
     void computeDSOG(LDDGraph &g);
@@ -57,12 +57,13 @@ public:
 
 protected:
 private:
+    MPI_Comm m_comm_world;
     /// \ hash function
     void get_md5(const string &chaine, unsigned char *md_chaine);
     /// Termination Detection functions
     inline void ReceiveTermSignal();
-    inline void TermSendMsg();
-    inline void startTermDetectionByMaster();
+    
+    
     inline void TermReceivedMsg();
 
 
@@ -97,8 +98,8 @@ private:
     MDD decodage_message(const char *chaine);
     /// there is a message to receive?
     void read_message();
-    /// receive termination message
-    void read_termination();
+    
+    
     void AbortTerm();
     /// receive state message
     void read_state_message();

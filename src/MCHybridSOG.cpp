@@ -22,10 +22,10 @@ using namespace sylvan;
 
 
 
-MCHybridSOG::MCHybridSOG(const NewNet &R, int BOUND,bool init)
+MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world, int BOUND,bool init)
 {
 
-
+    m_comm_world=comm_world;
     lace_init(1, 0);
     lace_startup(0, NULL, NULL);
 
@@ -204,38 +204,10 @@ void *MCHybridSOG::doCompute()
                 send_state_message();
                 read_message();
             }
-            while (isNotTerminated()); //!m_msg[0].empty());
+            while (isNotTerminated()); 
 
 
-            if (m_working==0  && m_nbsend>=1)
-            {
-
-
-                if(task_id==0)// && !isNotTerminated())
-                {
-                    /*cout<<"Termination started..."<<endl;
-                    cout<<"Nb send "<<m_nbsend<<" nb recev "<<m_nbrecv<<endl;*/
-                    startTermDetectionByMaster();
-                    do
-                    {
-                        read_termination();
-                    }
-                    while (m_Terminating==true && m_Terminated==false );// && m_tag_state_received==false);
-                    //cout<<"task id"<<task_id<<"termination is started"<<endl;
-                }
-                else //if (task_id && !isNotTerminated())
-                {
-                    m_Terminating=true;
-                    do
-                    {
-                        read_termination();
-                    }
-                    while (m_Terminating==true && m_Terminated==false);  // && !isNotTerminated());// && m_tag_state_received==false);
-                    m_Terminating=false;
-                }
-                //pthread_barrier_wait(&m_barrier2);
-
-            } //m_working
+            
 
         }
         /******************************* Construction des aggregats ************************************/
@@ -268,7 +240,7 @@ void *MCHybridSOG::doCompute()
                         m_charge[id_thread]--;
 
                         LDDState *reached_class=NULL;
-                        // cout << " cccccccccc "<<endl;
+                        
 
                         while(!e.second.empty())
                         {
@@ -375,7 +347,6 @@ void *MCHybridSOG::doCompute()
                                     strcpySHA(reached_class->m_SHA2,Identif);
                                     pthread_mutex_unlock(&m_graph_mutex);
                                 #ifndef REDUCE
-                                printf("Hello canonize");
                                 reached=Canonize(ldd_reachedclass,0);
                                 ldd_refs_push(ldd_reachedclass);
                                 #endif
@@ -488,64 +459,33 @@ void MCHybridSOG::ReceiveTermSignal()
 {
 
     int  term=1;
-    MPI_Recv(&term, 1, MPI_INT, task_id==0 ? n_tasks-1 : task_id-1, TAG_TERM, MPI_COMM_WORLD,&m_status);
+    MPI_Recv(&term, 1, MPI_INT, task_id==0 ? n_tasks-1 : task_id-1, TAG_TERM, m_comm_world,&m_status);
     //cout<<"Task id receive terminal message"<<task_id<<endl;
     if(task_id!=0)
     {
-        MPI_Send(&term, 1, MPI_INT, (task_id + 1)%n_tasks, TAG_TERM, MPI_COMM_WORLD);
+        MPI_Send(&term, 1, MPI_INT, (task_id + 1)%n_tasks, TAG_TERM, m_comm_world);
     }
     m_Terminated=true;
 }
 
-void MCHybridSOG::TermSendMsg()
-{
-
-
-    int term=1;
-    int kkk;
-    MPI_Recv( &kkk, 1, MPI_INT,task_id==0 ? n_tasks-1 : task_id-1, TAG_SEND, MPI_COMM_WORLD, &m_status);
-    //  cout<<" Terminaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaate \n"<<task_id<<endl;
-
-    if(task_id!=0)
-    {
-        kkk=kkk+m_nbsend;
-        MPI_Send( &kkk, 1, MPI_INT, (task_id + 1) % n_tasks, TAG_SEND, MPI_COMM_WORLD);
-
-    }
-    else if(kkk==m_total_nb_recv)
-    {
-        MPI_Send( &term, 1, MPI_INT, (task_id + 1) % n_tasks, TAG_TERM, MPI_COMM_WORLD);
-    }
-    else
-    {
-        m_Terminating=false;
-    }
-
-}
-
-void MCHybridSOG::startTermDetectionByMaster()
-{
-    m_Terminating=true;
-    MPI_Send( &m_nbrecv, 1, MPI_INT, (task_id+1)%n_tasks, TAG_REC, MPI_COMM_WORLD);
-}
 
 void MCHybridSOG::TermReceivedMsg()
 {
 
 
     int kkk=0;
-    MPI_Recv(&kkk, 1, MPI_INT, task_id==0 ? n_tasks-1 : task_id-1, TAG_REC, MPI_COMM_WORLD, &m_status);
+    MPI_Recv(&kkk, 1, MPI_INT, task_id==0 ? n_tasks-1 : task_id-1, TAG_REC, m_comm_world, &m_status);
     if(task_id!=0)
     {
         kkk=kkk+m_nbrecv;
-        MPI_Send( &kkk, 1, MPI_INT, (task_id+1)%n_tasks, TAG_REC, MPI_COMM_WORLD);
+        MPI_Send( &kkk, 1, MPI_INT, (task_id+1)%n_tasks, TAG_REC, m_comm_world);
 
     }
     else if (m_Terminating)
     {
         m_total_nb_recv=kkk;
         // printf("Process 0  total receive %d\n", m_total_nb_recv);
-        MPI_Send( &m_nbsend, 1, MPI_INT, 1, TAG_SEND, MPI_COMM_WORLD);
+        MPI_Send( &m_nbsend, 1, MPI_INT, 1, TAG_SEND, m_comm_world);
         // printf("Process 0  nb send au debut %d\n", m_nbsend);
     }
 
@@ -569,8 +509,8 @@ void MCHybridSOG::AbortTerm()
 {
     int v=1;
     m_Terminating=false;
-    MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
-    if (task_id)  MPI_Send( &v, 1, MPI_INT, 0, TAG_ABORT, MPI_COMM_WORLD);
+    MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, m_comm_world, &m_status);
+    if (task_id)  MPI_Send( &v, 1, MPI_INT, 0, TAG_ABORT, m_comm_world);
 }
 
 void MCHybridSOG::read_message()
@@ -578,7 +518,7 @@ void MCHybridSOG::read_message()
     int flag=0;
 
 
-    MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status); // exist a msg to receiv?
+    MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,m_comm_world,&flag,&m_status); // exist a msg to receiv?
     while (flag!=0)
     {
         switch (m_status.MPI_TAG)
@@ -599,54 +539,12 @@ void MCHybridSOG::read_message()
              if (task_id!=0)
                  MPI_Send( &v, 1, MPI_INT, 0, TAG_ABORT, MPI_COMM_WORLD);*/
         }
-        MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status);
+        MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,m_comm_world,&flag,&m_status);
     }
 
 }
 
 
-void MCHybridSOG::read_termination()
-{
-    int flag=0;
-
-    MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status); // exist a msg to receiv?
-    while (flag!=0)
-    {
-        switch (m_status.MPI_TAG)
-        {
-        case TAG_ABORT :
-            int v;
-            MPI_Recv(&v, 1, MPI_INT, MPI_ANY_SOURCE, TAG_ABORT, MPI_COMM_WORLD, &m_status);
-            //cout<<"TAG ABORTED received by task"<<task_id<<endl;
-            m_Terminating=false;
-            return;
-            break;
-        case TAG_REC :
-            //cout<<"TAG REC by task"<<task_id<<endl;
-            TermReceivedMsg();
-            break;
-        case TAG_SEND :
-            //cout<<"TAG SEND received by task"<<task_id<<endl;
-            TermSendMsg();
-            break;
-        case TAG_TERM :
-            //cout<<"TAG TERM received by task................................."<<task_id<<endl;
-            ReceiveTermSignal();
-            break;
-        case TAG_STATE :
-            //cout<<"TAG STATe received by task"<<task_id<<endl;
-            m_Terminating=false;
-            return;
-            break;
-        default :
-            cout<<"read_termination unknown received "<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
-            break;
-
-        }
-
-        MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status);
-    }
-}
 
 void MCHybridSOG::read_state_message()
 {
@@ -655,7 +553,7 @@ void MCHybridSOG::read_state_message()
     int nbytes;
     MPI_Get_count(&m_status, MPI_CHAR, &nbytes);
     char inmsg[nbytes+1];
-    MPI_Recv(inmsg, nbytes, MPI_CHAR,m_status.MPI_SOURCE,TAG_STATE,MPI_COMM_WORLD, &m_status);
+    MPI_Recv(inmsg, nbytes, MPI_CHAR,m_status.MPI_SOURCE,TAG_STATE,m_comm_world, &m_status);
     m_nbrecv++;
     string *msg_receiv =new string(inmsg,nbytes);
     /*string nom_file="recept_";
@@ -685,7 +583,7 @@ void MCHybridSOG::send_state_message()
         message_size=s.first->size()+1;
         int destination=s.second;
         read_message();
-        MPI_Send(s.first->c_str(), message_size, MPI_CHAR, destination, TAG_STATE, MPI_COMM_WORLD);
+        MPI_Send(s.first->c_str(), message_size, MPI_CHAR, destination, TAG_STATE, m_comm_world);
         /*string nom_file="send_";
         nom_file+=to_string(task_id);
     FILE *fp=fopen(nom_file.c_str(),"a");
@@ -706,8 +604,9 @@ void MCHybridSOG::computeDSOG(LDDGraph &g)
     double tps;
 
     // double  t1=(double)clock() / (double)CLOCKS_PER_SEC;
-
-    MPI_Barrier(MPI_COMM_WORLD);
+    cout<<"process with id "<<task_id<<" / "<<n_tasks<<endl;
+    MPI_Barrier(m_comm_world);
+    cout<<"After!!!!process with id "<<task_id<<endl;
    // int nb_th;
     m_nb_thread=nb_th;
     cout<<"nb de thread"<<nb_th<<endl;
@@ -770,9 +669,9 @@ void MCHybridSOG::computeDSOG(LDDGraph &g)
 
     int nbarcs=g.m_nbArcs;
     unsigned long  total_size_mess=0;
-    MPI_Reduce(&nbstate, &sum_nbStates, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&nbarcs, &sum_nbArcs, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&m_size_mess, &total_size_mess, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&nbstate, &sum_nbStates, 1, MPI_INT, MPI_SUM, 0, m_comm_world);
+    MPI_Reduce(&nbarcs, &sum_nbArcs, 1, MPI_INT, MPI_SUM, 0, m_comm_world);
+    MPI_Reduce(&m_size_mess, &total_size_mess, 1, MPI_INT, MPI_SUM, 0, m_comm_world);
 
 
 
