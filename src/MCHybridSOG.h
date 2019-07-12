@@ -60,14 +60,7 @@ private:
     MPI_Comm m_comm_world;
     /// \ hash function
     void get_md5(const string &chaine, unsigned char *md_chaine);
-    /// Termination Detection functions
-    inline void ReceiveTermSignal();
-    
-    
-    inline void TermReceivedMsg();
-
-
-
+        
     /// minimum charge function for the load balancing between thread
     inline int minCharge();
     inline bool isNotTerminated();
@@ -100,7 +93,7 @@ private:
     void read_message();
     
     
-    void AbortTerm();
+    
     /// receive state message
     void read_state_message();
     /// send state message

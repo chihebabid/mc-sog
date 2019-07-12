@@ -10,15 +10,15 @@
 class HybridKripke: public spot::kripke {
     public:
 
-        HybridKripke(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder);
-        HybridKripke(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap);
+        HybridKripke(const spot::bdd_dict_ptr& dict_ptr);
+        HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap);
         virtual ~HybridKripke();
         spot::state* get_init_state() const override;
         HybridKripkeIterator* succ_iter(const spot::state* s) const override;
         std::string format_state(const spot::state* s) const override;
         bdd state_condition(const spot::state* s) const override;
 
-        ModelCheckBaseMT *m_builder;
+        //ModelCheckBaseMT *m_builder;
 
     protected:
 

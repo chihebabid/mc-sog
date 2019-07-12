@@ -28,6 +28,7 @@
 #include "SogKripke.h"
 
 #include "SogKripkeTh.h"
+#include "HybridKripke.h"
 
 
 
@@ -322,12 +323,13 @@ int main(int argc, char** argv)
                         cout<<"N task :"<<n_tasks<<endl;
                         MCHybridSOG DR(R,gprocess, bound,false);
                         LDDGraph g(&DR);
-                        DR.computeDSOG(g);
-                        
+                        DR.computeDSOG(g);                        
                     }
-                    else {
-                        
+                    else {                        
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
+                        auto d = spot::make_bdd_dict();
+                        auto k =
+            std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP());
                     }
                 }
            

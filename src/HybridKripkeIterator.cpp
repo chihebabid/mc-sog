@@ -42,7 +42,11 @@ bool HybridKripkeIterator::done() const {
 HybridKripkeState* HybridKripkeIterator::dst() const
   {
     /*cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;*/
-    return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
+   // return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
+   string id;
+   uint16_t p_container;
+   return new HybridKripkeState(id,p_container);
+   // return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
   }
 
 bdd HybridKripkeIterator::cond()  const {

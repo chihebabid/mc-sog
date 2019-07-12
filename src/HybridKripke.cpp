@@ -10,10 +10,9 @@
 #include "HybridKripke.h"
 #include <map>
 using namespace spot;
-HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder): spot::kripke(dict_ptr),m_builder(builder)
+HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 {
-    HybridKripkeIterator::m_builder=builder;
-    HybridKripkeIterator::m_builder=builder;
+    
     HybridKripkeIterator::m_dict_ptr=&dict_ptr;
     HybridKripkeIterator::m_deadlock.setLDDValue(1);
     HybridKripkeIterator::m_deadlock.setVisited();
@@ -24,7 +23,7 @@ HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builde
     HybridKripkeIterator::m_div.Successors.push_back(pair<LDDState*,int>(&HybridKripkeIterator::m_div,-1));
 }
 
-HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):HybridKripke(dict_ptr,builder) {
+HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap):HybridKripke(dict_ptr) {
 
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
@@ -36,8 +35,11 @@ HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *
 
 
 state* HybridKripke::get_init_state() const {
-   LDDState *ss=m_builder->getInitialMetaState();   
-    return new HybridKripkeState(ss);//new SpotSogState();
+    // LDDState *ss=m_builder->getInitialMetaState();   
+    
+    string id;
+    uint16_t p_container;
+    return new HybridKripkeState(id,p_container);//new SpotSogState();
 
 }
 // Allows to print state label representing its id
@@ -78,22 +80,22 @@ bdd HybridKripke::state_condition(const spot::state* s) const
   {
 
     auto ss = static_cast<const HybridKripkeState*>(s);
-    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
+    //vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
 
     bdd result=bddtrue;
     // Marked places
-    for (auto it=marked_place.begin();it!=marked_place.end();it++) {
-    string name=m_builder->getPlace(*it);
+    //for (auto it=marked_place.begin();it!=marked_place.end();it++) {
+    // string name=m_builder->getPlace(*it);
+    //spot::formula f=spot::formula::ap(name);
+    //result&=bdd_ithvar((dict_->var_map.find(f))->second);
+   // }
+    //vector<int> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
+    //for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
+    /*string name=m_builder->getPlace(*it);
     spot::formula f=spot::formula::ap(name);
-    result&=bdd_ithvar((dict_->var_map.find(f))->second);
-    }
-    vector<int> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
-    for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
-    string name=m_builder->getPlace(*it);
-    spot::formula f=spot::formula::ap(name);
-    result&=!bdd_ithvar((dict_->var_map.find(f))->second);
-    }
+    result&=!bdd_ithvar((dict_->var_map.find(f))->second);*/
+    //}
 
   return result;
   }

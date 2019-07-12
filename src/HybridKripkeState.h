@@ -1,22 +1,27 @@
 #ifndef HYBRIDKRIPKESTATETH_H_INCLUDED
 #define HYBRIDKRIPKESTATETH_H_INCLUDED
 
-
+#include <mpi.h>
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
-
+#define TAG_ASKSTATE 10
 class HybridKripkeState : public spot::state
 {
 public:
     static ModelCheckBaseMT * m_builder;
-    HybridKripkeState(LDDState *st):m_state(st) {
-            m_builder->buildSucc(st);
+    HybridKripkeState(string &id,uint16_t pcontainer):m_id(id),m_container(pcontainer) {
+        int v=1;
+        MPI_Send( &v, 1, MPI_INT, 0, TAG_ASKSTATE, MPI_COMM_WORLD); 
+                
     };
+    // Constructor for cloning
+    HybridKripkeState(const string &id,uint16_t pcontainer,bool ddiv, bool deadlock):m_id(id),m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock) {
+    }
     virtual ~HybridKripkeState();
 
     HybridKripkeState* clone() const override
     {
-        return new HybridKripkeState(m_state);
+        return new HybridKripkeState(m_id,m_container,m_div,m_deadlock);
     }
     size_t hash() const override
     {
@@ -41,6 +46,10 @@ protected:
 
 private:
     LDDState *m_state;
+    string m_id;
+    bool m_div;
+    bool m_deadlock;
+    uint16_t m_container;
 };
 
 
