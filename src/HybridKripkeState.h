@@ -4,14 +4,14 @@
 #include <mpi.h>
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
-#define TAG_ASKSTATE 10
+#define TAG_ASK_SUCC 4
 class HybridKripkeState : public spot::state
 {
 public:
     static ModelCheckBaseMT * m_builder;
     HybridKripkeState(string &id,uint16_t pcontainer):m_id(id),m_container(pcontainer) {
-        int v=1;
-        MPI_Send( &v, 1, MPI_INT, 0, TAG_ASKSTATE, MPI_COMM_WORLD); 
+        int v=1;        
+        MPI_Send( &v, 1, MPI_INT, m_container, TAG_ASK_SUCC, MPI_COMM_WORLD); 
                 
     };
     // Constructor for cloning

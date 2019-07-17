@@ -16,11 +16,10 @@ using namespace sylvan;
 #define TAG_STATE 1
 #define TAG_FINISH 2
 #define TAG_INITIAL 3
-#define TAG_SUCC 4
+#define TAG_ASK_SUCC 4
+
 #define TAG_AGREGATE 5
-
-
-
+#define TAG_ACK_INITIAL 8
 
 MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world, int BOUND,bool init)
 {
@@ -157,6 +156,7 @@ void *MCHybridSOG::doCompute()
             m_graph->setInitialState(c);
             m_graph->insert(c);
             m_charge[1]++;
+            strcpySHA(c->m_SHA2,Identif);
         }
         else
         {
@@ -481,8 +481,23 @@ void MCHybridSOG::read_message()
             read_state_message();
             break;
         case TAG_FINISH : break;
-        case TAG_INITIAL : break;
-        case TAG_SUCC : break;
+        case TAG_INITIAL : 
+             int v;
+             MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
+             LDDState *i_agregate=m_graph->getInitialState();
+             
+             stringstream ss;
+             ss<<(task_id);
+             ss<<i_agregate->getSHAValue();
+             cout<<"Ldd Value :"<<i_agregate->getLDDValue()<<endl;
+             cout<<"string :"<<ss.str()<<endl;               
+             MPI_Send(ss.str().c_str(),17,MPI_UNSIGNED_CHAR,m_status.MPI_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD);
+             break;
+        case TAG_ASK_SUCC : 
+            int id;
+             MPI_Recv(&id, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
+             LDDState *aggregate=m_graph->getLDDStateById(id);
+            break;
         case TAG_AGREGATE : break;
         default :  //cout<<"unknown received "<<status.MPI_TAG<<" by task "<<task_id<<endl;
             //AbortTerm();
@@ -663,6 +678,7 @@ void MCHybridSOG::strcpySHA(unsigned char *dest,const unsigned char *source)
     for (int i=0; i<LENGTH_ID; i++)
     {
         dest[i]=source[i];
+        //if (source[i]=='\0') exit(0);
     }
     dest[LENGTH_ID]='\0';
 }

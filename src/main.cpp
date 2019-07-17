@@ -103,7 +103,6 @@ int main(int argc, char** argv)
     //if(argc>5)
     nb_th = atoi(argv[2])==0 ? 1 : atoi(argv[2]);
 
-    cout<<"Bonjour..."<<endl;
     cout<<"Fichier net : "<<argv[3]<<endl;
     cout<<"Fichier formule : "<<formula<<endl;
     cout<<"Fichier Interface : "<<Int<<endl;
@@ -327,9 +326,16 @@ int main(int argc, char** argv)
                     }
                     else {                        
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
-                        auto d = spot::make_bdd_dict();
-                        auto k =
-            std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP());
+                       auto d = spot::make_bdd_dict();
+                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP()),spot::twa::prop_set::all(), true);
+                     /*   auto k =
+            std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP());*/
+                     /*    fstream file;
+                    string st(argv[3]);
+                    st+=".dot";
+                    file.open(st.c_str(),fstream::out);
+                    spot::print_dot(file, k,"ka");
+                    file.close();*/
                     }
                 }
            

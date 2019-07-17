@@ -9,7 +9,10 @@
 
 #include "HybridKripke.h"
 #include <map>
+#define TAG_INITIAL 3
+#define TAG_ACK_INITIAL 8
 using namespace spot;
+
 HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 {
     
@@ -24,22 +27,33 @@ HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 }
 
 HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap):HybridKripke(dict_ptr) {
-
+    
     for (auto it=l_transap.begin();it!=l_transap.end();it++) {
         register_ap(*it);
     }
+    
     for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
         register_ap(*it);
+    
 
 }
 
 
 state* HybridKripke::get_init_state() const {
-    // LDDState *ss=m_builder->getInitialMetaState();   
-    
-    string id;
-    uint16_t p_container;
-    return new HybridKripkeState(id,p_container);//new SpotSogState();
+    // LDDState *ss=m_builder->getInitialMetaState();
+    int v;
+    MPI_Send( &v, 1, MPI_INT, 0, TAG_INITIAL, MPI_COMM_WORLD); 
+     char message[18];
+    MPI_Status status; int nbytes;
+    MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD, &status);
+    MPI_Get_count(&status, MPI_UNSIGNED_CHAR, &v);
+    cout<<" Message size : "<<v<<endl;
+    MPI_Recv(message, 17, MPI_UNSIGNED_CHAR,MPI_ANY_SOURCE,TAG_ACK_INITIAL,MPI_COMM_WORLD, &status);
+    message[17]='\0';
+    cout<<"Message received : "<<message<<endl;
+    string id(message+1);
+    uint16_t p_container=message[0];
+    return new HybridKripkeState(id,p_container);
 
 }
 // Allows to print state label representing its id
