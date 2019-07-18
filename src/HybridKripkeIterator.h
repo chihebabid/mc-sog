@@ -12,7 +12,7 @@ public:
     static ModelCheckBaseMT * m_builder;
     static spot::bdd_dict_ptr* m_dict_ptr;
   //  sog_succ_iterator(const RdPBDD& pn, const SogKripkeState& s, const bdd& c);
-    HybridKripkeIterator(const LDDState* lddstate, bdd cnd);
+    HybridKripkeIterator(const HybridKripkeState &kstate, bdd cnd);
     virtual ~HybridKripkeIterator();
     bool first() override;
     bool next() override;
@@ -28,6 +28,7 @@ public:
     std::string format_transition() const;
 
 private:
+    HybridKripkeState *m_current_state;
     LDDState * m_lddstate;
     vector<pair<LDDState*, int>> m_lsucc;
     unsigned int m_current_edge=0;

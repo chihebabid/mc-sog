@@ -4,18 +4,17 @@
 #include <mpi.h>
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
-#define TAG_ASK_SUCC 4
+
 class HybridKripkeState : public spot::state
 {
 public:
     static ModelCheckBaseMT * m_builder;
-    HybridKripkeState(string &id,uint16_t pcontainer):m_id(id),m_container(pcontainer) {
-        int v=1;        
-        MPI_Send( &v, 1, MPI_INT, m_container, TAG_ASK_SUCC, MPI_COMM_WORLD); 
-                
+    HybridKripkeState(unsigned char * id,uint16_t pcontainer):m_container(pcontainer) {
+        memcpy(m_id,id,16);               
     };
     // Constructor for cloning
-    HybridKripkeState(const string &id,uint16_t pcontainer,bool ddiv, bool deadlock):m_id(id),m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock) {
+    HybridKripkeState(unsigned char *id,uint16_t pcontainer,bool ddiv, bool deadlock):m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock) {
+        memcpy(m_id,id,16);
     }
     virtual ~HybridKripkeState();
 
@@ -39,14 +38,17 @@ public:
         else
             return h > oh;
     }
-    LDDState* getLDDState() {
-        return m_state;
+    unsigned char * getId() {
+        return m_id;
+    }
+    uint16_t getContainerProcess() {
+        return m_container;
     }
 protected:
 
 private:
     LDDState *m_state;
-    string m_id;
+    unsigned char  m_id[16];
     bool m_div;
     bool m_deadlock;
     uint16_t m_container;

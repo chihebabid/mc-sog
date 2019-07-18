@@ -487,16 +487,18 @@ void MCHybridSOG::read_message()
              LDDState *i_agregate=m_graph->getInitialState();
              
              stringstream ss;
-             ss<<(task_id);
+             ss<<(task_id);ss<<'\0';
              ss<<i_agregate->getSHAValue();
              cout<<"Ldd Value :"<<i_agregate->getLDDValue()<<endl;
-             cout<<"string :"<<ss.str()<<endl;               
+             cout<<"string :"<<ss.str()<<endl;   
+             
              MPI_Send(ss.str().c_str(),17,MPI_UNSIGNED_CHAR,m_status.MPI_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD);
              break;
         case TAG_ASK_SUCC : 
             int id;
              MPI_Recv(&id, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
-             LDDState *aggregate=m_graph->getLDDStateById(id);
+            // LDDState *aggregate=m_graph->findSHA()
+             // Send successors 
             break;
         case TAG_AGREGATE : break;
         default :  //cout<<"unknown received "<<status.MPI_TAG<<" by task "<<task_id<<endl;

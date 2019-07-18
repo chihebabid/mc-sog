@@ -49,11 +49,12 @@ state* HybridKripke::get_init_state() const {
     MPI_Get_count(&status, MPI_UNSIGNED_CHAR, &v);
     cout<<" Message size : "<<v<<endl;
     MPI_Recv(message, 17, MPI_UNSIGNED_CHAR,MPI_ANY_SOURCE,TAG_ACK_INITIAL,MPI_COMM_WORLD, &status);
-    message[17]='\0';
+    message[17]='\0';    
     cout<<"Message received : "<<message<<endl;
-    string id(message+1);
+    
+
     uint16_t p_container=message[0];
-    return new HybridKripkeState(id,p_container);
+    return new HybridKripkeState(message+1,p_container);
 
 }
 // Allows to print state label representing its id
@@ -62,7 +63,7 @@ std::string HybridKripke::format_state(const spot::state* s) const
     //cout<<__func__<<endl;
     auto ss = static_cast<const HybridKripkeState*>(s);
     std::ostringstream out;
-    out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
+    out << "( " << ss->getId() <<  ")";
    // cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
     return out.str();
   }
@@ -70,7 +71,7 @@ std::string HybridKripke::format_state(const spot::state* s) const
 HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
    
     auto ss = static_cast<const HybridKripkeState*>(s);
-    LDDState *aggregate=ss->getLDDState();
+    LDDState *aggregate;//=ss->getLDDState();
     bdd cond = state_condition(ss);
     if (iter_cache_)
     {
@@ -79,7 +80,7 @@ HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
       it->recycle(aggregate, cond);
       return it;
     }
-  return new HybridKripkeIterator(aggregate,cond);
+  return new HybridKripkeIterator(*ss,cond);
 
     
     

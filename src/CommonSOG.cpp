@@ -20,7 +20,6 @@ MDD CommonSOG::Accessible_epsilon(MDD From)
 {
     MDD M1;
     MDD M2=From;
-
     do
     {
         M1=M2;

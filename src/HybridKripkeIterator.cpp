@@ -2,10 +2,13 @@
 #include "LDDGraph.h"
 #include "HybridKripkeState.h"
 #include "HybridKripkeIterator.h"
+#define TAG_ASK_SUCC 4
 
-
-HybridKripkeIterator::HybridKripkeIterator(const LDDState* lddstate, bdd cnd):m_lddstate(lddstate), kripke_succ_iterator(cnd)
+HybridKripkeIterator::HybridKripkeIterator(const HybridKripkeState &kstate, bdd cnd):m_current_state(&kstate), kripke_succ_iterator(cnd)
 {
+    LDDState* lddstate;
+    cout<<"Send ask container"<<endl;
+     MPI_Send(m_current_state->getId(),16,MPI_UNSIGNED_CHAR,m_current_state->getContainerProcess(), TAG_ASK_SUCC, MPI_COMM_WORLD);
     for (int i=0;i<m_lddstate->getSuccessors()->size();i++) {
         m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
     }
@@ -43,7 +46,7 @@ HybridKripkeState* HybridKripkeIterator::dst() const
   {
     /*cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;*/
    // return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
-   string id;
+   char* id;
    uint16_t p_container;
    return new HybridKripkeState(id,p_container);
    // return new HybridKripkeState(m_lsucc.at(m_current_edge).first);
@@ -78,6 +81,9 @@ void HybridKripkeIterator::recycle(LDDState* aggregate, bdd cond)
         spot::kripke_succ_iterator::recycle(cond);
 }
 
+HybridKripkeState* HybridKripkeIterator::current_state() const {
+    return m_current_state;
+}
 static ModelCheckBaseMT * HybridKripkeIterator::m_builder;
 static spot::bdd_dict_ptr* HybridKripkeIterator::m_dict_ptr;
 static LDDState HybridKripkeIterator::m_deadlock;
