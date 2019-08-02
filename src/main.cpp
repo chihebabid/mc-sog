@@ -327,15 +327,19 @@ int main(int argc, char** argv)
                     else {                        
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
                        auto d = spot::make_bdd_dict();
-                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP()),spot::twa::prop_set::all(), true);
+                       spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP(),R),spot::twa::prop_set::all(), true);
+                        cout<<"finished...."<<endl;
+                        //while(1);
                      /*   auto k =
             std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP());*/
-                     /*    fstream file;
+                    fstream file;
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
-                    file.close();*/
+                    file.close();
+                    
                     }
                 }
            

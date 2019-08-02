@@ -44,7 +44,19 @@ LDDState * LDDGraph::findSHA(unsigned char* c)
                 return *i;
     return NULL;
 }
-
+/*--------------------------------------------*/
+size_t LDDGraph::findSHAPos(unsigned char* c,bool &res)
+{
+    size_t i=0;
+    res=false;
+    for(i=0;i<m_GONodes.size();i++)       
+            if((cmpSHA(c,m_GONodes.at(i)->m_SHA2)==0)) {
+                res=true;
+                return i;
+            }
+   // cout<<__func__<<" : Aggregate not found!!!"<<endl;
+    return i;
+}
 
 /*----------------------insert() ------------*/
 void LDDGraph::insert(LDDState *c)
@@ -110,7 +122,7 @@ void LDDGraph::printCompleteInformation()
 	//InitVisit(initialstate,n);
 
 	size_t n=1;
-	//cout<<"NB BDD NODE : "<<NbBddNode(initialstate,n)<<endl;
+	//cout<<"NB BDD NODE : "<<NbBdm_current_state->getContainerProcess()dNode(initialstate,n)<<endl;
 	NbBddNode(m_initialstate,n);
 	// cout<<"NB BDD NODE : "<<bdd_anodecount(m_Tab,(int)m_nbStates)<<endl;
 	//cout<<"Shared Nodes : "<<bdd_anodecount(Tab,nbStates)<<endl;

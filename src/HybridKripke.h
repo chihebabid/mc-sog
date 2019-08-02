@@ -11,7 +11,7 @@ class HybridKripke: public spot::kripke {
     public:
 
         HybridKripke(const spot::bdd_dict_ptr& dict_ptr);
-        HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap);
+        HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap,NewNet &net_);
         virtual ~HybridKripke();
         spot::state* get_init_state() const override;
         HybridKripkeIterator* succ_iter(const spot::state* s) const override;
@@ -24,7 +24,7 @@ class HybridKripke: public spot::kripke {
 
     private:
     std::map<int, int> place_prop;
-    //LDDGraph* m_sog;
+    NewNet *m_net;
 };
 
 #endif // SOGKRIPKE_H_INCLUDED

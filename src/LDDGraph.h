@@ -34,6 +34,7 @@ class LDDGraph
 		long m_nbArcs;
 		LDDState* find(LDDState*);
 		LDDState* findSHA(unsigned char*);
+        size_t findSHAPos(unsigned char*,bool &res);
 		bool cmpSHA(const unsigned char *s1, const unsigned char *s2);
 		void insertSHA(LDDState *c);
 		LDDEdges& get_successor(LDDState*);

@@ -43,13 +43,14 @@ class LDDState {
   bool isCompletedSucc() {return m_completed;}
   vector<int> getMarkedPlaces(set<int>& lplacesAP);
   vector<int> getUnmarkedPlaces(set<int>& lplacesAP);
-
+  void setProcess(uint16_t v) {m_process=v;}
+  uint16_t getProcess() {return m_process;}
  protected:
  private:
   bool m_virtual = false;
   bool m_visited=false;
   bool m_completed=false;
-
+  uint16_t m_process=0;
 };
 
 typedef pair<LDDState*, int> LDDEdge;

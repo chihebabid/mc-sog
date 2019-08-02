@@ -58,12 +58,19 @@ public:
 protected:
 private:
     MPI_Comm m_comm_world;
+    void sendSuccToMC();
+    bool m_waitingAgregate=false;
+    bool m_waitingBuild=false;
+    char m_id_md5[16];
+    LDDState * m_aggWaiting=nullptr;
+    bool m_waitingSucc=false;
+    
     /// \ hash function
     void get_md5(const string &chaine, unsigned char *md_chaine);
         
     /// minimum charge function for the load balancing between thread
     inline int minCharge();
-    inline bool isNotTerminated();
+    
     /// Copie string of caracter
     void strcpySHA(unsigned char *dest, const unsigned char *source);
 
@@ -126,7 +133,7 @@ private:
     int m_total_nb_send = 0, m_total_nb_recv = 0;
 
     MPI_Status m_status;
-    bool m_Terminating = false;
+    
 
 };
 
