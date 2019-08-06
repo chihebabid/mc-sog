@@ -78,7 +78,7 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
   {
 
     auto ss = static_cast<const SogKripkeStateTh*>(s);
-    vector<int> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
+    vector<uint16_t> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
 
     bdd result=bddtrue;
@@ -88,7 +88,7 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
     spot::formula f=spot::formula::ap(name);
     result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
-    vector<int> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
+    vector<uint16_t> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
     for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
     string name=m_builder->getPlace(*it);
     spot::formula f=spot::formula::ap(name);

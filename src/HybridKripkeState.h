@@ -10,20 +10,44 @@ class HybridKripkeState : public spot::state
 {
 public:
     //static ModelCheckBaseMT * m_builder;
-    HybridKripkeState(unsigned char * id,uint16_t pcontainer):m_container(pcontainer) {
-        cout<<__func__<<"pcontainer :"<<pcontainer<<endl;
-        memcpy(m_id,id,16);
+    HybridKripkeState(unsigned char * id,uint16_t pcontainer):m_container(pcontainer) {        
+        memcpy(m_id,id,16);        
+        MPI_Send(m_id,16,MPI_BYTE,pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);       
         
-        MPI_Send(m_id,16,MPI_BYTE,pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);
-        
-        
-        char message[9];
         MPI_Status status; //int nbytes;
         MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_STATE, MPI_COMM_WORLD, &status);
-        cout<<"ACK state received..."<<endl;
-        MPI_Recv(message, 8, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_STATE,MPI_COMM_WORLD, &status);
-        memcpy(&m_hashid,message,8);        
+        uint32_t nbytes;
+        MPI_Get_count(&status, MPI_BYTE, &nbytes);
+        // cout<<"ACK state received..."<<nbytes<<endl;
+        char message[nbytes];
+        MPI_Recv(message, nbytes, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_STATE,MPI_COMM_WORLD, &status);
+        memcpy(&m_hashid,message,8);     
+        //cout<<"Pos :"<<m_hashid<<endl;
+        //cout<<"Process :"<<m_container<<endl;
         m_hashid=m_hashid | (size_t(m_container)<<56);
+        
+        // Determine Place propositions
+        uint16_t n_mp;
+        memcpy(&n_mp,message+8,2);
+        
+        //cout<<" Marked places :"<<n_mp<<endl;
+        uint16_t indice=10;
+        for(int i=0;i<n_mp;i++) {
+            uint16_t val;
+            memcpy(&val,message+indice,2);
+            m_marked_places.insert(val);
+            indice+=2;            
+        }
+        uint16_t n_up;
+        memcpy(&n_up,message+indice,2);
+        //cout<<" Unmarked places :"<<n_mp<<endl;
+        indice+=2;
+        for(int i=0;i<n_up;i++) {
+            uint16_t val;
+            memcpy(&val,message+indice,2);
+            m_unmarked_places.insert(val);
+            indice+=2;
+        }    
         
         
     }
@@ -31,25 +55,24 @@ public:
     HybridKripkeState(unsigned char *id,uint16_t pcontainer,size_t hsh,bool ddiv, bool deadlock):m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock),m_hashid(hsh) {
         memcpy(m_id,id,16); 
     
-        cout<<__func__<<endl;
+      //  cout<<__func__<<endl;
         
     }
     virtual ~HybridKripkeState();
 
     HybridKripkeState* clone() const override
     {
-        cout<<__func__<<endl;
+        //cout<<__func__<<endl;
         return new HybridKripkeState(m_id,m_container,m_hashid,m_div,m_deadlock);
     }
     size_t hash() const override
-    {
-        cout<<__func__<<m_hashid<<endl;        
+    {                
         return m_hashid;
     }
 
     int compare(const spot::state* other) const override
     {
-        cout<<__func__<<endl;
+        
         auto o = static_cast<const HybridKripkeState*>(other);
         size_t oh = o->hash();
         size_t h = hash();
@@ -60,15 +83,14 @@ public:
             return h > oh;
     }
     unsigned char * getId() {
-        cout<<__func__<<endl;
+       // cout<<__func__<<endl;
         return m_id;
     }
-    uint16_t getContainerProcess() {
-        cout<<__func__<<endl;
+    uint16_t getContainerProcess() {        
         return m_container;
     }
-    set<uint16_t> & getMarkedPlaces() { return m_marked_places;}
-    set<uint16_t> & getUnmarkedPlaces() { return m_unmarked_places;}
+    set<uint16_t> * getMarkedPlaces() { return &m_marked_places;}
+    set<uint16_t> * getUnmarkedPlaces() { return &m_unmarked_places;}
 protected:
 
 private:

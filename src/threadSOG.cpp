@@ -66,7 +66,7 @@ threadSOG::threadSOG(const NewNet &R, int BOUND, int nbThread,bool uselace,bool 
     m_placeName=R.m_placePosName;
 
     cout<<"Toutes les Transitions:"<<endl;
-    map<string,int>::iterator it2=m_transitionName.begin();
+    map<string,uint16_t>::iterator it2=m_transitionName.begin();
     for (;it2!=m_transitionName.end();it2++) {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
 

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-//#include "bdd.h"
-//#include "fdd.h"
 #include <mpi.h>
 
 #include "DistributedSOG.h"
@@ -121,7 +119,7 @@ int main(int argc, char** argv)
     cout<<"Fetching formula..."<<endl;
     set<string> list_propositions=buildPropositions(formula);
 
-    NewNet R(argv[3],list_propositions);
+    NewNet Rnewnet(argv[3],list_propositions);
 
     MPI_Init (&argc, &argv );
     MPI_Comm_size(MPI_COMM_WORLD,&n_tasks);
@@ -152,13 +150,13 @@ int main(int argc, char** argv)
         }
         cout<<"Loading net information..."<<endl;
         ModelCheckBaseMT* mcl;
-        if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(R,bound,nb_th);
+        if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,bound,nb_th);
         else 
-            mcl=new ModelCheckerTh(R,bound,nb_th);
+            mcl=new ModelCheckerTh(Rnewnet,bound,nb_th);
         mcl->loadNet();   
         
         auto k =
-            std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP());
+            std::make_shared<SogKripkeTh>(d,mcl,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP());
    /*     spot::twa_graph_ptr k =
     spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
                          spot::twa::prop_set::all(), true);*/
@@ -199,7 +197,7 @@ int main(int argc, char** argv)
     {
         cout<<"number of task = 1 \n " <<endl;
         bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
-        threadSOG DR(R, bound,nb_th,uselace);
+        threadSOG DR(Rnewnet, bound,nb_th,uselace);
         LDDGraph g(&DR);
 
         if (nb_th==1)
@@ -264,7 +262,7 @@ int main(int argc, char** argv)
                 //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
 
                 spot::twa_graph_ptr k =
-                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP()),spot::twa::prop_set::all(), true);
+                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP()),spot::twa::prop_set::all(), true);
 
                 cout<<"SOG translated to SPOT succeeded.."<<endl;
                 cout<<"Want to save the graph in a dot file ?";
@@ -303,7 +301,7 @@ int main(int argc, char** argv)
         {
             if (task_id==0) cout<<"**************Hybrid version**************** \n" <<endl;
             if (strcmp(argv[1],"otf")) {
-                HybridSOG DR(R, bound);
+                HybridSOG DR(Rnewnet, bound);
                 LDDGraph g(&DR);
                 if (task_id==0) cout<<"Building the Distributed SOG by "<<n_tasks<<" processes..."<<endl;
                 DR.computeDSOG(g);
@@ -320,7 +318,7 @@ int main(int argc, char** argv)
                 cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
                     if (task_id!=n_tasks)  {
                         cout<<"N task :"<<n_tasks<<endl;
-                        MCHybridSOG DR(R,gprocess, bound,false);
+                        MCHybridSOG DR(Rnewnet,gprocess, bound,false);
                         LDDGraph g(&DR);
                         DR.computeDSOG(g);                        
                     }
@@ -328,7 +326,7 @@ int main(int argc, char** argv)
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
                        auto d = spot::make_bdd_dict();
                        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP(),R),spot::twa::prop_set::all(), true);
+                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
                         cout<<"finished...."<<endl;
                         //while(1);
                      /*   auto k =
@@ -350,7 +348,7 @@ int main(int argc, char** argv)
             //cout<<" sequential version using Sylvan : 1 with BuDDy : 2 \n" <<endl;
             cout<<"*************Distibuted version******************* \n" <<endl;
             {
-                DistributedSOG DR(R, bound);
+                DistributedSOG DR(Rnewnet, bound);
                 LDDGraph g(nullptr);
                 DR.computeDSOG(g);
             }

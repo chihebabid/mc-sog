@@ -16,8 +16,9 @@ public:
     static LDDState m_div;
     static NewNet * m_net;
     static spot::bdd_dict_ptr* m_dict_ptr;
-  //  sog_succ_iterator(const RdPBDD& pn, const SogKripkeState& s, const bdd& c);
-    HybridKripkeIterator(HybridKripkeState &kstate, bdd cnd);
+    
+  
+    HybridKripkeIterator(char *id,uint16_t pcontainer, bdd cnd);
     virtual ~HybridKripkeIterator();
     bool first() override;
     bool next() override;
@@ -27,16 +28,14 @@ public:
 
    // HybridKripkeState* current_state() const;
 
-    void recycle(HybridKripkeState *aggregate, bdd cond);
-
-   
+    void recycle(char *id,uint16_t pcontainer, bdd cond);   
     std::string format_transition() const;
     
 
 private:
-    HybridKripkeState *m_current_state;
     
-    
+    char m_id[16];
+    uint16_t m_pcontainer;    
     unsigned int m_current_edge=0;
     vector<succ_t> m_succ;
 };

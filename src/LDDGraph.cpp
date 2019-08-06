@@ -197,9 +197,9 @@ LDDState *LDDGraph::getLDDStateById(unsigned int id) {
     return m_GONodes.at(id);
 }
 
-string LDDGraph::getTransition(int pos) {
+string LDDGraph::getTransition(uint16_t pos) {
 
-    map<string,int>::iterator it=m_transition->begin();
+    map<string,uint16_t>::iterator it=m_transition->begin();
     while(it != m_transition->end())
     {
         if(it->second == pos)
@@ -209,14 +209,14 @@ string LDDGraph::getTransition(int pos) {
     return it->first;
 }
 
-string LDDGraph::getPlace(int pos) {
+string LDDGraph::getPlace(uint16_t pos) {
     return m_places->find(pos)->second;
 }
 
-void LDDGraph::setTransition(map<string,int>& list_transitions) {
+void LDDGraph::setTransition(map<string,uint16_t>& list_transitions) {
     m_transition=&list_transitions;
 }
-void LDDGraph::setPlace(map<int,string>& list_places) {
+void LDDGraph::setPlace(map<uint16_t,string>& list_places) {
     m_places=&list_places;
 }
 

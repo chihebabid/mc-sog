@@ -69,13 +69,13 @@ class NewNet : public RdPMonteur {
   /* Attributs */
   vector<class Place> places;
   vector<class Transition> transitions;
-  map<string, int> placeName;
-  map<string, int> transitionName;
+  map<string, uint16_t> placeName;
+  map<string, uint16_t> transitionName;
   Set Observable;
   Set NonObservable;
   Set InterfaceTrans;
   Set Formula_Trans;
-  Set m_formula_place;
+  set<uint16_t> m_formula_place;
 
   /* Constructors */
   NewNet(){};
@@ -108,10 +108,10 @@ class NewNet : public RdPMonteur {
   set<string>& getListPlaceAP() {return m_lplaceAP;}
   string& getPlaceName(size_t pos) { return m_placePosName.find(pos)->second;}
   string& getTransitionName(size_t pos) { return m_transitionPosName.find(pos)->second;}
-  map<int,string> m_placePosName;
+  map<uint16_t,string> m_placePosName;
   private:
   
-  map<int,string> m_transitionPosName;
+  map<uint16_t,string> m_transitionPosName;
 
 
   set<string> m_ltransitionAP;

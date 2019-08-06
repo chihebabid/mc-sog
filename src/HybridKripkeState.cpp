@@ -6,7 +6,7 @@
 HybridKripkeState::~HybridKripkeState()
 {
     //dtor
-    cout<<__func__<<endl;
+    //cout<<__func__<<endl;
 }
 
 //static ModelCheckBaseMT * HybridKripkeState::m_builder;

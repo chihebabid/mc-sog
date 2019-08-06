@@ -13,7 +13,7 @@ class LDDState {
  public:
 
   LDDState() {
-    m_boucle = m_blocage = m_visited = false;
+    m_boucle = m_blocage = m_visited = false;m_completed=false;
     m_virtual = false;
   }
   virtual ~LDDState();
@@ -41,8 +41,8 @@ class LDDState {
   bool isVisited() {return m_visited;}
   void setCompletedSucc() {m_completed=true;}
   bool isCompletedSucc() {return m_completed;}
-  vector<int> getMarkedPlaces(set<int>& lplacesAP);
-  vector<int> getUnmarkedPlaces(set<int>& lplacesAP);
+  vector<uint16_t> getMarkedPlaces(set<uint16_t>& lplacesAP);
+  vector<uint16_t> getUnmarkedPlaces(set<uint16_t>& lplacesAP);
   void setProcess(uint16_t v) {m_process=v;}
   uint16_t getProcess() {return m_process;}
  protected:

@@ -16,7 +16,7 @@ using namespace spot;
 
 HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 {
-    cout<<__func__<<endl;
+    //cout<<__func__<<endl;
     HybridKripkeIterator::m_dict_ptr=&dict_ptr;
     /*HybridKripkeIterator::m_deadlock.setLDDValue(1);
     HybridKripkeIterator::m_deadlock.setVisited();
@@ -62,57 +62,49 @@ state* HybridKripke::get_init_state() const {
 // Allows to print state label representing its id
 std::string HybridKripke::format_state(const spot::state* s) const
   {
-    cout<<__func__<<endl;
+    //cout<<__func__<<endl;
     auto ss = static_cast<const HybridKripkeState*>(s);
     std::ostringstream out;
-    out << "( " << ss->hash() <<  ")";
- 
+    out << "( " << ss->hash() <<  ")"; 
     return out.str();
   }
 
 HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
-   cout<<__func__<<endl;
+    //cout<<__func__<<endl;
     auto ss = static_cast<const HybridKripkeState*>(s);
-    HybridKripkeState *aggregate=ss;
+    char id[16];
+    memcpy(id,ss->getId(),16);
     bdd cond = state_condition(ss);
-    if (iter_cache_)
+    uint16_t pcontainer=ss->getContainerProcess();
+   /* if (iter_cache_)
     {
       auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
-      it->recycle(ss, cond);
+      it->recycle(id,pcontainer,cond);
       return it;
-    }
-  return new HybridKripkeIterator(*aggregate,cond);
+    }*/
+   
+  return new HybridKripkeIterator(id,pcontainer,cond);
 
-    
-    
-    
-/*    auto ss = static_cast<const SogKripkeStateTh*>(s);
-   //////////////////////////////////////////////
-
-    return new SogKripkeIteratorTh(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));*/
 }
 
 bdd HybridKripke::state_condition(const spot::state* s) const
   {
    
     auto ss = static_cast<const HybridKripkeState*>(s);
-    set<uint16_t> marked_place=ss->getMarkedPlaces();
-
-
-    bdd result=bddtrue;
-     
-    for (auto it=marked_place.begin();it!=marked_place.end();it++) {
+    set<uint16_t>* marked_place=ss->getMarkedPlaces();
+    bdd result=bddtrue;     
+    for (auto it=marked_place->begin();it!=marked_place->end();it++) {
         string name=m_net->getPlaceName(*it);
         spot::formula f=spot::formula::ap(name);
         result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
-    set<uint16_t> unmarked_place=ss->getUnmarkedPlaces();
-    //for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
-    /*string name=m_builder->getPlace(*it);
-    spot::formula f=spot::formula::ap(name);
-    result&=!bdd_ithvar((dict_->var_map.find(f))->second);*/
-    //}
+    set<uint16_t>* unmarked_place=ss->getUnmarkedPlaces();
+    for (auto it=unmarked_place->begin();it!=unmarked_place->end();it++) {
+        string name=m_net->getPlaceName(*it);
+        spot::formula f=spot::formula::ap(name);
+        result&=!bdd_ithvar((dict_->var_map.find(f))->second);
+    }
 
   return result;
   }

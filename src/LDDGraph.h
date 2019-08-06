@@ -14,16 +14,16 @@ class CommonSOG;
 class LDDGraph
 {
     private:
-        map<string,int>* m_transition;
-        map<int,string>* m_places;
+        map<string,uint16_t>* m_transition;
+        map<uint16_t,string>* m_places;
 		void printGraph(LDDState *, size_t &);
         CommonSOG *m_constructor;
 	public:
         CommonSOG* getConstructor() {return m_constructor;}
-        string getTransition(int pos);
-        string getPlace(int pos);
-        void setPlace(map<int,string>& list_places);
-        void setTransition(map<string,int>& list_transitions);
+        string getTransition(uint16_t pos);
+        string getPlace(uint16_t pos);
+        void setPlace(map<uint16_t,string>& list_places);
+        void setTransition(map<string,uint16_t>& list_transitions);
         MetaLDDNodes m_GONodes;
         LDDState *getLDDStateById(unsigned int id);
 		void Reset();

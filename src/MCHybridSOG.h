@@ -30,6 +30,7 @@
 #include <time.h>
 #include <chrono>
 #include "CommonSOG.h"
+#include <atomic>
 // namespace mpi = boost::mpi;
 
 //#define MASTER 0
@@ -59,11 +60,13 @@ protected:
 private:
     MPI_Comm m_comm_world;
     void sendSuccToMC();
-    bool m_waitingAgregate=false;
-    bool m_waitingBuild=false;
+    void sendPropToMC(size_t pos);
+    atomic_bool m_waitingAgregate;// (false);
+    atomic_bool m_waitingBuild;
+    atomic_bool m_waitingSucc;
     char m_id_md5[16];
     LDDState * m_aggWaiting=nullptr;
-    bool m_waitingSucc=false;
+    
     
     /// \ hash function
     void get_md5(const string &chaine, unsigned char *md_chaine);
@@ -72,7 +75,7 @@ private:
     inline int minCharge();
     
     /// Copie string of caracter
-    void strcpySHA(unsigned char *dest, const unsigned char *source);
+    
 
     MDD M0;
 
@@ -133,7 +136,8 @@ private:
     int m_total_nb_send = 0, m_total_nb_recv = 0;
 
     MPI_Status m_status;
-    
+    set<uint16_t> getUnmarkedPlaces(LDDState *agg);
+    set<uint16_t> getMarkedPlaces(LDDState *agg);
 
 };
 

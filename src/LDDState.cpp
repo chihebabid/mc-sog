@@ -33,10 +33,10 @@ vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
     return &Successors;
 }
 
-vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
-    vector<int> result;
+vector<uint16_t> LDDState::getMarkedPlaces(set<uint16_t>& lplacesAP) {
+    vector<uint16_t> result;
     MDD mdd=m_lddstate;
-    int depth=0;
+    uint16_t depth=0;
     while (mdd>lddmc_true)
     {
         //printf("mddd : %d \n",mdd);
@@ -54,11 +54,11 @@ vector<int> LDDState::getMarkedPlaces(set<int>& lplacesAP) {
     return result;
 }
 
-vector<int> LDDState::getUnmarkedPlaces(set<int>& lplacesAP) {
-    vector<int> result;
+vector<uint16_t> LDDState::getUnmarkedPlaces(set<uint16_t>& lplacesAP) {
+    vector<uint16_t> result;
     MDD mdd=m_lddstate;
 
-    int depth=0;
+    uint16_t depth=0;
     while (mdd>lddmc_true)
     {
         //printf("mddd : %d \n",mdd);

@@ -149,7 +149,7 @@ void *MCHybridSOG::doCompute()
         convert_wholemdd_stringcpp(Complete_meta_state,*chaine);
         get_md5(*chaine,Identif);
         //lddmc_getsha(Complete_meta_state, Identif);
-        int destination=(int)(Identif[0]%n_tasks);
+        uint16_t destination=(uint16_t)(Identif[0]%n_tasks);
         c->setProcess(destination);
         if(destination==0)
         {
@@ -167,7 +167,7 @@ void *MCHybridSOG::doCompute()
             MDD initialstate=Complete_meta_state;
             //cout<<"Initial marking is sent"<<endl;
             m_graph->insertSHA(c);
-            strcpySHA(c->m_SHA2,Identif);
+            memcpy(c->m_SHA2,Identif,16);
            // MDD initialstate=Complete_meta_state;
 
             //pthread_spin_lock(&m_spin_md5);
@@ -176,9 +176,9 @@ void *MCHybridSOG::doCompute()
             //pthread_spin_unlock(&m_spin_md5);
             //#ifndef
 //            if (strcmp(red,'C')==0)
-            {
+            
             initialstate=Canonize(Complete_meta_state,0);
-            }
+            
             //#endif // REDUCE
             convert_wholemdd_stringcpp(initialstate,*chaine);
 
@@ -210,28 +210,25 @@ void *MCHybridSOG::doCompute()
                                 m_waitingBuild=false;
                                 m_aggWaiting=m_graph->getLDDStateById(pos);
                                 m_waitingSucc=true;
-                                cout<<"Get build..."<<endl;
+                               // cout<<"Get build..."<<endl;
                             }
                             
                         }
                         if (m_waitingSucc) {
                             
                             if (m_aggWaiting->isCompletedSucc()) {
-                                cout<<"Get succ..."<<endl;
+                                //cout<<"Get succ..."<<endl;
                                 m_waitingSucc=false;
                                 sendSuccToMC();
                             }
                         }
                         if (m_waitingAgregate) {
-                            bool res;
+                            bool res=false;
                             size_t pos=m_graph->findSHAPos(m_id_md5,res);
                             //cout<<"Not found..."<<endl;
                             if (res) {
                                 m_waitingAgregate=false;
-                                char mess[9];
-                                memcpy(mess,&pos,8);
-                                MPI_Send(mess,8,MPI_BYTE,n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD);  
-                                
+                                sendPropToMC(pos);                                
                             }
                         }
             }
@@ -335,7 +332,7 @@ void *MCHybridSOG::doCompute()
                                 if(!pos)
                                 {
                                     m_graph->insert(reached_class);
-                                    
+                                    memcpy(reached_class->m_SHA2,Identif,16);
                                     pthread_mutex_unlock(&m_graph_mutex);
                                     m_graph->addArc();
 
@@ -385,7 +382,7 @@ void *MCHybridSOG::doCompute()
                                     //MDD Reduced=ldd_reachedclass;
                                  string* message_to_send2=new string();
                                  convert_wholemdd_stringcpp(reached,*message_to_send2);
-                                 get_md5(*message_to_send2,Identif);
+                                // get_md5(*message_to_send2,Identif);
 
 
 
@@ -507,45 +504,41 @@ void MCHybridSOG::read_message()
     {
        //cout<<"message tag :"<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
       if (m_status.MPI_TAG==TAG_ASK_STATE) {          
-            cout<<"TAG ASKSTATE received by task "<<task_id<<" from "<<m_status.MPI_SOURCE<<endl;
+            //cout<<"TAG ASKSTATE received by task "<<task_id<<" from "<<m_status.MPI_SOURCE<<endl;
             char mess[17];
             MPI_Recv(mess,16,MPI_BYTE,m_status.MPI_SOURCE,m_status.MPI_TAG,MPI_COMM_WORLD,&m_status);
             bool res;m_waitingAgregate=false;
             size_t pos=m_graph->findSHAPos(mess,res);
             if (!res) {
-                cout<<"Not found"<<endl;
+                //cout<<"Not found"<<endl;
                 m_waitingAgregate=true;
                 memcpy(m_id_md5,mess,16);
             }
-            else {
-                cout<<"pos found :"<<pos<<endl;
-                memcpy(mess,&pos,8);
-                MPI_Send(mess,8,MPI_BYTE,m_status.MPI_SOURCE, TAG_ACK_STATE, MPI_COMM_WORLD);                
-            }
+            else sendPropToMC(pos);
+               
             
       }
-      else if (m_status.MPI_TAG==TAG_ASK_SUCC) {          
+      else if (m_status.MPI_TAG==TAG_ASK_SUCC) {         
         
-            char mess[17];
-            
+            char mess[17];            
             MPI_Recv(mess,16,MPI_BYTE,m_status.MPI_SOURCE,m_status.MPI_TAG,MPI_COMM_WORLD,&m_status);
             m_waitingBuild=false;m_waitingSucc=false;
             bool res;
-            cout<<"Before "<<res<<endl;
+            //cout<<"Before "<<res<<endl;
             size_t pos=m_graph->findSHAPos(mess,res);
-            cout<<"After "<<res<<endl;
+            //cout<<"After "<<res<<endl;
             if (res) {
                 LDDState *aggregate=m_graph->getLDDStateById(pos);
                 m_aggWaiting=aggregate;
                 if (aggregate->isCompletedSucc()) sendSuccToMC();
                 else {
                     m_waitingSucc=true;                    
-                    cout<<"Waiting for succ..."<<endl;
+                    //cout<<"Waiting for succ..."<<endl;
                 }
             }
             else {
                 m_waitingBuild=true;
-                cout<<"Waiting for build..."<<endl;
+                //cout<<"Waiting for build..."<<endl;
                 memcpy(m_id_md5,mess,16);
             }
             
@@ -554,29 +547,22 @@ void MCHybridSOG::read_message()
         switch (m_status.MPI_TAG)
         {
         case TAG_STATE:
-            cout<<"=============================TAG STATE received by task "<<task_id<<endl;
+            //cout<<"=============================TAG STATE received by task "<<task_id<<endl;
             read_state_message();
             break;
         case TAG_FINISH: 
-            cout<<"TAG FINISH received by task "<<task_id<<endl;
-            
+            cout<<"TAG FINISH received by task "<<task_id<<endl;            
              MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
             m_Terminated=true;
             break;
         case TAG_INITIAL: 
-            cout<<"TAG INITIAL received by task "<<task_id<<endl;
-             
+             // cout<<"TAG INITIAL received by task "<<task_id<<endl;             
              MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
-             LDDState *i_agregate=m_graph->getInitialState();
-             
-           
-             char message[23];
+             LDDState *i_agregate=m_graph->getInitialState();           
+             char message[22];
              memcpy(message,i_agregate->getSHAValue(),16);
-             uint16_t id_p=i_agregate->getProcess();
-             uint32_t jouk=65535;
-             memcpy(message+16,&id_p,2);
-             memcpy(message+18,&jouk,4);           
-            
+             uint16_t id_p=i_agregate->getProcess();             
+             memcpy(message+16,&id_p,2);            
              MPI_Send(message,22,MPI_BYTE,m_status.MPI_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD);
              break;
        
@@ -584,11 +570,7 @@ void MCHybridSOG::read_message()
         
         default:  cout<<"unknown received "<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
             //AbortTerm();
-            break;
-            /* int v;
-             MPI_Recv(&v, 1, MPI_INT, status.MPI_SOURCE, status.MPI_TAG, MPI_COMM_WORLD, &status);
-             if (task_id!=0)
-                 MPI_Send( &v, 1, MPI_INT, 0, TAG_ABORT, MPI_COMM_WORLD);*/
+            break;           
         }
         
         MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status);
@@ -614,9 +596,6 @@ void MCHybridSOG::read_state_message()
     m_msg[min_charge].push(MSG(msg_receiv,0));
     pthread_mutex_unlock(&m_spin_msg[min_charge]);
 }
-
-
-
 
 void MCHybridSOG::send_state_message()
 {
@@ -694,8 +673,6 @@ void MCHybridSOG::computeDSOG(LDDGraph &g)
 
     doCompute();
 
-
-
     for (int i = 0; i < m_nb_thread-1; i++)
     {
         pthread_join(m_list_thread[i], NULL);
@@ -713,16 +690,8 @@ void MCHybridSOG::computeDSOG(LDDGraph &g)
     MPI_Reduce(&nbarcs, &sum_nbArcs, 1, MPI_INT, MPI_SUM, 0, m_comm_world);
     MPI_Reduce(&m_size_mess, &total_size_mess, 1, MPI_INT, MPI_SUM, 0, m_comm_world);
 
-
-
-
     if(task_id==0)
     {
-        //
-
-        // cout<<"Nb Iteration internes : "<<m_itint<<endl;*/
-        //auto t2 = std::chrono::high_resolution_clock::now();
-        //tps=(double)clock() / (double)CLOCKS_PER_SEC-t1;
         clock_gettime(CLOCK_REALTIME, &finish);
 
         tps = (finish.tv_sec - start.tv_sec);
@@ -757,15 +726,6 @@ int MCHybridSOG::minCharge()
 }
 
 
-void MCHybridSOG::strcpySHA(unsigned char *dest,const unsigned char *source)
-{
-    for (int i=0; i<LENGTH_ID; i++)
-    {
-        dest[i]=source[i];
-        //if (source[i]=='\0') exit(0);
-    }
-    dest[LENGTH_ID]='\0';
-}
 
 
 
@@ -773,10 +733,6 @@ MCHybridSOG::~MCHybridSOG()
 {
     //dtor
 }
-
-
-
-
 
 /******************************************convert char ---> MDD ********************************************/
 
@@ -800,27 +756,6 @@ MDD MCHybridSOG::decodage_message(const char *chaine)
     }
     return M;
 }
-
-
-/*void HybridSOG::DisplayMessage(const char *chaine)
-{
-    unsigned int longueur=((unsigned char)chaine[1]-1);
-    longueur=(longueur<<7) | ((unsigned char)chaine[0]>>1);
-    int index=2;
-    printf("Chaine longueur %d pour %d places",longueur,m_nbPlaces);
-    for (int nb=0; nb<longueur; nb++)
-    {
-        for (int i=0; i<m_nbPlaces; i++)
-        {
-
-            printf("%d",((unsigned char)chaine[index]-1));
-            index++;
-        }
-        printf(" ");
-    }
-
-} */
-
 
 void * MCHybridSOG::threadHandler(void *context)
 {
@@ -877,7 +812,7 @@ void  MCHybridSOG::get_md5(const string& chaine,unsigned char *md_chaine)
     pthread_spin_lock(&m_spin_md5);
     MD5(chaine.c_str(), chaine.size(),md_chaine);
     pthread_spin_unlock(&m_spin_md5);
-    md_chaine[16]='\0';
+    //md_chaine[16]='\0';
 }
 
 void MCHybridSOG::sendSuccToMC() {
@@ -887,7 +822,7 @@ void MCHybridSOG::sendSuccToMC() {
     char mess_tosend[message_size];
     memcpy(mess_tosend,&nb_succ,4);            
     uint32_t i_message=4;
-    
+    //cout<<"***************************Number of succesors to send :"<<nb_succ<<endl;
     for (uint32_t i=0;i<nb_succ;i++) {  
                
                 pair<LDDState*,int> elt;
@@ -895,7 +830,7 @@ void MCHybridSOG::sendSuccToMC() {
                 memcpy(mess_tosend+i_message,elt.first->getSHAValue(),16);
                 i_message+=16;
                 uint16_t pcontainer=elt.first->getProcess();
-                cout<<" pcontainer "<<pcontainer<<endl;
+                //cout<<" pcontainer "<<pcontainer<<endl;
                 memcpy(mess_tosend+i_message,&pcontainer,2);                
                 i_message+=2;  
                 memcpy(mess_tosend+i_message,&(elt.second),2);
@@ -904,4 +839,72 @@ void MCHybridSOG::sendSuccToMC() {
             
            MPI_Send(mess_tosend,message_size,MPI_BYTE,n_tasks, TAG_ACK_SUCC,MPI_COMM_WORLD);
           
+}
+
+set<uint16_t> MCHybridSOG::getMarkedPlaces(LDDState *agg) {
+    set<uint16_t> result;
+    MDD mdd=agg->getLDDValue();
+    uint16_t depth=0;
+    while (mdd>lddmc_true)
+    {
+        //printf("mddd : %d \n",mdd);
+        mddnode_t node=GETNODE(mdd);
+        if (m_place_proposition.find(depth)!=m_place_proposition.end())
+        if (mddnode_getvalue(node)==1) {
+            result.insert(depth);
+        }
+
+        mdd=mddnode_getdown(node);
+        depth++;
+
+    }
+    return result;
+}
+
+set<uint16_t> MCHybridSOG::getUnmarkedPlaces(LDDState *agg) {
+    set<uint16_t> result;
+    MDD mdd=agg->getLDDValue();
+
+    uint16_t depth=0;
+    while (mdd>lddmc_true)
+    {
+        //printf("mddd : %d \n",mdd);
+        mddnode_t node=GETNODE(mdd);
+        if (m_place_proposition.find(depth)!=m_place_proposition.end())
+        if (mddnode_getvalue(node)==0) {
+            result.insert(depth);
+
+        }
+
+        mdd=mddnode_getdown(node);
+        depth++;
+
+    }
+    return result;
+}
+// Send propositions to Model checker
+void MCHybridSOG::sendPropToMC(size_t pos) {
+     LDDState *agg=m_graph->getLDDStateById(pos);
+     set<uint16_t> marked_places=getMarkedPlaces(agg);
+     set<uint16_t> unmarked_places=getUnmarkedPlaces(agg);
+     uint16_t s_mp=marked_places.size();
+     uint16_t s_up=unmarked_places.size();
+     char mess_to_send[8+s_mp*2+s_up*2+4];
+     memcpy(mess_to_send,&pos,8);
+     //cout<<"************* Pos to send :"<<pos<<endl;
+     size_t indice=8;
+     memcpy(mess_to_send+indice,&s_mp,2);
+     indice+=2;
+     for (auto it=marked_places.begin();it!=marked_places.end();it++) {
+                    
+        memcpy(mess_to_send+indice,&(*it),2);
+        indice+=2;
+    }
+    memcpy(mess_to_send+indice,&s_up,2);
+    indice+=2;
+    for (auto it=unmarked_places.begin();it!=unmarked_places.end();it++) {
+        memcpy(mess_to_send+indice,&(*it),2);
+        indice+=2;
+    }
+    MPI_Send(mess_to_send,indice,MPI_BYTE,n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD);                
 }
