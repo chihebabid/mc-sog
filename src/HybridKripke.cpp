@@ -71,20 +71,18 @@ std::string HybridKripke::format_state(const spot::state* s) const
 
 HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
     //cout<<__func__<<endl;
-    auto ss = static_cast<const HybridKripkeState*>(s);
-    char id[16];
-    memcpy(id,ss->getId(),16);
+    auto ss = static_cast<const HybridKripkeState*>(s);    
     bdd cond = state_condition(ss);
-    uint16_t pcontainer=ss->getContainerProcess();
-   /* if (iter_cache_)
+    HybridKripkeState* st=ss;
+    if (iter_cache_)
     {
       auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
-      it->recycle(id,pcontainer,cond);
+      it->recycle(*st,cond);
       return it;
-    }*/
+    }
    
-  return new HybridKripkeIterator(id,pcontainer,cond);
+  return new HybridKripkeIterator(*st,cond);
 
 }
 
@@ -92,14 +90,14 @@ bdd HybridKripke::state_condition(const spot::state* s) const
   {
    
     auto ss = static_cast<const HybridKripkeState*>(s);
-    set<uint16_t>* marked_place=ss->getMarkedPlaces();
+    list<uint16_t>* marked_place=ss->getMarkedPlaces();
     bdd result=bddtrue;     
     for (auto it=marked_place->begin();it!=marked_place->end();it++) {
         string name=m_net->getPlaceName(*it);
         spot::formula f=spot::formula::ap(name);
         result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
-    set<uint16_t>* unmarked_place=ss->getUnmarkedPlaces();
+    list<uint16_t>* unmarked_place=ss->getUnmarkedPlaces();
     for (auto it=unmarked_place->begin();it!=unmarked_place->end();it++) {
         string name=m_net->getPlaceName(*it);
         spot::formula f=spot::formula::ap(name);

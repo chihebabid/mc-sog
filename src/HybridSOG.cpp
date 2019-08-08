@@ -738,7 +738,7 @@ void HybridSOG::computeDSOG(LDDGraph &g)
     MPI_Barrier(MPI_COMM_WORLD);
    // int nb_th;
     m_nb_thread=nb_th;
-    cout<<"nb de thread"<<nb_th<<endl;
+    //cout<<"nb de thread"<<nb_th<<endl;
     int rc;
     m_id_thread=0;
     m_nbrecv=0;

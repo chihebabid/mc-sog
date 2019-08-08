@@ -4,11 +4,7 @@
 #include "ModelCheckBaseMT.h"
 #include <spot/kripke/kripke.hh>
 // Iterator for a SOG graph
-typedef struct {
-    char id[17];
-    int16_t transition;
-    uint16_t pcontainer;
-} succ_t;
+
 class HybridKripkeIterator : public spot::kripke_succ_iterator
 {
 public:
@@ -18,7 +14,7 @@ public:
     static spot::bdd_dict_ptr* m_dict_ptr;
     
   
-    HybridKripkeIterator(char *id,uint16_t pcontainer, bdd cnd);
+    HybridKripkeIterator(HybridKripkeState &st, bdd cnd);
     virtual ~HybridKripkeIterator();
     bool first() override;
     bool next() override;
@@ -28,16 +24,14 @@ public:
 
    // HybridKripkeState* current_state() const;
 
-    void recycle(char *id,uint16_t pcontainer, bdd cond);   
+    void recycle(HybridKripkeState &st, bdd cond);   
     std::string format_transition() const;
     
 
 private:
-    
-    char m_id[16];
-    uint16_t m_pcontainer;    
     unsigned int m_current_edge=0;
-    vector<succ_t> m_succ;
+    HybridKripkeState *m_current_state;
+    
 };
 
 

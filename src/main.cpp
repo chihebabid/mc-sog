@@ -315,7 +315,7 @@ int main(int argc, char** argv)
                 }  
                 MPI_Comm gprocess;
                 MPI_Comm_split(MPI_COMM_WORLD,task_id==n_tasks?0:1,task_id,&gprocess);
-                cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
+                //cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
                     if (task_id!=n_tasks)  {
                         cout<<"N task :"<<n_tasks<<endl;
                         MCHybridSOG DR(Rnewnet,gprocess, bound,false);
@@ -326,18 +326,25 @@ int main(int argc, char** argv)
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
                        auto d = spot::make_bdd_dict();
                        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
+                       /* spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
                         cout<<"finished...."<<endl;
-                        //while(1);
-                     /*   auto k =
-            std::make_shared<HybridKripke>(d,R.getListTransitionAP(),R.getListPlaceAP());*/
+                     
+            
                     fstream file;
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
-                    file.close();
-                    
+                    file.close();*/
+                     auto k =
+            std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
+            if (auto run = k->intersecting_run(af))
+        {
+            std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+            cout<<"=================================="<<endl;            
+        }
+        else
+            std::cout << "formula is verified\n";
                     }
                 }
            

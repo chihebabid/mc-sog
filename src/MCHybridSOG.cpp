@@ -623,12 +623,12 @@ void MCHybridSOG::computeDSOG(LDDGraph &g)
     double tps;
 
     // double  t1=(double)clock() / (double)CLOCKS_PER_SEC;
-    cout<<"process with id "<<task_id<<" / "<<n_tasks<<endl;
+    //cout<<"process with id "<<task_id<<" / "<<n_tasks<<endl;
     MPI_Barrier(m_comm_world);
-    cout<<"After!!!!process with id "<<task_id<<endl;
+   // cout<<"After!!!!process with id "<<task_id<<endl;
    // int nb_th;
     m_nb_thread=nb_th;
-    cout<<"nb de thread"<<nb_th<<endl;
+    //cout<<"nb de thread"<<nb_th<<endl;
     int rc;
     m_id_thread=0;
     m_nbrecv=0;
