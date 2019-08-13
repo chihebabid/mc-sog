@@ -1,0 +1,1559 @@
+#place p0 mk(1<..>)
+#place p1
+#place p2
+#place p3
+#place p4
+#place p5
+#place p6
+#place p7
+#place p8
+#place p9
+#place p10
+#place p11
+#place p12
+#place p13
+#place p14
+#place p15
+#place p16
+#place p17
+#place p18
+#place p19
+#place p20
+#place p21
+#place p22
+#place p23
+#place p24
+#place p25
+#place p26
+#place p27
+#place p28
+#place p29
+#place p30
+#place p31
+#place p32
+#place p33
+#place p34
+#place p35
+#place p36
+#place p37
+#place p38
+#place p39
+#place p40
+#place p41
+#place p42
+#place p43
+#place p44
+#place p45
+#place p46
+#place p47
+#place p48
+#place p49
+#place p50
+#place p51
+#place p52
+#place p53
+#place p54
+#place p55
+#place p56
+#place p57
+#place p58
+#place p59
+#place p60
+#place p61
+#place p62
+#place p63
+#place p64
+#place p65
+#place p66
+#place p67
+#place p68
+#place p69
+#place p70
+#place p71
+#place p72
+#place p73
+#place p74
+#place p75
+#place p76
+#place p77
+#place p78
+#place p79
+#place p80
+#place p81
+#place p82
+#place p83
+#place p84
+#place p85
+#place p86
+#place p87
+#place p88
+#place p89
+#place p90
+#place p91
+#place p92
+#place p93
+#place p94
+#place p95
+#place p96
+#place p97
+#place p98
+#place p99
+#place p100
+#place p101
+#place p102
+#place p103
+#place p104
+#place p105
+#place p106
+#place p107
+#place p108
+#place p109
+#place p110
+#place p111
+#place p112
+#place p113
+#place p114
+#place p115
+#place p116
+#place p117
+#place p118
+#place p119
+#place p120
+#place p121
+#place p122
+#place p123
+#place p124
+#place p125
+#place p126
+#place p127
+#place p128
+#place p129
+#place p130
+#place p131
+#place p132
+#place p133
+#place p134
+#place p135
+#place p136
+#place p137
+#place p138
+#place p139
+#place p140
+#place p141
+#place p142
+#place p143
+#place p144
+#place p145
+#place p146
+#place p147
+#place p148
+#place p149
+#place p150
+#place p151
+#place p152
+#place p153
+#place p154
+#place p155
+#place p156
+#place p157
+#place p158
+#place p159
+#place p160
+#place p161
+#place p162
+#place p163
+#place p164
+#place p165
+#place p166
+#place p167
+#place p168
+#place p169
+#place p170
+#place p171
+#place p172
+#place p173
+#place p174
+#place p175
+#place p176
+#place p177
+#place p178
+#place p179
+#place p180
+#place p181
+#place p182
+#place p183
+#place p184
+#place p185
+#place p186
+#place p187
+#place p188
+#place p189
+#place p190
+#place p191
+#place p192
+#place p193
+#place p194
+#place p195
+#place p196
+#place p197
+#place p198
+#place p199
+#place p200
+#place p201
+#place p202
+#place p203
+#place p204
+#place p205
+#place p206
+#place p207
+#place p208
+#place p209
+#place p210
+#place p211
+#place p212
+#place p213
+#place p214
+#place p215
+#place p216
+#place p217
+#place p218
+#place p219
+#place p220
+#place p221
+#place p222
+#place p223
+#place p224
+#place p225
+#place p226
+#place p227
+#place p228
+#place p229
+#place p230
+#place p231
+#place p232
+#place p233
+#place p234
+#place p235
+#place p236
+#place p237
+#place p238
+#place p239
+#place p240
+#place p241
+#place p242
+#place p243
+#place p244
+#place p245
+#place p246
+#place p247
+#place p248
+#place p249
+#place p250
+#place p251
+#place p252
+#place p253
+#place p254
+#place p255
+#place p256
+#place p257
+#place p258
+#place p259
+#place p260
+#place p261
+#place p262
+#place p263
+#place p264
+#place p265
+#place p266
+#place p267
+#place p268
+#place p269
+#place p270
+#place p271
+#place p272
+#place p273
+#place p274
+#place p275
+#place p276
+#place p277
+#place p279
+#place p280
+#place p281
+#place p282
+#place p283
+#place p284
+#place p285
+#place p286
+#place p287
+#place p288
+#place p289
+#place p290
+#place p291
+#place p292
+#place p293
+#place p294
+#place p295
+#place p296
+#place p297
+#place p298
+#place p299
+#place p300
+#place p301
+#place p302
+#place p303
+#place p304
+#place p305
+#place p306
+#place p307
+#place p308
+#place p309
+#place p310
+#place p311
+#place p312
+#place p313
+#place p314
+#place p315
+#place p316
+#place p317
+#place p318
+#place p319
+#place p320
+#place p321
+#place p322
+#place p323
+#place p324
+#place p325
+#place p326
+#place p327
+#place p328
+#place p329
+#place p330
+#place p331
+#place p332
+#place p333
+#place p334
+#place p335
+#place p336
+#place p337
+#place p338
+#place p339
+#place p340
+#place p341
+#place p342
+#place p343
+#place p344
+#place p345
+#place p346
+#place p347
+#place p348
+#place p349
+#place p350
+#place p351
+#place p352
+#place p353
+#place p354
+#place p355
+#place p356
+#place p357
+#place p358
+#place p359
+#place p360
+#place p361
+#place p362
+#place p363
+#place p364
+#place p365
+#place p366
+#place p367
+#place p368
+#place p369
+#place p370
+#place p371
+#place p372
+#place p373
+#place p374
+#place p375
+#trans t0
+in {p95:<..>;p89:<..>;p83:<..>;p77:<..>;p74:<..>;p80:<..>;p86:<..>;p92:<..>;}
+out {p66:<..>;}
+#endtr
+#trans t1
+in {p129:<..>;p123:<..>;p117:<..>;p111:<..>;p108:<..>;p114:<..>;p120:<..>;p126:<..>;}
+out {p98:<..>;}
+#endtr
+#trans t2
+in {p374:<..>;p368:<..>;p362:<..>;p356:<..>;p353:<..>;p359:<..>;p365:<..>;p371:<..>;}
+out {p332:<..>;}
+#endtr
+#trans t3
+in {p0:<..>;}
+out {p270:<..>;p1:<..>;}
+#endtr
+#trans t4
+in {p270:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t5
+in {p344:<..>;}
+out {p343:<..>;}
+#endtr
+#trans t6
+in {p343:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t7
+in {p342:<..>;}
+out {p341:<..>;}
+#endtr
+#trans t8
+in {p340:<..>;}
+out {p339:<..>;}
+#endtr
+#trans t9
+in {p339:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t10
+in {p338:<..>;}
+out {p337:<..>;}
+#endtr
+#trans t11
+in {p336:<..>;}
+out {p335:<..>;}
+#endtr
+#trans t12
+in {p335:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t13
+in {p334:<..>;}
+out {p333:<..>;}
+#endtr
+#trans t14
+in {p333:<..>;}
+out {p373:<..>;p346:<..>;}
+#endtr
+#trans t15
+in {p375:<..>;}
+out {p374:<..>;}
+#endtr
+#trans t16
+in {p346:<..>;}
+out {p370:<..>;p347:<..>;}
+#endtr
+#trans t17
+in {p372:<..>;}
+out {p371:<..>;}
+#endtr
+#trans t18
+in {p347:<..>;}
+out {p367:<..>;p348:<..>;}
+#endtr
+#trans t19
+in {p369:<..>;}
+out {p368:<..>;}
+#endtr
+#trans t20
+in {p348:<..>;}
+out {p364:<..>;p349:<..>;}
+#endtr
+#trans t21
+in {p366:<..>;}
+out {p365:<..>;}
+#endtr
+#trans t22
+in {p349:<..>;}
+out {p361:<..>;p350:<..>;}
+#endtr
+#trans t23
+in {p363:<..>;}
+out {p362:<..>;}
+#endtr
+#trans t24
+in {p350:<..>;}
+out {p358:<..>;p351:<..>;}
+#endtr
+#trans t25
+in {p360:<..>;}
+out {p359:<..>;}
+#endtr
+#trans t26
+in {p351:<..>;}
+out {p355:<..>;p352:<..>;}
+#endtr
+#trans t27
+in {p357:<..>;}
+out {p356:<..>;}
+#endtr
+#trans t28
+in {p354:<..>;}
+out {p353:<..>;}
+#endtr
+#trans t29
+in {p332:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t30
+in {p331:<..>;}
+out {p330:<..>;}
+#endtr
+#trans t31
+in {p330:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t32
+in {p329:<..>;}
+out {p328:<..>;}
+#endtr
+#trans t33
+in {p328:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t34
+in {p327:<..>;}
+out {p326:<..>;}
+#endtr
+#trans t35
+in {p326:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t36
+in {p325:<..>;}
+out {p324:<..>;}
+#endtr
+#trans t37
+in {p324:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t38
+in {p323:<..>;}
+out {p322:<..>;}
+#endtr
+#trans t39
+in {p322:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t40
+in {p321:<..>;}
+out {p320:<..>;}
+#endtr
+#trans t41
+in {p320:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t42
+in {p319:<..>;}
+out {p318:<..>;}
+#endtr
+#trans t43
+in {p318:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t44
+in {p317:<..>;}
+out {p316:<..>;}
+#endtr
+#trans t45
+in {p316:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t46
+in {p315:<..>;}
+out {p314:<..>;}
+#endtr
+#trans t47
+in {p313:<..>;}
+out {p312:<..>;}
+#endtr
+#trans t48
+in {p312:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t49
+in {p311:<..>;}
+out {p310:<..>;}
+#endtr
+#trans t50
+in {p309:<..>;}
+out {p308:<..>;}
+#endtr
+#trans t51
+in {p308:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t52
+in {p307:<..>;}
+out {p306:<..>;}
+#endtr
+#trans t53
+in {p305:<..>;}
+out {p304:<..>;}
+#endtr
+#trans t54
+in {p304:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t55
+in {p303:<..>;}
+out {p302:<..>;}
+#endtr
+#trans t56
+in {p301:<..>;}
+out {p300:<..>;}
+#endtr
+#trans t57
+in {p300:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t58
+in {p299:<..>;}
+out {p298:<..>;}
+#endtr
+#trans t59
+in {p297:<..>;}
+out {p296:<..>;}
+#endtr
+#trans t60
+in {p296:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t61
+in {p295:<..>;}
+out {p294:<..>;}
+#endtr
+#trans t62
+in {p293:<..>;}
+out {p292:<..>;}
+#endtr
+#trans t63
+in {p292:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t64
+in {p291:<..>;}
+out {p290:<..>;}
+#endtr
+#trans t65
+in {p289:<..>;}
+out {p288:<..>;}
+#endtr
+#trans t66
+in {p288:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t67
+in {p287:<..>;}
+out {p286:<..>;}
+#endtr
+#trans t68
+in {p285:<..>;}
+out {p284:<..>;}
+#endtr
+#trans t69
+in {p284:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t70
+in {p283:<..>;}
+out {p282:<..>;}
+#endtr
+#trans t71
+in {p282:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t72
+in {p345:<..>;}
+out {p281:<..>;}
+#endtr
+#trans t73
+in {p281:<..>;}
+out {p280:<..>;}
+#endtr
+#trans t74
+in {p280:<..>;}
+out {p279:<..>;}
+#endtr
+#trans t76
+in {p280:<..>;}
+out {p277:<..>;}
+#endtr
+#trans t77
+in {p277:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t78
+in {p345:<..>;}
+out {p276:<..>;}
+#endtr
+#trans t79
+in {p276:<..>;}
+out {p275:<..>;}
+#endtr
+#trans t80
+in {p275:<..>;}
+out {p274:<..>;}
+#endtr
+#trans t81
+in {p273:<..>;}
+out {p272:<..>;}
+#endtr
+#trans t82
+in {p272:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t83
+in {p275:<..>;}
+out {p271:<..>;}
+#endtr
+#trans t84
+in {p271:<..>;}
+out {p345:<..>;}
+#endtr
+#trans t85
+in {p1:<..>;}
+out {p151:<..>;p2:<..>;}
+#endtr
+#trans t86
+in {p151:<..>;}
+out {p265:<..>;p152:<..>;}
+#endtr
+#trans t87
+in {p265:<..>;}
+out {p269:<..>;}
+#endtr
+#trans t88
+in {p269:<..>;}
+out {p268:<..>;}
+#endtr
+#trans t89
+in {p266:<..>;}
+out {p268:<..>;}
+#endtr
+#trans t90
+in {p152:<..>;}
+out {p260:<..>;p153:<..>;}
+#endtr
+#trans t91
+in {p260:<..>;}
+out {p264:<..>;}
+#endtr
+#trans t92
+in {p264:<..>;}
+out {p263:<..>;}
+#endtr
+#trans t93
+in {p261:<..>;}
+out {p263:<..>;}
+#endtr
+#trans t94
+in {p153:<..>;}
+out {p255:<..>;p154:<..>;}
+#endtr
+#trans t95
+in {p255:<..>;}
+out {p259:<..>;}
+#endtr
+#trans t96
+in {p259:<..>;}
+out {p258:<..>;}
+#endtr
+#trans t97
+in {p256:<..>;}
+out {p258:<..>;}
+#endtr
+#trans t98
+in {p154:<..>;}
+out {p250:<..>;p155:<..>;}
+#endtr
+#trans t99
+in {p250:<..>;}
+out {p254:<..>;}
+#endtr
+#trans t100
+in {p254:<..>;}
+out {p253:<..>;}
+#endtr
+#trans t101
+in {p251:<..>;}
+out {p253:<..>;}
+#endtr
+#trans t102
+in {p155:<..>;}
+out {p245:<..>;p156:<..>;}
+#endtr
+#trans t103
+in {p245:<..>;}
+out {p249:<..>;}
+#endtr
+#trans t104
+in {p249:<..>;}
+out {p248:<..>;}
+#endtr
+#trans t105
+in {p246:<..>;}
+out {p248:<..>;}
+#endtr
+#trans t106
+in {p156:<..>;}
+out {p240:<..>;p157:<..>;}
+#endtr
+#trans t107
+in {p240:<..>;}
+out {p244:<..>;}
+#endtr
+#trans t108
+in {p244:<..>;}
+out {p243:<..>;}
+#endtr
+#trans t109
+in {p241:<..>;}
+out {p243:<..>;}
+#endtr
+#trans t110
+in {p157:<..>;}
+out {p235:<..>;p158:<..>;}
+#endtr
+#trans t111
+in {p235:<..>;}
+out {p239:<..>;}
+#endtr
+#trans t112
+in {p239:<..>;}
+out {p238:<..>;}
+#endtr
+#trans t113
+in {p236:<..>;}
+out {p238:<..>;}
+#endtr
+#trans t114
+in {p158:<..>;}
+out {p230:<..>;p159:<..>;}
+#endtr
+#trans t115
+in {p230:<..>;}
+out {p234:<..>;}
+#endtr
+#trans t116
+in {p234:<..>;}
+out {p233:<..>;}
+#endtr
+#trans t117
+in {p231:<..>;}
+out {p233:<..>;}
+#endtr
+#trans t118
+in {p159:<..>;}
+out {p225:<..>;p160:<..>;}
+#endtr
+#trans t119
+in {p225:<..>;}
+out {p229:<..>;}
+#endtr
+#trans t120
+in {p229:<..>;}
+out {p228:<..>;}
+#endtr
+#trans t121
+in {p226:<..>;}
+out {p228:<..>;}
+#endtr
+#trans t122
+in {p160:<..>;}
+out {p220:<..>;p161:<..>;}
+#endtr
+#trans t123
+in {p220:<..>;}
+out {p224:<..>;}
+#endtr
+#trans t124
+in {p224:<..>;}
+out {p223:<..>;}
+#endtr
+#trans t125
+in {p221:<..>;}
+out {p223:<..>;}
+#endtr
+#trans t126
+in {p161:<..>;}
+out {p215:<..>;p162:<..>;}
+#endtr
+#trans t127
+in {p215:<..>;}
+out {p219:<..>;}
+#endtr
+#trans t128
+in {p219:<..>;}
+out {p218:<..>;}
+#endtr
+#trans t129
+in {p216:<..>;}
+out {p218:<..>;}
+#endtr
+#trans t130
+in {p162:<..>;}
+out {p210:<..>;p163:<..>;}
+#endtr
+#trans t131
+in {p210:<..>;}
+out {p214:<..>;}
+#endtr
+#trans t132
+in {p214:<..>;}
+out {p213:<..>;}
+#endtr
+#trans t133
+in {p211:<..>;}
+out {p213:<..>;}
+#endtr
+#trans t134
+in {p163:<..>;}
+out {p205:<..>;p164:<..>;}
+#endtr
+#trans t135
+in {p205:<..>;}
+out {p209:<..>;}
+#endtr
+#trans t136
+in {p209:<..>;}
+out {p208:<..>;}
+#endtr
+#trans t137
+in {p206:<..>;}
+out {p208:<..>;}
+#endtr
+#trans t138
+in {p164:<..>;}
+out {p200:<..>;p165:<..>;}
+#endtr
+#trans t139
+in {p200:<..>;}
+out {p204:<..>;}
+#endtr
+#trans t140
+in {p204:<..>;}
+out {p203:<..>;}
+#endtr
+#trans t141
+in {p201:<..>;}
+out {p203:<..>;}
+#endtr
+#trans t142
+in {p165:<..>;}
+out {p195:<..>;p166:<..>;}
+#endtr
+#trans t143
+in {p195:<..>;}
+out {p199:<..>;}
+#endtr
+#trans t144
+in {p199:<..>;}
+out {p198:<..>;}
+#endtr
+#trans t145
+in {p196:<..>;}
+out {p198:<..>;}
+#endtr
+#trans t146
+in {p166:<..>;}
+out {p190:<..>;p167:<..>;}
+#endtr
+#trans t147
+in {p190:<..>;}
+out {p194:<..>;}
+#endtr
+#trans t148
+in {p194:<..>;}
+out {p193:<..>;}
+#endtr
+#trans t149
+in {p191:<..>;}
+out {p193:<..>;}
+#endtr
+#trans t150
+in {p167:<..>;}
+out {p185:<..>;p168:<..>;}
+#endtr
+#trans t151
+in {p185:<..>;}
+out {p189:<..>;}
+#endtr
+#trans t152
+in {p189:<..>;}
+out {p188:<..>;}
+#endtr
+#trans t153
+in {p186:<..>;}
+out {p188:<..>;}
+#endtr
+#trans t154
+in {p168:<..>;}
+out {p180:<..>;p169:<..>;}
+#endtr
+#trans t155
+in {p180:<..>;}
+out {p184:<..>;}
+#endtr
+#trans t156
+in {p184:<..>;}
+out {p183:<..>;}
+#endtr
+#trans t157
+in {p181:<..>;}
+out {p183:<..>;}
+#endtr
+#trans t158
+in {p169:<..>;}
+out {p175:<..>;p170:<..>;}
+#endtr
+#trans t159
+in {p175:<..>;}
+out {p179:<..>;}
+#endtr
+#trans t160
+in {p179:<..>;}
+out {p178:<..>;}
+#endtr
+#trans t161
+in {p176:<..>;}
+out {p178:<..>;}
+#endtr
+#trans t162
+in {p170:<..>;}
+out {p174:<..>;}
+#endtr
+#trans t163
+in {p174:<..>;}
+out {p173:<..>;}
+#endtr
+#trans t164
+in {p171:<..>;}
+out {p173:<..>;}
+#endtr
+#trans t165
+in {p2:<..>;}
+out {p147:<..>;p3:<..>;}
+#endtr
+#trans t166
+in {p149:<..>;}
+out {p148:<..>;}
+#endtr
+#trans t167
+in {p3:<..>;}
+out {p143:<..>;p4:<..>;}
+#endtr
+#trans t168
+in {p146:<..>;}
+out {p145:<..>;}
+#endtr
+#trans t169
+in {p144:<..>;}
+out {p143:<..>;}
+#endtr
+#trans t170
+in {p4:<..>;}
+out {p137:<..>;p5:<..>;}
+#endtr
+#trans t171
+in {p142:<..>;}
+out {p141:<..>;}
+#endtr
+#trans t172
+in {p139:<..>;}
+out {p138:<..>;}
+#endtr
+#trans t173
+in {p138:<..>;}
+out {p137:<..>;}
+#endtr
+#trans t174
+in {p5:<..>;}
+out {p131:<..>;p6:<..>;}
+#endtr
+#trans t175
+in {p136:<..>;}
+out {p135:<..>;}
+#endtr
+#trans t176
+in {p133:<..>;}
+out {p132:<..>;}
+#endtr
+#trans t177
+in {p132:<..>;}
+out {p131:<..>;}
+#endtr
+#trans t178
+in {p6:<..>;}
+out {p97:<..>;p7:<..>;}
+#endtr
+#trans t179
+in {p100:<..>;}
+out {p99:<..>;}
+#endtr
+#trans t180
+in {p99:<..>;}
+out {p128:<..>;p101:<..>;}
+#endtr
+#trans t181
+in {p130:<..>;}
+out {p129:<..>;}
+#endtr
+#trans t182
+in {p101:<..>;}
+out {p125:<..>;p102:<..>;}
+#endtr
+#trans t183
+in {p127:<..>;}
+out {p126:<..>;}
+#endtr
+#trans t184
+in {p102:<..>;}
+out {p122:<..>;p103:<..>;}
+#endtr
+#trans t185
+in {p124:<..>;}
+out {p123:<..>;}
+#endtr
+#trans t186
+in {p103:<..>;}
+out {p119:<..>;p104:<..>;}
+#endtr
+#trans t187
+in {p121:<..>;}
+out {p120:<..>;}
+#endtr
+#trans t188
+in {p104:<..>;}
+out {p116:<..>;p105:<..>;}
+#endtr
+#trans t189
+in {p118:<..>;}
+out {p117:<..>;}
+#endtr
+#trans t190
+in {p105:<..>;}
+out {p113:<..>;p106:<..>;}
+#endtr
+#trans t191
+in {p115:<..>;}
+out {p114:<..>;}
+#endtr
+#trans t192
+in {p106:<..>;}
+out {p110:<..>;p107:<..>;}
+#endtr
+#trans t193
+in {p112:<..>;}
+out {p111:<..>;}
+#endtr
+#trans t194
+in {p109:<..>;}
+out {p108:<..>;}
+#endtr
+#trans t195
+in {p98:<..>;}
+out {p97:<..>;}
+#endtr
+#trans t196
+in {p7:<..>;}
+out {p63:<..>;p8:<..>;}
+#endtr
+#trans t197
+in {p63:<..>;}
+out {p94:<..>;p67:<..>;}
+#endtr
+#trans t198
+in {p96:<..>;}
+out {p95:<..>;}
+#endtr
+#trans t199
+in {p67:<..>;}
+out {p91:<..>;p68:<..>;}
+#endtr
+#trans t200
+in {p93:<..>;}
+out {p92:<..>;}
+#endtr
+#trans t201
+in {p68:<..>;}
+out {p88:<..>;p69:<..>;}
+#endtr
+#trans t202
+in {p90:<..>;}
+out {p89:<..>;}
+#endtr
+#trans t203
+in {p69:<..>;}
+out {p85:<..>;p70:<..>;}
+#endtr
+#trans t204
+in {p87:<..>;}
+out {p86:<..>;}
+#endtr
+#trans t205
+in {p70:<..>;}
+out {p82:<..>;p71:<..>;}
+#endtr
+#trans t206
+in {p84:<..>;}
+out {p83:<..>;}
+#endtr
+#trans t207
+in {p71:<..>;}
+out {p79:<..>;p72:<..>;}
+#endtr
+#trans t208
+in {p81:<..>;}
+out {p80:<..>;}
+#endtr
+#trans t209
+in {p72:<..>;}
+out {p76:<..>;p73:<..>;}
+#endtr
+#trans t210
+in {p78:<..>;}
+out {p77:<..>;}
+#endtr
+#trans t211
+in {p75:<..>;}
+out {p74:<..>;}
+#endtr
+#trans t212
+in {p65:<..>;}
+out {p64:<..>;}
+#endtr
+#trans t213
+in {p64:<..>;}
+out {p63:<..>;}
+#endtr
+#trans t214
+in {p8:<..>;}
+out {p57:<..>;p9:<..>;}
+#endtr
+#trans t215
+in {p62:<..>;}
+out {p61:<..>;}
+#endtr
+#trans t216
+in {p59:<..>;}
+out {p58:<..>;}
+#endtr
+#trans t217
+in {p58:<..>;}
+out {p57:<..>;}
+#endtr
+#trans t218
+in {p9:<..>;}
+out {p51:<..>;p10:<..>;}
+#endtr
+#trans t219
+in {p56:<..>;}
+out {p55:<..>;}
+#endtr
+#trans t220
+in {p53:<..>;}
+out {p52:<..>;}
+#endtr
+#trans t221
+in {p52:<..>;}
+out {p51:<..>;}
+#endtr
+#trans t222
+in {p10:<..>;}
+out {p45:<..>;p11:<..>;}
+#endtr
+#trans t223
+in {p50:<..>;}
+out {p49:<..>;}
+#endtr
+#trans t224
+in {p47:<..>;}
+out {p46:<..>;}
+#endtr
+#trans t225
+in {p46:<..>;}
+out {p45:<..>;}
+#endtr
+#trans t226
+in {p11:<..>;}
+out {p39:<..>;p12:<..>;}
+#endtr
+#trans t227
+in {p44:<..>;}
+out {p43:<..>;}
+#endtr
+#trans t228
+in {p41:<..>;}
+out {p40:<..>;}
+#endtr
+#trans t229
+in {p40:<..>;}
+out {p39:<..>;}
+#endtr
+#trans t230
+in {p12:<..>;}
+out {p33:<..>;p13:<..>;}
+#endtr
+#trans t231
+in {p38:<..>;}
+out {p37:<..>;}
+#endtr
+#trans t232
+in {p35:<..>;}
+out {p34:<..>;}
+#endtr
+#trans t233
+in {p34:<..>;}
+out {p33:<..>;}
+#endtr
+#trans t234
+in {p13:<..>;}
+out {p27:<..>;p14:<..>;}
+#endtr
+#trans t235
+in {p32:<..>;}
+out {p31:<..>;}
+#endtr
+#trans t236
+in {p29:<..>;}
+out {p28:<..>;}
+#endtr
+#trans t237
+in {p28:<..>;}
+out {p27:<..>;}
+#endtr
+#trans t238
+in {p14:<..>;}
+out {p21:<..>;p15:<..>;}
+#endtr
+#trans t239
+in {p26:<..>;}
+out {p25:<..>;}
+#endtr
+#trans t240
+in {p23:<..>;}
+out {p22:<..>;}
+#endtr
+#trans t241
+in {p22:<..>;}
+out {p21:<..>;}
+#endtr
+#trans t242
+in {p20:<..>;}
+out {p19:<..>;}
+#endtr
+#trans t243
+in {p17:<..>;}
+out {p16:<..>;}
+#endtr
+#trans t244
+in {p16:<..>;}
+out {p15:<..>;}
+#endtr
+#trans t245
+in {p135:<..>;}
+out {p134:<..>;}
+#endtr
+#trans t246
+in {p55:<..>;}
+out {p54:<..>;}
+#endtr
+#trans t247
+in {p43:<..>;}
+out {p42:<..>;}
+#endtr
+#trans t248
+in {p31:<..>;}
+out {p30:<..>;}
+#endtr
+#trans t249
+in {p19:<..>;}
+out {p18:<..>;}
+#endtr
+#trans t250
+in {p25:<..>;}
+out {p24:<..>;}
+#endtr
+#trans t251
+in {p37:<..>;}
+out {p36:<..>;}
+#endtr
+#trans t252
+in {p49:<..>;}
+out {p48:<..>;}
+#endtr
+#trans t253
+in {p61:<..>;}
+out {p60:<..>;}
+#endtr
+#trans t254
+in {p141:<..>;}
+out {p140:<..>;}
+#endtr
+#trans t255
+in {p147:<..>;}
+out {p150:<..>;}
+#endtr
+#trans t256
+in {p145:<..>;}
+out {p144:<..>;}
+#endtr
+#trans t257
+in {p268:<..>;p150:<..>;p345:<..>;}
+out {p267:<..>;p149:<..>;p344:<..>;}
+#endtr
+#trans t258
+in {p267:<..>;p137:<..>;p345:<..>;}
+out {p266:<..>;p142:<..>;p342:<..>;}
+#endtr
+#trans t259
+in {p263:<..>;p140:<..>;p341:<..>;}
+out {p262:<..>;p139:<..>;p340:<..>;}
+#endtr
+#trans t260
+in {p217:<..>;p131:<..>;p345:<..>;}
+out {p216:<..>;p136:<..>;p338:<..>;}
+#endtr
+#trans t261
+in {p213:<..>;p134:<..>;p337:<..>;}
+out {p212:<..>;p133:<..>;p336:<..>;}
+#endtr
+#trans t262
+in {p262:<..>;p97:<..>;p345:<..>;}
+out {p261:<..>;p100:<..>;p334:<..>;}
+#endtr
+#trans t263
+in {p258:<..>;p128:<..>;p373:<..>;}
+out {p257:<..>;p130:<..>;p375:<..>;}
+#endtr
+#trans t264
+in {p248:<..>;p122:<..>;p367:<..>;}
+out {p247:<..>;p124:<..>;p369:<..>;}
+#endtr
+#trans t265
+in {p208:<..>;p116:<..>;p361:<..>;}
+out {p207:<..>;p118:<..>;p363:<..>;}
+#endtr
+#trans t266
+in {p198:<..>;p110:<..>;p355:<..>;}
+out {p197:<..>;p112:<..>;p357:<..>;}
+#endtr
+#trans t267
+in {p193:<..>;p107:<..>;p352:<..>;}
+out {p192:<..>;p109:<..>;p354:<..>;}
+#endtr
+#trans t268
+in {p203:<..>;p113:<..>;p358:<..>;}
+out {p202:<..>;p115:<..>;p360:<..>;}
+#endtr
+#trans t269
+in {p243:<..>;p119:<..>;p364:<..>;}
+out {p242:<..>;p121:<..>;p366:<..>;}
+#endtr
+#trans t270
+in {p253:<..>;p125:<..>;p370:<..>;}
+out {p252:<..>;p127:<..>;p372:<..>;}
+#endtr
+#trans t271
+in {p237:<..>;p94:<..>;p345:<..>;}
+out {p236:<..>;p96:<..>;p331:<..>;}
+#endtr
+#trans t272
+in {p232:<..>;p91:<..>;p345:<..>;}
+out {p231:<..>;p93:<..>;p329:<..>;}
+#endtr
+#trans t273
+in {p227:<..>;p88:<..>;p345:<..>;}
+out {p226:<..>;p90:<..>;p327:<..>;}
+#endtr
+#trans t274
+in {p222:<..>;p85:<..>;p345:<..>;}
+out {p221:<..>;p87:<..>;p325:<..>;}
+#endtr
+#trans t275
+in {p187:<..>;p82:<..>;p345:<..>;}
+out {p186:<..>;p84:<..>;p323:<..>;}
+#endtr
+#trans t276
+in {p182:<..>;p79:<..>;p345:<..>;}
+out {p181:<..>;p81:<..>;p321:<..>;}
+#endtr
+#trans t277
+in {p177:<..>;p76:<..>;p345:<..>;}
+out {p176:<..>;p78:<..>;p319:<..>;}
+#endtr
+#trans t278
+in {p172:<..>;p73:<..>;p345:<..>;}
+out {p171:<..>;p75:<..>;p317:<..>;}
+#endtr
+#trans t279
+in {p257:<..>;p57:<..>;p345:<..>;}
+out {p256:<..>;p62:<..>;p315:<..>;}
+#endtr
+#trans t280
+in {p238:<..>;p60:<..>;p314:<..>;}
+out {p237:<..>;p59:<..>;p313:<..>;}
+#endtr
+#trans t281
+in {p252:<..>;p51:<..>;p345:<..>;}
+out {p251:<..>;p56:<..>;p311:<..>;}
+#endtr
+#trans t282
+in {p233:<..>;p54:<..>;p310:<..>;}
+out {p232:<..>;p53:<..>;p309:<..>;}
+#endtr
+#trans t283
+in {p247:<..>;p45:<..>;p345:<..>;}
+out {p246:<..>;p50:<..>;p307:<..>;}
+#endtr
+#trans t284
+in {p228:<..>;p48:<..>;p306:<..>;}
+out {p227:<..>;p47:<..>;p305:<..>;}
+#endtr
+#trans t285
+in {p242:<..>;p39:<..>;p345:<..>;}
+out {p241:<..>;p44:<..>;p303:<..>;}
+#endtr
+#trans t286
+in {p223:<..>;p42:<..>;p302:<..>;}
+out {p222:<..>;p41:<..>;p301:<..>;}
+#endtr
+#trans t287
+in {p207:<..>;p33:<..>;p345:<..>;}
+out {p206:<..>;p38:<..>;p299:<..>;}
+#endtr
+#trans t288
+in {p188:<..>;p36:<..>;p298:<..>;}
+out {p187:<..>;p35:<..>;p297:<..>;}
+#endtr
+#trans t289
+in {p202:<..>;p27:<..>;p345:<..>;}
+out {p201:<..>;p32:<..>;p295:<..>;}
+#endtr
+#trans t290
+in {p183:<..>;p30:<..>;p294:<..>;}
+out {p182:<..>;p29:<..>;p293:<..>;}
+#endtr
+#trans t291
+in {p197:<..>;p21:<..>;p345:<..>;}
+out {p196:<..>;p26:<..>;p291:<..>;}
+#endtr
+#trans t292
+in {p178:<..>;p24:<..>;p290:<..>;}
+out {p177:<..>;p23:<..>;p289:<..>;}
+#endtr
+#trans t293
+in {p192:<..>;p15:<..>;p345:<..>;}
+out {p191:<..>;p20:<..>;p287:<..>;}
+#endtr
+#trans t294
+in {p173:<..>;p18:<..>;p286:<..>;}
+out {p172:<..>;p17:<..>;p285:<..>;}
+#endtr
+#trans t295
+in {p212:<..>;p143:<..>;p345:<..>;}
+out {p211:<..>;p146:<..>;p283:<..>;}
+#endtr
+#trans t296
+in {p218:<..>;p66:<..>;p274:<..>;}
+out {p217:<..>;p65:<..>;p273:<..>;}
+#endtr

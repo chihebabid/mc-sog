@@ -1,0 +1,72 @@
+#place Section_4
+#place F7 mk(1<..>)
+#place Section_2
+#place Section_9 mk(1<..>)
+#place Section_11
+#place F2 mk(1<..>)
+#place Section_6 mk(1<..>)
+#place F9
+#place F3
+#place Section_12 mk(1<..>)
+#place F12
+#place F6
+#place F1 mk(1<..>)
+#place Section_3 mk(1<..>)
+#place Section_10
+#place F8 mk(1<..>)
+#place F10 mk(1<..>)
+#place Section_5
+#place Section_8
+#place Section_7
+#place F5 mk(1<..>)
+#place F11 mk(1<..>)
+#place F4 mk(1<..>)
+#place Section_1
+#trans t7_to_8
+in {F8:<..>;Section_7:<..>;}
+out {F6:<..>;Section_8:<..>;}
+#endtr
+#trans t10_to_11
+in {F11:<..>;Section_10:<..>;}
+out {Section_11:<..>;F9:<..>;}
+#endtr
+#trans t4_to_5
+in {F5:<..>;Section_4:<..>;}
+out {F3:<..>;Section_5:<..>;}
+#endtr
+#trans t11_to_12
+in {Section_11:<..>;F12:<..>;}
+out {Section_12:<..>;F10:<..>;}
+#endtr
+#trans t6_to_7
+in {Section_6:<..>;F7:<..>;}
+out {F5:<..>;Section_7:<..>;}
+#endtr
+#trans t9_to_10
+in {Section_9:<..>;F10:<..>;}
+out {Section_10:<..>;F8:<..>;}
+#endtr
+#trans t8_to_9
+in {F9:<..>;Section_8:<..>;}
+out {Section_9:<..>;F7:<..>;}
+#endtr
+#trans t2_to_3
+in {F3:<..>;Section_2:<..>;}
+out {F1:<..>;Section_3:<..>;}
+#endtr
+#trans t12_to_1
+in {Section_12:<..>;F1:<..>;}
+out {Section_1:<..>;F11:<..>;}
+#endtr
+#trans t5_to_6
+in {Section_5:<..>;F6:<..>;}
+out {Section_6:<..>;F4:<..>;}
+#endtr
+#trans t3_to_4
+in {F4:<..>;Section_3:<..>;}
+out {Section_4:<..>;F2:<..>;}
+#endtr
+#trans t1_to_2
+in {F2:<..>;Section_1:<..>;}
+out {F12:<..>;Section_2:<..>;}
+#endtr

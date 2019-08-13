@@ -1,0 +1,143 @@
+#place ContainerDown mk(10<..>)
+#place ContainerUp
+#place Container
+#place OsContainer
+#place OsAvailable
+#place OsRunning
+#place OsNotInstalled mk(10<..>)
+#place SwContainer
+#place ServerContainer
+#place ScStopped
+#place ScUnavailable mk(10<..>)
+#place ScWorking
+#place WebAppRuntime
+#place WSRuntime2
+#place Wsr2Started
+#place Wsr2Deployed
+#place Wsr2NotDeployed mk(20<..>)
+#place WSRuntime1
+#place Wsr1Deployed
+#place Wsr1NotDeployed mk(20<..>)
+#place Wsr1Started
+#place WsRuntime3
+#place Wsr3Deployed
+#place Wsr3NotDeployed mk(20<..>)
+#place Wsr3Started
+#place Bounder1 mk(20<..>)
+#place Bounder2 mk(20<..>)
+#trans StopWsr3
+in {Wsr3Started:<..>;}
+out {Wsr3Deployed:<..>;}
+#endtr
+#trans DeployWsr3
+in {WsRuntime3:<..>;Wsr3NotDeployed:<..>;}
+out {Wsr3Deployed:<..>;}
+#endtr
+#trans StartWsr3
+in {Wsr3Deployed:<..>;}
+out {Wsr3Started:<..>;}
+#endtr
+#trans StopContainer
+in {Container:<..>;ContainerUp:<..>;}
+out {ContainerDown:<..>;Bounder2:<..>;}
+#endtr
+#trans StartContainer
+in {ContainerDown:<..>;Bounder2:<..>;}
+out {ContainerUp:<..>;Container:<..>;}
+#endtr
+#trans tlink0
+in {Container:<..>;}
+out {OsContainer:<..>;}
+#endtr
+#trans tlink1
+in {OsContainer:<..>;}
+out {Container:<..>;}
+#endtr
+#trans UninstallOs
+in {OsContainer:<..>;OsAvailable:<..>;}
+out {OsContainer:<..>;OsNotInstalled:<..>;}
+#endtr
+#trans ShutdownOs
+in {OsRunning:<..>;SwContainer:<..>;Bounder2:<..>;}
+out {OsContainer:<..>;OsAvailable:<..>;}
+#endtr
+#trans InstallOs
+in {OsNotInstalled:<..>;Bounder2:<..>;}
+out {OsAvailable:<..>;OsContainer:<..>;}
+#endtr
+#trans StartOs
+in {OsContainer:<..>;OsAvailable:<..>;}
+out {OsRunning:<..>;SwContainer:<..>;Bounder2:<..>;}
+#endtr
+#trans tlink3
+in {ServerContainer:<..>;Bounder1:<..>;}
+out {SwContainer:<..>;}
+#endtr
+#trans tlink2
+in {SwContainer:<..>;}
+out {ServerContainer:<..>;Bounder1:<..>;}
+#endtr
+#trans UninstallSc
+in {ServerContainer:<..>;ScStopped:<..>;}
+out {ServerContainer:<..>;ScUnavailable:<..>;}
+#endtr
+#trans StopSc
+in {ScWorking:<..>;WebAppRuntime:<..>;Bounder1:<..>;}
+out {ServerContainer:<..>;ScStopped:<..>;}
+#endtr
+#trans RunSc
+in {ScStopped:<..>;ServerContainer:<..>;}
+out {ScWorking:<..>;WebAppRuntime:<..>;Bounder1:<..>;}
+#endtr
+#trans ConfigureSc
+in {ScWorking:<..>;}
+out {ScWorking:<..>;}
+#endtr
+#trans SetupSc
+in {ScUnavailable:<..>;Bounder1:<..>;}
+out {ScStopped:<..>;ServerContainer:<..>;}
+#endtr
+#trans tlink5
+in {WSRuntime2:<..>;WSRuntime1:<..>;WsRuntime3:<..>;}
+out {WebAppRuntime:<..>;}
+#endtr
+#trans tlink4
+in {WebAppRuntime:<..>;}
+out {WSRuntime2:<..>;WSRuntime1:<..>;WsRuntime3:<..>;}
+#endtr
+#trans UndeployWsr2
+in {Wsr2Deployed:<..>;}
+out {WSRuntime2:<..>;Wsr2NotDeployed:<..>;}
+#endtr
+#trans StopWsr2
+in {Wsr2Started:<..>;}
+out {Wsr2Deployed:<..>;}
+#endtr
+#trans DeployWsr2
+in {Wsr2NotDeployed:<..>;WSRuntime2:<..>;}
+out {Wsr2Deployed:<..>;}
+#endtr
+#trans StartWsr2
+in {Wsr2Deployed:<..>;}
+out {Wsr2Started:<..>;}
+#endtr
+#trans UndeployWsr1
+in {Wsr1Deployed:<..>;}
+out {WSRuntime1:<..>;Wsr1NotDeployed:<..>;}
+#endtr
+#trans StopWsr1
+in {Wsr1Started:<..>;}
+out {Wsr1Deployed:<..>;}
+#endtr
+#trans DeployWsr1
+in {WSRuntime1:<..>;Wsr1NotDeployed:<..>;}
+out {Wsr1Deployed:<..>;}
+#endtr
+#trans StartWsr1
+in {Wsr1Deployed:<..>;}
+out {Wsr1Started:<..>;}
+#endtr
+#trans UndeployWsr3
+in {Wsr3Deployed:<..>;}
+out {WsRuntime3:<..>;Wsr3NotDeployed:<..>;}
+#endtr

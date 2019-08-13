@@ -1,0 +1,250 @@
+#place Think_1 mk(1<..>)
+#place Think_2 mk(1<..>)
+#place Think_3 mk(1<..>)
+#place Think_4 mk(1<..>)
+#place Think_5 mk(1<..>)
+#place Think_6 mk(1<..>)
+#place Think_7 mk(1<..>)
+#place Think_8 mk(1<..>)
+#place Think_9 mk(1<..>)
+#place Think_10 mk(1<..>)
+#place Fork_1 mk(1<..>)
+#place Fork_2 mk(1<..>)
+#place Fork_3 mk(1<..>)
+#place Fork_5 mk(1<..>)
+#place Fork_4 mk(1<..>)
+#place Fork_7 mk(1<..>)
+#place Fork_6 mk(1<..>)
+#place Fork_9 mk(1<..>)
+#place Fork_8 mk(1<..>)
+#place Catch1_1
+#place Fork_10 mk(1<..>)
+#place Catch1_3
+#place Catch1_2
+#place Catch1_5
+#place Catch1_4
+#place Catch1_7
+#place Catch1_6
+#place Catch1_9
+#place Catch1_8
+#place Catch2_2
+#place Catch2_3
+#place Catch1_10
+#place Catch2_1
+#place Catch2_6
+#place Catch2_7
+#place Catch2_4
+#place Catch2_5
+#place Catch2_10
+#place Eat_1
+#place Catch2_8
+#place Catch2_9
+#place Eat_4
+#place Eat_5
+#place Eat_2
+#place Eat_3
+#place Eat_9
+#place Eat_8
+#place Eat_7
+#place Eat_6
+#place Eat_10
+#trans FF1a_3
+in {Think_3:<..>;Fork_2:<..>;}
+out {Catch1_3:<..>;}
+#endtr
+#trans FF1a_2
+in {Fork_1:<..>;Think_2:<..>;}
+out {Catch1_2:<..>;}
+#endtr
+#trans FF1a_1
+in {Fork_10:<..>;Think_1:<..>;}
+out {Catch1_1:<..>;}
+#endtr
+#trans FF1a_7
+in {Fork_6:<..>;Think_7:<..>;}
+out {Catch1_7:<..>;}
+#endtr
+#trans FF1a_6
+in {Think_6:<..>;Fork_5:<..>;}
+out {Catch1_6:<..>;}
+#endtr
+#trans FF1a_5
+in {Fork_4:<..>;Think_5:<..>;}
+out {Catch1_5:<..>;}
+#endtr
+#trans FF1a_4
+in {Think_4:<..>;Fork_3:<..>;}
+out {Catch1_4:<..>;}
+#endtr
+#trans FF1b_1
+in {Fork_1:<..>;Think_1:<..>;}
+out {Catch2_1:<..>;}
+#endtr
+#trans FF1a_10
+in {Think_10:<..>;Fork_9:<..>;}
+out {Catch1_10:<..>;}
+#endtr
+#trans FF1a_9
+in {Fork_8:<..>;Think_9:<..>;}
+out {Catch1_9:<..>;}
+#endtr
+#trans FF1a_8
+in {Think_8:<..>;Fork_7:<..>;}
+out {Catch1_8:<..>;}
+#endtr
+#trans FF1b_6
+in {Think_6:<..>;Fork_6:<..>;}
+out {Catch2_6:<..>;}
+#endtr
+#trans FF1b_7
+in {Think_7:<..>;Fork_7:<..>;}
+out {Catch2_7:<..>;}
+#endtr
+#trans FF1b_8
+in {Fork_8:<..>;Think_8:<..>;}
+out {Catch2_8:<..>;}
+#endtr
+#trans FF1b_9
+in {Fork_9:<..>;Think_9:<..>;}
+out {Catch2_9:<..>;}
+#endtr
+#trans FF1b_2
+in {Fork_2:<..>;Think_2:<..>;}
+out {Catch2_2:<..>;}
+#endtr
+#trans FF1b_3
+in {Think_3:<..>;Fork_3:<..>;}
+out {Catch2_3:<..>;}
+#endtr
+#trans FF1b_4
+in {Think_4:<..>;Fork_4:<..>;}
+out {Catch2_4:<..>;}
+#endtr
+#trans FF1b_5
+in {Fork_5:<..>;Think_5:<..>;}
+out {Catch2_5:<..>;}
+#endtr
+#trans FF2a_4
+in {Fork_4:<..>;Catch1_4:<..>;}
+out {Eat_4:<..>;}
+#endtr
+#trans FF2a_5
+in {Catch1_5:<..>;Fork_5:<..>;}
+out {Eat_5:<..>;}
+#endtr
+#trans FF2a_6
+in {Fork_6:<..>;Catch1_6:<..>;}
+out {Eat_6:<..>;}
+#endtr
+#trans FF2a_7
+in {Fork_7:<..>;Catch1_7:<..>;}
+out {Eat_7:<..>;}
+#endtr
+#trans FF1b_10
+in {Fork_10:<..>;Think_10:<..>;}
+out {Catch2_10:<..>;}
+#endtr
+#trans FF2a_1
+in {Catch1_1:<..>;Fork_1:<..>;}
+out {Eat_1:<..>;}
+#endtr
+#trans FF2a_2
+in {Fork_2:<..>;Catch1_2:<..>;}
+out {Eat_2:<..>;}
+#endtr
+#trans FF2a_3
+in {Fork_3:<..>;Catch1_3:<..>;}
+out {Eat_3:<..>;}
+#endtr
+#trans FF2b_3
+in {Fork_2:<..>;Catch2_3:<..>;}
+out {Eat_3:<..>;}
+#endtr
+#trans FF2b_2
+in {Fork_1:<..>;Catch2_2:<..>;}
+out {Eat_2:<..>;}
+#endtr
+#trans FF2b_5
+in {Fork_4:<..>;Catch2_5:<..>;}
+out {Eat_5:<..>;}
+#endtr
+#trans FF2b_4
+in {Fork_3:<..>;Catch2_4:<..>;}
+out {Eat_4:<..>;}
+#endtr
+#trans FF2a_9
+in {Fork_9:<..>;Catch1_9:<..>;}
+out {Eat_9:<..>;}
+#endtr
+#trans FF2a_8
+in {Catch1_8:<..>;Fork_8:<..>;}
+out {Eat_8:<..>;}
+#endtr
+#trans FF2b_1
+in {Fork_10:<..>;Catch2_1:<..>;}
+out {Eat_1:<..>;}
+#endtr
+#trans FF2a_10
+in {Catch1_10:<..>;Fork_10:<..>;}
+out {Eat_10:<..>;}
+#endtr
+#trans End_1
+in {Eat_1:<..>;}
+out {Fork_10:<..>;Think_1:<..>;Fork_1:<..>;}
+#endtr
+#trans FF2b_10
+in {Catch2_10:<..>;Fork_9:<..>;}
+out {Eat_10:<..>;}
+#endtr
+#trans End_3
+in {Eat_3:<..>;}
+out {Fork_2:<..>;Fork_3:<..>;Think_3:<..>;}
+#endtr
+#trans End_2
+in {Eat_2:<..>;}
+out {Fork_1:<..>;Think_2:<..>;Fork_2:<..>;}
+#endtr
+#trans FF2b_7
+in {Catch2_7:<..>;Fork_6:<..>;}
+out {Eat_7:<..>;}
+#endtr
+#trans FF2b_6
+in {Fork_5:<..>;Catch2_6:<..>;}
+out {Eat_6:<..>;}
+#endtr
+#trans FF2b_9
+in {Catch2_9:<..>;Fork_8:<..>;}
+out {Eat_9:<..>;}
+#endtr
+#trans FF2b_8
+in {Catch2_8:<..>;Fork_7:<..>;}
+out {Eat_8:<..>;}
+#endtr
+#trans End_10
+in {Eat_10:<..>;}
+out {Fork_10:<..>;Think_10:<..>;Fork_9:<..>;}
+#endtr
+#trans End_8
+in {Eat_8:<..>;}
+out {Fork_8:<..>;Think_8:<..>;Fork_7:<..>;}
+#endtr
+#trans End_9
+in {Eat_9:<..>;}
+out {Fork_9:<..>;Think_9:<..>;Fork_8:<..>;}
+#endtr
+#trans End_6
+in {Eat_6:<..>;}
+out {Fork_5:<..>;Fork_6:<..>;Think_6:<..>;}
+#endtr
+#trans End_7
+in {Eat_7:<..>;}
+out {Fork_7:<..>;Think_7:<..>;Fork_6:<..>;}
+#endtr
+#trans End_4
+in {Eat_4:<..>;}
+out {Fork_3:<..>;Fork_4:<..>;Think_4:<..>;}
+#endtr
+#trans End_5
+in {Eat_5:<..>;}
+out {Fork_4:<..>;Fork_5:<..>;Think_5:<..>;}
+#endtr

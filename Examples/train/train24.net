@@ -1,0 +1,144 @@
+#place Section_4
+#place F7 mk(1<..>)
+#place Section_2
+#place Section_9 mk(1<..>)
+#place F23 mk(1<..>)
+#place Section_16
+#place F14 mk(1<..>)
+#place F21
+#place Section_23
+#place Section_11
+#place F2 mk(1<..>)
+#place Section_6 mk(1<..>)
+#place Section_14
+#place F19 mk(1<..>)
+#place F16 mk(1<..>)
+#place F18
+#place F9
+#place F3
+#place Section_12 mk(1<..>)
+#place Section_15 mk(1<..>)
+#place Section_21 mk(1<..>)
+#place Section_18 mk(1<..>)
+#place Section_24 mk(1<..>)
+#place F12
+#place F6
+#place Section_17
+#place F1 mk(1<..>)
+#place F15
+#place Section_3 mk(1<..>)
+#place Section_10
+#place F8 mk(1<..>)
+#place F24
+#place F10 mk(1<..>)
+#place Section_5
+#place F13 mk(1<..>)
+#place Section_19
+#place Section_8
+#place F22 mk(1<..>)
+#place Section_7
+#place F5 mk(1<..>)
+#place Section_20
+#place F11 mk(1<..>)
+#place Section_13
+#place Section_22
+#place F4 mk(1<..>)
+#place Section_1
+#place F20 mk(1<..>)
+#place F17 mk(1<..>)
+#trans t16_to_17
+in {Section_16:<..>;F17:<..>;}
+out {Section_17:<..>;F15:<..>;}
+#endtr
+#trans t7_to_8
+in {Section_7:<..>;F8:<..>;}
+out {F6:<..>;Section_8:<..>;}
+#endtr
+#trans t10_to_11
+in {Section_10:<..>;F11:<..>;}
+out {F9:<..>;Section_11:<..>;}
+#endtr
+#trans t13_to_14
+in {F14:<..>;Section_13:<..>;}
+out {Section_14:<..>;F12:<..>;}
+#endtr
+#trans t22_to_23
+in {F23:<..>;Section_22:<..>;}
+out {F21:<..>;Section_23:<..>;}
+#endtr
+#trans t18_to_19
+in {F19:<..>;Section_18:<..>;}
+out {Section_19:<..>;F17:<..>;}
+#endtr
+#trans t4_to_5
+in {Section_4:<..>;F5:<..>;}
+out {F3:<..>;Section_5:<..>;}
+#endtr
+#trans t11_to_12
+in {Section_11:<..>;F12:<..>;}
+out {F10:<..>;Section_12:<..>;}
+#endtr
+#trans t6_to_7
+in {F7:<..>;Section_6:<..>;}
+out {Section_7:<..>;F5:<..>;}
+#endtr
+#trans t9_to_10
+in {Section_9:<..>;F10:<..>;}
+out {Section_10:<..>;F8:<..>;}
+#endtr
+#trans t8_to_9
+in {Section_8:<..>;F9:<..>;}
+out {Section_9:<..>;F7:<..>;}
+#endtr
+#trans t20_to_21
+in {Section_20:<..>;F21:<..>;}
+out {Section_21:<..>;F19:<..>;}
+#endtr
+#trans t23_to_24
+in {F24:<..>;Section_23:<..>;}
+out {F22:<..>;Section_24:<..>;}
+#endtr
+#trans t15_to_16
+in {Section_15:<..>;F16:<..>;}
+out {Section_16:<..>;F14:<..>;}
+#endtr
+#trans t2_to_3
+in {Section_2:<..>;F3:<..>;}
+out {Section_3:<..>;F1:<..>;}
+#endtr
+#trans t24_to_1
+in {Section_24:<..>;F1:<..>;}
+out {F23:<..>;Section_1:<..>;}
+#endtr
+#trans t19_to_20
+in {F20:<..>;Section_19:<..>;}
+out {Section_20:<..>;F18:<..>;}
+#endtr
+#trans t12_to_13
+in {F13:<..>;Section_12:<..>;}
+out {F11:<..>;Section_13:<..>;}
+#endtr
+#trans t5_to_6
+in {F6:<..>;Section_5:<..>;}
+out {F4:<..>;Section_6:<..>;}
+#endtr
+#trans t17_to_18
+in {F18:<..>;Section_17:<..>;}
+out {Section_18:<..>;F16:<..>;}
+#endtr
+#trans t21_to_22
+in {Section_21:<..>;F22:<..>;}
+out {F20:<..>;Section_22:<..>;}
+#endtr
+#trans t3_to_4
+in {Section_3:<..>;F4:<..>;}
+out {Section_4:<..>;F2:<..>;}
+#endtr
+#trans t14_to_15
+in {F15:<..>;Section_14:<..>;}
+out {F13:<..>;Section_15:<..>;}
+#endtr
+#trans t1_to_2
+in {F2:<..>;Section_1:<..>;}
+out {Section_2:<..>;F24:<..>;}
+#endtr

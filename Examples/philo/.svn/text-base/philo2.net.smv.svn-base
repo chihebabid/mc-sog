@@ -1,0 +1,235 @@
+MODULE main
+VAR
+  Idle0: 0..1;
+  WaitLeft0: 0..1;
+  HasLeft0: 0..1;
+  WaitRight0: 0..1;
+  HasRight0: 0..1;
+  Fork0: 0..1;
+  IsEating0: 0..1;
+  Idle1: 0..1;
+  WaitLeft1: 0..1;
+  HasLeft1: 0..1;
+  WaitRight1: 0..1;
+  HasRight1: 0..1;
+  Fork1: 0..1;
+  IsEating1: 0..1;
+
+ASSIGN
+  init(Idle0) := 1;
+  init(WaitLeft0) := 0;
+  init(HasLeft0) := 0;
+  init(WaitRight0) := 0;
+  init(HasRight0) := 0;
+  init(Fork0) := 1;
+  init(IsEating0) := 0;
+  init(Idle1) := 1;
+  init(WaitLeft1) := 0;
+  init(HasLeft1) := 0;
+  init(WaitRight1) := 0;
+  init(HasRight1) := 0;
+  init(Fork1) := 1;
+  init(IsEating1) := 0;
+
+DEFINE
+  GoEat0_enabled := (Idle0 >= 1);
+  GoLeft0_enabled := (WaitLeft0 >= 1) & (Fork1 >= 1);
+  GoRight0_enabled := (WaitRight0 >= 1) & (Fork0 >= 1);
+  Eat0_enabled := (HasLeft0 >= 1) & (HasRight0 >= 1);
+  Release0_enabled := (IsEating0 >= 1);
+  GoEat1_enabled := (Idle1 >= 1);
+  GoLeft1_enabled := (Fork0 >= 1) & (WaitLeft1 >= 1);
+  GoRight1_enabled := (WaitRight1 >= 1) & (Fork1 >= 1);
+  Eat1_enabled := (HasLeft1 >= 1) & (HasRight1 >= 1);
+  Release1_enabled := (IsEating1 >= 1);
+
+  deadlock := !(
+    GoEat0_enabled | 
+    GoLeft0_enabled | 
+    GoRight0_enabled | 
+    Eat0_enabled | 
+    Release0_enabled | 
+    GoEat1_enabled | 
+    GoLeft1_enabled | 
+    GoRight1_enabled | 
+    Eat1_enabled | 
+    Release1_enabled
+  );
+
+TRANS
+  ( GoEat0_enabled &
+    ( next(Idle0) =  (Idle0 - 1 ) mod 2 ) &
+    ( next(WaitLeft0) =  (WaitLeft0 + 1 ) mod 2 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) =  (WaitRight0 + 1 ) mod 2 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    GoLeft0_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) =  (WaitLeft0 - 1 ) mod 2 ) &
+    ( next(HasLeft0) =  (HasLeft0 + 1 ) mod 2 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) =  (Fork1 - 1 ) mod 2 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    GoRight0_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) =  (WaitRight0 - 1 ) mod 2 ) &
+    ( next(HasRight0) =  (HasRight0 + 1 ) mod 2 ) &
+    ( next(Fork0) =  (Fork0 - 1 ) mod 2 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    Eat0_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) =  (HasLeft0 - 1 ) mod 2 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) =  (HasRight0 - 1 ) mod 2 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) =  (IsEating0 + 1 ) mod 2 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    Release0_enabled &
+    ( next(Idle0) =  (Idle0 + 1 ) mod 2 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) =  (Fork0 + 1 ) mod 2 ) &
+    ( next(IsEating0) =  (IsEating0 - 1 ) mod 2 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) =  (Fork1 + 1 ) mod 2 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    GoEat1_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) =  (Idle1 - 1 ) mod 2 ) &
+    ( next(WaitLeft1) =  (WaitLeft1 + 1 ) mod 2 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) =  (WaitRight1 + 1 ) mod 2 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    GoLeft1_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) =  (Fork0 - 1 ) mod 2 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) =  (WaitLeft1 - 1 ) mod 2 ) &
+    ( next(HasLeft1) =  (HasLeft1 + 1 ) mod 2 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    GoRight1_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) =  (WaitRight1 - 1 ) mod 2 ) &
+    ( next(HasRight1) =  (HasRight1 + 1 ) mod 2 ) &
+    ( next(Fork1) =  (Fork1 - 1 ) mod 2 ) &
+    ( next(IsEating1) = IsEating1 )
+  |
+    Eat1_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) =  (HasLeft1 - 1 ) mod 2 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) =  (HasRight1 - 1 ) mod 2 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) =  (IsEating1 + 1 ) mod 2 )
+  |
+    Release1_enabled &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) =  (Fork0 + 1 ) mod 2 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) =  (Idle1 + 1 ) mod 2 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) =  (Fork1 + 1 ) mod 2 ) &
+    ( next(IsEating1) =  (IsEating1 - 1 ) mod 2 )
+  |
+    deadlock &
+    ( next(Idle0) = Idle0 ) &
+    ( next(WaitLeft0) = WaitLeft0 ) &
+    ( next(HasLeft0) = HasLeft0 ) &
+    ( next(WaitRight0) = WaitRight0 ) &
+    ( next(HasRight0) = HasRight0 ) &
+    ( next(Fork0) = Fork0 ) &
+    ( next(IsEating0) = IsEating0 ) &
+    ( next(Idle1) = Idle1 ) &
+    ( next(WaitLeft1) = WaitLeft1 ) &
+    ( next(HasLeft1) = HasLeft1 ) &
+    ( next(WaitRight1) = WaitRight1 ) &
+    ( next(HasRight1) = HasRight1 ) &
+    ( next(Fork1) = Fork1 ) &
+    ( next(IsEating1) = IsEating1 )
+  );

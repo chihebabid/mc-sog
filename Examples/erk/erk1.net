@@ -1,0 +1,55 @@
+#place Raf1Star mk(1<..>)
+#place RKIP mk(1<..>)
+#place Raf1Star_RKIP
+#place ERKPP
+#place MEKPP_ERK
+#place Raf1Star_RKIP_ERKPP
+#place RKIPP_RP
+#place MEKPP mk(1<..>)
+#place ERK mk(1<..>)
+#place RKIPP
+#place RP mk(1<..>)
+#trans r1
+in {Raf1Star:<..>;RKIP:<..>;}
+out {Raf1Star_RKIP:<..>;}
+#endtr
+#trans r2
+in {Raf1Star_RKIP:<..>;}
+out {Raf1Star:<..>;RKIP:<..>;}
+#endtr
+#trans r3
+in {Raf1Star_RKIP:<..>;ERKPP:<..>;}
+out {Raf1Star_RKIP_ERKPP:<..>;}
+#endtr
+#trans r4
+in {Raf1Star_RKIP_ERKPP:<..>;}
+out {Raf1Star_RKIP:<..>;ERKPP:<..>;}
+#endtr
+#trans r6
+in {MEKPP:<..>;ERK:<..>;}
+out {MEKPP_ERK:<..>;}
+#endtr
+#trans r7
+in {MEKPP_ERK:<..>;}
+out {ERK:<..>;MEKPP:<..>;}
+#endtr
+#trans r9
+in {RP:<..>;RKIPP:<..>;}
+out {RKIPP_RP:<..>;}
+#endtr
+#trans r10
+in {RKIPP_RP:<..>;}
+out {RP:<..>;RKIPP:<..>;}
+#endtr
+#trans r5
+in {Raf1Star_RKIP_ERKPP:<..>;}
+out {ERK:<..>;RKIPP:<..>;Raf1Star:<..>;}
+#endtr
+#trans r8
+in {MEKPP_ERK:<..>;}
+out {ERKPP:<..>;MEKPP:<..>;}
+#endtr
+#trans r11
+in {RKIPP_RP:<..>;}
+out {RKIP:<..>;RP:<..>;}
+#endtr

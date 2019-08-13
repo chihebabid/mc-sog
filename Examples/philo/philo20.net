@@ -1,0 +1,500 @@
+#place Think_1 mk(1<..>)
+#place Think_2 mk(1<..>)
+#place Think_3 mk(1<..>)
+#place Think_4 mk(1<..>)
+#place Think_5 mk(1<..>)
+#place Think_6 mk(1<..>)
+#place Think_7 mk(1<..>)
+#place Think_8 mk(1<..>)
+#place Think_9 mk(1<..>)
+#place Think_10 mk(1<..>)
+#place Think_11 mk(1<..>)
+#place Think_12 mk(1<..>)
+#place Think_13 mk(1<..>)
+#place Think_15 mk(1<..>)
+#place Think_14 mk(1<..>)
+#place Think_17 mk(1<..>)
+#place Think_16 mk(1<..>)
+#place Think_19 mk(1<..>)
+#place Think_18 mk(1<..>)
+#place Fork_1 mk(1<..>)
+#place Think_20 mk(1<..>)
+#place Fork_3 mk(1<..>)
+#place Fork_2 mk(1<..>)
+#place Fork_5 mk(1<..>)
+#place Fork_4 mk(1<..>)
+#place Fork_7 mk(1<..>)
+#place Fork_6 mk(1<..>)
+#place Fork_9 mk(1<..>)
+#place Fork_8 mk(1<..>)
+#place Fork_12 mk(1<..>)
+#place Fork_13 mk(1<..>)
+#place Fork_10 mk(1<..>)
+#place Fork_11 mk(1<..>)
+#place Fork_16 mk(1<..>)
+#place Fork_17 mk(1<..>)
+#place Fork_14 mk(1<..>)
+#place Fork_15 mk(1<..>)
+#place Fork_20 mk(1<..>)
+#place Catch1_1
+#place Fork_18 mk(1<..>)
+#place Fork_19 mk(1<..>)
+#place Catch1_4
+#place Catch1_5
+#place Catch1_2
+#place Catch1_3
+#place Catch1_9
+#place Catch1_8
+#place Catch1_7
+#place Catch1_6
+#place Catch1_13
+#place Catch1_12
+#place Catch1_11
+#place Catch1_10
+#place Catch1_17
+#place Catch1_16
+#place Catch1_15
+#place Catch1_14
+#place Catch2_1
+#place Catch1_20
+#place Catch1_19
+#place Catch1_18
+#place Catch2_6
+#place Catch2_7
+#place Catch2_8
+#place Catch2_9
+#place Catch2_2
+#place Catch2_3
+#place Catch2_4
+#place Catch2_5
+#place Catch2_14
+#place Catch2_15
+#place Catch2_16
+#place Catch2_17
+#place Catch2_10
+#place Catch2_11
+#place Catch2_12
+#place Catch2_13
+#place Eat_3
+#place Eat_2
+#place Eat_5
+#place Eat_4
+#place Catch2_19
+#place Catch2_18
+#place Eat_1
+#place Catch2_20
+#place Eat_11
+#place Eat_10
+#place Eat_13
+#place Eat_12
+#place Eat_7
+#place Eat_6
+#place Eat_9
+#place Eat_8
+#place Eat_20
+#place Eat_18
+#place Eat_19
+#place Eat_16
+#place Eat_17
+#place Eat_14
+#place Eat_15
+#trans FF1a_1
+in {Fork_20:<..>;Think_1:<..>;}
+out {Catch1_1:<..>;}
+#endtr
+#trans FF1a_8
+in {Fork_7:<..>;Think_8:<..>;}
+out {Catch1_8:<..>;}
+#endtr
+#trans FF1a_9
+in {Fork_8:<..>;Think_9:<..>;}
+out {Catch1_9:<..>;}
+#endtr
+#trans FF1a_6
+in {Think_6:<..>;Fork_5:<..>;}
+out {Catch1_6:<..>;}
+#endtr
+#trans FF1a_7
+in {Think_7:<..>;Fork_6:<..>;}
+out {Catch1_7:<..>;}
+#endtr
+#trans FF1a_4
+in {Think_4:<..>;Fork_3:<..>;}
+out {Catch1_4:<..>;}
+#endtr
+#trans FF1a_5
+in {Fork_4:<..>;Think_5:<..>;}
+out {Catch1_5:<..>;}
+#endtr
+#trans FF1a_2
+in {Think_2:<..>;Fork_1:<..>;}
+out {Catch1_2:<..>;}
+#endtr
+#trans FF1a_3
+in {Fork_2:<..>;Think_3:<..>;}
+out {Catch1_3:<..>;}
+#endtr
+#trans FF1a_17
+in {Fork_16:<..>;Think_17:<..>;}
+out {Catch1_17:<..>;}
+#endtr
+#trans FF1a_16
+in {Think_16:<..>;Fork_15:<..>;}
+out {Catch1_16:<..>;}
+#endtr
+#trans FF1a_15
+in {Think_15:<..>;Fork_14:<..>;}
+out {Catch1_15:<..>;}
+#endtr
+#trans FF1a_14
+in {Think_14:<..>;Fork_13:<..>;}
+out {Catch1_14:<..>;}
+#endtr
+#trans FF1a_13
+in {Fork_12:<..>;Think_13:<..>;}
+out {Catch1_13:<..>;}
+#endtr
+#trans FF1a_12
+in {Think_12:<..>;Fork_11:<..>;}
+out {Catch1_12:<..>;}
+#endtr
+#trans FF1a_11
+in {Think_11:<..>;Fork_10:<..>;}
+out {Catch1_11:<..>;}
+#endtr
+#trans FF1a_10
+in {Fork_9:<..>;Think_10:<..>;}
+out {Catch1_10:<..>;}
+#endtr
+#trans FF1b_5
+in {Think_5:<..>;Fork_5:<..>;}
+out {Catch2_5:<..>;}
+#endtr
+#trans FF1b_4
+in {Think_4:<..>;Fork_4:<..>;}
+out {Catch2_4:<..>;}
+#endtr
+#trans FF1b_3
+in {Fork_3:<..>;Think_3:<..>;}
+out {Catch2_3:<..>;}
+#endtr
+#trans FF1b_2
+in {Think_2:<..>;Fork_2:<..>;}
+out {Catch2_2:<..>;}
+#endtr
+#trans FF1b_1
+in {Think_1:<..>;Fork_1:<..>;}
+out {Catch2_1:<..>;}
+#endtr
+#trans FF1a_20
+in {Think_20:<..>;Fork_19:<..>;}
+out {Catch1_20:<..>;}
+#endtr
+#trans FF1a_19
+in {Think_19:<..>;Fork_18:<..>;}
+out {Catch1_19:<..>;}
+#endtr
+#trans FF1a_18
+in {Think_18:<..>;Fork_17:<..>;}
+out {Catch1_18:<..>;}
+#endtr
+#trans FF1b_15
+in {Think_15:<..>;Fork_15:<..>;}
+out {Catch2_15:<..>;}
+#endtr
+#trans FF1b_14
+in {Think_14:<..>;Fork_14:<..>;}
+out {Catch2_14:<..>;}
+#endtr
+#trans FF1b_17
+in {Fork_17:<..>;Think_17:<..>;}
+out {Catch2_17:<..>;}
+#endtr
+#trans FF1b_16
+in {Fork_16:<..>;Think_16:<..>;}
+out {Catch2_16:<..>;}
+#endtr
+#trans FF1b_19
+in {Fork_19:<..>;Think_19:<..>;}
+out {Catch2_19:<..>;}
+#endtr
+#trans FF1b_18
+in {Fork_18:<..>;Think_18:<..>;}
+out {Catch2_18:<..>;}
+#endtr
+#trans FF2a_1
+in {Fork_1:<..>;Catch1_1:<..>;}
+out {Eat_1:<..>;}
+#endtr
+#trans FF1b_20
+in {Fork_20:<..>;Think_20:<..>;}
+out {Catch2_20:<..>;}
+#endtr
+#trans FF1b_7
+in {Think_7:<..>;Fork_7:<..>;}
+out {Catch2_7:<..>;}
+#endtr
+#trans FF1b_6
+in {Fork_6:<..>;Think_6:<..>;}
+out {Catch2_6:<..>;}
+#endtr
+#trans FF1b_9
+in {Think_9:<..>;Fork_9:<..>;}
+out {Catch2_9:<..>;}
+#endtr
+#trans FF1b_8
+in {Fork_8:<..>;Think_8:<..>;}
+out {Catch2_8:<..>;}
+#endtr
+#trans FF1b_11
+in {Think_11:<..>;Fork_11:<..>;}
+out {Catch2_11:<..>;}
+#endtr
+#trans FF1b_10
+in {Fork_10:<..>;Think_10:<..>;}
+out {Catch2_10:<..>;}
+#endtr
+#trans FF1b_13
+in {Fork_13:<..>;Think_13:<..>;}
+out {Catch2_13:<..>;}
+#endtr
+#trans FF1b_12
+in {Think_12:<..>;Fork_12:<..>;}
+out {Catch2_12:<..>;}
+#endtr
+#trans FF2a_10
+in {Catch1_10:<..>;Fork_10:<..>;}
+out {Eat_10:<..>;}
+#endtr
+#trans FF2a_11
+in {Fork_11:<..>;Catch1_11:<..>;}
+out {Eat_11:<..>;}
+#endtr
+#trans FF2a_12
+in {Catch1_12:<..>;Fork_12:<..>;}
+out {Eat_12:<..>;}
+#endtr
+#trans FF2a_13
+in {Catch1_13:<..>;Fork_13:<..>;}
+out {Eat_13:<..>;}
+#endtr
+#trans FF2a_14
+in {Catch1_14:<..>;Fork_14:<..>;}
+out {Eat_14:<..>;}
+#endtr
+#trans FF2a_15
+in {Catch1_15:<..>;Fork_15:<..>;}
+out {Eat_15:<..>;}
+#endtr
+#trans FF2a_16
+in {Catch1_16:<..>;Fork_16:<..>;}
+out {Eat_16:<..>;}
+#endtr
+#trans FF2a_17
+in {Catch1_17:<..>;Fork_17:<..>;}
+out {Eat_17:<..>;}
+#endtr
+#trans FF2a_2
+in {Catch1_2:<..>;Fork_2:<..>;}
+out {Eat_2:<..>;}
+#endtr
+#trans FF2a_3
+in {Catch1_3:<..>;Fork_3:<..>;}
+out {Eat_3:<..>;}
+#endtr
+#trans FF2a_4
+in {Fork_4:<..>;Catch1_4:<..>;}
+out {Eat_4:<..>;}
+#endtr
+#trans FF2a_5
+in {Catch1_5:<..>;Fork_5:<..>;}
+out {Eat_5:<..>;}
+#endtr
+#trans FF2a_6
+in {Fork_6:<..>;Catch1_6:<..>;}
+out {Eat_6:<..>;}
+#endtr
+#trans FF2a_7
+in {Fork_7:<..>;Catch1_7:<..>;}
+out {Eat_7:<..>;}
+#endtr
+#trans FF2a_8
+in {Fork_8:<..>;Catch1_8:<..>;}
+out {Eat_8:<..>;}
+#endtr
+#trans FF2a_9
+in {Catch1_9:<..>;Fork_9:<..>;}
+out {Eat_9:<..>;}
+#endtr
+#trans FF2b_9
+in {Fork_8:<..>;Catch2_9:<..>;}
+out {Eat_9:<..>;}
+#endtr
+#trans FF2b_8
+in {Catch2_8:<..>;Fork_7:<..>;}
+out {Eat_8:<..>;}
+#endtr
+#trans FF2b_7
+in {Fork_6:<..>;Catch2_7:<..>;}
+out {Eat_7:<..>;}
+#endtr
+#trans FF2b_6
+in {Fork_5:<..>;Catch2_6:<..>;}
+out {Eat_6:<..>;}
+#endtr
+#trans FF2b_13
+in {Fork_12:<..>;Catch2_13:<..>;}
+out {Eat_13:<..>;}
+#endtr
+#trans FF2b_12
+in {Catch2_12:<..>;Fork_11:<..>;}
+out {Eat_12:<..>;}
+#endtr
+#trans FF2b_11
+in {Fork_10:<..>;Catch2_11:<..>;}
+out {Eat_11:<..>;}
+#endtr
+#trans FF2b_10
+in {Catch2_10:<..>;Fork_9:<..>;}
+out {Eat_10:<..>;}
+#endtr
+#trans FF2b_1
+in {Fork_20:<..>;Catch2_1:<..>;}
+out {Eat_1:<..>;}
+#endtr
+#trans FF2a_20
+in {Fork_20:<..>;Catch1_20:<..>;}
+out {Eat_20:<..>;}
+#endtr
+#trans FF2a_19
+in {Catch1_19:<..>;Fork_19:<..>;}
+out {Eat_19:<..>;}
+#endtr
+#trans FF2a_18
+in {Catch1_18:<..>;Fork_18:<..>;}
+out {Eat_18:<..>;}
+#endtr
+#trans FF2b_5
+in {Fork_4:<..>;Catch2_5:<..>;}
+out {Eat_5:<..>;}
+#endtr
+#trans FF2b_4
+in {Fork_3:<..>;Catch2_4:<..>;}
+out {Eat_4:<..>;}
+#endtr
+#trans FF2b_3
+in {Fork_2:<..>;Catch2_3:<..>;}
+out {Eat_3:<..>;}
+#endtr
+#trans FF2b_2
+in {Catch2_2:<..>;Fork_1:<..>;}
+out {Eat_2:<..>;}
+#endtr
+#trans End_4
+in {Eat_4:<..>;}
+out {Think_4:<..>;Fork_4:<..>;Fork_3:<..>;}
+#endtr
+#trans End_5
+in {Eat_5:<..>;}
+out {Think_5:<..>;Fork_5:<..>;Fork_4:<..>;}
+#endtr
+#trans End_2
+in {Eat_2:<..>;}
+out {Think_2:<..>;Fork_2:<..>;Fork_1:<..>;}
+#endtr
+#trans End_3
+in {Eat_3:<..>;}
+out {Think_3:<..>;Fork_3:<..>;Fork_2:<..>;}
+#endtr
+#trans End_8
+in {Eat_8:<..>;}
+out {Fork_7:<..>;Fork_8:<..>;Think_8:<..>;}
+#endtr
+#trans End_9
+in {Eat_9:<..>;}
+out {Fork_8:<..>;Fork_9:<..>;Think_9:<..>;}
+#endtr
+#trans End_6
+in {Eat_6:<..>;}
+out {Fork_5:<..>;Fork_6:<..>;Think_6:<..>;}
+#endtr
+#trans End_7
+in {Eat_7:<..>;}
+out {Fork_6:<..>;Fork_7:<..>;Think_7:<..>;}
+#endtr
+#trans FF2b_16
+in {Fork_15:<..>;Catch2_16:<..>;}
+out {Eat_16:<..>;}
+#endtr
+#trans FF2b_17
+in {Catch2_17:<..>;Fork_16:<..>;}
+out {Eat_17:<..>;}
+#endtr
+#trans FF2b_14
+in {Fork_13:<..>;Catch2_14:<..>;}
+out {Eat_14:<..>;}
+#endtr
+#trans FF2b_15
+in {Catch2_15:<..>;Fork_14:<..>;}
+out {Eat_15:<..>;}
+#endtr
+#trans FF2b_20
+in {Catch2_20:<..>;Fork_19:<..>;}
+out {Eat_20:<..>;}
+#endtr
+#trans End_1
+in {Eat_1:<..>;}
+out {Fork_1:<..>;Think_1:<..>;Fork_20:<..>;}
+#endtr
+#trans FF2b_18
+in {Fork_17:<..>;Catch2_18:<..>;}
+out {Eat_18:<..>;}
+#endtr
+#trans FF2b_19
+in {Catch2_19:<..>;Fork_18:<..>;}
+out {Eat_19:<..>;}
+#endtr
+#trans End_19
+in {Eat_19:<..>;}
+out {Fork_18:<..>;Fork_19:<..>;Think_19:<..>;}
+#endtr
+#trans End_18
+in {Eat_18:<..>;}
+out {Fork_17:<..>;Fork_18:<..>;Think_18:<..>;}
+#endtr
+#trans End_20
+in {Eat_20:<..>;}
+out {Fork_19:<..>;Fork_20:<..>;Think_20:<..>;}
+#endtr
+#trans End_15
+in {Eat_15:<..>;}
+out {Fork_14:<..>;Think_15:<..>;Fork_15:<..>;}
+#endtr
+#trans End_14
+in {Eat_14:<..>;}
+out {Fork_13:<..>;Think_14:<..>;Fork_14:<..>;}
+#endtr
+#trans End_17
+in {Eat_17:<..>;}
+out {Fork_16:<..>;Think_17:<..>;Fork_17:<..>;}
+#endtr
+#trans End_16
+in {Eat_16:<..>;}
+out {Fork_15:<..>;Think_16:<..>;Fork_16:<..>;}
+#endtr
+#trans End_11
+in {Eat_11:<..>;}
+out {Fork_10:<..>;Think_11:<..>;Fork_11:<..>;}
+#endtr
+#trans End_10
+in {Eat_10:<..>;}
+out {Fork_9:<..>;Think_10:<..>;Fork_10:<..>;}
+#endtr
+#trans End_13
+in {Eat_13:<..>;}
+out {Fork_12:<..>;Think_13:<..>;Fork_13:<..>;}
+#endtr
+#trans End_12
+in {Eat_12:<..>;}
+out {Fork_11:<..>;Think_12:<..>;Fork_12:<..>;}
+#endtr

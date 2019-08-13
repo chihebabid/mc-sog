@@ -1,0 +1,288 @@
+#place Section_4
+#place F44 mk(1<..>)
+#place Section_38
+#place F32 mk(1<..>)
+#place F37 mk(1<..>)
+#place F7 mk(1<..>)
+#place F30
+#place Section_25
+#place Section_32
+#place Section_2
+#place Section_39 mk(1<..>)
+#place Section_41
+#place Section_9 mk(1<..>)
+#place F23 mk(1<..>)
+#place F28 mk(1<..>)
+#place Section_16
+#place F14 mk(1<..>)
+#place F21
+#place Section_23
+#place Section_11
+#place F48
+#place F42
+#place F2 mk(1<..>)
+#place Section_37
+#place Section_43
+#place Section_6 mk(1<..>)
+#place Section_28
+#place Section_14
+#place F19 mk(1<..>)
+#place F25 mk(1<..>)
+#place F16 mk(1<..>)
+#place F39
+#place F43 mk(1<..>)
+#place F33
+#place Section_27 mk(1<..>)
+#place Section_34
+#place F34 mk(1<..>)
+#place Section_42 mk(1<..>)
+#place F18
+#place Section_36 mk(1<..>)
+#place F40 mk(1<..>)
+#place F46 mk(1<..>)
+#place Section_30 mk(1<..>)
+#place Section_33 mk(1<..>)
+#place F9
+#place F3
+#place Section_12 mk(1<..>)
+#place Section_15 mk(1<..>)
+#place Section_21 mk(1<..>)
+#place Section_18 mk(1<..>)
+#place Section_24 mk(1<..>)
+#place F45
+#place F12
+#place F6
+#place Section_48 mk(1<..>)
+#place Section_17
+#place F29 mk(1<..>)
+#place F1 mk(1<..>)
+#place Section_45 mk(1<..>)
+#place F15
+#place Section_3 mk(1<..>)
+#place Section_26
+#place Section_10
+#place F47 mk(1<..>)
+#place F8 mk(1<..>)
+#place F31 mk(1<..>)
+#place F24
+#place F10 mk(1<..>)
+#place F27
+#place Section_5
+#place F13 mk(1<..>)
+#place Section_19
+#place Section_40
+#place F36
+#place Section_8
+#place Section_44
+#place Section_31
+#place F22 mk(1<..>)
+#place Section_7
+#place Section_35
+#place Section_47
+#place F5 mk(1<..>)
+#place Section_20
+#place F26 mk(1<..>)
+#place F11 mk(1<..>)
+#place Section_13
+#place Section_22
+#place F4 mk(1<..>)
+#place Section_1
+#place F41 mk(1<..>)
+#place F20 mk(1<..>)
+#place F17 mk(1<..>)
+#place F38 mk(1<..>)
+#place Section_46
+#place F35 mk(1<..>)
+#place Section_29
+#trans t16_to_17
+in {Section_16:<..>;F17:<..>;}
+out {Section_17:<..>;F15:<..>;}
+#endtr
+#trans t46_to_47
+in {Section_46:<..>;F47:<..>;}
+out {Section_47:<..>;F45:<..>;}
+#endtr
+#trans t7_to_8
+in {F8:<..>;Section_7:<..>;}
+out {Section_8:<..>;F6:<..>;}
+#endtr
+#trans t10_to_11
+in {Section_10:<..>;F11:<..>;}
+out {Section_11:<..>;F9:<..>;}
+#endtr
+#trans t13_to_14
+in {Section_13:<..>;F14:<..>;}
+out {F12:<..>;Section_14:<..>;}
+#endtr
+#trans t22_to_23
+in {F23:<..>;Section_22:<..>;}
+out {F21:<..>;Section_23:<..>;}
+#endtr
+#trans t43_to_44
+in {F44:<..>;Section_43:<..>;}
+out {F42:<..>;Section_44:<..>;}
+#endtr
+#trans t18_to_19
+in {F19:<..>;Section_18:<..>;}
+out {F17:<..>;Section_19:<..>;}
+#endtr
+#trans t41_to_42
+in {F42:<..>;Section_41:<..>;}
+out {F40:<..>;Section_42:<..>;}
+#endtr
+#trans t34_to_35
+in {F35:<..>;Section_34:<..>;}
+out {F33:<..>;Section_35:<..>;}
+#endtr
+#trans t4_to_5
+in {F5:<..>;Section_4:<..>;}
+out {F3:<..>;Section_5:<..>;}
+#endtr
+#trans t11_to_12
+in {F12:<..>;Section_11:<..>;}
+out {F10:<..>;Section_12:<..>;}
+#endtr
+#trans t6_to_7
+in {Section_6:<..>;F7:<..>;}
+out {F5:<..>;Section_7:<..>;}
+#endtr
+#trans t45_to_46
+in {Section_45:<..>;F46:<..>;}
+out {Section_46:<..>;F44:<..>;}
+#endtr
+#trans t32_to_33
+in {Section_32:<..>;F33:<..>;}
+out {Section_33:<..>;F31:<..>;}
+#endtr
+#trans t9_to_10
+in {Section_9:<..>;F10:<..>;}
+out {Section_10:<..>;F8:<..>;}
+#endtr
+#trans t29_to_30
+in {F30:<..>;Section_29:<..>;}
+out {F28:<..>;Section_30:<..>;}
+#endtr
+#trans t8_to_9
+in {Section_8:<..>;F9:<..>;}
+out {Section_9:<..>;F7:<..>;}
+#endtr
+#trans t20_to_21
+in {Section_20:<..>;F21:<..>;}
+out {F19:<..>;Section_21:<..>;}
+#endtr
+#trans t30_to_31
+in {F31:<..>;Section_30:<..>;}
+out {Section_31:<..>;F29:<..>;}
+#endtr
+#trans t47_to_48
+in {F48:<..>;Section_47:<..>;}
+out {Section_48:<..>;F46:<..>;}
+#endtr
+#trans t23_to_24
+in {Section_23:<..>;F24:<..>;}
+out {F22:<..>;Section_24:<..>;}
+#endtr
+#trans t15_to_16
+in {Section_15:<..>;F16:<..>;}
+out {Section_16:<..>;F14:<..>;}
+#endtr
+#trans t2_to_3
+in {Section_2:<..>;F3:<..>;}
+out {Section_3:<..>;F1:<..>;}
+#endtr
+#trans t24_to_25
+in {F25:<..>;Section_24:<..>;}
+out {F23:<..>;Section_25:<..>;}
+#endtr
+#trans t48_to_1
+in {F1:<..>;Section_48:<..>;}
+out {F47:<..>;Section_1:<..>;}
+#endtr
+#trans t39_to_40
+in {Section_39:<..>;F40:<..>;}
+out {Section_40:<..>;F38:<..>;}
+#endtr
+#trans t42_to_43
+in {F43:<..>;Section_42:<..>;}
+out {F41:<..>;Section_43:<..>;}
+#endtr
+#trans t33_to_34
+in {F34:<..>;Section_33:<..>;}
+out {F32:<..>;Section_34:<..>;}
+#endtr
+#trans t36_to_37
+in {F37:<..>;Section_36:<..>;}
+out {F35:<..>;Section_37:<..>;}
+#endtr
+#trans t27_to_28
+in {F28:<..>;Section_27:<..>;}
+out {Section_28:<..>;F26:<..>;}
+#endtr
+#trans t19_to_20
+in {F20:<..>;Section_19:<..>;}
+out {F18:<..>;Section_20:<..>;}
+#endtr
+#trans t12_to_13
+in {F13:<..>;Section_12:<..>;}
+out {F11:<..>;Section_13:<..>;}
+#endtr
+#trans t5_to_6
+in {F6:<..>;Section_5:<..>;}
+out {F4:<..>;Section_6:<..>;}
+#endtr
+#trans t44_to_45
+in {F45:<..>;Section_44:<..>;}
+out {F43:<..>;Section_45:<..>;}
+#endtr
+#trans t17_to_18
+in {F18:<..>;Section_17:<..>;}
+out {F16:<..>;Section_18:<..>;}
+#endtr
+#trans t21_to_22
+in {F22:<..>;Section_21:<..>;}
+out {Section_22:<..>;F20:<..>;}
+#endtr
+#trans t3_to_4
+in {Section_3:<..>;F4:<..>;}
+out {F2:<..>;Section_4:<..>;}
+#endtr
+#trans t14_to_15
+in {Section_14:<..>;F15:<..>;}
+out {Section_15:<..>;F13:<..>;}
+#endtr
+#trans t28_to_29
+in {F29:<..>;Section_28:<..>;}
+out {Section_29:<..>;F27:<..>;}
+#endtr
+#trans t40_to_41
+in {Section_40:<..>;F41:<..>;}
+out {Section_41:<..>;F39:<..>;}
+#endtr
+#trans t35_to_36
+in {F36:<..>;Section_35:<..>;}
+out {F34:<..>;Section_36:<..>;}
+#endtr
+#trans t26_to_27
+in {F27:<..>;Section_26:<..>;}
+out {Section_27:<..>;F25:<..>;}
+#endtr
+#trans t37_to_38
+in {F38:<..>;Section_37:<..>;}
+out {F36:<..>;Section_38:<..>;}
+#endtr
+#trans t1_to_2
+in {F2:<..>;Section_1:<..>;}
+out {Section_2:<..>;F48:<..>;}
+#endtr
+#trans t31_to_32
+in {Section_31:<..>;F32:<..>;}
+out {Section_32:<..>;F30:<..>;}
+#endtr
+#trans t25_to_26
+in {F26:<..>;Section_25:<..>;}
+out {F24:<..>;Section_26:<..>;}
+#endtr
+#trans t38_to_39
+in {Section_38:<..>;F39:<..>;}
+out {Section_39:<..>;F37:<..>;}
+#endtr
