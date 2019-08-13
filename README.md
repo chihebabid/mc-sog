@@ -41,7 +41,9 @@ This repository hosts the experiments and results for the Hybrid (MPI/pthreads) 
 SOG building from an LTL formula (philo3.net example)
 
 ```
-mpirun -n 2 hybrid-sog arg1 arg 2 arg3 arg4
+Multi-threading execution
+
+mpirun -n 1 hybrid-sog arg1 arg 2 arg3 arg4
 arg1: specifies method of creating threads or/and specifies if modelchecking should be performed on the fly. It can be set with one of the following values:
      * p : using pthread library
      * pc : using pthread library and applying canonization on nodes
@@ -53,5 +55,14 @@ arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
 
+Distributed execution
+mpirun -n arg0 hybrid-sog arg1 arg 2 arg3 arg4
+arg0 : specifies the number of processes must be >1
+arg1: specifies whether modelchecking should be performed on the fly. It can be set with one of the following values:
+     * otf : Construction performing Model checking on the fly
+     * otherwise : construction without Model checking
+arg2: specifies the number of threads/workers to be created
+arg3: specifies the net to build its SOG
+arg4: specifies the LTL formula file
 
 ```

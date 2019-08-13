@@ -10,23 +10,42 @@
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
 typedef struct {
-    char id[17];
+    char id[16];
     int16_t transition;
     uint16_t pcontainer;
+    bool _virtual;
 } succ_t;
 class HybridKripkeState : public spot::state
 {
 public:
     //static ModelCheckBaseMT * m_builder;
-    HybridKripkeState(unsigned char * id,uint16_t pcontainer):m_container(pcontainer) {        
-        memcpy(m_id,id,16);        
-        MPI_Send(m_id,16,MPI_BYTE,pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);       
+    HybridKripkeState(succ_t &e):m_container(e.pcontainer) {  
+      
+   if (e._virtual) { //div or deadlock
+            if (e.id[0]=='v') { // div
+                cout<<"div created..."<<endl;
+                m_hashid=0xFFFFFFFFFFFFFFFE;
+                m_id[0]='v';
+                succ_t elt;
+                elt.id[0]='v';                   
+                elt.transition=-1;
+                elt._virtual=true;
+                m_succ.push_back(elt);
+            }
+            else {
+                m_id[0]='d';
+                m_hashid=0xFFFFFFFFFFFFFFFF; // deadlock                
+            }
+        }
+        else {        
+        memcpy(m_id,e.id,16);        
+        MPI_Send(m_id,16,MPI_BYTE,e.pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);       
         
         MPI_Status status; //int nbytes;
         MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_STATE, MPI_COMM_WORLD, &status);
         uint32_t nbytes;
         MPI_Get_count(&status, MPI_BYTE, &nbytes);
-        // cout<<"ACK state received..."<<nbytes<<endl;
+        // Receive hash id =idprocess | position
         char message[nbytes];
         MPI_Recv(message, nbytes, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_STATE,MPI_COMM_WORLD, &status);
         memcpy(&m_hashid,message,8);     
@@ -55,7 +74,12 @@ public:
             memcpy(&val,message+indice,2);
             m_unmarked_places.emplace_front(val);
             indice+=2;
-        }    
+        }   
+        // Get div & deadlock
+        uint8_t divblock;
+        memcpy(&divblock,message+indice,1);        
+        m_div=divblock & 1;
+        m_deadlock=(divblock>>1) & 1;
         // Get successors 
          MPI_Send(m_id,16,MPI_BYTE,m_container, TAG_ASK_SUCC, MPI_COMM_WORLD);
    
@@ -81,9 +105,28 @@ public:
         indice+=2;
         memcpy(&(succ_elt->transition),inmsg+indice,2);
         indice+=2;        
+        succ_elt->_virtual=false;
         m_succ.push_back(*succ_elt);   
         delete succ_elt;
     }  
+    
+    if (m_div) {
+        succ_t el;
+        el.id[0]='v';                   
+        el.transition=-1;
+        el._virtual=true;
+        cout<<"yep..."<<endl;
+        m_succ.push_back(el);
+    }
+    if (m_deadlock) {
+        succ_t el;
+        el.id[0]='d';
+        el.pcontainer=0;
+        el._virtual=true;
+        el.transition=-1;
+        m_succ.push_back(el);
+    }
+    }
         
         
 }
@@ -91,14 +134,14 @@ public:
     HybridKripkeState(unsigned char *id,uint16_t pcontainer,size_t hsh,bool ddiv, bool deadlock):m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock),m_hashid(hsh) {
         memcpy(m_id,id,16); 
     
-      //  cout<<__func__<<endl;
+        cout<<__func__<<endl;
         
     }
     virtual ~HybridKripkeState();
 
     HybridKripkeState* clone() const override
     {
-        //cout<<__func__<<endl;
+        cout<<__func__<<endl;
         return new HybridKripkeState(m_id,m_container,m_hashid,m_div,m_deadlock);
     }
     size_t hash() const override

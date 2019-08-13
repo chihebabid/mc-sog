@@ -326,7 +326,7 @@ int main(int argc, char** argv)
                         cout<<"On the fly Model checker by process "<<task_id<<endl;
                        auto d = spot::make_bdd_dict();
                        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                       /* spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
+                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
                         cout<<"finished...."<<endl;
                      
             
@@ -335,8 +335,8 @@ int main(int argc, char** argv)
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
-                    file.close();*/
-                     auto k =
+                    file.close();
+                   /*  auto k =
             std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
             if (auto run = k->intersecting_run(af))
         {
@@ -344,7 +344,7 @@ int main(int argc, char** argv)
             cout<<"=================================="<<endl;            
         }
         else
-            std::cout << "formula is verified\n";
+            std::cout << "formula is verified\n";*/
                     }
                 }
            

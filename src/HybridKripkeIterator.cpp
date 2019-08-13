@@ -32,25 +32,19 @@ bool HybridKripkeIterator::done() const {
 }
 
 HybridKripkeState* HybridKripkeIterator::dst() const
-  {
-     
-    succ_t succ_elt= m_current_state->getListSucc()->at(m_current_edge);
-   return new HybridKripkeState(succ_elt.id,succ_elt.pcontainer);
-  
-  }
+{     
+    succ_t succ_elt= m_current_state->getListSucc()->at(m_current_edge);    
+   return new HybridKripkeState(succ_elt);  
+}
 
 bdd HybridKripkeIterator::cond()  const {
     //cout<<"entering "<<__func__<<endl;
-    succ_t succ_elt=m_current_state->getListSucc()->at(m_current_edge);
-    
-    if (succ_elt.transition==-1) return bddtrue;
-    
+    succ_t succ_elt=m_current_state->getListSucc()->at(m_current_edge);    
+    if (succ_elt.transition==-1) return bddtrue;    
     string name=m_net->getTransitionName(succ_elt.transition);
-
     spot::bdd_dict *p=m_dict_ptr->get();
     spot::formula f=spot::formula::ap(name);
     bdd   result=bdd_ithvar((p->var_map.find(f))->second);
-
     return result & spot::kripke_succ_iterator::cond();
 }
 
@@ -64,18 +58,11 @@ HybridKripkeIterator::~HybridKripkeIterator()
 }
 
 void HybridKripkeIterator::recycle(HybridKripkeState &st, bdd cond)
-{
-        //cout<<__func__<<endl;
-        m_current_state=&st;
-        
+{       
+        m_current_state=&st;        
         spot::kripke_succ_iterator::recycle(cond);
 }
 
-/*HybridKripkeState* HybridKripkeIterator::current_state() const {
-    cout<<__func__<<endl;
-    return m_current_state;
-}*/
 static NewNet * HybridKripkeIterator::m_net;
 static spot::bdd_dict_ptr* HybridKripkeIterator::m_dict_ptr;
-static LDDState HybridKripkeIterator::m_deadlock;
-static LDDState HybridKripkeIterator::m_div;
+

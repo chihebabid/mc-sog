@@ -331,11 +331,12 @@ void *MCHybridSOG::doCompute()
                                 LDDState* pos=m_graph->find(reached_class);
                                 if(!pos)
                                 {
+                                    reached_class->setDiv(Set_Div(ldd_reachedclass));
+                                    reached_class->setDeadLock(Set_Bloc(ldd_reachedclass));
                                     m_graph->insert(reached_class);
                                     memcpy(reached_class->m_SHA2,Identif,16);
                                     pthread_mutex_unlock(&m_graph_mutex);
                                     m_graph->addArc();
-
                                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
 
@@ -445,8 +446,11 @@ void *MCHybridSOG::doCompute()
                         pthread_mutex_lock(&m_graph_mutex);
                         if (!m_graph->find(Agregate))
                         {
-                            m_graph->insert(Agregate);
+                            ldd_refs_push(MState);                                                        
+                            Agregate->setDiv(Set_Div(MState));
+                            Agregate->setDeadLock(Set_Bloc(MState));
                             Agregate->setProcess(task_id);
+                            m_graph->insert(Agregate);
                             string* chaine=new string();
                             convert_wholemdd_stringcpp(MState,*chaine);
                             get_md5(*chaine,Identif);
@@ -457,8 +461,7 @@ void *MCHybridSOG::doCompute()
                             min_charge=minCharge();
                             pthread_mutex_lock(&m_spin_stack[min_charge]);
                             m_st[min_charge].push(Pair(couple(Agregate,MState),fire));
-                            pthread_mutex_unlock(&m_spin_stack[min_charge]);
-                            ldd_refs_push(MState);
+                            pthread_mutex_unlock(&m_spin_stack[min_charge]);                            
                             m_charge[min_charge]++;
                         }
 
@@ -551,7 +554,7 @@ void MCHybridSOG::read_message()
             read_state_message();
             break;
         case TAG_FINISH: 
-            cout<<"TAG FINISH received by task "<<task_id<<endl;            
+            //cout<<"TAG FINISH received by task "<<task_id<<endl;            
              MPI_Recv(&v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status);
             m_Terminated=true;
             break;
@@ -889,14 +892,13 @@ void MCHybridSOG::sendPropToMC(size_t pos) {
      set<uint16_t> unmarked_places=getUnmarkedPlaces(agg);
      uint16_t s_mp=marked_places.size();
      uint16_t s_up=unmarked_places.size();
-     char mess_to_send[8+s_mp*2+s_up*2+4];
+     char mess_to_send[8+s_mp*2+s_up*2+5];
      memcpy(mess_to_send,&pos,8);
      //cout<<"************* Pos to send :"<<pos<<endl;
      size_t indice=8;
      memcpy(mess_to_send+indice,&s_mp,2);
      indice+=2;
-     for (auto it=marked_places.begin();it!=marked_places.end();it++) {
-                    
+     for (auto it=marked_places.begin();it!=marked_places.end();it++) {                    
         memcpy(mess_to_send+indice,&(*it),2);
         indice+=2;
     }
@@ -906,5 +908,9 @@ void MCHybridSOG::sendPropToMC(size_t pos) {
         memcpy(mess_to_send+indice,&(*it),2);
         indice+=2;
     }
+    uint8_t divblock=agg->isDiv();
+    divblock=divblock | (agg->isDeadLock()<<1);    
+    memcpy(mess_to_send+indice,&divblock,1);
+    indice++;
     MPI_Send(mess_to_send,indice,MPI_BYTE,n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD);                
 }

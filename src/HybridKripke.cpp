@@ -41,9 +41,7 @@ HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_tra
 }
 
 
-state* HybridKripke::get_init_state() const {
-  
-    
+state* HybridKripke::get_init_state() const {    
     int v;
     MPI_Send( &v, 1, MPI_INT, 0, TAG_INITIAL, MPI_COMM_WORLD); 
      char message[23];
@@ -51,12 +49,11 @@ state* HybridKripke::get_init_state() const {
     MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD, &status);
     MPI_Get_count(&status, MPI_BYTE, &v);
     MPI_Recv(message, 22, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_INITIAL,MPI_COMM_WORLD, &status);
-    char id[16];
-    memcpy(id,message,16);
-    
-    uint16_t p_container;
-    memcpy(&p_container,message+16,2);    
-    return new HybridKripkeState(id,p_container);    
+    succ_t* elt=new succ_t;    
+    memcpy(elt->id,message,16);   
+    memcpy(&elt->pcontainer,message+16,2);    
+    elt->_virtual=false;
+    return new HybridKripkeState(*elt);    
 
 }
 // Allows to print state label representing its id
@@ -74,13 +71,13 @@ HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
     auto ss = static_cast<const HybridKripkeState*>(s);    
     bdd cond = state_condition(ss);
     HybridKripkeState* st=ss;
-    if (iter_cache_)
+  /*  if (iter_cache_)
     {
       auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
       it->recycle(*st,cond);
       return it;
-    }
+    }*/
    
   return new HybridKripkeIterator(*st,cond);
 
