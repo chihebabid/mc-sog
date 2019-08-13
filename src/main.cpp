@@ -133,7 +133,7 @@ int main(int argc, char** argv)
         else cout<<"Multi-threaded algorithm based on Lace framework!"<<endl;
         cout<<"Building automata for not(formula)\n";
         auto d = spot::make_bdd_dict();
-        
+
         spot::twa_graph_ptr af = spot::translator(d).run(not_f);
         cout<<"Formula automata built.\n";
         cout<<"Want to save the graph in a dot file ?";
@@ -151,28 +151,28 @@ int main(int argc, char** argv)
         cout<<"Loading net information..."<<endl;
         ModelCheckBaseMT* mcl;
         if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,bound,nb_th);
-        else 
+        else
             mcl=new ModelCheckerTh(Rnewnet,bound,nb_th);
-        mcl->loadNet();   
-        
+        mcl->loadNet();
+
         auto k =
             std::make_shared<SogKripkeTh>(d,mcl,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP());
-   /*     spot::twa_graph_ptr k =
-    spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
-                         spot::twa::prop_set::all(), true);*/
-       /*      cout<<"Want to save the graph in a dot file ?";
-                cin>>c;
-                if (c=='y')
-                {
-                    fstream file;
-                    string st(argv[3]);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, k,"ka");
-                    file.close();
-                }                           
-        mcl->getGraph()->printCompleteInformation();
-        // Performing on the fly Modelchecking*/
+        /*     spot::twa_graph_ptr k =
+         spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                              spot::twa::prop_set::all(), true);*/
+        /*      cout<<"Want to save the graph in a dot file ?";
+                 cin>>c;
+                 if (c=='y')
+                 {
+                     fstream file;
+                     string st(argv[3]);
+                     st+=".dot";
+                     file.open(st.c_str(),fstream::out);
+                     spot::print_dot(file, k,"ka");
+                     file.close();
+                 }
+         mcl->getGraph()->printCompleteInformation();
+         // Performing on the fly Modelchecking*/
         cout<<"Performing on the fly Modelchecking"<<endl;
 
         if (auto run = k->intersecting_run(af))
@@ -300,55 +300,68 @@ int main(int argc, char** argv)
         if(nb_th>1)
         {
             if (task_id==0) cout<<"**************Hybrid version**************** \n" <<endl;
-            if (strcmp(argv[1],"otf")) {
+            if (strcmp(argv[1],"otf"))
+            {
                 HybridSOG DR(Rnewnet, bound);
                 LDDGraph g(&DR);
                 if (task_id==0) cout<<"Building the Distributed SOG by "<<n_tasks<<" processes..."<<endl;
                 DR.computeDSOG(g);
             }
-            else {
+            else
+            {
                 n_tasks--;
-                if (task_id==n_tasks) {
+                if (task_id==n_tasks)
+                {
                     cout<<"Model checking on the fly..."<<endl;
                     cout<<" One process will perform Model checking"<<endl;
                     cout<<n_tasks<<" process will build the Distributed SOG"<<endl;
-                }  
+                }
                 MPI_Comm gprocess;
                 MPI_Comm_split(MPI_COMM_WORLD,task_id==n_tasks?0:1,task_id,&gprocess);
                 //cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
-                    if (task_id!=n_tasks)  {
-                        cout<<"N task :"<<n_tasks<<endl;
-                        MCHybridSOG DR(Rnewnet,gprocess, bound,false);
-                        LDDGraph g(&DR);
-                        DR.computeDSOG(g);                        
-                    }
-                    else {                        
-                        cout<<"On the fly Model checker by process "<<task_id<<endl;
-                       auto d = spot::make_bdd_dict();
-                       spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                        spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
-                        cout<<"finished...."<<endl;
-                     
-            
+                if (task_id!=n_tasks)
+                {
+                    cout<<"N task :"<<n_tasks<<endl;
+                    MCHybridSOG DR(Rnewnet,gprocess, bound,false);
+                    LDDGraph g(&DR);
+                    DR.computeDSOG(g);
+                }
+                else
+                {
+                   cout<<"On the fly Model checker by process "<<task_id<<endl;
+
+                    auto d = spot::make_bdd_dict();
+                    spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+                    double tps;
+
+                    auto t1 = std::chrono::high_resolution_clock::now();
+                    spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
+                    cout<<"finished...."<<endl;
+
+                    auto t2 = std::chrono::high_resolution_clock::now();
+                    std::cout << "temps de verification "
+                              << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                              << " milliseconds\n";
+
                     fstream file;
                     string st(argv[3]);
                     st+=".dot";
                     file.open(st.c_str(),fstream::out);
                     spot::print_dot(file, k,"ka");
                     file.close();
-                   /*  auto k =
-            std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
-            if (auto run = k->intersecting_run(af))
-        {
-            std::cout << "formula is violated by the following run:\n"<<*run<<endl;
-            cout<<"=================================="<<endl;            
-        }
-        else
-            std::cout << "formula is verified\n";*/
+                    /*  auto k =
+                    std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
+                    if (auto run = k->intersecting_run(af))
+                    {
+                    std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+                    cout<<"=================================="<<endl;
                     }
+                    else
+                    std::cout << "formula is verified\n";*/
                 }
-           
-            
+            }
+
+
         }
         else
         {
