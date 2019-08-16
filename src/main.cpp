@@ -125,176 +125,193 @@ int main(int argc, char** argv)
     MPI_Comm_size(MPI_COMM_WORLD,&n_tasks);
     MPI_Comm_rank(MPI_COMM_WORLD,&task_id);
 
-    //
-    if (n_tasks==1 && (!strcmp(argv[1],"otfL") || !strcmp(argv[1],"otfP")))
+    if (n_tasks==1)
     {
-        cout<<"Performing on the fly Model checking..."<<endl;
-        if (!strcmp(argv[1],"otfP")) cout<<"Multi-threaded algorithm based on Pthread library!"<<endl;
-        else cout<<"Multi-threaded algorithm based on Lace framework!"<<endl;
-        cout<<"Building automata for not(formula)\n";
-        auto d = spot::make_bdd_dict();
-
-        spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-        cout<<"Formula automata built.\n";
-        cout<<"Want to save the graph in a dot file ?";
-        char c;
-        cin>>c;
-        if (c=='y')
+        if (n_tasks==1 && (!strcmp(argv[1],"otfL") || !strcmp(argv[1],"otfP")))
         {
-            fstream file;
-            string st(formula);
-            st+=".dot";
-            file.open(st.c_str(),fstream::out);
-            spot::print_dot(file, af);
-            file.close();
-        }
-        cout<<"Loading net information..."<<endl;
-        ModelCheckBaseMT* mcl;
-        if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,bound,nb_th);
-        else
-            mcl=new ModelCheckerTh(Rnewnet,bound,nb_th);
-        mcl->loadNet();
+            cout<<"Performing on the fly Model checking..."<<endl;
+            if (!strcmp(argv[1],"otfP")) cout<<"Multi-threaded algorithm based on Pthread library!"<<endl;
+            else cout<<"Multi-threaded algorithm based on Lace framework!"<<endl;
+            cout<<"Building automata for not(formula)\n";
+            auto d = spot::make_bdd_dict();
 
-        auto k =
-            std::make_shared<SogKripkeTh>(d,mcl,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP());
-        /*     spot::twa_graph_ptr k =
-         spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
-                              spot::twa::prop_set::all(), true);*/
-        /*      cout<<"Want to save the graph in a dot file ?";
-                 cin>>c;
-                 if (c=='y')
-                 {
-                     fstream file;
-                     string st(argv[3]);
-                     st+=".dot";
-                     file.open(st.c_str(),fstream::out);
-                     spot::print_dot(file, k,"ka");
-                     file.close();
-                 }
-         mcl->getGraph()->printCompleteInformation();
-         // Performing on the fly Modelchecking*/
-        cout<<"Performing on the fly Modelchecking"<<endl;
-
-        if (auto run = k->intersecting_run(af))
-        {
-            std::cout << "formula is violated by the following run:\n"<<*run<<endl;
-            cout<<"=================================="<<endl;
-            /*run->highlight(5); // 5 is a color number.
-            fstream file;
-            file.open("violated.dot",fstream::out);
-            cout<<"Property is violated!"<<endl;
-            cout<<"Check the dot file."<<endl;
-            spot::print_dot(file, k, ".kA");
-            file.close();*/
-        }
-        else
-            std::cout << "formula is verified\n";
-        //cin>>c;
-        //mcl->getGraph()->printCompleteInformation();
-        delete mcl;
-    }
-    else if (n_tasks==1)
-    {
-        cout<<"number of task = 1 \n " <<endl;
-        bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
-        threadSOG DR(Rnewnet, bound,nb_th,uselace);
-        LDDGraph g(&DR);
-
-        if (nb_th==1)
-        {
-            cout<<"******************Sequential version******************* \n" <<endl;
-            DR.computeSeqSOG(g);
-            g.printCompleteInformation();
-        }
-        else
-        {
-            cout<<"*******************Multithread version****************** \n" <<endl;
-            if (!strcmp(argv[1],"p"))
-            {
-                cout<<"Construction with pthread library."<<endl;
-                cout<<"Count of threads to be created: "<<nb_th<<endl;
-                DR.computeDSOG(g,false);
-                g.printCompleteInformation();
-            }
-            else if (!strcmp(argv[1],"pc"))
-            {
-                cout<<"Canonized construction with pthread library."<<endl;
-                cout<<"Count of threads to be created: "<<nb_th<<endl;
-                DR.computeDSOG(g,true);
-                g.printCompleteInformation();
-            }
-            else if (!strcmp(argv[1],"l"))
-            {
-                cout<<"Construction with lace framework."<<endl;
-                cout<<"Count of workers to be created: "<<nb_th<<endl;
-                DR.computeSOGLace(g);
-                g.printCompleteInformation();
-            }
-            else if (!strcmp(argv[1],"lc"))
-            {
-                cout<<"Canonised construction with lace framework."<<endl;
-                cout<<"Count of workers to be created: "<<nb_th<<endl;
-                DR.computeSOGLaceCanonized(g);
-                g.printCompleteInformation();
-            }
-
-            cout<<"Perform Model checking ?";
+            spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+            cout<<"Formula automata built.\n";
+            cout<<"Want to save the graph in a dot file ?";
             char c;
             cin>>c;
-            if (c='y')
+            if (c=='y')
             {
-                cout<<"Building automata for not(formula)\n";
-                auto d = spot::make_bdd_dict();
-                // d->register_ap("jbhkj");
-                spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-                cout<<"Formula automata built.\n";
-                cout<<"Want to save the graph in a dot file ?";
-                cin>>c;
-                if (c=='y')
-                {
-                    fstream file;
-                    string st(formula);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, af);
-                    file.close();
-                }
-                //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
-
-                spot::twa_graph_ptr k =
-                    spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP()),spot::twa::prop_set::all(), true);
-
-                cout<<"SOG translated to SPOT succeeded.."<<endl;
-                cout<<"Want to save the graph in a dot file ?";
-                cin>>c;
-                if (c=='y')
-                {
-                    fstream file;
-                    string st(argv[3]);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, k,"ka");
-                    file.close();
-                }
-                if (auto run = k->intersecting_run(af))
-                {
-                    /*std::cout << "formula is violated by the following run:\n" << *run;*/
-                    run->highlight(5); // 5 is a color number.
-                    fstream file;
-                    file.open("violated.dot",fstream::out);
-                    cout<<"Property is violated"<<endl;
-                    cout<<"Check the dot file to get a violation run"<<endl;
-                    spot::print_dot(file, k, ".kA");
-                    file.close();
-                }
-                else
-                    std::cout << "formula is verified\n";
+                fstream file;
+                string st(formula);
+                st+=".dot";
+                file.open(st.c_str(),fstream::out);
+                spot::print_dot(file, af);
+                file.close();
             }
+            cout<<"Loading net information..."<<endl;
+            ModelCheckBaseMT* mcl;
+            if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,bound,nb_th);
+            else
+                mcl=new ModelCheckerTh(Rnewnet,bound,nb_th);
+            mcl->loadNet();
+            double tps;
 
+            auto t1 = std::chrono::high_resolution_clock::now();
+
+            auto k =
+                std::make_shared<SogKripkeTh>(d,mcl,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP());
+            /*     spot::twa_graph_ptr k =
+             spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
+                                  spot::twa::prop_set::all(), true);*/
+            /*      cout<<"Want to save the graph in a dot file ?";
+                     cin>>c;
+                     if (c=='y')
+                     {
+                         fstream file;
+                         string st(argv[3]);
+                         st+=".dot";
+                         file.open(st.c_str(),fstream::out);
+                         spot::print_dot(file, k,"ka");
+                         file.close();
+                     }
+             mcl->getGraph()->printCompleteInformation();
+             // Performing on the fly Modelchecking*/
+            cout<<"Performing on the fly Modelchecking"<<endl;
+
+            if (auto run = k->intersecting_run(af))
+            {
+                std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+                auto t2 = std::chrono::high_resolution_clock::now();
+                std::cout << "temps de verification "
+                          << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                          << " milliseconds\n";
+
+                cout<<"=================================="<<endl;
+                /*run->highlight(5); // 5 is a color number.
+                fstream file;
+                file.open("violated.dot",fstream::out);
+                cout<<"Property is violated!"<<endl;
+                cout<<"Check the dot file."<<endl;
+                spot::print_dot(file, k, ".kA");
+                file.close();*/
+            }
+            else
+            {
+                std::cout << "formula is verified\n";
+                auto t2 = std::chrono::high_resolution_clock::now();
+                std::cout << "temps de verification "
+                          << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                          << " milliseconds\n";
+            }
+            //cin>>c;
+            //mcl->getGraph()->printCompleteInformation();
+            delete mcl;
         }
+
+
+        else
+        {
+            cout<<"number of task = 1 \n " <<endl;
+            bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
+            threadSOG DR(Rnewnet, bound,nb_th,uselace);
+            LDDGraph g(&DR);
+
+            if (nb_th==1)
+            {
+                cout<<"******************Sequential version******************* \n" <<endl;
+                DR.computeSeqSOG(g);
+                g.printCompleteInformation();
+            }
+            else
+            {
+                cout<<"*******************Multithread version****************** \n" <<endl;
+                if (!strcmp(argv[1],"p"))
+                {
+                    cout<<"Construction with pthread library."<<endl;
+                    cout<<"Count of threads to be created: "<<nb_th<<endl;
+                    DR.computeDSOG(g,false);
+                    g.printCompleteInformation();
+                }
+                else if (!strcmp(argv[1],"pc"))
+                {
+                    cout<<"Canonized construction with pthread library."<<endl;
+                    cout<<"Count of threads to be created: "<<nb_th<<endl;
+                    DR.computeDSOG(g,true);
+                    g.printCompleteInformation();
+                }
+                else if (!strcmp(argv[1],"l"))
+                {
+                    cout<<"Construction with lace framework."<<endl;
+                    cout<<"Count of workers to be created: "<<nb_th<<endl;
+                    DR.computeSOGLace(g);
+                    g.printCompleteInformation();
+                }
+                else if (!strcmp(argv[1],"lc"))
+                {
+                    cout<<"Canonised construction with lace framework."<<endl;
+                    cout<<"Count of workers to be created: "<<nb_th<<endl;
+                    DR.computeSOGLaceCanonized(g);
+                    g.printCompleteInformation();
+                }
+
+                cout<<"Perform Model checking ?";
+                char c;
+                cin>>c;
+                if (c='y')
+                {
+                    cout<<"Building automata for not(formula)\n";
+                    auto d = spot::make_bdd_dict();
+                    // d->register_ap("jbhkj");
+                    spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+                    cout<<"Formula automata built.\n";
+                    cout<<"Want to save the graph in a dot file ?";
+                    cin>>c;
+                    if (c=='y')
+                    {
+                        fstream file;
+                        string st(formula);
+                        st+=".dot";
+                        file.open(st.c_str(),fstream::out);
+                        spot::print_dot(file, af);
+                        file.close();
+                    }
+                    //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
+
+                    spot::twa_graph_ptr k =
+                        spot::make_twa_graph(std::make_shared<SogKripke>(d,DR.getGraph(),Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP()),spot::twa::prop_set::all(), true);
+
+                    cout<<"SOG translated to SPOT succeeded.."<<endl;
+                    cout<<"Want to save the graph in a dot file ?";
+                    cin>>c;
+                    if (c=='y')
+                    {
+                        fstream file;
+                        string st(argv[3]);
+                        st+=".dot";
+                        file.open(st.c_str(),fstream::out);
+                        spot::print_dot(file, k,"ka");
+                        file.close();
+                    }
+                    if (auto run = k->intersecting_run(af))
+                    {
+                        /*std::cout << "formula is violated by the following run:\n" << *run;*/
+                        run->highlight(5); // 5 is a color number.
+                        fstream file;
+                        file.open("violated.dot",fstream::out);
+                        cout<<"Property is violated"<<endl;
+                        cout<<"Check the dot file to get a violation run"<<endl;
+                        spot::print_dot(file, k, ".kA");
+                        file.close();
+                    }
+                    else
+                        std::cout << "formula is verified\n";
+                }
+
+            }
+        }
+
     }
-
-
     if (n_tasks>1)
     {
         if(nb_th>1)
@@ -328,37 +345,49 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                   cout<<"On the fly Model checker by process "<<task_id<<endl;
+                    cout<<"On the fly Model checker by process "<<task_id<<endl;
 
                     auto d = spot::make_bdd_dict();
                     spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+
+                    /*         spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
+                               cout<<"finished...."<<endl;
+
+
+                               fstream file;
+                               string st(argv[3]);
+                               st+=".dot";
+                               file.open(st.c_str(),fstream::out);
+                               spot::print_dot(file, k,"ka");
+                               file.close(); */
                     double tps;
 
                     auto t1 = std::chrono::high_resolution_clock::now();
-                    spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
-                    cout<<"finished...."<<endl;
-
-                    auto t2 = std::chrono::high_resolution_clock::now();
-                    std::cout << "temps de verification "
-                              << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
-                              << " milliseconds\n";
-
-                    fstream file;
-                    string st(argv[3]);
-                    st+=".dot";
-                    file.open(st.c_str(),fstream::out);
-                    spot::print_dot(file, k,"ka");
-                    file.close();
-                    /*  auto k =
-                    std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
+                    auto k =
+                        std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
                     if (auto run = k->intersecting_run(af))
                     {
-                    std::cout << "formula is violated by the following run:\n"<<*run<<endl;
-                    cout<<"=================================="<<endl;
+                        std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+                        auto t2 = std::chrono::high_resolution_clock::now();
+                        std::cout << "temps de verification "
+                                  << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                                  << " milliseconds\n";
+
+                        cout<<"=================================="<<endl;
+
                     }
                     else
-                    std::cout << "formula is verified\n";*/
+                    {
+                        std::cout << "formula is verified\n";
+                        auto t2 = std::chrono::high_resolution_clock::now();
+                        std::cout << "temps de verification "
+                                  << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                                  << " milliseconds\n";
+
+                    }
+
                 }
+
             }
 
 
@@ -378,5 +407,5 @@ int main(int argc, char** argv)
     }
 
     MPI_Finalize();
-    return 0;
+    return (EXIT_SUCCESS);
 }
