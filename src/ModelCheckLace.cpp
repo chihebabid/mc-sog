@@ -9,22 +9,39 @@ using namespace sylvan;
 ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread):ModelCheckBaseMT(R,BOUND,nbThread)
 {
 }
-void ModelCheckLace::preConfigure() {
-    cout<<__func__<<endl;
+void
+print_h(double size)
+{
+    const char* units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+    int i = 0;
+    for (;size>1024;size/=1024) i++;
+    printf("%.*f %s", i, size, units[i]);
+}
+size_t
+getMaxMemory()
+{
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size;
+}
+void ModelCheckLace::preConfigure() {   
     lace_init(m_nb_thread, 10000000);
     lace_startup(0, NULL, NULL);
-    sylvan_set_limits(2LL<<30, 16, 3);
+    size_t max = 16LL<<30;
+    if (max > getMaxMemory()) max = getMaxMemory()/10*9;
+    printf("Memory : ");
+    print_h(max);
+    printf(" max.\n");
+    LACE_ME;
+    sylvan_set_limits(max, 28, 1);
     sylvan_init_package();
     sylvan_init_ldd();
-    LACE_ME;
     
+    //init_gc_seq();
+    sylvan_gc_enable();
+    printf("%zu of %zu buckets filled!\n", llmsset_count_marked(nodes), llmsset_get_size(nodes));
     int  i;
     vector<Place>::const_iterator it_places;
-
-
-    init_gc_seq();
-
-
     //_______________
     transitions=m_net.transitions;
     m_observable=m_net.Observable;
@@ -59,7 +76,8 @@ void ModelCheckLace::preConfigure() {
     }
 
     m_initialMarking=lddmc_cube(liste_marques,m_net.places.size());
-
+    delete []liste_marques;
+    lddmc_refs_push(m_initialMarking);
 
 
 
@@ -99,9 +117,9 @@ void ModelCheckLace::preConfigure() {
         }
 
         MDD _minus=lddmc_cube(prec,m_nbPlaces);
-        ldd_refs_push(_minus);
+        lddmc_refs_push(_minus);
         MDD _plus=lddmc_cube(postc,m_nbPlaces);
-        ldd_refs_push(_plus);
+        lddmc_refs_push(_plus);
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
     delete [] prec;
@@ -116,22 +134,28 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
     MDD M1;
     MDD M2=From;
     int it=0;
-    //cout<<"worker "<<lace_get_worker()->worker<<endl;
+    lddmc_refs_pushptr(&M1);
+    lddmc_refs_pushptr(&M2);
+    cout<<"worker "<<lace_get_worker()->worker<<endl;
+    
     do
     {
         M1=M2;
         for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
-            SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus());
+            lddmc_refs_spawn(SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus()));
         }
+       // j=0;
         for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
-            MDD succ=SYNC(lddmc_firing_lace);
+            MDD succ=lddmc_refs_sync(SYNC(lddmc_firing_lace));
+            //cout<<"j :"<<j<<endl;
             M2=lddmc_union(succ,M2);
         }
 
     }
     while(M1!=M2);
+    lddmc_refs_popptr(2);
     return M2;
 }
 
@@ -190,11 +214,13 @@ TASK_3 (bool, SetDivL, MDD, M, Set*, nonObservable, vector<TransSylvan>*, tb_rel
 
 LDDState * ModelCheckLace::getInitialMetaState()
 {
-    
+    cout<<__func__<<endl;
     LDDState *initalAggregate=new LDDState();
     LDDState *reached_class;
     LACE_ME;
     MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
+    cout<<"Yep..."<<endl;
+    lddmc_refs_push(initial_meta_state);
     Set fire=fire_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
 
     // c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
@@ -208,8 +234,10 @@ LDDState * ModelCheckLace::getInitialMetaState()
     // Compute successors
     unsigned int onb_it=0;
     Set::iterator iter=fire.begin();
+    int j=0;
     while(iter!=fire.end())
     {
+        
         int t = *iter;
         SPAWN(Aggregate_epsilon_lace,get_successor(initial_meta_state,t),&m_nonObservable,&m_tb_relation);
         onb_it++;
@@ -225,6 +253,7 @@ LDDState * ModelCheckLace::getInitialMetaState()
         Complete_meta_state=SYNC(Aggregate_epsilon_lace);
         reached_class=new LDDState();
         reached_class->m_lddstate=Complete_meta_state;
+        lddmc_refs_push(Complete_meta_state);
         reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
         m_graph->addArc();
         m_graph->insert(reached_class);
@@ -237,12 +266,15 @@ LDDState * ModelCheckLace::getInitialMetaState()
 
 void ModelCheckLace::buildSucc(LDDState *agregate)
 {
-   
+   cout<<__func__<<endl;
    if (!agregate->isVisited()) {
    // It's first time to visit agregate, then we have to build its successors
-        agregate->setVisited();
+        agregate->setVisited();         
         LDDState *reached_class=nullptr;
         LACE_ME;
+        displayMDDTableInfo();
+        sylvan_gc();
+        displayMDDTableInfo();
         MDD meta_state=agregate->getLDDValue();//(CALL(Aggregate_epsilon_lace,agregate->getLDDValue(),&m_nonObservable,&m_tb_relation));
 
         Set fire=fire_obs_lace(meta_state,&m_observable,&m_tb_relation);
@@ -268,6 +300,7 @@ void ModelCheckLace::buildSucc(LDDState *agregate)
 
             if(!pos)
             {
+                lddmc_refs_push(Complete_meta_state);
                 reached_class->setDiv(SetDivL(Complete_meta_state,&m_nonObservable,&m_tb_relation));
                 reached_class->setDeadLock(Set_Bloc(Complete_meta_state));
                 m_graph->addArc();

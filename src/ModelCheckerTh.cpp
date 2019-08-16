@@ -201,6 +201,7 @@ void * ModelCheckerTh::Compute_successors()
                //     #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
+                    
                     sylvan_gc_seq();
                  //   #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
