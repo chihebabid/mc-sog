@@ -8,6 +8,7 @@ public:
         void buildSucc(LDDState *agregate) override;
 private:
         void preConfigure();
+        bool m_built_initial=false;
 
 };
 #endif

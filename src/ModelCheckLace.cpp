@@ -33,7 +33,7 @@ void ModelCheckLace::preConfigure() {
     print_h(max);
     printf(" max.\n");
     LACE_ME;
-    sylvan_set_limits(max, 28, 1);
+    sylvan_set_limits(max, 16, 2);
     sylvan_init_package();
     sylvan_init_ldd();
     
@@ -134,8 +134,8 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
     MDD M1;
     MDD M2=From;
     int it=0;
-    lddmc_refs_pushptr(&M1);
-    lddmc_refs_pushptr(&M2);
+    /*lddmc_refs_pushptr(&M1);
+    lddmc_refs_pushptr(&M2);*/
     cout<<"worker "<<lace_get_worker()->worker<<endl;
     
     do
@@ -145,17 +145,20 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
         {
             lddmc_refs_spawn(SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus()));
         }
-       // j=0;
+      
         for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
+            lddmc_refs_push(M1);
+            lddmc_refs_push(M2);
             MDD succ=lddmc_refs_sync(SYNC(lddmc_firing_lace));
-            //cout<<"j :"<<j<<endl;
+            lddmc_refs_push(succ);
             M2=lddmc_union(succ,M2);
+            lddmc_refs_pop(3);
         }
 
     }
-    while(M1!=M2);
-    lddmc_refs_popptr(2);
+    while (M1!=M2);
+   /* lddmc_refs_popptr(2);*/
     return M2;
 }
 
@@ -214,7 +217,7 @@ TASK_3 (bool, SetDivL, MDD, M, Set*, nonObservable, vector<TransSylvan>*, tb_rel
 
 LDDState * ModelCheckLace::getInitialMetaState()
 {
-    cout<<__func__<<endl;
+    if (!m_built_initial) {
     LDDState *initalAggregate=new LDDState();
     LDDState *reached_class;
     LACE_ME;
@@ -259,6 +262,8 @@ LDDState * ModelCheckLace::getInitialMetaState()
         m_graph->insert(reached_class);
         initalAggregate->Successors.insert(initalAggregate->Successors.begin(),LDDEdge(reached_class,t));
         reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(initalAggregate,t));
+    }
+    m_built_initial=true;
     }
 
     return m_graph->getInitialState();
