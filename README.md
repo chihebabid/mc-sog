@@ -11,7 +11,7 @@ BuDDy used for sequential version and Sylvan for both sequential and parallel co
 
 
 
-It is necessary to install Spot [Spot](https://spot.lrde.epita.fr/install.html).
+It is necessary to install [Spot](https://spot.lrde.epita.fr/install.html).
 
 ## Description
 This repository hosts the experiments and results for the Hybrid (MPI/pthreads) approach for the SOG construction and provides a short guide on how to install the tools and reproduce the results.
