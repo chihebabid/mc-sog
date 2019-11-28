@@ -66,3 +66,14 @@ arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
 
 ```
+## Publications
+1. [A Parallel Construction of the Symbolic Observation Graph: the Basis for Efficient Model Checking of Concurrent Systems 2017](https://www.researchgate.net/publication/315840512_A_Parallel_Construction_of_the_Symbolic_Observation_Graph_the_Basis_for_Efficient_Model_Checking_of_Concurrent_Systems)
+
+2. [Parallel Symbolic Observation Graph 2017](https://ieeexplore.ieee.org/document/8367348)
+
+3. [Reducing Time and/or Memory Consumption of the SOG Construction in a Parallel Context](https://ieeexplore.ieee.org/abstract/document/8672359)
+
+4. [Towards Parallel Verification of Concurrent Systems using the Symbolic Observation Graph](https://ieeexplore.ieee.org/abstract/document/8843636)
+
+
+
