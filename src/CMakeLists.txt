@@ -10,12 +10,12 @@ find_package(OpenSSL)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 # include spot library
-add_library(spot SHARED IMPORTED)
-set_target_properties(spot PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libspot.so")
+add_library(spot STATIC IMPORTED)
+set_target_properties(spot PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libspot.a")
 
 # include bddx library
-add_library(bddx SHARED IMPORTED)
-set_target_properties(bddx PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libbddx.so")
+add_library(bddx STATIC IMPORTED)
+set_target_properties(bddx PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libbddx.a")
 
 # Hybrid SOG executable
 add_executable(pmc-sog main.cpp

@@ -29,7 +29,7 @@ set(SPOT_DIR "${CMAKE_BINARY_DIR}/third-party/spot")
 ExternalProject_Add(SpotLibrary
   PREFIX            ${SPOT_DIR}
   SOURCE_DIR        ${SPOT_SOURCE_DIR}
-  CONFIGURE_COMMAND autoreconf -if ${SPOT_SOURCE_DIR} && ${SPOT_SOURCE_DIR}/configure --disable-python --prefix=<INSTALL_DIR>
+  CONFIGURE_COMMAND autoreconf -if ${SPOT_SOURCE_DIR} && ${SPOT_SOURCE_DIR}/configure --disable-python --prefix=<INSTALL_DIR> --enable-static
   BUILD_COMMAND     make -j
 )
 include_directories("${SPOT_DIR}/include")
