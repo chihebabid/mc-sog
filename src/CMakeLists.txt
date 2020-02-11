@@ -9,16 +9,27 @@ include_directories(${MPI_INCLUDE_PATH})
 find_package(OpenSSL)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
-# include spot library
-add_library(spot STATIC IMPORTED)
-set_target_properties(spot PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libspot.a")
+include_directories("${CMAKE_SOURCE_DIR}/third-party/sylvan/src")
 
-# include bddx library
-add_library(bddx STATIC IMPORTED)
-set_target_properties(bddx PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libbddx.a")
+
+add_library(spot SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(spot PROPERTIES
+  IMPORTED_LOCATION "/usr/lib/x86_64-linux-gnu/libspot.so"
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/include/spot/"
+)
+
+add_library(bddx SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(bddx PROPERTIES
+  IMPORTED_LOCATION "/usr/lib/x86_64-linux-gnu/libbddx.so"
+  INTERFACE_INCLUDE_DIRECTORIES "/usr/include/spot/"
+)
+
+
+
+
 
 # Hybrid SOG executable
-add_executable(pmc-sog main.cpp
+add_executable(hybrid-sog main.cpp
   NewNet.cpp
   NewNet.h
   CommonSOG.cpp
@@ -69,7 +80,7 @@ add_executable(pmc-sog main.cpp
   HybridKripkeState.h
   )
 
-target_link_libraries(pmc-sog
+target_link_libraries(hybrid-sog
   bddx
   spot
   sylvan
@@ -77,5 +88,3 @@ target_link_libraries(pmc-sog
   ${MPI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
 )
-
-add_dependencies(pmc-sog SpotLibrary)

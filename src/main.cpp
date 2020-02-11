@@ -349,19 +349,8 @@ int main(int argc, char** argv)
 
                     auto d = spot::make_bdd_dict();
                     spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-
-                    /*         spot::twa_graph_ptr k =spot::make_twa_graph(std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet),spot::twa::prop_set::all(), true);
-                               cout<<"finished...."<<endl;
-
-
-                               fstream file;
-                               string st(argv[3]);
-                               st+=".dot";
-                               file.open(st.c_str(),fstream::out);
-                               spot::print_dot(file, k,"ka");
-                               file.close(); */
+                
                     double tps;
-
                     auto t1 = std::chrono::high_resolution_clock::now();
                     auto k =
                         std::make_shared<HybridKripke>(d,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP(),Rnewnet);
@@ -372,9 +361,7 @@ int main(int argc, char** argv)
                         std::cout << "temps de verification "
                                   << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
                                   << " milliseconds\n";
-
                         cout<<"=================================="<<endl;
-
                     }
                     else
                     {
@@ -385,27 +372,19 @@ int main(int argc, char** argv)
                                   << " milliseconds\n";
 
                     }
-
                 }
-
             }
-
-
         }
         else
-        {
-            //cout<<" sequential version using Sylvan : 1 with BuDDy : 2 \n" <<endl;
+        {           
             cout<<"*************Distibuted version******************* \n" <<endl;
             {
                 DistributedSOG DR(Rnewnet, bound);
                 LDDGraph g(nullptr);
                 DR.computeDSOG(g);
             }
-
-
         }
     }
-
     MPI_Finalize();
     return (EXIT_SUCCESS);
 }

@@ -33,7 +33,7 @@ void ModelCheckLace::preConfigure() {
     print_h(max);
     printf(" max.\n");
     LACE_ME;
-    sylvan_set_limits(max, 16, 2);
+    sylvan_set_limits(max, 16, 1);
     sylvan_init_package();
     sylvan_init_ldd();
     
@@ -58,7 +58,7 @@ void ModelCheckLace::preConfigure() {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;
     }*/
     //cout<<"Transitions observables :"<<endl;
-    Set::iterator it=m_observable.begin();
+    //Set::iterator it=m_observable.begin();
     /*for (; it!=m_observable.end(); it++)
     {
         cout<<*it<<"  ";
@@ -133,20 +133,16 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
 {
     MDD M1;
     MDD M2=From;
-    int it=0;
-    /*lddmc_refs_pushptr(&M1);
-    lddmc_refs_pushptr(&M2);*/
-    cout<<"worker "<<lace_get_worker()->worker<<endl;
-    
+      
     do
     {
         M1=M2;
-        for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
+        for(Set::iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
             lddmc_refs_spawn(SPAWN(lddmc_firing_lace,M2,(*tb_relation)[(*i)].getMinus(),(*tb_relation)[(*i)].getPlus()));
         }
       
-        for(Set::const_iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
+        for(Set::iterator i=nonObservable->begin(); !(i==nonObservable->end()); i++)
         {
             lddmc_refs_push(M1);
             lddmc_refs_push(M2);
@@ -155,6 +151,8 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
             M2=lddmc_union(succ,M2);
             lddmc_refs_pop(3);
         }
+        cout<<"M1 :"<<M1<<endl;
+        cout<<"M2 :"<<M2<<endl;
 
     }
     while (M1!=M2);
@@ -237,7 +235,7 @@ LDDState * ModelCheckLace::getInitialMetaState()
     // Compute successors
     unsigned int onb_it=0;
     Set::iterator iter=fire.begin();
-    int j=0;
+    
     while(iter!=fire.end())
     {
         

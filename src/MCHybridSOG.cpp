@@ -567,13 +567,10 @@ void MCHybridSOG::read_message()
              uint16_t id_p=i_agregate->getProcess();             
              memcpy(message+16,&id_p,2);            
              MPI_Send(message,22,MPI_BYTE,m_status.MPI_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD);
-             break;
-       
-        
-        
-        default:  cout<<"unknown received "<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
+             break;        
+        /*default:  cout<<"unknown received "<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
             //AbortTerm();
-            break;           
+            //break;    */       
         }
         
         MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&m_status);
