@@ -21,18 +21,29 @@ set(SYLVAN_DIR "${CMAKE_SOURCE_DIR}/third-party/sylvan")
 include_directories(${SYLVAN_DIR})
 add_subdirectory(${SYLVAN_DIR})
 
-# add spot
-include(ExternalProject)
-message(STATUS "Building Spot ...")
-set(SPOT_SOURCE_DIR "${CMAKE_SOURCE_DIR}/third-party/spot")
-set(SPOT_DIR "${CMAKE_BINARY_DIR}/third-party/spot")
-ExternalProject_Add(SpotLibrary
-  PREFIX            ${SPOT_DIR}
-  SOURCE_DIR        ${SPOT_SOURCE_DIR}
-  CONFIGURE_COMMAND autoreconf -if ${SPOT_SOURCE_DIR} && ${SPOT_SOURCE_DIR}/configure --disable-python --prefix=<INSTALL_DIR> --enable-static
-  BUILD_COMMAND     make -j
-)
-include_directories("${SPOT_DIR}/include")
+# build spot if it is not installed on the system
+find_library(SPOT_LIBRARY "spot")
+find_library(BDDX_LIBRARY "bddx")
+
+if(NOT SPOT_LIBRARY)
+  include(ExternalProject)
+
+  message(STATUS "Building Spot ...")
+  set(SPOT_SOURCE_DIR "${CMAKE_SOURCE_DIR}/third-party/spot")
+  set(SPOT_DIR "${CMAKE_BINARY_DIR}/third-party/spot")
+
+  ExternalProject_Add(SpotLibrary
+    PREFIX            ${SPOT_DIR}
+    SOURCE_DIR        ${SPOT_SOURCE_DIR}
+    CONFIGURE_COMMAND autoreconf -if ${SPOT_SOURCE_DIR} && ${SPOT_SOURCE_DIR}/configure --disable-python --prefix=<INSTALL_DIR>
+    BUILD_COMMAND     make -j
+  )
+
+  include_directories("${SPOT_DIR}/include")
+else ()
+  message(STATUS "Found spot: ${SPOT_LIBRARY}")
+  message(STATUS "Found bddx: ${BDDX_LIBRARY}")
+endif()
 
 # add source folder
 include_directories(src)

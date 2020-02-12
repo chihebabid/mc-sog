@@ -139,5 +139,10 @@ local.properties
 
 .sts4-cache/
 
+### Kate ###
+# Swap Files #
+.*.kate-swp
+.swp.*
+
 # End of https://www.gitignore.io/api/c++,cmake
 
