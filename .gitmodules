@@ -5,6 +5,3 @@
 	path = third-party/sylvan
 	url = https://depot.lipn.univ-paris13.fr/PMC-SOG/sylvan.git
 	branch = Sylvan-SOG
-[submodule "third-party/spot"]
-	path = third-party/spot
-	url = https://gitlab.lrde.epita.fr/spot/spot.git

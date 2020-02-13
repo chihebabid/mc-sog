@@ -29,14 +29,15 @@ if(NOT SPOT_LIBRARY)
   include(ExternalProject)
 
   message(STATUS "Building Spot ...")
-  set(SPOT_SOURCE_DIR "${CMAKE_SOURCE_DIR}/third-party/spot")
   set(SPOT_DIR "${CMAKE_BINARY_DIR}/third-party/spot")
 
   ExternalProject_Add(SpotLibrary
-    PREFIX            ${SPOT_DIR}
-    SOURCE_DIR        ${SPOT_SOURCE_DIR}
-    CONFIGURE_COMMAND autoreconf -if ${SPOT_SOURCE_DIR} && ${SPOT_SOURCE_DIR}/configure --disable-python --prefix=<INSTALL_DIR>
-    BUILD_COMMAND     make -j
+    PREFIX                ${SPOT_DIR}
+    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.8.5.tar.gz
+    DOWNLOAD_NO_PROGRESS  YES
+    CONFIGURE_COMMAND     ./configure --disable-doxygen --disable-python --enable-silent-rules --silent --prefix=<INSTALL_DIR>
+    BUILD_COMMAND         make -j
+    BUILD_IN_SOURCE       1
   )
 
   include_directories("${SPOT_DIR}/include")
