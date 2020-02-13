@@ -44,6 +44,9 @@ if(NOT SPOT_LIBRARY)
 else ()
   message(STATUS "Found spot: ${SPOT_LIBRARY}")
   message(STATUS "Found bddx: ${BDDX_LIBRARY}")
+
+  find_path(SPOT_INCLUDE_PATH "spot")
+  include_directories("${SPOT_INCLUDE_PATH}")
 endif()
 
 # add source folder
