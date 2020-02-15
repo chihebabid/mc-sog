@@ -293,9 +293,8 @@ int main(int argc, char** argv)
                         file.close();
                     }
                     if (auto run = k->intersecting_run(af))
-                    {
-                        /*std::cout << "formula is violated by the following run:\n" << *run;*/
-                        run->highlight(5); // 5 is a color number.
+                    {                       
+                        run->highlight(5); 
                         fstream file;
                         file.open("violated.dot",fstream::out);
                         cout<<"Property is violated"<<endl;
