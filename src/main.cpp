@@ -97,7 +97,6 @@ int main(int argc, char** argv)
     if (argc > 6)
         strcpy(Int, argv[5]);
 
-    int bound  = atoi(argv[argc - 1])==0?32:atoi(argv[argc - 1]);
     //if(argc>5)
     nb_th = atoi(argv[2])==0 ? 1 : atoi(argv[2]);
 
@@ -151,9 +150,9 @@ int main(int argc, char** argv)
             }
             cout<<"Loading net information..."<<endl;
             ModelCheckBaseMT* mcl;
-            if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,bound,nb_th);
+            if (!strcmp(argv[1],"otfL")) mcl=new ModelCheckLace(Rnewnet,nb_th);
             else
-                mcl=new ModelCheckerTh(Rnewnet,bound,nb_th);
+                mcl=new ModelCheckerTh(Rnewnet,nb_th);
             mcl->loadNet();
             double tps;
 
@@ -214,7 +213,7 @@ int main(int argc, char** argv)
         {
             cout<<"number of task = 1 \n " <<endl;
             bool uselace=(!strcmp(argv[1],"lc")) || (!strcmp(argv[1],"l"));
-            threadSOG DR(Rnewnet, bound,nb_th,uselace);
+            threadSOG DR(Rnewnet,nb_th,uselace);
             LDDGraph g(&DR);
 
             if (nb_th==1)
@@ -319,7 +318,7 @@ int main(int argc, char** argv)
             if (task_id==0) cout<<"**************Hybrid version**************** \n" <<endl;
             if (strcmp(argv[1],"otf"))
             {
-                HybridSOG DR(Rnewnet, bound);
+                HybridSOG DR(Rnewnet);
                 LDDGraph g(&DR);
                 if (task_id==0) cout<<"Building the Distributed SOG by "<<n_tasks<<" processes..."<<endl;
                 DR.computeDSOG(g);
@@ -339,7 +338,7 @@ int main(int argc, char** argv)
                 if (task_id!=n_tasks)
                 {
                     cout<<"N task :"<<n_tasks<<endl;
-                    MCHybridSOG DR(Rnewnet,gprocess, bound,false);
+                    MCHybridSOG DR(Rnewnet,gprocess,false);
                     LDDGraph g(&DR);
                     DR.computeDSOG(g);
                 }
@@ -379,7 +378,7 @@ int main(int argc, char** argv)
         {           
             cout<<"*************Distibuted version******************* \n" <<endl;
             {
-                DistributedSOG DR(Rnewnet, bound);
+                DistributedSOG DR(Rnewnet);
                 LDDGraph g(nullptr);
                 DR.computeDSOG(g);
             }

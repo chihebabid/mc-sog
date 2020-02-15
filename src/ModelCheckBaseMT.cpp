@@ -6,7 +6,7 @@
 #include <sylvan_int.h>
 
 using namespace sylvan;
-ModelCheckBaseMT::ModelCheckBaseMT(const NewNet &R, int BOUND,int nbThread)
+ModelCheckBaseMT::ModelCheckBaseMT(const NewNet &R,int nbThread)
 {
     m_nb_thread=nbThread;
     m_net=R;

@@ -46,7 +46,7 @@ extern int n_tasks, task_id;
 // typedef vector<Trans> vec_trans;
 class DistributedSOG : public CommonSOG{
  public:
-  DistributedSOG(const NewNet &, int BOUND = 32, bool init = false);
+  DistributedSOG(const NewNet &, bool init = false);
   void buildFromNet(int index);
   void computeDSOG(LDDGraph &g);
   void BuildInitialState(LDDState *m_state, MDD mdd);

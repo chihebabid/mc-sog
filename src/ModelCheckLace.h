@@ -3,7 +3,7 @@
 #include "ModelCheckBaseMT.h"
 class ModelCheckLace : public ModelCheckBaseMT {
 public:
-        ModelCheckLace(const NewNet &R, int BOUND,int nbThread);
+        ModelCheckLace(const NewNet &R,int nbThread);
         LDDState * getInitialMetaState() override;
         void buildSucc(LDDState *agregate) override;
 private:

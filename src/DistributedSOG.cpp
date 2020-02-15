@@ -25,7 +25,7 @@ using namespace sylvan;
 /**************************************************/
 
 
-DistributedSOG::DistributedSOG(const NewNet &R, int BOUND,bool init)
+DistributedSOG::DistributedSOG(const NewNet &R,bool init)
 {
 
 

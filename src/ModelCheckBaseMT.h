@@ -3,7 +3,7 @@
 #include "CommonSOG.h"
 class ModelCheckBaseMT : public CommonSOG {
 public:
-        ModelCheckBaseMT(const NewNet &R, int BOUND,int nbThread);
+        ModelCheckBaseMT(const NewNet &R,int nbThread);
         virtual LDDState * getInitialMetaState()=0;
         virtual void buildSucc(LDDState *agregate)=0;
         void loadNet();

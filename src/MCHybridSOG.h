@@ -48,7 +48,7 @@ typedef stack<MSG> pile_msg;
 class MCHybridSOG : public CommonSOG
 {
 public:
-    MCHybridSOG(const NewNet &,MPI_Comm &, int BOUND = 32, bool init = false);
+    MCHybridSOG(const NewNet &,MPI_Comm &, bool init = false);
     void buildFromNet(int index);
     /// principal functions to construct the SOG
     void computeDSOG(LDDGraph &g);

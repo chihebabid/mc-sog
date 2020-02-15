@@ -6,7 +6,7 @@
 #include <sylvan_int.h>
 
 using namespace sylvan;
-ModelCheckLace::ModelCheckLace(const NewNet &R, int BOUND,int nbThread):ModelCheckBaseMT(R,BOUND,nbThread)
+ModelCheckLace::ModelCheckLace(const NewNet &R,int nbThread):ModelCheckBaseMT(R,nbThread)
 {
 }
 void

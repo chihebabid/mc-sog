@@ -25,7 +25,7 @@ using namespace sylvan;
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
 
-MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world, int BOUND,bool init)
+MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world,bool init)
 {
 
     m_comm_world=comm_world;

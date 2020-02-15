@@ -7,7 +7,7 @@ typedef stack<pair<LDDState *,int>> pile_t;
 class ModelCheckerTh : public ModelCheckBaseMT
 {
 public:
-    ModelCheckerTh(const NewNet &R, int BOUND,int nbThread);
+    ModelCheckerTh(const NewNet &R,int nbThread);
     ~ModelCheckerTh();
     LDDState * getInitialMetaState();
     void buildSucc(LDDState *agregate);

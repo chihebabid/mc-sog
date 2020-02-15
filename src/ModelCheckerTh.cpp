@@ -7,7 +7,7 @@
 
 using namespace sylvan;
 
-ModelCheckerTh::ModelCheckerTh(const NewNet &R, int BOUND,int nbThread):ModelCheckBaseMT(R,BOUND,nbThread)  {
+ModelCheckerTh::ModelCheckerTh(const NewNet &R,int nbThread):ModelCheckBaseMT(R,nbThread)  {
 }
 void ModelCheckerTh::preConfigure()
 {

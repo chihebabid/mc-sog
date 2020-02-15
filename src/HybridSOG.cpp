@@ -50,7 +50,7 @@ using namespace sylvan;
 } */
 
 
-HybridSOG::HybridSOG(const NewNet &R, int BOUND,bool init)
+HybridSOG::HybridSOG(const NewNet &R,bool init)
 {
 
 
