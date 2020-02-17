@@ -22,7 +22,7 @@ else()
 endif()
 
 # Hybrid SOG executable
-add_executable(hybrid-sog main.cpp
+add_executable(mc-sog main.cpp
   NewNet.cpp
   NewNet.h
   CommonSOG.cpp
@@ -73,7 +73,7 @@ add_executable(hybrid-sog main.cpp
   HybridKripkeState.h
   )
 
-target_link_libraries(hybrid-sog
+target_link_libraries(mc-sog
   bddx
   spot
   sylvan
