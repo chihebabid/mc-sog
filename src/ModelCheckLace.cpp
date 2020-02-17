@@ -51,19 +51,7 @@ void ModelCheckLace::preConfigure() {
     m_transitionName=m_net.transitionName;
     m_placeName=m_net.m_placePosName;
 
-   /* cout<<"Toutes les Transitions:"<<endl;
-    map<string,int>::iterator it2=m_transitionName.begin();
-    for (; it2!=m_transitionName.end(); it2++)
-    {
-        cout<<(*it2).first<<" : "<<(*it2).second<<endl;
-    }*/
-    //cout<<"Transitions observables :"<<endl;
-    //Set::iterator it=m_observable.begin();
-    /*for (; it!=m_observable.end(); it++)
-    {
-        cout<<*it<<"  ";
-    }
-    cout<<endl;*/
+   
     InterfaceTrans=m_net.InterfaceTrans;
     
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -151,8 +139,7 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
             M2=lddmc_union(succ,M2);
             lddmc_refs_pop(3);
         }
-        cout<<"M1 :"<<M1<<endl;
-        cout<<"M2 :"<<M2<<endl;
+        
 
     }
     while (M1!=M2);
@@ -220,7 +207,7 @@ LDDState * ModelCheckLace::getInitialMetaState()
     LDDState *reached_class;
     LACE_ME;
     MDD initial_meta_state(CALL(Aggregate_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
-    cout<<"Yep..."<<endl;
+   
     lddmc_refs_push(initial_meta_state);
     Set fire=fire_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
 

@@ -203,8 +203,7 @@ int main(int argc, char** argv)
                           << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
                           << " milliseconds\n";
             }
-            //cin>>c;
-            //mcl->getGraph()->printCompleteInformation();
+            
             delete mcl;
         }
 
