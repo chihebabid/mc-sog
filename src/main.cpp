@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     cout<<"Fichier net : "<<argv[3]<<endl;
     cout<<"Fichier formule : "<<formula<<endl;
     cout<<"Fichier Interface : "<<Int<<endl;
-    cout<<"Bound : "<<argv[argc-1]<<endl;
+   
     cout<<"thread : "<<argv[2]<<endl;
     //strcpy(red,argv[5]);
     //cout<<"Reduce : "<<red<<endl;
@@ -160,22 +160,7 @@ int main(int argc, char** argv)
 
             auto k =
                 std::make_shared<SogKripkeTh>(d,mcl,Rnewnet.getListTransitionAP(),Rnewnet.getListPlaceAP());
-            /*     spot::twa_graph_ptr k =
-             spot::make_twa_graph(std::make_shared<SogKripkeTh>(d,mcl,R.getListTransitionAP(),R.getListPlaceAP()),
-                                  spot::twa::prop_set::all(), true);*/
-            /*      cout<<"Want to save the graph in a dot file ?";
-                     cin>>c;
-                     if (c=='y')
-                     {
-                         fstream file;
-                         string st(argv[3]);
-                         st+=".dot";
-                         file.open(st.c_str(),fstream::out);
-                         spot::print_dot(file, k,"ka");
-                         file.close();
-                     }
-             mcl->getGraph()->printCompleteInformation();
-             // Performing on the fly Modelchecking*/
+           
             cout<<"Performing on the fly Modelchecking"<<endl;
 
             if (auto run = k->intersecting_run(af))
