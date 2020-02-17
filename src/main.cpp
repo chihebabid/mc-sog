@@ -36,9 +36,6 @@
 using namespace std;
 #define MASTER 0
 
-int Formula_transitions(const char * f, Set_mot& formula_trans, NewNet Rv) ;
-//int nb_th;
-
 unsigned int nb_th;
 int n_tasks, task_id;
 spot::formula not_f;
@@ -85,10 +82,6 @@ set<string> buildPropositions(const string &fileName)
 int main(int argc, char** argv)
 {
     int choix;
-    /*string input=read_formula(argv[4]);
-
-    exit(0);*/
-
     if(argc<3)
         return 0;
     char formula[100]="";
