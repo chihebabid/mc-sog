@@ -173,7 +173,7 @@ TASK_3 (bool, SetDivL, MDD, M, Set*, nonObservable, vector<TransSylvan>*, tb_rel
     if (nonObservable->empty()) return false;
 	Set::iterator i;
 	MDD Reached,From;
-	//cout<<"Ici detect divergence \n";
+	
 	Reached=lddmc_false;
     From=M;
 	do
@@ -256,15 +256,15 @@ LDDState * ModelCheckLace::getInitialMetaState()
 
 void ModelCheckLace::buildSucc(LDDState *agregate)
 {
-   cout<<__func__<<endl;
+   //cout<<__func__<<endl;
    if (!agregate->isVisited()) {
    // It's first time to visit agregate, then we have to build its successors
         agregate->setVisited();         
         LDDState *reached_class=nullptr;
         LACE_ME;
-        displayMDDTableInfo();
+        //displayMDDTableInfo();
         sylvan_gc();
-        displayMDDTableInfo();
+        //displayMDDTableInfo();
         MDD meta_state=agregate->getLDDValue();//(CALL(Aggregate_epsilon_lace,agregate->getLDDValue(),&m_nonObservable,&m_tb_relation));
 
         Set fire=fire_obs_lace(meta_state,&m_observable,&m_tb_relation);
