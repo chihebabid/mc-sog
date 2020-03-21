@@ -31,14 +31,14 @@ class LDDState {
   bool m_blocage=false;
 
 
-  bool isVirtual();
-  void setVirtual();
+  bool isVirtual() {return m_virtual;}
+  void setVirtual(){m_virtual=true;}
   void setDiv(bool di) {m_boucle=di;}
   bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
-  void setVisited() {m_visited=true;}
-  bool isVisited() {return m_visited;}
+  inline void setVisited() {m_visited=true;}
+  inline bool isVisited() {return m_visited;}
   void setCompletedSucc() {m_completed=true;}
   bool isCompletedSucc() {return m_completed;}
   vector<uint16_t> getMarkedPlaces(set<uint16_t>& lplacesAP);

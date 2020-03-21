@@ -1,13 +1,13 @@
 #include "MCHybridSOG.h"
 //#define DEBUG_GC
-#define REDUCE
-using namespace std;
-#include <stdio.h>
+
+
+#include <cstdio>
 
 #include "sylvan_seq.h"
 #include <sylvan_int.h>
 
-using namespace sylvan;
+
 #include <openssl/md5.h>
 #define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
 
@@ -24,7 +24,8 @@ using namespace sylvan;
 #define TAG_ACK_STATE 10
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
-
+using namespace sylvan;
+using namespace std;
 MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world,bool init)
 {
 
@@ -118,7 +119,7 @@ MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world,bool init)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////// Version distribuée en utilisant les LDD - MPI/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// Version distribuï¿½e en utilisant les LDD - MPI/////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -422,7 +423,7 @@ void *MCHybridSOG::doCompute()
                     }
 
 
-                    /******************************* Construction des aggregats à partir de pile de messages ************************************/
+                    /******************************* Construction des aggregats ï¿½ partir de pile de messages ************************************/
 
                     if (!m_msg[id_thread].empty())
                     {

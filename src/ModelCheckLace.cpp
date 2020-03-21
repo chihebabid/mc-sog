@@ -42,7 +42,7 @@ void ModelCheckLace::preConfigure() {
     printf("%zu of %zu buckets filled!\n", llmsset_count_marked(nodes), llmsset_get_size(nodes));
     int  i;
     vector<Place>::const_iterator it_places;
-    //_______________
+
     transitions=m_net.transitions;
     m_observable=m_net.Observable;
     m_place_proposition=m_net.m_formula_place;
@@ -139,8 +139,6 @@ TASK_3 (MDD, Aggregate_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tran
             M2=lddmc_union(succ,M2);
             lddmc_refs_pop(3);
         }
-        
-
     }
     while (M1!=M2);
    /* lddmc_refs_popptr(2);*/

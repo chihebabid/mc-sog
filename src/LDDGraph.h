@@ -42,7 +42,7 @@ class LDDGraph
 		int NbBddNode(LDDState*,size_t&);
 		void InitVisit(LDDState * S,size_t nb);
 		void printpredecessors(LDDState *);
-		void addArc(){m_nbArcs++;}
+		inline void addArc()  {m_nbArcs++;}
 		void insert(LDDState*);
 		LDDGraph(CommonSOG *constuctor) {m_nbStates=m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph

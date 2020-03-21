@@ -21,13 +21,7 @@ unsigned char* LDDState::getSHAValue() {
 }
 
 
-bool LDDState::isVirtual() {
-    return m_virtual;
-}
 
-void LDDState::setVirtual() {
-    m_virtual=true;
-}
 
 vector<pair<LDDState*, int>>* LDDState::getSuccessors() {
     return &Successors;
@@ -66,12 +60,9 @@ vector<uint16_t> LDDState::getUnmarkedPlaces(set<uint16_t>& lplacesAP) {
         if (lplacesAP.find(depth)!=lplacesAP.end())
         if (mddnode_getvalue(node)==0) {
             result.push_back(depth);
-
         }
-
         mdd=mddnode_getdown(node);
         depth++;
-
     }
     return result;
 }
