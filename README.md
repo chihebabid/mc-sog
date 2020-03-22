@@ -45,7 +45,7 @@ SOG building from an LTL formula (philo3.net example)
 ```
 Multi-threading execution
 
-mpirun -n 1 hybrid-sog arg1 arg 2 arg3 arg4
+mpirun -n 1 hybrid-sog arg1 arg2 arg3 arg4 [arg5]
 arg1: specifies method of creating threads or/and specifies if modelchecking should be performed on the fly. It can be set with one of the following values:
      * p : using pthread library
      * pc : using pthread library and applying canonization on nodes
@@ -56,6 +56,8 @@ arg1: specifies method of creating threads or/and specifies if modelchecking sho
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
+arg5: (Optional)
+     * couv : Couvreur99 emptiness check algorithm provided by spot
 
 Distributed execution
 mpirun -n arg0 hybrid-sog arg1 arg 2 arg3 arg4

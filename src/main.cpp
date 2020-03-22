@@ -80,6 +80,7 @@ void displayCheckResult(bool res) {
 void displayTime(auto startTime, auto finalTime) {
 	cout << "Verification duration : " << std::chrono::duration_cast < std::chrono::milliseconds
 			> (finalTime - startTime).count() << " milliseconds\n";
+
 }
 /***********************************************/
 int main(int argc, char **argv) {
@@ -151,17 +152,17 @@ int main(int argc, char **argv) {
 			if (!strcmp(algorithm, "couv")) {
 				cout << "Couvreur99 algorithm..." << endl;
 				std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
-				spot::couvreur99_check check = spot::couvreur99_check(product);
-				auto startTime = std::chrono::high_resolution_clock::now();
+				spot::couvreur99_check_shy check = spot::couvreur99_check_shy(product);
+				auto startTime = std::chrono::steady_clock::now();
 				bool res = (check.check() == 0);
-				auto finalTime = std::chrono::high_resolution_clock::now();
+				auto finalTime = std::chrono::steady_clock::now();
 				displayTime(startTime, finalTime);
 				displayCheckResult(res);
 
 			} else {
-				auto startTime = std::chrono::high_resolution_clock::now();
+				auto startTime = std::chrono::steady_clock::now();
 				bool res = (k->intersecting_run(af) == 0);
-				auto finalTime = std::chrono::high_resolution_clock::now();
+				auto finalTime = std::chrono::steady_clock::now();
 				displayTime(startTime, finalTime);
 				displayCheckResult(res);
 				/*
@@ -305,15 +306,15 @@ int main(int argc, char **argv) {
 					if (!strcmp(algorithm,"couv")) {
 						std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
 						spot::couvreur99_check check = spot::couvreur99_check(product);
-						auto startTime = std::chrono::high_resolution_clock::now();
+						auto startTime = std::chrono::steady_clock::now();
 						bool res = (check.check() == 0);
-						auto finalTime = std::chrono::high_resolution_clock::now();
+						auto finalTime = std::chrono::steady_clock::now();
 						displayTime(startTime, finalTime);
 						displayCheckResult(res);
 					} else {
-						auto startTime = std::chrono::high_resolution_clock::now();
+						auto startTime = std::chrono::steady_clock::now();
 						bool res= (k->intersecting_run(af)==0);
-						auto finalTime = std::chrono::high_resolution_clock::now();
+						auto finalTime = std::chrono::steady_clock::now();
 						displayTime(startTime, finalTime);
 						displayCheckResult(res);
 					}
