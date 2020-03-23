@@ -149,15 +149,32 @@ int main(int argc, char **argv) {
 			mcl->loadNet();
 			auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
 			cout << "Performing on the fly Modelchecking" << endl;
-			if (!strcmp(algorithm, "couv")) {
+			if (strcmp(algorithm, "")) {
 				cout << "Couvreur99 algorithm..." << endl;
-				std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
-				spot::couvreur99_check_shy check = spot::couvreur99_check_shy(product);
+				shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
+				//spot::couvreur99_check_shy check = spot::couvreur99_check_shy(product);
+				/****************************/
+				const char *err;
+				spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
+
+				if (!echeck_inst) {
+					cerr << "Failed to parse argument near `" << err << "'" << endl;
+					cerr << "Spot unknown emptiness algorithm" << endl;
+					exit(2);
+				}
+				spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
 				auto startTime = std::chrono::steady_clock::now();
-				bool res = (check.check() == 0);
+				bool res = (echptr->check() == 0);
 				auto finalTime = std::chrono::steady_clock::now();
 				displayTime(startTime, finalTime);
 				displayCheckResult(res);
+				/****************************/
+
+				/*auto startTime = std::chrono::steady_clock::now();
+				 bool res = (check.check() == 0);
+				 auto finalTime = std::chrono::steady_clock::now();
+				 displayTime(startTime, finalTime);
+				 displayCheckResult(res);*/
 
 			} else {
 				auto startTime = std::chrono::steady_clock::now();
@@ -303,17 +320,31 @@ int main(int argc, char **argv) {
 					auto d = spot::make_bdd_dict();
 					spot::twa_graph_ptr af = spot::translator(d).run(not_f);
 					auto k = std::make_shared<HybridKripke>(d, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP(), Rnewnet);
-					if (!strcmp(algorithm,"couv")) {
+					if (strcmp(algorithm, "")) {
 						std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
-						spot::couvreur99_check check = spot::couvreur99_check(product);
+						const char *err;
+						spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
+
+						if (!echeck_inst) {
+							cerr << "Failed to parse argument near `" << err << "'" << endl;
+							cerr << "Spot unknown emptiness algorithm" << endl;
+							exit(2);
+						}
+						spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
 						auto startTime = std::chrono::steady_clock::now();
-						bool res = (check.check() == 0);
+						bool res = (echptr->check() == 0);
 						auto finalTime = std::chrono::steady_clock::now();
 						displayTime(startTime, finalTime);
 						displayCheckResult(res);
+						/*spot::couvreur99_check check = spot::couvreur99_check(product);
+						 auto startTime = std::chrono::steady_clock::now();
+						 bool res = (check.check() == 0);
+						 auto finalTime = std::chrono::steady_clock::now();
+						 displayTime(startTime, finalTime);
+						 displayCheckResult(res);*/
 					} else {
 						auto startTime = std::chrono::steady_clock::now();
-						bool res= (k->intersecting_run(af)==0);
+						bool res = (k->intersecting_run(af) == 0);
 						auto finalTime = std::chrono::steady_clock::now();
 						displayTime(startTime, finalTime);
 						displayCheckResult(res);

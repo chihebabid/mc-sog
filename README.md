@@ -53,11 +53,22 @@ arg1: specifies method of creating threads or/and specifies if modelchecking sho
      * lc : using lace framework and applying canonization on nodes
      * otfL : perform modelchecking on the fly using laceframework
      * otfP : perform modelchecking on the fly using pthread
-arg2: specifies the number of threads/workers to be created
-arg3: specifies the net to build its SOG
-arg4: specifies the LTL formula file
-arg5: (Optional)
-     * couv : Couvreur99 emptiness check algorithm provided by spot
+arg2: specify the number of threads/workers to be created
+arg3: specify the net to build its SOG
+arg4: specify the LTL formula file
+arg5: (Optional) select an algorithm for the emptiness check provided by spot, see https://spot.lrde.epita.fr/doxygen/group__emptiness__check.html 
+     * Cou99 
+	+ shy
+	+ poprem
+	+ group 
+     * GC04
+     * CVWY90
+	+ bsh : set the size of a hash-table
+     * SE05
+	+ bsh : set the size of a hash-table
+     * Tau03
+     * Tau03_opt
+      
 
 Distributed execution
 mpirun -n arg0 hybrid-sog arg1 arg 2 arg3 arg4
@@ -68,6 +79,18 @@ arg1: specifies whether modelchecking should be performed on the fly. It can be 
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG
 arg4: specifies the LTL formula file
+arg5: (Optional) select an algorithm for the emptiness check provided by spot, see https://spot.lrde.epita.fr/doxygen/group__emptiness__check>
+     * Cou99 
+        + shy
+        + poprem
+        + group
+     * GC04
+     * CVWY90
+        + bsh : set the size of a hash-table
+     * SE05
+        + bsh : set the size of a hash-table
+     * Tau03
+     * Tau03_opt
 
 ```
 ## Publications
