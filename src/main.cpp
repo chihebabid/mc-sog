@@ -330,6 +330,8 @@ int main(int argc, char **argv) {
 							cerr << "Spot unknown emptiness algorithm" << endl;
 							exit(2);
 						}
+						else
+							cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
 						spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
 						auto startTime = std::chrono::steady_clock::now();
 						bool res = (echptr->check() == 0);
@@ -373,7 +375,7 @@ int main(int argc, char **argv) {
 		} else {
 			cout << "*************Distibuted version******************* \n" << endl;
 			{
-				DistributedSOG DR(Rnewnet);
+				DistributedSOG DR(Rnewnet);cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
 				LDDGraph g(nullptr);
 				DR.computeDSOG(g);
 			}

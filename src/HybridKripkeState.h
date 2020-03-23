@@ -23,7 +23,7 @@ public:
       
    if (e._virtual) { //div or deadlock
             if (e.id[0]=='v') { // div
-                cout<<"div created..."<<endl;
+                //cout<<"div created..."<<endl;
                 m_hashid=0xFFFFFFFFFFFFFFFE;
                 m_id[0]='v';
                 succ_t elt;
@@ -115,7 +115,7 @@ public:
         el.id[0]='v';                   
         el.transition=-1;
         el._virtual=true;
-        cout<<"yep..."<<endl;
+        //cout<<"yep..."<<endl;
         m_succ.push_back(el);
     }
     if (m_deadlock) {
@@ -134,14 +134,14 @@ public:
     HybridKripkeState(unsigned char *id,uint16_t pcontainer,size_t hsh,bool ddiv, bool deadlock):m_container(pcontainer),m_div(ddiv),m_deadlock(deadlock),m_hashid(hsh) {
         memcpy(m_id,id,16); 
     
-        cout<<__func__<<endl;
+        //cout<<__func__<<endl;
         
     }
     virtual ~HybridKripkeState();
 
     HybridKripkeState* clone() const override
     {
-        cout<<__func__<<endl;
+        //cout<<__func__<<endl;
         return new HybridKripkeState(m_id,m_container,m_hashid,m_div,m_deadlock);
     }
     size_t hash() const override
