@@ -64,7 +64,7 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
     sylvan_init_package();
     sylvan_init_ldd();
     sylvan_gc_enable();
-    m_net=R;
+    m_net=&R;
 
     m_init=init;
     m_nbPlaces=R.places.size();
@@ -144,7 +144,7 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////// Version distribuée en utilisant les LDD - MPI/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// Version distribuï¿½e en utilisant les LDD - MPI/////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -447,7 +447,7 @@ void *HybridSOG::doCompute()
                     }
 
 
-                    /******************************* Construction des aggregats à partir de pile de messages ************************************/
+                    /******************************* Construction des aggregats ï¿½ partir de pile de messages ************************************/
 
                     if (!m_msg[id_thread].empty())
                     {

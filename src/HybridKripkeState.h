@@ -4,8 +4,8 @@
 #include <mpi.h>
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
-#define TAG_ASK_STATE 9
-#define TAG_ACK_STATE 10
+constexpr auto TAG_ASK_STATE = 9;
+constexpr auto TAG_ACK_STATE = 10;
 #define TAG_ASK_SUCC 4
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20

@@ -27,7 +27,7 @@ class CommonSOG
         string getTransition(int pos);
         string getPlace(int pos);
     protected:
-        NewNet m_net;
+        NewNet* m_net;
         int m_nbPlaces = 0;
         LDDGraph *m_graph;
         vector<TransSylvan> m_tb_relation;

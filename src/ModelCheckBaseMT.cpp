@@ -9,8 +9,8 @@ using namespace sylvan;
 ModelCheckBaseMT::ModelCheckBaseMT(const NewNet &R,int nbThread)
 {
     m_nb_thread=nbThread;
-    m_net=R;
-    m_nbPlaces=m_net.places.size();
+    m_net=&R;
+    m_nbPlaces=m_net->places.size();
 }
 void ModelCheckBaseMT::loadNet()
 {

@@ -46,7 +46,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     /*sylvan_gc_hook_pregc(TASK(gc_start));
     sylvan_gc_hook_postgc(TASK(gc_end));
     sylvan_gc_enable();*/
-       m_net=R;
+       m_net=&R;
 
     m_init=init;
     int  i;
@@ -146,7 +146,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
 
 
 
-//**************************************************** Version séquentielle en utilisant les LDD********************************************************************
+//**************************************************** Version sï¿½quentielle en utilisant les LDD********************************************************************
 void threadSOG::computeSeqSOG(LDDGraph &g)
 {
     // m_graph=&g;
@@ -436,7 +436,7 @@ void * threadSOG::doCompute()
 
     }
     while (isNotTerminated());
-    //cout<<"Thread :"<<id_thread<<"  has performed "<<nb_it<<" itérations avec "<<nb_failed<<" échecs"<<endl;
+    //cout<<"Thread :"<<id_thread<<"  has performed "<<nb_it<<" itï¿½rations avec "<<nb_failed<<" ï¿½checs"<<endl;
     //cout<<"Max succ :"<<max_succ<<endl;
 }
 
@@ -601,7 +601,7 @@ void * threadSOG::doComputeCanonized()
 
     }
     while (isNotTerminated());
-    //cout<<"Thread :"<<id_thread<<"  has performed "<<nb_it<<" itérations avec "<<nb_failed<<" échecs"<<endl;
+    //cout<<"Thread :"<<id_thread<<"  has performed "<<nb_it<<" itï¿½rations avec "<<nb_failed<<" ï¿½checs"<<endl;
     //cout<<"Max succ :"<<max_succ<<endl;
 }
 

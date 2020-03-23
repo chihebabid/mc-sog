@@ -38,7 +38,7 @@ DistributedSOG::DistributedSOG(const NewNet &R,bool init)
     sylvan_init_package();
     sylvan_init_ldd();
    // sylvan_gc_enable();
-    m_net=R;
+    m_net=&R;
 
     m_init=init;
 
@@ -109,7 +109,7 @@ DistributedSOG::DistributedSOG(const NewNet &R,bool init)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////// Version distribuée en utilisant les LDD - MPI/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// Version distribuï¿½e en utilisant les LDD - MPI/////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -175,7 +175,7 @@ void *DistributedSOG::doCompute()
 
     while (Terminated==false)
     {
-        // cout<<"Nouvelle itération"<<endl;
+        // cout<<"Nouvelle itï¿½ration"<<endl;
         /****************************************** debut boucle pile ********************************************/
         if (!m_st.empty())
         {
@@ -343,7 +343,7 @@ void *DistributedSOG::doCompute()
 
             }
         }
-        /****************************************** debut reception de nombre de msg envoyé ********************************************/
+        /****************************************** debut reception de nombre de msg envoyï¿½ ********************************************/
         if(m_st.empty())
         {
 
@@ -462,7 +462,7 @@ void DistributedSOG::read_state_message()
         }
         else delete Agregate;
         MPI_Iprobe(MPI_ANY_SOURCE,TAG_STATE,MPI_COMM_WORLD,&flag,&status); // exist a msg to receiv?
-        //cout<<"Fin Boucle réception state "<<task_id<<endl;
+        //cout<<"Fin Boucle rï¿½ception state "<<task_id<<endl;
 
     }
 

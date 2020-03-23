@@ -24,31 +24,31 @@ void ModelCheckerTh::preConfigure() {
 
 	init_gc_seq();
 
-	//_______________
-	transitions = m_net.transitions;
-	m_observable = m_net.Observable;
-	m_place_proposition = m_net.m_formula_place;
-	m_nonObservable = m_net.NonObservable;
 
-	m_transitionName = m_net.transitionName;
-	m_placeName = m_net.m_placePosName;
+	transitions = m_net->transitions;
+	m_observable = m_net->Observable;
+	m_place_proposition = m_net->m_formula_place;
+	m_nonObservable = m_net->NonObservable;
 
-	InterfaceTrans = m_net.InterfaceTrans;
+	m_transitionName = m_net->transitionName;
+	m_placeName = m_net->m_placePosName;
+
+	InterfaceTrans = m_net->InterfaceTrans;
 
 	cout << "Nombre de places : " << m_nbPlaces << endl;
-	cout << "Derniere place : " << m_net.places[m_nbPlaces - 1].name << endl;
+	cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
 
-	uint32_t *liste_marques = new uint32_t[m_net.places.size()];
-	for (i = 0, it_places = m_net.places.begin(); it_places != m_net.places.end(); i++, it_places++) {
+	uint32_t *liste_marques = new uint32_t[m_net->places.size()];
+	for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); i++, it_places++) {
 		liste_marques[i] = it_places->marking;
 	}
 
-	m_initialMarking = lddmc_cube(liste_marques, m_net.places.size());
+	m_initialMarking = lddmc_cube(liste_marques, m_net->places.size());
 
 	uint32_t *prec = new uint32_t[m_nbPlaces];
 	uint32_t *postc = new uint32_t[m_nbPlaces];
 	// Transition relation
-	for (vector<Transition>::const_iterator t = m_net.transitions.begin(); t != m_net.transitions.end(); t++) {
+	for (vector<Transition>::const_iterator t = m_net->transitions.begin(); t != m_net->transitions.end(); t++) {
 		// Initialisation
 		for (i = 0; i < m_nbPlaces; i++) {
 			prec[i] = 0;

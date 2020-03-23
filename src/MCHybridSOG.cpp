@@ -40,7 +40,7 @@ MCHybridSOG::MCHybridSOG(const NewNet &R,MPI_Comm &comm_world,bool init)
     sylvan_init_package();
     sylvan_init_ldd();
     sylvan_gc_enable();
-    m_net=R;
+    m_net=&R;
 
     m_init=init;
     m_nbPlaces=R.places.size();
