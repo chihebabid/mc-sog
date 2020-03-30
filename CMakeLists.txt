@@ -33,7 +33,7 @@ if(NOT SPOT_LIBRARY)
 
   ExternalProject_Add(SpotLibrary
     PREFIX                ${SPOT_DIR}
-    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.8.5.tar.gz
+    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.8.7.tar.gz
     DOWNLOAD_NO_PROGRESS  YES
     CONFIGURE_COMMAND     ./configure --disable-doxygen --disable-python --enable-silent-rules --silent --prefix=<INSTALL_DIR>
     BUILD_COMMAND         make -j
@@ -42,11 +42,11 @@ if(NOT SPOT_LIBRARY)
 
   include_directories("${SPOT_DIR}/include")
 else ()
-  message(STATUS "Found spot: ${SPOT_LIBRARY}")
-  message(STATUS "Found bddx: ${BDDX_LIBRARY}")
+ message(STATUS "Found spot: ${SPOT_LIBRARY}")
+ message(STATUS "Found bddx: ${BDDX_LIBRARY}")
 
-  find_path(SPOT_INCLUDE_PATH "spot")
-  include_directories("${SPOT_INCLUDE_PATH}")
+ find_path(SPOT_INCLUDE_PATH "spot")
+ include_directories("${SPOT_INCLUDE_PATH}")
 endif()
 
 # add source folder

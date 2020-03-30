@@ -56,13 +56,13 @@ SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
     auto ss = static_cast<const SogKripkeStateTh*>(s);
     LDDState *aggregate=ss->getLDDState();
     bdd cond = state_condition(ss);
-    if (iter_cache_)
+    /*if (iter_cache_)
     {
       auto it = static_cast<SogKripkeIteratorTh*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
       it->recycle(aggregate, cond);
       return it;
-    }
+    }*/
   return new SogKripkeIteratorTh(aggregate,cond);
 
     
