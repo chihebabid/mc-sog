@@ -78,7 +78,7 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
   {
 
     auto ss = static_cast<const SogKripkeStateTh*>(s);
-    vector<uint16_t> marked_place=ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
+	vector<uint16_t> marked_place = ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
 
     bdd result=bddtrue;

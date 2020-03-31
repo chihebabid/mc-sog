@@ -226,4 +226,4 @@ string CommonSOG::getPlace(int pos)
 {
     return m_graph->getPlace(pos);
 }
-
+static LDDGraph *CommonSOG::m_graph;

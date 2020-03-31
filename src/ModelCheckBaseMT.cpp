@@ -14,8 +14,8 @@ ModelCheckBaseMT::ModelCheckBaseMT(const NewNet &R,int nbThread)
 }
 void ModelCheckBaseMT::loadNet()
 {
-    preConfigure();    
-    m_graph=new LDDGraph(this);
+	m_graph=new LDDGraph(this);
+	preConfigure();
     m_graph->setTransition(m_transitionName);
     m_graph->setPlace(m_placeName);
 }

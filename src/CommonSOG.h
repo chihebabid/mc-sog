@@ -29,7 +29,7 @@ class CommonSOG
     protected:
         NewNet* m_net;
         int m_nbPlaces = 0;
-        LDDGraph *m_graph;
+        static LDDGraph *m_graph;
         vector<TransSylvan> m_tb_relation;
         MDD m_initialMarking;
         map<string, uint16_t> m_transitionName;
