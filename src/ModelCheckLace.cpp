@@ -18,7 +18,7 @@ print_h(double size)
     printf("%.*f %s", i, size, units[i]);
 }
 size_t
-getMaxMemory()
+getMaxMemoryTh()
 {
     long pages = sysconf(_SC_PHYS_PAGES);
     long page_size = sysconf(_SC_PAGE_SIZE);
@@ -28,7 +28,7 @@ void ModelCheckLace::preConfigure() {
     lace_init(m_nb_thread, 10000000);
     lace_startup(0, NULL, NULL);
     size_t max = 16LL<<30;
-    if (max > getMaxMemory()) max = getMaxMemory()/10*9;
+    if (max > getMaxMemoryTh()) max = getMaxMemoryTh()/10*9;
     printf("Memory : ");
     print_h(max);
     printf(" max.\n");

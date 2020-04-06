@@ -10,16 +10,25 @@ using namespace sylvan;
 ModelCheckerTh::ModelCheckerTh(const NewNet &R, int nbThread) :
 		ModelCheckBaseMT(R, nbThread) {
 }
+size_t
+getMaxMemory()
+{
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size;
+}
 void ModelCheckerTh::preConfigure() {
 
 	lace_init(1, 0);
 	lace_startup(0, NULL, NULL);
+	size_t max = 16LL<<30;
+	if (max > getMaxMemory()) max = getMaxMemory()/10*9;
+	sylvan_set_limits(max, 8, 0);
 
-	sylvan_set_limits(2LL << 30, 16, 3);
 	sylvan_init_package();
 	sylvan_init_ldd();
+	displayMDDTableInfo();
 
-	int i;
 	vector<Place>::const_iterator it_places;
 
 	init_gc_seq();
@@ -39,6 +48,7 @@ void ModelCheckerTh::preConfigure() {
 	cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
 
 	uint32_t *liste_marques = new uint32_t[m_net->places.size()];
+	uint32_t i;
 	for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); i++, it_places++) {
 		liste_marques[i] = it_places->marking;
 	}
@@ -114,17 +124,15 @@ void* ModelCheckerTh::Compute_successors() {
 
 	if (id_thread == 0) {
 		LDDState *c = new LDDState;
-
 		MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
 		ldd_refs_push(Complete_meta_state);
 		MDD canonised_initial = Complete_meta_state;            //Canonize(Complete_meta_state,0);
 		/*ldd_refs_push(canonised_initial);*/
 		fire = firable_obs(Complete_meta_state);
 		c->m_lddstate = canonised_initial;
-		c->setDeadLock(false);//Set_Bloc(Complete_meta_state));
-		c->setDiv(false);//Set_Div(Complete_meta_state));
+		c->setDeadLock(Set_Bloc(Complete_meta_state));
+		c->setDiv(Set_Div(Complete_meta_state));
 		m_st[0].push(Pair(couple(c, Complete_meta_state), fire));
-
 		m_graph->setInitialState(c);
 		m_graph->insert(c);
 		m_charge[0] = 1;
@@ -188,8 +196,8 @@ void* ModelCheckerTh::Compute_successors() {
 
 					m_graph->addArc();
 					m_graph->insert(reached_class);
-					reached_class->setDiv(false);//Set_Div(Complete_meta_state));
-					reached_class->setDeadLock(false);//Set_Bloc(Complete_meta_state));
+					reached_class->setDiv(Set_Div(Complete_meta_state));
+					reached_class->setDeadLock(Set_Bloc(Complete_meta_state));
 					pthread_mutex_unlock(&m_graph_mutex);
 
 					e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
@@ -210,7 +218,6 @@ void* ModelCheckerTh::Compute_successors() {
 					e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
 					pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
 					delete reached_class;
-
 				}
 				if (id_thread) {
 					pthread_mutex_lock(&m_supervise_gc_mutex);
