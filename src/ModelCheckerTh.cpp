@@ -129,8 +129,8 @@ void* ModelCheckerTh::Compute_successors() {
 		
 		fire = firable_obs(Complete_meta_state);
 		c->m_lddstate = Complete_meta_state;
-		//c->setDeadLock(Set_Bloc(Complete_meta_state));
-		//c->setDiv(Set_Div(Complete_meta_state));
+		c->setDeadLock(Set_Bloc(Complete_meta_state));
+		c->setDiv(Set_Div(Complete_meta_state));
 		m_st[0].push(Pair(couple(c, Complete_meta_state), fire));
 		m_graph->setInitialState(c);
 		m_graph->insert(c);
@@ -181,14 +181,15 @@ void* ModelCheckerTh::Compute_successors() {
 				LDDState *pos = m_graph->find(reached_class);
 				if (!pos) {
 					//  cout<<"not found"<<endl;
-					//reached_class->blocage=Set_Bloc(Complete_meta_state);
-					//reached_class->boucle=Set_Div(Complete_meta_state);
+
 					m_graph->addArc();
 					m_graph->insert(reached_class);
                     
 					//reached_class->setDiv(Set_Div(reduced_meta));
 					//reached_class->setDeadLock(Set_Bloc(reduced_meta));					
 					pthread_mutex_unlock(&m_graph_mutex);
+					reached_class->setDeadLock(Set_Bloc(reduced_meta));
+					reached_class->setDiv(Set_Div(reduced_meta));
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
 					reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
 					//pthread_mutex_lock(&m_mutex);
