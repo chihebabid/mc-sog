@@ -1,6 +1,7 @@
 #ifndef MODELCHECKERTH_H
 #define MODELCHECKERTH_H
 #include "ModelCheckBaseMT.h"
+#include <atomic>
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
 
@@ -28,7 +29,7 @@ private:
     pthread_mutex_t m_supervise_gc_mutex;
 
     pthread_barrier_t m_barrier_builder;
-    unsigned int m_gc;
+     unsigned int m_gc=0; //
     bool m_finish=false;
     bool m_finish_initial=false;
     pthread_mutex_t m_mutex_stack[128];

@@ -12,136 +12,125 @@ CommonSOG::~CommonSOG()
     //dtor
 }
 
-LDDGraph *CommonSOG::getGraph() const {
+LDDGraph *CommonSOG::getGraph() const
+{
     return m_graph;
 }
 
-MDD CommonSOG::Accessible_epsilon(MDD From)
+MDD CommonSOG::Accessible_epsilon ( MDD From )
 {
     MDD M1;
     MDD M2=From;
-    do
-    {
+    do {
         M1=M2;
-        for(Set::const_iterator i=m_nonObservable.begin(); !(i==m_nonObservable.end()); i++)
-        {
+        for ( Set::const_iterator i=m_nonObservable.begin(); ! ( i==m_nonObservable.end() ); i++ ) {
 
-            MDD succ= lddmc_firing_mono(M2,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-            M2=lddmc_union_mono(M2,succ);
+            MDD succ= lddmc_firing_mono ( M2,m_tb_relation[ ( *i )].getMinus(),m_tb_relation[ ( *i )].getPlus() );
+            M2=lddmc_union_mono ( M2,succ );
             //M2=succ|M2;
         }
 
-    }
-    while(M1!=M2);
+    } while ( M1!=M2 );
     return M2;
 }
 // Return the set of firable observable transitions from an agregate
-Set CommonSOG::firable_obs(MDD State)
+Set CommonSOG::firable_obs ( MDD State )
 {
     Set res;
-    for(Set::const_iterator i=m_observable.begin(); !(i==m_observable.end()); i++)
-    {
+    for ( Set::const_iterator i=m_observable.begin(); ! ( i==m_observable.end() ); i++ ) {
         //cout<<"firable..."<<endl;
-        MDD succ = lddmc_firing_mono(State,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        if(succ!=lddmc_false)
-        {
-            res.insert(*i);
+        MDD succ = lddmc_firing_mono ( State,m_tb_relation[ ( *i )].getMinus(),m_tb_relation[ ( *i )].getPlus() );
+        if ( succ!=lddmc_false ) {            
+            res.insert ( *i );
         }
 
     }
     return res;
 }
 
-MDD CommonSOG::get_successor(MDD From,int t)
+MDD CommonSOG::get_successor ( MDD From,int t )
 {
-    return lddmc_firing_mono(From,m_tb_relation[(t)].getMinus(),m_tb_relation[(t)].getPlus());
+    return lddmc_firing_mono ( From,m_tb_relation[ ( t )].getMinus(),m_tb_relation[ ( t )].getPlus() );
 }
 
 
-MDD CommonSOG::ImageForward(MDD From)
+MDD CommonSOG::ImageForward ( MDD From )
 {
     MDD Res=lddmc_false;
-    for(Set::const_iterator i=m_nonObservable.begin(); !(i==m_nonObservable.end()); i++)
-    {
-        MDD succ= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        Res=lddmc_union_mono(Res,succ);
+    for ( Set::const_iterator i=m_nonObservable.begin(); ! ( i==m_nonObservable.end() ); i++ ) {
+        MDD succ= lddmc_firing_mono ( From,m_tb_relation[ ( *i )].getMinus(),m_tb_relation[ ( *i )].getPlus() );
+        Res=lddmc_union_mono ( Res,succ );
     }
     return Res;
 }
 
 
 /*----------------------------------------------CanonizeR()------------------------------------*/
-MDD CommonSOG::Canonize(MDD s,unsigned int level)
+MDD CommonSOG::Canonize ( MDD s,unsigned int level )
 {
-    if (level>m_nbPlaces || s==lddmc_false) return lddmc_false;
-    if(isSingleMDD(s))   return s;
+    if ( level>m_nbPlaces || s==lddmc_false ) {
+        return lddmc_false;
+    }
+    if ( isSingleMDD ( s ) ) {
+        return s;
+    }
     MDD s0=lddmc_false,s1=lddmc_false;
 
     bool res=false;
-    do
-    {
-        if (get_mddnbr(s,level)>1)
-        {
-            s0=ldd_divide_rec(s,level);
-            s1=ldd_minus(s,s0);
+    do {
+        if ( get_mddnbr ( s,level ) >1 ) {
+            s0=ldd_divide_rec ( s,level );
+            s1=ldd_minus ( s,s0 );
             res=true;
-        }
-        else
+        } else {
             level++;
-    }
-    while(level<m_nbPlaces && !res);
+        }
+    } while ( level<m_nbPlaces && !res );
 
 
-    if (s0==lddmc_false && s1==lddmc_false)
+    if ( s0==lddmc_false && s1==lddmc_false ) {
         return lddmc_false;
+    }
     // if (level==nbPlaces) return lddmc_false;
     MDD Front,Reach;
-    if (s0!=lddmc_false && s1!=lddmc_false)
-    {
+    if ( s0!=lddmc_false && s1!=lddmc_false ) {
         Front=s1;
         Reach=s1;
-        do
-        {
+        do {
             // cout<<"premiere boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s0 = ldd_minus(s0,Front);
-        }
-        while((Front!=lddmc_false)&&(s0!=lddmc_false));
+            Front=ldd_minus ( ImageForward ( Front ),Reach );
+            Reach = lddmc_union_mono ( Reach,Front );
+            s0 = ldd_minus ( s0,Front );
+        } while ( ( Front!=lddmc_false ) && ( s0!=lddmc_false ) );
     }
-    if((s0!=lddmc_false)&&(s1!=lddmc_false))
-    {
+    if ( ( s0!=lddmc_false ) && ( s1!=lddmc_false ) ) {
         Front=s0;
         Reach = s0;
-        do
-        {
+        do {
             //  cout<<"deuxieme boucle interne \n";
-            Front=ldd_minus(ImageForward(Front),Reach);
-            Reach = lddmc_union_mono(Reach,Front);
-            s1 = ldd_minus(s1,Front);
-        }
-        while( Front!=lddmc_false && s1!=lddmc_false );
+            Front=ldd_minus ( ImageForward ( Front ),Reach );
+            Reach = lddmc_union_mono ( Reach,Front );
+            s1 = ldd_minus ( s1,Front );
+        } while ( Front!=lddmc_false && s1!=lddmc_false );
     }
 
 
 
     MDD Repr=lddmc_false;
 
-    if (isSingleMDD(s0))
-    {
+    if ( isSingleMDD ( s0 ) ) {
         Repr=s0;
-    }
-    else
-    {
+    } else {
 
-        Repr=Canonize(s0,level);
+        Repr=Canonize ( s0,level );
 
     }
 
-    if (isSingleMDD(s1))
-        Repr=lddmc_union_mono(Repr,s1);
-    else
-        Repr=lddmc_union_mono(Repr,Canonize(s1,level));
+    if ( isSingleMDD ( s1 ) ) {
+        Repr=lddmc_union_mono ( Repr,s1 );
+    } else {
+        Repr=lddmc_union_mono ( Repr,Canonize ( s1,level ) );
+    }
 
 
     return Repr;
@@ -149,81 +138,85 @@ MDD CommonSOG::Canonize(MDD s,unsigned int level)
 
 }
 
-void CommonSOG::printhandler(ostream &o, int var)
+void CommonSOG::printhandler ( ostream &o, int var )
 {
-    o << (*_places)[var/2].name;
-    if (var%2)
+    o << ( *_places ) [var/2].name;
+    if ( var%2 ) {
         o << "_p";
+    }
 }
 
 
-vector<TransSylvan>* CommonSOG::getTBRelation() {
+vector<TransSylvan>* CommonSOG::getTBRelation()
+{
     return &m_tb_relation;
 }
 
-Set * CommonSOG::getNonObservable() {
+Set * CommonSOG::getNonObservable()
+{
     return &m_nonObservable;
 }
 
 
 /*********Returns the count of places******************************************/
-unsigned int CommonSOG::getPlacesCount() {
+unsigned int CommonSOG::getPlacesCount()
+{
     return m_nbPlaces;
 }
 
 /**** Detect divergence in an agregate ****/
-bool CommonSOG::Set_Div(MDD &M) const
+bool CommonSOG::Set_Div ( MDD &M ) const
 {
-    
-    if (m_nonObservable.empty())
-    return false;
-	Set::const_iterator i;
-	MDD Reached,From;
-	//cout<<"Ici detect divergence \n";
-	Reached=lddmc_false;
-    From=M;
-	do
-	{
-        
-		for(i=m_nonObservable.begin();!(i==m_nonObservable.end());i++)
-		{
 
-        MDD To= lddmc_firing_mono(From,m_tb_relation[(*i)].getMinus(),m_tb_relation[(*i)].getPlus());
-        Reached=lddmc_union_mono(Reached,To);
-				//Reached=To;
-		}
-		
-		if(Reached==From) return true;
+    if ( m_nonObservable.empty() ) {
+        return false;
+    }
+    Set::const_iterator i;
+    MDD Reached,From;
+    //cout<<"Ici detect divergence \n";
+    Reached=lddmc_false;
+    From=M;
+    do {
+
+        for ( i=m_nonObservable.begin(); ! ( i==m_nonObservable.end() ); i++ ) {
+
+            MDD To= lddmc_firing_mono ( From,m_tb_relation[ ( *i )].getMinus(),m_tb_relation[ ( *i )].getPlus() );
+            Reached=lddmc_union_mono ( Reached,To );
+            //Reached=To;
+        }
+
+        if ( Reached==From ) {
+            return true;
+        }
         From=Reached;
         Reached=lddmc_false;
 
-	} while(Reached!=lddmc_false && Reached != lddmc_true);
-     
-	 return false;
+    } while ( Reached!=lddmc_false && Reached != lddmc_true );
+
+    return false;
 }
 
 /**** Detetc deadlocks ****/
-bool CommonSOG::Set_Bloc(MDD &M) const
+bool CommonSOG::Set_Bloc ( MDD &M ) const
 {
 
-   MDD cur=lddmc_true;
-  for(vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i!=m_tb_relation.end();i++)
-  {
+    MDD cur=lddmc_true;
+    for ( vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i!=m_tb_relation.end(); i++ ) {
 
-      cur=cur&(TransSylvan(*i).getMinus());
+        cur=cur& ( TransSylvan ( *i ).getMinus() );
 
-  }
-return ((M&cur)!=lddmc_false);
-	//BLOCAGE
+    }
+    return ( ( M&cur ) !=lddmc_false );
+    //BLOCAGE
 }
 
-string CommonSOG::getTransition(int pos)
+string CommonSOG::getTransition ( int pos )
 {
-    return m_graph->getTransition(pos);
+    return m_graph->getTransition ( pos );
 }
 
-string CommonSOG::getPlace(int pos)
+string CommonSOG::getPlace ( int pos )
 {
-    return m_graph->getPlace(pos);
+    return m_graph->getPlace ( pos );
 }
 static LDDGraph *CommonSOG::m_graph;

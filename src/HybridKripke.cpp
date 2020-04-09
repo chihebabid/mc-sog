@@ -100,7 +100,6 @@ bdd HybridKripke::state_condition(const spot::state* s) const
         spot::formula f=spot::formula::ap(name);
         result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }
-
   return result;
   }
 

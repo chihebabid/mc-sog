@@ -64,11 +64,8 @@ void ModelCheckLace::preConfigure() {
     }
 
     m_initialMarking=lddmc_cube(liste_marques,m_net->places.size());
-    delete []liste_marques;
     lddmc_refs_push(m_initialMarking);
-
-
-
+    delete []liste_marques;
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];

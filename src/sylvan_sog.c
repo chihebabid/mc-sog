@@ -59,15 +59,14 @@ TASK_IMPL_3(MDD, lddmc_firing_lace, MDD, cmark, MDD, minus, MDD ,plus) {
         if (cmark == lddmc_false) break;
         n_cmark = GETNODE(cmark);
     }
-    if (count>10) printf("Count %d\n",count);
+   
     result= lddmc_false;
     while (count--) {
         lddmc_refs_push(result);
         MDD left=lddmc_refs_sync(SYNC(lddmc_firing_lace));
         lddmc_refs_push(left);
         MDD result2 =
-                lddmc_makenode(l_values[count],left, lddmc_false);      
-        if (l_values[count]>5) printf("%d ",l_values[count]);
+                lddmc_makenode(l_values[count],left, lddmc_false);           
         lddmc_refs_push(result2);    
         result = lddmc_union( result, result2);  
         lddmc_refs_pop(3);
