@@ -151,8 +151,6 @@ void* ModelCheckerTh::Compute_successors() {
 			while (!e.second.empty() && !m_finish) {
 				int t = *e.second.begin();
 				e.second.erase(t);
-
-
 				if (id_thread) {
 					pthread_mutex_lock(&m_supervise_gc_mutex);
 					m_gc++;
@@ -161,17 +159,13 @@ void* ModelCheckerTh::Compute_successors() {
 					}
 					pthread_mutex_unlock(&m_supervise_gc_mutex);
 				}
-
-
 				//MDD reduced_meta = Complete_meta_state;            //Canonize(Complete_meta_state,0);
 				/*ldd_refs_push(reduced_meta);*/
-
 				if (id_thread == 0) {
 					pthread_mutex_lock(&m_gc_mutex);
 					//     #ifdef DEBUG_GC
                     //displayMDDTableInfo();
 					//   #endif // DEBUG_GC
-
 					sylvan_gc_seq();
 					//   #ifdef DEBUG_GC
                     //displayMDDTableInfo();
@@ -182,18 +176,13 @@ void* ModelCheckerTh::Compute_successors() {
 												ldd_refs_push(reduced_meta);
 				reached_class = new LDDState();
 				reached_class->m_lddstate = reduced_meta;
-						
-
 				//pthread_spin_lock(&m_accessible);
 				pthread_mutex_lock(&m_graph_mutex);
-
 				LDDState *pos = m_graph->find(reached_class);
-
 				if (!pos) {
 					//  cout<<"not found"<<endl;
 					//reached_class->blocage=Set_Bloc(Complete_meta_state);
 					//reached_class->boucle=Set_Div(Complete_meta_state);
-
 					m_graph->addArc();
 					m_graph->insert(reached_class);
                     
