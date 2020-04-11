@@ -30,7 +30,7 @@ private:
 
     pthread_barrier_t m_barrier_builder;
      unsigned int m_gc=0; //
-    bool m_finish=false;
+    volatile bool m_finish=false;
     bool m_finish_initial=false;
     pthread_mutex_t m_mutex_stack[128];
     pthread_t m_list_thread[128];

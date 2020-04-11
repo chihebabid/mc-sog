@@ -63,6 +63,10 @@ add_executable(mc-sog main.cpp
   SogKripkeIteratorTh.h
   ModelCheckerTh.cpp
   ModelCheckerTh.h
+  stacksafe.cpp
+  stacksafe.h
+  ModelCheckerThV2.cpp
+  ModelCheckerThV2.h  
   MCHybridSOG.cpp
   MCHybridSOG.h
   HybridKripke.cpp

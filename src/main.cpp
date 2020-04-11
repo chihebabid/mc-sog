@@ -13,6 +13,7 @@
 #include "LDDGraph.h"
 #include "ModelCheckLace.h"
 #include "ModelCheckerTh.h"
+#include "ModelCheckerThV2.h"
 
 #include <spot/misc/version.hh>
 #include <spot/twaalgos/dot.hh>
@@ -118,12 +119,14 @@ int main(int argc, char **argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
 
 	if (n_tasks == 1) {
-		if (n_tasks == 1 && (!strcmp(argv[1], "otfL") || !strcmp(argv[1], "otfP"))) {
+		if (n_tasks == 1 && (!strcmp(argv[1], "otfL") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP"))) {
 			cout << "Performing on the fly Model checking..." << endl;
 			if (!strcmp(argv[1], "otfP"))
 				cout << "Multi-threaded algorithm based on Pthread library!" << endl;
-			else
+			else if (!strcmp(argv[1], "otfL"))
 				cout << "Multi-threaded algorithm based on Lace framework!" << endl;
+            else 
+                cout << "Multi-threaded algorithm based on C++ Thread library!" << endl;
 			cout << "Building automata for not(formula)\n";
 			auto d = spot::make_bdd_dict();
 
@@ -144,8 +147,10 @@ int main(int argc, char **argv) {
 			ModelCheckBaseMT *mcl;
 			if (!strcmp(argv[1], "otfL"))
 				mcl = new ModelCheckLace(Rnewnet, nb_th);
-			else
+			else if (!strcmp(argv[1], "otfP"))
 				mcl = new ModelCheckerTh(Rnewnet, nb_th);
+            else 
+                mcl = new ModelCheckerThV2(Rnewnet, nb_th);
 			mcl->loadNet();
 			auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
 			cout << "Performing on the fly Modelchecking" << endl;
