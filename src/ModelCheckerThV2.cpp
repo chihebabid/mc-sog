@@ -135,24 +135,29 @@ void ModelCheckerThV2::Compute_successors()
         LDDState *c = new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
         ldd_refs_push ( Complete_meta_state );
-
         fire = firable_obs ( Complete_meta_state );
         c->m_lddstate = Complete_meta_state;
         c->setDeadLock ( Set_Bloc ( Complete_meta_state ) );
         c->setDiv ( Set_Div ( Complete_meta_state ) );
         m_common_stack.push ( Pair ( couple ( c, Complete_meta_state ), fire ) );
+        m_condStack.notify_one();
         m_started=true;
         m_graph->setInitialState ( c );
         m_graph->insert ( c );
         m_finish_initial = true;
-
     }
 
     LDDState *reached_class;
     //pthread_barrier_wait ( &m_barrier_builder );
+    Pair e;
     do {
-        Pair e;
-        while ( !m_common_stack.empty() && !m_finish ) {
+        
+        
+        std::unique_lock<std::mutex> lk ( m_mutexStack );
+        m_condStack.wait(lk,std::bind(&ModelCheckerThV2::hasToProcess,this));
+        lk.unlock();
+        
+        if (!m_finish ) {
             m_terminaison++;
             bool advance=true;
             try {
@@ -206,14 +211,11 @@ void ModelCheckerThV2::Compute_successors()
                         reached_class->setDeadLock ( Set_Bloc ( reduced_meta ) );
                         reached_class->setDiv ( Set_Div ( reduced_meta ) );
 
-
                         m_common_stack.push ( Pair ( couple ( reached_class, reduced_meta ), fire ) );
+                        m_condStack.notify_one();
 
                         e.first.first->Successors.insert ( e.first.first->Successors.begin(), LDDEdge ( reached_class, t ) );
                         reached_class->Predecessors.insert ( reached_class->Predecessors.begin(), LDDEdge ( e.first.first, t ) );
-
-                        //pthread_mutex_lock(&m_mutex);
-
 
                     } else {
                         m_graph->addArc();
@@ -272,11 +274,15 @@ void ModelCheckerThV2::ComputeTh_Succ()
 ModelCheckerThV2::~ModelCheckerThV2()
 {
     m_finish = true;
+    m_condStack.notify_all();
     pthread_barrier_wait ( &m_barrier_builder );
     for ( int i = 0; i < m_nb_thread; i++ ) {
         m_list_thread[i]->join();
         delete m_list_thread[i];
     }
 
+}
+bool ModelCheckerThV2::hasToProcess() const {
+    return m_finish || !m_common_stack.empty();
 }
 

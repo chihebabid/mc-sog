@@ -5,6 +5,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
 
@@ -20,7 +21,7 @@ public:
     void ComputeTh_Succ();
 private:
     void preConfigure();
-    
+    bool ModelCheckerThV2::hasToProcess() const;
       
     StackSafe<Pair> m_common_stack;
     bool m_started=false;
@@ -31,7 +32,8 @@ private:
     atomic<uint32_t> m_gc,m_terminaison; //
     volatile bool m_finish=false;
     bool m_finish_initial=false;
-    pthread_mutex_t m_mutex_stack[128];
+    std::condition_variable m_condStack;
+    std::mutex m_mutexStack;
     thread* m_list_thread[128];    
 };
 #endif
