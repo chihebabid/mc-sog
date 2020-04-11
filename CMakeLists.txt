@@ -6,7 +6,7 @@ project(pmc-sog C CXX)
 
 # compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -g3 -std=c++17")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++17")
 endif()
 
 # add pn parser
