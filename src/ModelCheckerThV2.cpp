@@ -3,6 +3,7 @@
 #include "sylvan_seq.h"
 #include <sylvan_sog.h>
 #include <sylvan_int.h>
+#include <functional>
 
 using namespace sylvan;
 using namespace std;
