@@ -104,34 +104,29 @@ LDDState* ModelCheckerThV2::getInitialMetaState()
 {
     while ( !m_finish_initial )	;
     LDDState *initial_metastate = m_graph->getInitialState();
-    if ( !initial_metastate->isVisited() ) {
-        initial_metastate->setVisited();
-        while ( !initial_metastate->isCompletedSucc() )
-            ;
-    }
+    buildSucc(initial_metastate);    
     return initial_metastate;
 }
 
 void ModelCheckerThV2::buildSucc ( LDDState *agregate )
 {
     if ( !agregate->isVisited() ) {
-        agregate->setVisited();
-        while ( !agregate->isCompletedSucc() )
-            ;
+        agregate->setVisited();        
+        std::unique_lock<std::mutex> lk ( m_mutexStack );
+        m_condBuild.wait(lk,[&agregate]{return agregate->isCompletedSucc();});
+        lk.unlock();        
     }
 }
 
 void ModelCheckerThV2::Compute_successors()
 {
     int id_thread;
-    {
-        std::scoped_lock  guard ( m_mutex );
-        id_thread = m_id_thread++;
-    }
+   
+   id_thread = m_id_thread++;
+   
     //cout<<" I'm here thread id " <<m_id_thread<<endl;
-    Set fire;
-    int min_charge = 0;
-    m_started=false;
+    Set fire;    
+    
     if ( id_thread == 0 ) {
         LDDState *c = new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
@@ -141,8 +136,7 @@ void ModelCheckerThV2::Compute_successors()
         c->setDeadLock ( Set_Bloc ( Complete_meta_state ) );
         c->setDiv ( Set_Div ( Complete_meta_state ) );
         m_common_stack.push ( Pair ( couple ( c, Complete_meta_state ), fire ) );
-        m_condStack.notify_one();
-        m_started=true;
+        m_condStack.notify_one();        
         m_graph->setInitialState ( c );
         m_graph->insert ( c );
         m_finish_initial = true;
@@ -151,96 +145,55 @@ void ModelCheckerThV2::Compute_successors()
     LDDState *reached_class;
     //pthread_barrier_wait ( &m_barrier_builder );
     Pair e;
-    do {
-        
-        
+    do {        
         std::unique_lock<std::mutex> lk ( m_mutexStack );
         m_condStack.wait(lk,std::bind(&ModelCheckerThV2::hasToProcess,this));
         lk.unlock();
-        
-        if (!m_finish ) {
-            m_terminaison++;
-            bool advance=true;
-            try {
-                m_common_stack.pop ( e );                
-            } catch ( ... ) {
-                advance=false;
-            }
-
-            if ( advance ) {
+                            
+            if ( m_common_stack.try_pop ( e ) && !m_finish ) {
                 while ( !e.second.empty() && !m_finish ) {
                     int t = *e.second.begin();
                     e.second.erase ( t );
-                    if ( id_thread ) {
-                        std::scoped_lock supervise ( m_supervise_gc_mutex );
-                        m_gc++;
-                        if ( m_gc == 1 ) {
-                            m_gc_mutex.lock();
-                        }
-                    }
-
-                    //MDD reduced_meta = Complete_meta_state;            //Canonize(Complete_meta_state,0);
-                    /*ldd_refs_push(reduced_meta);*/
-                    if ( id_thread == 0 ) {
-                        std::scoped_lock guard ( m_gc_mutex );
-                        //     #ifdef DEBUG_GC
-                        //displayMDDTableInfo();
-                        //   #endif // DEBUG_GC
-                        sylvan_gc_seq();
-                        //   #ifdef DEBUG_GC
-                        //displayMDDTableInfo();
-                        //   #endif // DEBUG_GC
-                    }
-
-                    //pthread_spin_lock(&m_accessible);
-
+                   
                     MDD reduced_meta = Accessible_epsilon ( get_successor ( e.first.second, t ) );
                     ldd_refs_push ( reduced_meta );
                     reached_class = new LDDState();
-                    reached_class->m_lddstate = reduced_meta;
-                    m_graph_mutex.lock();
+                    reached_class->m_lddstate = reduced_meta;                    
                     LDDState *pos = m_graph->find ( reached_class );
-                    if ( !pos ) {
-                        //  cout<<"not found"<<endl;
+                    if ( !pos ) {                 
 
                         m_graph->addArc();
-                        m_graph->insert ( reached_class );
-                        m_graph_mutex.unlock();
-                        //reached_class->setDiv(Set_Div(reduced_meta));
-                        //reached_class->setDeadLock(Set_Bloc(reduced_meta));
+                        m_graph->insert ( reached_class );               
+                        
                         fire = firable_obs ( reduced_meta );
                         reached_class->setDeadLock ( Set_Bloc ( reduced_meta ) );
                         reached_class->setDiv ( Set_Div ( reduced_meta ) );
 
                         m_common_stack.push ( Pair ( couple ( reached_class, reduced_meta ), fire ) );
                         m_condStack.notify_one();
-
+                        m_graph_mutex.lock();    
                         e.first.first->Successors.insert ( e.first.first->Successors.begin(), LDDEdge ( reached_class, t ) );
                         reached_class->Predecessors.insert ( reached_class->Predecessors.begin(), LDDEdge ( e.first.first, t ) );
+                        m_graph_mutex.unlock();
 
                     } else {
+                        delete reached_class;
                         m_graph->addArc();
-                        m_graph_mutex.unlock();
+                        m_graph_mutex.lock();
                         e.first.first->Successors.insert ( e.first.first->Successors.begin(), LDDEdge ( pos, t ) );
                         pos->Predecessors.insert ( pos->Predecessors.begin(), LDDEdge ( e.first.first, t ) );
-                        delete reached_class;
+                        m_graph_mutex.unlock();
+                        
                     }
-                    if ( id_thread ) {
-                        std::scoped_lock guard ( m_supervise_gc_mutex );
-                        m_gc--;
-                        if ( m_gc == 0 ) {
-                            m_gc_mutex.unlock();
-                        }
-
-                    }
+                    
                 }
-                e.first.first->setCompletedSucc();
+                e.first.first->setCompletedSucc();m_condBuild.notify_one();
             } //end advance
-            m_terminaison--;
-        }
+            
+        
 
     } while ( !m_finish );
-    pthread_barrier_wait ( &m_barrier_builder );
+    //pthread_barrier_wait ( &m_barrier_builder );
 
 }
 
@@ -258,10 +211,7 @@ void ModelCheckerThV2::ComputeTh_Succ()
 
     /*   pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);*/
     pthread_barrier_init ( &m_barrier_builder, NULL, m_nb_thread + 1 );
-
-
-    m_gc=0;
-    m_terminaison=0;
+   
     m_finish=false;
     for ( int i = 0; i < m_nb_thread; i++ ) {
         int rc;
@@ -276,7 +226,7 @@ ModelCheckerThV2::~ModelCheckerThV2()
 {
     m_finish = true;
     m_condStack.notify_all();
-    pthread_barrier_wait ( &m_barrier_builder );
+    //pthread_barrier_wait ( &m_barrier_builder );
     for ( int i = 0; i < m_nb_thread; i++ ) {
         m_list_thread[i]->join();
         delete m_list_thread[i];
@@ -286,4 +236,5 @@ ModelCheckerThV2::~ModelCheckerThV2()
 bool ModelCheckerThV2::hasToProcess() const {
     return m_finish || !m_common_stack.empty();
 }
+
 

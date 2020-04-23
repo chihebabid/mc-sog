@@ -2,7 +2,8 @@
 #define LDDGRAPH_H
 #include "LDDState.h"
 #include "CommonSOG.h"
-
+#include <mutex>
+#include <atomic>
 //#include "LDDStateExtend.h"
 using namespace std;
 #include <iostream>
@@ -14,6 +15,7 @@ class CommonSOG;
 class LDDGraph
 {
     private:
+        mutable std::mutex m_mutex;
         map<string,uint16_t>* m_transition;
         map<uint16_t,string>* m_places;
 		void printGraph(LDDState *, size_t &);
@@ -31,7 +33,7 @@ class LDDGraph
 		LDDState *m_currentstate;
 		long m_nbStates;
 		long m_nbMarking;
-		long m_nbArcs;
+		atomic<uint32_t> m_nbArcs;
 		LDDState* find(LDDState*);
 		LDDState* findSHA(unsigned char*);
         size_t findSHAPos(unsigned char*,bool &res);

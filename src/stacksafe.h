@@ -44,6 +44,10 @@ template<typename T> class StackSafe {
         void push ( T new_value );
         std::shared_ptr<T> pop();
         void pop ( T& value );
-        bool empty() const;
+        bool try_pop ( T& value );
+        bool empty() const {
+            std::scoped_lock lock(m_mutex);
+            return m_data.empty();
+        };
     };
 #endif // STACKSAFE_H

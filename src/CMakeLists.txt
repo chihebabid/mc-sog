@@ -65,6 +65,8 @@ add_executable(mc-sog main.cpp
   ModelCheckerTh.h
   stacksafe.cpp
   stacksafe.h
+  SafeDequeue.cpp
+  SafeDequeue.h
   ModelCheckerThV2.cpp
   ModelCheckerThV2.h  
   MCHybridSOG.cpp

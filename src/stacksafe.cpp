@@ -48,16 +48,22 @@ void StackSafe<T>::pop(T& value)
     value=m_data.top();
     m_data.pop();
 }
-
 template<typename T>
-bool StackSafe<T>::empty() const
+bool StackSafe<T>::try_pop(T& value)
 {
     std::scoped_lock lock(m_mutex);
-    return m_data.empty();
+    if(m_data.empty()) return false;
+    value=m_data.top();
+    m_data.pop();
+    return true;
 }
 
 
- template class StackSafe<Pair>;
+
+template class StackSafe<Pair>;
+typedef pair<string *, unsigned int> MSG;
+template class StackSafe<MSG>;
+
 
 
 

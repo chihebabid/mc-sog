@@ -22,8 +22,8 @@ LDDState* LDDGraph::getInitialState() const {
 /*----------------------find()----------------*/
 LDDState * LDDGraph::find(LDDState* c)
 {
-    for(MetaLDDNodes::const_iterator i=m_GONodes.begin();!(i==m_GONodes.end());i++)
-    //if((c->class_state.id()==(*i)->class_state.id())&&(c->blocage==(*i)->blocage)&&(c->boucle==(*i)->boucle))
+    std::scoped_lock lock(m_mutex);
+    for(MetaLDDNodes::const_iterator i=m_GONodes.begin();!(i==m_GONodes.end());i++)   
         if(c->m_lddstate==(*i)->m_lddstate)
             return *i;
     return NULL;
@@ -62,7 +62,7 @@ size_t LDDGraph::findSHAPos(unsigned char* c,bool &res)
 /*----------------------insert() ------------*/
 void LDDGraph::insert(LDDState *c)
 {
-
+    std::scoped_lock lock(m_mutex);
 	this->m_GONodes.push_back(c);
 	m_nbStates++;
 }
