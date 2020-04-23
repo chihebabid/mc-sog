@@ -2,6 +2,7 @@
 #define MODELCHECKERTH_H
 #include "ModelCheckBaseMT.h"
 #include <atomic>
+#include <mutex>
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
 
@@ -18,18 +19,17 @@ public:
 private:
     void preConfigure();
     bool isNotTerminated();
-    int minCharge();
+    uint8_t minCharge();
     pile m_st[128];
     int m_charge[128];
     bool m_terminaison[128];
-    int m_id_thread;
-    pthread_mutex_t m_mutex;
-    pthread_mutex_t m_graph_mutex;
+    atomic<uint8_t> m_id_thread;    
+    std::mutex m_graph_mutex;
     pthread_mutex_t m_gc_mutex;
-    pthread_mutex_t m_supervise_gc_mutex;
-
     pthread_barrier_t m_barrier_builder;
-     unsigned int m_gc=0; //
+#ifdef GCENABLE
+    atomic<uint8_t> m_gc; 
+#endif
     volatile bool m_finish=false;
     bool m_finish_initial=false;
     pthread_mutex_t m_mutex_stack[128];

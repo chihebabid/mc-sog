@@ -115,10 +115,8 @@ void ModelCheckerTh::buildSucc(LDDState *agregate) {
 }
 
 void* ModelCheckerTh::Compute_successors() {
-	int id_thread;
-	pthread_mutex_lock(&m_mutex);
-	id_thread = m_id_thread++;
-	pthread_mutex_unlock(&m_mutex);
+	int id_thread;	
+	id_thread = m_id_thread++;	
 	Set fire;
 	int min_charge = 0;
 
@@ -143,24 +141,21 @@ void* ModelCheckerTh::Compute_successors() {
 		while (!m_st[id_thread].empty() && !m_finish) {
 			m_terminaison[id_thread] = false;
 			pthread_spin_lock(&m_spin_stack[id_thread]);
-			Pair e = m_st[id_thread].top();
-			//pthread_spin_lock(&m_accessible);
+			Pair e = m_st[id_thread].top();			
 			m_st[id_thread].pop();
 			pthread_spin_unlock(&m_spin_stack[id_thread]);
 			m_charge[id_thread]--;
 			while (!e.second.empty() && !m_finish) {
 				int t = *e.second.begin();
 				e.second.erase(t);
-				if (id_thread) {
-					pthread_mutex_lock(&m_supervise_gc_mutex);
-					m_gc++;
-					if (m_gc == 1) {
+#ifdef GCENABLE
+                if (id_thread) {				
+					if (++m_gc == 1) {
 						pthread_mutex_lock(&m_gc_mutex);
 					}
-					pthread_mutex_unlock(&m_supervise_gc_mutex);
-				}
-				//MDD reduced_meta = Complete_meta_state;            //Canonize(Complete_meta_state,0);
-				/*ldd_refs_push(reduced_meta);*/
+					
+				}		
+
 				if (id_thread == 0) {
 					pthread_mutex_lock(&m_gc_mutex);
 					//     #ifdef DEBUG_GC
@@ -172,30 +167,24 @@ void* ModelCheckerTh::Compute_successors() {
 					//   #endif // DEBUG_GC
 					pthread_mutex_unlock(&m_gc_mutex);
 				}
+#endif
 				MDD reduced_meta = Accessible_epsilon(get_successor(e.first.second, t));
-												ldd_refs_push(reduced_meta);
+                ldd_refs_push(reduced_meta);
 				reached_class = new LDDState();
 				reached_class->m_lddstate = reduced_meta;
 				//pthread_spin_lock(&m_accessible);
-				pthread_mutex_lock(&m_graph_mutex);
+				
 				LDDState *pos = m_graph->find(reached_class);
-				if (!pos) {
-					//  cout<<"not found"<<endl;
-
+				if (!pos) {					
 					m_graph->addArc();
-					m_graph->insert(reached_class);
-                    
-					//reached_class->setDiv(Set_Div(reduced_meta));
-					//reached_class->setDeadLock(Set_Bloc(reduced_meta));					
-					pthread_mutex_unlock(&m_graph_mutex);
+					m_graph->insert(reached_class);                    
 					reached_class->setDeadLock(Set_Bloc(reduced_meta));
 					reached_class->setDiv(Set_Div(reduced_meta));
+                    m_graph_mutex.lock();					
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
 					reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-					//pthread_mutex_lock(&m_mutex);
-					fire = firable_obs(reduced_meta);
-					//if (max_succ<fire.size()) max_succ=fire.size();
-					//pthread_mutex_unlock(&m_mutex);
+                    m_graph_mutex.unlock();					
+					fire = firable_obs(reduced_meta);					
 					min_charge = minCharge();
 					//m_min_charge=(m_min_charge+1) % m_nb_thread;
 					pthread_spin_lock(&m_spin_stack[min_charge]);
@@ -204,25 +193,25 @@ void* ModelCheckerTh::Compute_successors() {
 					m_charge[min_charge]++;
 				} else {
 					m_graph->addArc();
-					pthread_mutex_unlock(&m_graph_mutex);
+					m_graph_mutex.lock();
 					e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
 					pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
+                    m_graph_mutex.unlock();
 					delete reached_class;
 				}
-				if (id_thread) {
-					pthread_mutex_lock(&m_supervise_gc_mutex);
-					m_gc--;
-					if (m_gc == 0)
-						pthread_mutex_unlock(&m_gc_mutex);
-					pthread_mutex_unlock(&m_supervise_gc_mutex);
+#ifdef GCENABLE
+				if (id_thread) {					
+					if (--m_gc == 0)
+						pthread_mutex_unlock(&m_gc_mutex);					
 				}
+#endif
 			}
 			e.first.first->setCompletedSucc();
 		}
 		m_terminaison[id_thread] = true;
 	} while (isNotTerminated() && !m_finish);
-	//cout<<"Thread id :"<<id_thread<<endl;
-	pthread_barrier_wait(&m_barrier_builder);
+	
+	
 
 }
 
@@ -233,12 +222,10 @@ void* ModelCheckerTh::threadHandler(void *context) {
 void ModelCheckerTh::ComputeTh_Succ() {
 
 	m_id_thread = 0;
-	m_gc==0;
-	pthread_mutex_init(&m_mutex, NULL);
-	pthread_mutex_init(&m_gc_mutex, NULL);
-	pthread_mutex_init(&m_graph_mutex, NULL);
-	pthread_mutex_init(&m_supervise_gc_mutex, NULL);
-	/*   pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread+1);*/
+#ifdef GCENABLE
+	m_gc=0;
+#endif	
+	pthread_mutex_init(&m_gc_mutex, NULL);	
 	pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread + 1);
 
 	for (int i = 0; i < m_nb_thread; i++) {
@@ -257,17 +244,17 @@ void ModelCheckerTh::ComputeTh_Succ() {
 
 ModelCheckerTh::~ModelCheckerTh() {
 	m_finish = true;
-	pthread_barrier_wait(&m_barrier_builder);
+	
 	for (int i = 0; i < m_nb_thread; i++) {
 		pthread_join(m_list_thread[i], NULL);
 	}
 
 }
 
-int ModelCheckerTh::minCharge() {
-	int pos = 0;
+uint8_t ModelCheckerTh::minCharge() {
+	uint8_t pos = 0;
 	int min_charge = m_charge[0];
-	for (int i = 1; i < m_nb_thread; i++) {
+	for (uint8_t i = 1; i < m_nb_thread; i++) {
 		if (m_charge[i] < min_charge) {
 			min_charge = m_charge[i];
 			pos = i;

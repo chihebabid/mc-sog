@@ -6,6 +6,7 @@
 #include "TransSylvan.h"
 #include "NewNet.h"
 #include <stack>
+// #define GCENABLE 0
 class LDDState;
 typedef pair<LDDState *, MDD> couple;
 typedef pair<couple, Set> Pair;
