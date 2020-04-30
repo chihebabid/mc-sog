@@ -33,7 +33,7 @@ if(NOT SPOT_LIBRARY)
 
   ExternalProject_Add(SpotLibrary
     PREFIX                ${SPOT_DIR}
-    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.8.7.tar.gz
+    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.9.tar.gz
     DOWNLOAD_NO_PROGRESS  YES
     CONFIGURE_COMMAND     ./configure --disable-doxygen --disable-python --enable-silent-rules --silent --prefix=<INSTALL_DIR>
     BUILD_COMMAND         make -j

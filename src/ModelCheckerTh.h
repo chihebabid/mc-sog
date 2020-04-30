@@ -5,14 +5,12 @@
 #include <mutex>
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
-
+#define MAXT 64
 class ModelCheckerTh : public ModelCheckBaseMT
 {
 public:
     ModelCheckerTh(const NewNet &R,int nbThread);
-    ~ModelCheckerTh();
-    LDDState * getInitialMetaState();
-    void buildSucc(LDDState *agregate);
+    ~ModelCheckerTh();   
     static void *threadHandler(void *context);
     void *Compute_successors();
     void ComputeTh_Succ();
@@ -20,9 +18,9 @@ private:
     void preConfigure();
     bool isNotTerminated();
     uint8_t minCharge();
-    pile m_st[128];
-    int m_charge[128];
-    bool m_terminaison[128];
+    pile m_st[MAXT];
+    int m_charge[MAXT];
+    bool m_terminaison[MAXT];
     atomic<uint8_t> m_id_thread;    
     std::mutex m_graph_mutex;
     pthread_mutex_t m_gc_mutex;
@@ -30,8 +28,7 @@ private:
 #ifdef GCENABLE
     atomic<uint8_t> m_gc; 
 #endif
-    volatile bool m_finish=false;
-    bool m_finish_initial=false;
+    volatile bool m_finish=false;    
     pthread_mutex_t m_mutex_stack[128];
     pthread_t m_list_thread[128];
     pthread_spinlock_t m_spin_stack[128];

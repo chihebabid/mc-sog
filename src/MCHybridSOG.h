@@ -31,6 +31,9 @@
 #include <chrono>
 #include "CommonSOG.h"
 #include <atomic>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 // namespace mpi = boost::mpi;
 
 //#define MASTER 0
@@ -106,20 +109,19 @@ private:
     
     /// receive state message
     void read_state_message();
-    /// send state message
     void send_state_message();
 
 
-    int m_nb_thread;
+    uint8_t m_nb_thread;
     pthread_t m_list_thread[128];
 
-    int m_id_thread;
+    atomic<uint8_t> m_id_thread;
     /// Mutex declaration
-    pthread_mutex_t m_mutex;
+    
     pthread_mutex_t m_graph_mutex;
     pthread_mutex_t m_gc_mutex;
-    pthread_mutex_t m_supervise_gc_mutex;
-    unsigned int m_gc;
+    
+    atomic<uint8_t> m_gc;
 
     pthread_mutex_t m_mutex_stack[128];
     pthread_mutex_t m_spin_stack[128];
@@ -127,7 +129,7 @@ private:
     // pthread_mutex_t m_spin_charge;
     pthread_spinlock_t m_spin_md5;
     pthread_mutex_t m_spin_working;
-    unsigned int m_working = 0;
+    
 
     // unsigned int m_count_thread_working;
     bool m_Terminated = false;

@@ -100,23 +100,8 @@ void ModelCheckerThV2::preConfigure()
 
 }
 
-LDDState* ModelCheckerThV2::getInitialMetaState()
-{
-    while ( !m_finish_initial )	;
-    LDDState *initial_metastate = m_graph->getInitialState();
-    buildSucc(initial_metastate);    
-    return initial_metastate;
-}
 
-void ModelCheckerThV2::buildSucc ( LDDState *agregate )
-{
-    if ( !agregate->isVisited() ) {
-        agregate->setVisited();        
-        std::unique_lock<std::mutex> lk ( m_mutexStack );
-        m_condBuild.wait(lk,[&agregate]{return agregate->isCompletedSucc();});
-        lk.unlock();        
-    }
-}
+
 
 void ModelCheckerThV2::Compute_successors()
 {
@@ -182,8 +167,7 @@ void ModelCheckerThV2::Compute_successors()
                         m_graph_mutex.lock();
                         e.first.first->Successors.insert ( e.first.first->Successors.begin(), LDDEdge ( pos, t ) );
                         pos->Predecessors.insert ( pos->Predecessors.begin(), LDDEdge ( e.first.first, t ) );
-                        m_graph_mutex.unlock();
-                        
+                        m_graph_mutex.unlock();                        
                     }
                     
                 }

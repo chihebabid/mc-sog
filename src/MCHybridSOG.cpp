@@ -122,11 +122,9 @@ void *MCHybridSOG::doCompute()
 {
     int min_charge=1;
     int id_thread;
-
-    pthread_mutex_lock ( &m_mutex );
+    
     id_thread=m_id_thread++;
-    pthread_mutex_unlock ( &m_mutex );
-
+    
     unsigned char Identif[20];
     m_Terminated=false;
 
@@ -160,16 +158,7 @@ void *MCHybridSOG::doCompute()
             //cout<<"Initial marking is sent"<<endl;
             m_graph->insertSHA ( c );
             memcpy ( c->m_SHA2,Identif,16 );
-            // MDD initialstate=Complete_meta_state;
-
-            //pthread_spin_lock(&m_spin_md5);
-            //pthread_spin_unlock(&m_spin_md5);
-            //write_to_dot("reduced.dot",Reduced);
-            //pthread_spin_unlock(&m_spin_md5);
-            //#ifndef
-//            if (strcmp(red,'C')==0)
-
-            initialstate=Canonize ( Complete_meta_state,0 );
+           initialstate=Canonize ( Complete_meta_state,0 );
 
             //#endif // REDUCE
             convert_wholemdd_stringcpp ( initialstate,*chaine );
@@ -231,17 +220,10 @@ void *MCHybridSOG::doCompute()
         else {
 
             if ( !m_st[id_thread].empty() || !m_msg[id_thread].empty() ) {
-                pthread_mutex_lock ( &m_spin_working );
-                m_working++;
-                pthread_mutex_unlock ( &m_spin_working );
-
-                if ( id_thread>1 ) {
-                    pthread_mutex_lock ( &m_supervise_gc_mutex );
-                    m_gc++;
-                    if ( m_gc==1 ) {
+               if ( id_thread>1 ) {   
+                    if ( ++m_gc==1 ) {
                         pthread_mutex_lock ( &m_gc_mutex );
-                    }
-                    pthread_mutex_unlock ( &m_supervise_gc_mutex );
+                    }                    
                 }
 
                 if ( !m_st[id_thread].empty() ) {
@@ -309,17 +291,19 @@ void *MCHybridSOG::doCompute()
                         reached_class->setProcess ( destination );
                         if ( destination==task_id ) {
                             //      cout << " construction local de l'aggregat " <<endl;
-                            pthread_mutex_lock ( &m_graph_mutex );
+                            
                             LDDState* pos=m_graph->find ( reached_class );
                             if ( !pos ) {
                                 reached_class->setDiv ( Set_Div ( ldd_reachedclass ) );
                                 reached_class->setDeadLock ( Set_Bloc ( ldd_reachedclass ) );
                                 m_graph->insert ( reached_class );
+                                pthread_mutex_lock ( &m_graph_mutex );
                                 memcpy ( reached_class->m_SHA2,Identif,16 );
-                                pthread_mutex_unlock ( &m_graph_mutex );
-                                m_graph->addArc();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( reached_class,t ) );
                                 reached_class->Predecessors.insert ( reached_class->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
+                                pthread_mutex_unlock ( &m_graph_mutex );
+                                m_graph->addArc();
+                                
 
                                 Set fire=firable_obs ( ldd_reachedclass );
                                 min_charge=minCharge();
@@ -332,10 +316,12 @@ void *MCHybridSOG::doCompute()
                                 //pthread_mutex_unlock(&m_spin_charge);
                                 //      cout<<" I'm local destination "<<task_id<< " thread "<< id_thread<< " msg "<< msg<<endl;
                             } else {
-                                pthread_mutex_unlock ( &m_graph_mutex );
+                                
                                 m_graph->addArc();
+                                pthread_mutex_lock ( &m_graph_mutex );
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( pos,t ) );
                                 pos->Predecessors.insert ( pos->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
+                                pthread_mutex_unlock ( &m_graph_mutex );
                                 delete reached_class;
 
                             }
@@ -445,16 +431,12 @@ void *MCHybridSOG::doCompute()
                 }
 
                 if ( id_thread>1 ) {
-                    pthread_mutex_lock ( &m_supervise_gc_mutex );
-                    m_gc--;
-                    if ( m_gc==0 ) {
+                    if ( --m_gc==0 ) {
                         pthread_mutex_unlock ( &m_gc_mutex );
                     }
-                    pthread_mutex_unlock ( &m_supervise_gc_mutex );
+                    
                 }
-                pthread_mutex_lock ( &m_spin_working );
-                m_working--;
-                pthread_mutex_unlock ( &m_spin_working );
+               
 
             } // End    while (m_msg[id_thread].size()>0 || m_st[id_thread].size()>0);
 
@@ -612,21 +594,16 @@ void MCHybridSOG::computeDSOG ( LDDGraph &g )
     //pthread_barrier_init(&m_barrier1, 0, m_nb_thread);
     //pthread_barrier_init(&m_barrier2, 0, m_nb_thread);
 
-    pthread_mutex_init ( &m_mutex, NULL );
+    
     pthread_mutex_init ( &m_graph_mutex,NULL );
     pthread_mutex_init ( &m_gc_mutex,NULL );
-    pthread_mutex_init ( &m_supervise_gc_mutex,NULL );
     m_gc=0;
     pthread_spin_init ( &m_spin_md5,0 );
     pthread_mutex_init ( &m_spin_working,0 );
-    m_working=0;
-
-
+    
     for ( int i=0; i<m_nb_thread; i++ ) {
         pthread_mutex_init ( &m_spin_stack[i], 0 );
-        pthread_mutex_init ( &m_spin_msg[i], 0 );
-
-
+        pthread_mutex_init ( &m_spin_msg[i], 0 );        
     }
 
     timespec start, finish;

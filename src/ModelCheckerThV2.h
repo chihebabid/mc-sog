@@ -15,22 +15,19 @@ class ModelCheckerThV2 : public ModelCheckBaseMT
 public:
     ModelCheckerThV2(const NewNet &R,int nbThread);
     ~ModelCheckerThV2();
-    LDDState * getInitialMetaState();
-    void buildSucc(LDDState *agregate);
     static void threadHandler(void *context);
     void Compute_successors();
     void ComputeTh_Succ();
 private:
     void preConfigure();
     bool hasToProcess() const;      
-    SafeDequeue<Pair> m_common_stack;
-       
+    SafeDequeue<Pair> m_common_stack;       
     atomic<uint8_t> m_id_thread;
-    std::mutex m_mutex,m_graph_mutex,m_gc_mutex,m_supervise_gc_mutex;    
+    std::mutex m_mutex,m_graph_mutex,m_gc_mutex;    
     pthread_barrier_t m_barrier_builder;    
     volatile bool m_finish=false;
-    bool m_finish_initial=false;
-    std::condition_variable m_condStack,m_condBuild;
+    
+    std::condition_variable m_condStack;
     std::mutex m_mutexStack;
     thread* m_list_thread[128];    
 };

@@ -25,8 +25,23 @@ ModelCheckBaseMT::~ModelCheckBaseMT()
    
 }
 
+void ModelCheckBaseMT::buildSucc ( LDDState *agregate )
+{
+    if ( !agregate->isVisited() ) {
+        agregate->setVisited();        
+        std::unique_lock<std::mutex> lk ( m_mutexBuild );
+        m_condBuild.wait(lk,[&agregate]{return agregate->isCompletedSucc();});
+        lk.unlock();        
+    }
+}
 
-  
+LDDState* ModelCheckBaseMT::getInitialMetaState()
+{
+    while ( !m_finish_initial);
+    LDDState *initial_metastate = m_graph->getInitialState();
+    buildSucc(initial_metastate);    
+    return initial_metastate;
+}
 
 
 
