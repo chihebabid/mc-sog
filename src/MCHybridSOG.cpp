@@ -24,7 +24,7 @@
 #define TAG_ACK_STATE 10
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
-#define DEBUG_GC 1
+//#define DEBUG_GC 1
 using namespace sylvan;
 using namespace std;
 MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
