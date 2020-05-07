@@ -5,6 +5,7 @@ using namespace std;
 #include <stdio.h>
 
 #include "sylvan_seq.h"
+#include "sylvan_sog.h"
 #include <sylvan_int.h>
 
 using namespace sylvan;

@@ -135,6 +135,7 @@ void ModelCheckerThV2::Compute_successors()
         lk.unlock();
                             
             if ( m_common_stack.try_pop ( e ) && !m_finish ) {
+
                 while ( !e.second.empty() && !m_finish ) {
                     int t = *e.second.begin();
                     e.second.erase ( t );

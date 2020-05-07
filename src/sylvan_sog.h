@@ -12,6 +12,9 @@ TASK_DECL_3(MDD, lddmc_firing_lace, MDD, MDD, MDD)
 #define lddmc_firing_lace(cmark, minus, plus) CALL(lddmc_firing_lace, cmark, minus, plus)
 
 
+void  displayMDDTableInfo();
+int isGCRequired();
+uint32_t getCountMDD();
 
 #ifdef __cplusplus
 }

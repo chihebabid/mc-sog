@@ -117,8 +117,19 @@ MDD ldd_firing_fast ( MDD cmark, MDD minus, MDD plus ) {
         n_cmark = GETNODE ( cmark );
         }
     //cache_put3(CACHE_LDD_FIRE, cmark, minus, plus, result);
+
     return result;
     }
 
-
+void  displayMDDTableInfo()
+{
+    printf("%zu of %zu buckets filled!\n", seq_llmsset_count_marked(nodes), llmsset_get_size(nodes));
+}
+int isGCRequired()
+{
+    return (g_created>llmsset_get_size(nodes)/2);
+}
+uint32_t getCountMDD() {
+    return g_created;
+}
 

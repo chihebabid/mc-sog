@@ -3,7 +3,7 @@
 
 
 #include <cstdio>
-
+#include "sylvan_sog.h"
 #include "sylvan_seq.h"
 #include <sylvan_int.h>
 
@@ -24,6 +24,7 @@
 #define TAG_ACK_STATE 10
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
+#define DEBUG_GC 1
 using namespace sylvan;
 using namespace std;
 MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
@@ -33,13 +34,16 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
     lace_init ( 1, 0 );
     lace_startup ( 0, NULL, NULL );
 
+    //sylvan_set_limits ( 16LL<<30, 8, 0 );
     sylvan_set_limits ( 16LL<<30, 8, 0 );
+
     //sylvan_set_limits ( 2LL<<31, 2, 1 ); // sylvan_set_limits(2LL<<31, 2, 1);
     //sylvan_set_sizes(1LL<<27, 1LL<<31, 1LL<<20, 1LL<<22);
 
     sylvan_init_package();
     sylvan_init_ldd();
     sylvan_gc_enable();
+    displayMDDTableInfo();
     m_net=&R;
 
     m_init=init;
