@@ -33,8 +33,8 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
     lace_init ( 1, 0 );
     lace_startup ( 0, NULL, NULL );
 
-    // Simple Sylvan initialization, also initialize MDD support
-    sylvan_set_limits ( 2LL<<31, 2, 1 ); // sylvan_set_limits(2LL<<31, 2, 1);
+    sylvan_set_limits ( 16LL<<30, 8, 0 );
+    //sylvan_set_limits ( 2LL<<31, 2, 1 ); // sylvan_set_limits(2LL<<31, 2, 1);
     //sylvan_set_sizes(1LL<<27, 1LL<<31, 1LL<<20, 1LL<<22);
 
     sylvan_init_package();
@@ -49,7 +49,7 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
 
     init_gc_seq();
     //_______________
-    transitions=R.transitions;
+    m_transitions=R.transitions;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
@@ -66,8 +66,8 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
     for ( i=0,it_places=R.places.begin(); it_places!=R.places.end(); i++,it_places++ ) {
         liste_marques[i] =it_places->marking;
     }
-    M0=lddmc_cube ( liste_marques,R.places.size() );
-    ldd_refs_push ( M0 );
+    m_initialMarking=lddmc_cube ( liste_marques,R.places.size() );
+    ldd_refs_push ( m_initialMarking );
 
     delete []liste_marques;
     // place names
@@ -122,9 +122,9 @@ void *MCHybridSOG::doCompute()
 {
     int min_charge=1;
     int id_thread;
-    
+
     id_thread=m_id_thread++;
-    
+
     unsigned char Identif[20];
     m_Terminated=false;
 
@@ -134,7 +134,7 @@ void *MCHybridSOG::doCompute()
 
 
         LDDState *c=new LDDState;
-        MDD Complete_meta_state=Accessible_epsilon ( M0 );
+        MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
         c->m_lddstate=Complete_meta_state;
         ldd_refs_push ( Complete_meta_state );
         //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);
@@ -158,7 +158,7 @@ void *MCHybridSOG::doCompute()
             //cout<<"Initial marking is sent"<<endl;
             m_graph->insertSHA ( c );
             memcpy ( c->m_SHA2,Identif,16 );
-           initialstate=Canonize ( Complete_meta_state,0 );
+            initialstate=Canonize ( Complete_meta_state,0 );
 
             //#endif // REDUCE
             convert_wholemdd_stringcpp ( initialstate,*chaine );
@@ -203,46 +203,32 @@ void *MCHybridSOG::doCompute()
                 if ( m_waitingAgregate ) {
                     bool res=false;
                     size_t pos=m_graph->findSHAPos ( m_id_md5,res );
-                    //cout<<"Not found..."<<endl;
                     if ( res ) {
                         m_waitingAgregate=false;
                         sendPropToMC ( pos );
                     }
                 }
             } while ( !m_Terminated );
-
-
-
-
         }
         /******************************* Construction des aggregats ************************************/
 
         else {
-
             if ( !m_st[id_thread].empty() || !m_msg[id_thread].empty() ) {
-               if ( id_thread>1 ) {   
+                if ( id_thread>1 ) {
                     if ( ++m_gc==1 ) {
-                        pthread_mutex_lock ( &m_gc_mutex );
-                    }                    
+                        m_gc_mutex.lock();
+                    }
                 }
 
                 if ( !m_st[id_thread].empty() ) {
-
                     Pair  e;
                     pthread_mutex_lock ( &m_spin_stack[id_thread] );
                     e=m_st[id_thread].top();
                     m_st[id_thread].pop();
                     pthread_mutex_unlock ( &m_spin_stack[id_thread] );
                     m_charge[id_thread]--;
-
                     LDDState *reached_class=NULL;
-
-
                     while ( !e.second.empty() ) {
-                        /*#ifdef DEBUG_GC
-                        displayMDDTableInfo();
-                            #endif // DEBUG_GC*/
-
                         int t = * ( e.second.begin() );
                         e.second.erase ( t );
                         reached_class=new LDDState();
@@ -252,8 +238,9 @@ void *MCHybridSOG::doCompute()
                         ldd_refs_push ( ldd_reachedclass );
 
                         if ( id_thread==1 )
+                            //displayMDDTableInfo();
                             if ( isGCRequired() ) {
-                                pthread_mutex_lock ( &m_gc_mutex );
+                                m_gc_mutex.lock();
 #ifdef DEBUG_GC
 
                                 displayMDDTableInfo();
@@ -263,7 +250,7 @@ void *MCHybridSOG::doCompute()
 
                                 displayMDDTableInfo();
 #endif // DEBUG_GC
-                                pthread_mutex_unlock ( &m_gc_mutex );
+                                m_gc_mutex.unlock();
                             }
 
 
@@ -282,111 +269,87 @@ void *MCHybridSOG::doCompute()
 
                         //lddmc_getsha(ldd_reachedclass, Identif);
 
-
-
-                        unsigned int destination= ( unsigned int ) ( Identif[0]%n_tasks );
+                        uint16_t destination= ( uint16_t ) ( Identif[0]%n_tasks );
 
                         /**************** construction local ******/
                         // cout<<"debut boucle pile process "<<task_id<< " thread "<< id_thread<<endl;
                         reached_class->setProcess ( destination );
                         if ( destination==task_id ) {
                             //      cout << " construction local de l'aggregat " <<endl;
-                            
-                            LDDState* pos=m_graph->find ( reached_class );
+
+                            LDDState* pos=m_graph->insertFind(reached_class );
                             if ( !pos ) {
+                                //cout<<"enter A"<<endl;
                                 reached_class->setDiv ( Set_Div ( ldd_reachedclass ) );
                                 reached_class->setDeadLock ( Set_Bloc ( ldd_reachedclass ) );
-                                m_graph->insert ( reached_class );
-                                pthread_mutex_lock ( &m_graph_mutex );
                                 memcpy ( reached_class->m_SHA2,Identif,16 );
+                                m_graph_mutex.lock();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( reached_class,t ) );
                                 reached_class->Predecessors.insert ( reached_class->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
-                                pthread_mutex_unlock ( &m_graph_mutex );
+                                m_graph_mutex.unlock();
                                 m_graph->addArc();
-                                
-
                                 Set fire=firable_obs ( ldd_reachedclass );
                                 min_charge=minCharge();
-
                                 pthread_mutex_lock ( &m_spin_stack[min_charge] );
                                 m_st[min_charge].push ( Pair ( couple ( reached_class,ldd_reachedclass ),fire ) );
                                 pthread_mutex_unlock ( &m_spin_stack[min_charge] );
                                 //pthread_mutex_lock(&m_spin_charge);
                                 m_charge[min_charge]++;
-                                //pthread_mutex_unlock(&m_spin_charge);
-                                //      cout<<" I'm local destination "<<task_id<< " thread "<< id_thread<< " msg "<< msg<<endl;
+
                             } else {
-                                
+                                //cout<<"enter B"<<endl;
                                 m_graph->addArc();
-                                pthread_mutex_lock ( &m_graph_mutex );
+                                m_graph_mutex.lock();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( pos,t ) );
                                 pos->Predecessors.insert ( pos->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
-                                pthread_mutex_unlock ( &m_graph_mutex );
+                                m_graph_mutex.unlock();
                                 delete reached_class;
-
+                                //cout<<"quit B"<<endl;
                             }
-
 
                         }
                         /**************** construction externe ******/
                         else { // send to another process
-                            pthread_mutex_lock ( &m_graph_mutex );
-                            LDDState* posV=m_graph->findSHA ( Identif );
+
+                            LDDState* posV=m_graph->insertFindSha( Identif,reached_class );
                             if ( !posV ) {
+                                MDD reached{ldd_reachedclass};
 
-                                MDD reached=ldd_reachedclass;
-
-                                m_graph->insertSHA ( reached_class );
-                                memcpy ( reached_class->m_SHA2,Identif,16 );
-                                pthread_mutex_unlock ( &m_graph_mutex );
 #ifndef REDUCE
                                 reached=Canonize ( ldd_reachedclass,0 );
                                 ldd_refs_push ( ldd_reachedclass );
 #endif
+
                                 //MDD Reduced=ldd_reachedclass;
                                 string* message_to_send2=new string();
                                 convert_wholemdd_stringcpp ( reached,*message_to_send2 );
-                                // get_md5(*message_to_send2,Identif);
-
-
-
                                 m_graph->addArc();
+                                m_graph_mutex.lock();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( reached_class,t ) );
                                 reached_class->Predecessors.insert ( reached_class->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
-
+                                m_graph_mutex.unlock();
                                 pthread_mutex_lock ( &m_spin_msg[0] );
                                 m_msg[0].push ( MSG ( message_to_send2,destination ) );
                                 pthread_mutex_unlock ( &m_spin_msg[0] );
-
-
+                                //cout<<"quit  C"<<endl;
                             } else {
-                                pthread_mutex_unlock ( &m_graph_mutex );
+                                //cout<<"sha found "<<endl;
                                 m_graph->addArc();
+                                m_graph_mutex.lock();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( posV,t ) );
                                 posV->Predecessors.insert ( posV->Predecessors.begin(),LDDEdge ( e.first.first,t ) );
+                                m_graph_mutex.unlock();
                                 delete reached_class;
-                                // read_state_message();
-
                             }
-
-
-
                         }
-
-
                     }
                     e.first.first->setCompletedSucc();
-
-
-
-
                 }
 
 
                 /******************************* Construction des aggregats � partir de pile de messages ************************************/
 
                 if ( !m_msg[id_thread].empty() ) {
-
                     MSG popped_msg;
                     pthread_mutex_lock ( &m_spin_msg[id_thread] );
                     popped_msg=m_msg[id_thread].top();
@@ -396,47 +359,42 @@ void *MCHybridSOG::doCompute()
                     m_charge[id_thread]--;
                     MDD receivedLDD=decodage_message ( popped_msg.first->c_str() );
                     delete popped_msg.first;
-                    // ldd_refs_push(receivedLDD);
-
                     LDDState* Agregate=new LDDState();
                     MDD MState=Accessible_epsilon ( receivedLDD );
-
-                    //cout<<"executed3..."<<endl;
                     Agregate->m_lddstate=MState;
-                    pthread_mutex_lock ( &m_graph_mutex );
-                    if ( !m_graph->find ( Agregate ) ) {
+                    if ( !m_graph->insertFind( Agregate ) ) {
+                        //cout<<"enter D"<<endl;
                         ldd_refs_push ( MState );
                         Agregate->setDiv ( Set_Div ( MState ) );
                         Agregate->setDeadLock ( Set_Bloc ( MState ) );
                         Agregate->setProcess ( task_id );
-                        m_graph->insert ( Agregate );
+                        //m_graph_mutex.lock();
                         string* chaine=new string();
                         convert_wholemdd_stringcpp ( MState,*chaine );
                         get_md5 ( *chaine,Identif );
                         delete chaine;
                         memcpy ( Agregate->m_SHA2,Identif,16 );
-                        pthread_mutex_unlock ( &m_graph_mutex );
+                        //m_graph_mutex.unlock();
                         Set fire=firable_obs ( MState );
                         min_charge=minCharge();
                         pthread_mutex_lock ( &m_spin_stack[min_charge] );
                         m_st[min_charge].push ( Pair ( couple ( Agregate,MState ),fire ) );
                         pthread_mutex_unlock ( &m_spin_stack[min_charge] );
                         m_charge[min_charge]++;
+                        //cout<<"quit D"<<endl;
                     }
-
                     else {
-                        pthread_mutex_unlock ( &m_graph_mutex );
                         delete Agregate;
                     }
                 }
 
                 if ( id_thread>1 ) {
                     if ( --m_gc==0 ) {
-                        pthread_mutex_unlock ( &m_gc_mutex );
+                        m_gc_mutex.unlock();
                     }
-                    
+
                 }
-               
+
 
             } // End    while (m_msg[id_thread].size()>0 || m_st[id_thread].size()>0);
 
@@ -444,7 +402,8 @@ void *MCHybridSOG::doCompute()
 
 
         }    /// End else
-        //cout<<"Working process "<<task_id<<" leaved...thread "<<id_thread<<endl;
+
+       // cout<<"Working process "<<task_id<<" leaved...thread "<<id_thread<<endl;
 
     }
 
@@ -591,19 +550,11 @@ void MCHybridSOG::computeDSOG ( LDDGraph &g )
         m_charge[i]=0;
     }
 
-    //pthread_barrier_init(&m_barrier1, 0, m_nb_thread);
-    //pthread_barrier_init(&m_barrier2, 0, m_nb_thread);
-
-    
-    pthread_mutex_init ( &m_graph_mutex,NULL );
-    pthread_mutex_init ( &m_gc_mutex,NULL );
     m_gc=0;
     pthread_spin_init ( &m_spin_md5,0 );
-    pthread_mutex_init ( &m_spin_working,0 );
-    
-    for ( int i=0; i<m_nb_thread; i++ ) {
+    for ( uint8_t i=0; i<m_nb_thread; i++ ) {
         pthread_mutex_init ( &m_spin_stack[i], 0 );
-        pthread_mutex_init ( &m_spin_msg[i], 0 );        
+        pthread_mutex_init ( &m_spin_msg[i], 0 );
     }
 
     timespec start, finish;
@@ -611,7 +562,7 @@ void MCHybridSOG::computeDSOG ( LDDGraph &g )
         clock_gettime ( CLOCK_REALTIME, &start );
     }
 
-    for ( int i=0; i<m_nb_thread-1; i++ ) {
+    for ( uint8_t i=0; i<m_nb_thread-1; i++ ) {
         if ( ( rc = pthread_create ( &m_list_thread[i], NULL,threadHandler,this ) ) ) {
             cout<<"error: pthread_create, rc: "<<rc<<endl;
         }
@@ -654,11 +605,11 @@ void MCHybridSOG::computeDSOG ( LDDGraph &g )
 }
 
 
-int MCHybridSOG::minCharge()
+uint8_t MCHybridSOG::minCharge()
 {
-    int pos=1;
+    uint8_t pos=1;
     int min_charge=m_charge[1];
-    for ( int i=1; i<m_nb_thread; i++ ) {
+    for ( uint8_t i=1; i<m_nb_thread; i++ ) {
         if ( m_charge[i]<min_charge ) {
             min_charge=m_charge[i];
             pos=i;
@@ -699,7 +650,6 @@ MDD MCHybridSOG::decodage_message ( const char *chaine )
 
 void * MCHybridSOG::threadHandler ( void *context )
 {
-
     return ( ( MCHybridSOG* ) context )->doCompute();
 }
 
@@ -755,7 +705,6 @@ void MCHybridSOG::sendSuccToMC()
 {
     uint32_t nb_succ=m_aggWaiting->getSuccessors()->size();
     uint32_t message_size=nb_succ*20+4;
-
     char mess_tosend[message_size];
     memcpy ( mess_tosend,&nb_succ,4 );
     uint32_t i_message=4;

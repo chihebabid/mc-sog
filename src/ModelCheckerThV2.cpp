@@ -24,11 +24,11 @@ void ModelCheckerThV2::preConfigure()
 
     lace_init ( 1, 0 );
     lace_startup ( 0, NULL, NULL );
-    size_t max = 16LL<<30;
+    size_t max = 16LL<<34;
     if ( max > getMaxMemoryV3() ) {
         max = getMaxMemoryV3() /10*9;
     }
-    sylvan_set_limits ( max, 8, 0 );
+    sylvan_set_limits ( 16LL<<30, 16, 0 );
 
     sylvan_init_package();
     sylvan_init_ldd();
@@ -38,8 +38,7 @@ void ModelCheckerThV2::preConfigure()
 
     init_gc_seq();
 
-
-    transitions = m_net->transitions;
+    m_transitions = m_net->transitions;
     m_observable = m_net->Observable;
     m_place_proposition = m_net->m_formula_place;
     m_nonObservable = m_net->NonObservable;
@@ -177,7 +176,7 @@ void ModelCheckerThV2::Compute_successors()
         
 
     } while ( !m_finish );
-    //pthread_barrier_wait ( &m_barrier_builder );
+
 
 }
 

@@ -34,7 +34,7 @@ void ModelCheckerTh::preConfigure() {
 	init_gc_seq();
 
 
-	transitions = m_net->transitions;
+	m_transitions = m_net->transitions;
 	m_observable = m_net->Observable;
 	m_place_proposition = m_net->m_formula_place;
 	m_nonObservable = m_net->NonObservable;
@@ -206,7 +206,7 @@ void ModelCheckerTh::ComputeTh_Succ() {
 #ifdef GCENABLE
 	m_gc=0;
 #endif	
-	pthread_mutex_init(&m_gc_mutex, NULL);	
+	
 	pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread + 1);
 
 	for (int i = 0; i < m_nb_thread; i++) {
@@ -225,7 +225,6 @@ void ModelCheckerTh::ComputeTh_Succ() {
 
 ModelCheckerTh::~ModelCheckerTh() {
 	m_finish = true;
-	
 	for (int i = 0; i < m_nb_thread; i++) {
 		pthread_join(m_list_thread[i], NULL);
 	}

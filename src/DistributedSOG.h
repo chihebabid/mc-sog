@@ -69,7 +69,7 @@ class DistributedSOG : public CommonSOG{
                       int longueur2, char *dest);
   void sha256(LDDState *state, char output[65]);
 
-  MDD M0;
+
 
   MDD currentvar;
 

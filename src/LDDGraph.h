@@ -16,6 +16,7 @@ class LDDGraph
 {
     private:
         mutable std::mutex m_mutex;
+        mutable std::mutex m_mutex_sha;
         map<string,uint16_t>* m_transition;
         map<uint16_t,string>* m_places;
 		void printGraph(LDDState *, size_t &);
@@ -35,7 +36,9 @@ class LDDGraph
 		long m_nbMarking;
 		atomic<uint32_t> m_nbArcs;
 		LDDState* find(LDDState*);
+        LDDState* insertFind(LDDState*);
 		LDDState* findSHA(unsigned char*);
+		LDDState* insertFindSha(unsigned char*,LDDState*);
         size_t findSHAPos(unsigned char*,bool &res);
 		bool cmpSHA(const unsigned char *s1, const unsigned char *s2);
 		void insertSHA(LDDState *c);

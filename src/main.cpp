@@ -35,7 +35,7 @@
 // #include "RdPBDD.h"
 
 using namespace std;
-#define MASTER 0
+
 
 unsigned int nb_th;
 int n_tasks, task_id;

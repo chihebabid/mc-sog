@@ -73,7 +73,7 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
 
     init_gc_seq();
     //_______________
-    transitions=R.transitions;
+    m_transitions=R.transitions;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
@@ -91,8 +91,8 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
     {
         liste_marques[i] =it_places->marking;
     }
-    M0=lddmc_cube(liste_marques,R.places.size());
-    ldd_refs_push(M0);
+    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
+    ldd_refs_push(m_initialMarking);
 
     delete []liste_marques;
     // place names
@@ -167,7 +167,7 @@ void *HybridSOG::doCompute()
 
 
         LDDState *c=new LDDState;
-        MDD Complete_meta_state=Accessible_epsilon(M0);
+        MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
         c->m_lddstate=Complete_meta_state;
         ldd_refs_push(Complete_meta_state);
      //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);

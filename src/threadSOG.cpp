@@ -57,7 +57,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
 
 
     //_______________
-    transitions=R.transitions;
+    m_transitions=R.transitions;
     m_observable=R.Observable;
     m_place_proposition=R.m_formula_place;
     m_nonObservable=R.NonObservable;
@@ -87,11 +87,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
         liste_marques[i] =it_places->marking;
     }
 
-    M0=lddmc_cube(liste_marques,R.places.size());
-
-
-
-
+    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];
@@ -179,7 +175,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
 
     // cout<<"Marquage initial :\n";
     //cout<<bddtable<<M0<<endl;
-    MDD Complete_meta_state=Accessible_epsilon(M0);
+    MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
    // write_to_dot("detectDiv.dot",Complete_meta_state);
     //cout<<" div "<<Set_Div(Complete_meta_state)<<endl;
     //lddmc_fprintdot(fp,Complete_meta_state);
@@ -301,7 +297,7 @@ void * threadSOG::doCompute()
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
 
-        MDD Complete_meta_state(Accessible_epsilon(M0));
+        MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
         ldd_refs_push(Complete_meta_state);
        // MDD canonised_initial=Canonize(Complete_meta_state,0);
         //ldd_refs_push(canonised_initial);
@@ -348,13 +344,10 @@ void * threadSOG::doCompute()
                 e.second.erase(t);
                 reached_class=new LDDState();
                 if (id_thread)
-                {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc++;
-                    if (m_gc==1) {
-                        pthread_mutex_lock(&m_gc_mutex);
-                    }
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                {                   
+                    if (++m_gc==1) {
+                        m_gc_mutex.lock();
+                    }                    
                 }
 
 
@@ -367,7 +360,7 @@ void * threadSOG::doCompute()
 
                 if (id_thread==0)
                 {
-                    pthread_mutex_lock(&m_gc_mutex);
+                    m_gc_mutex.lock();
                //     #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
@@ -375,14 +368,14 @@ void * threadSOG::doCompute()
                  //   #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
-                    pthread_mutex_unlock(&m_gc_mutex);
+                    m_gc_mutex.unlock();
                 }
                 reached_class->m_lddstate=Complete_meta_state;
                 //reached_class->m_lddstate=reduced_meta;
                 //nbnode=bdd_pathcount(reached_class->m_lddstate);
 
                 //pthread_spin_lock(&m_accessible);
-                pthread_mutex_lock(&m_graph_mutex);
+                m_graph_mutex.lock();
 
                 LDDState* pos=m_graph->find(reached_class);
 
@@ -394,7 +387,7 @@ void * threadSOG::doCompute()
 
                     m_graph->addArc();
                     m_graph->insert(reached_class);
-                    pthread_mutex_unlock(&m_graph_mutex);
+                    m_graph_mutex.unlock();
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
@@ -414,7 +407,7 @@ void * threadSOG::doCompute()
                 {
                     nb_failed++;
                     m_graph->addArc();
-                    pthread_mutex_unlock(&m_graph_mutex);
+                    m_graph_mutex.unlock();
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(pos,t));
                     pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(e.first.first,t));
@@ -423,10 +416,10 @@ void * threadSOG::doCompute()
                 }
                 if (id_thread)
                 {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc--;
-                    if (m_gc==0) pthread_mutex_unlock(&m_gc_mutex);
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                    
+                    
+                    if (--m_gc==0) m_gc_mutex.unlock();
+                    
                 }
             }
         }
@@ -466,7 +459,7 @@ void * threadSOG::doComputeCanonized()
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
 
-        MDD Complete_meta_state(Accessible_epsilon(M0));
+        MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
         ldd_refs_push(Complete_meta_state);
         MDD canonised_initial=Canonize(Complete_meta_state,0);
         ldd_refs_push(canonised_initial);
@@ -514,12 +507,12 @@ void * threadSOG::doComputeCanonized()
                 reached_class=new LDDState();
                 if (id_thread)
                 {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc++;
-                    if (m_gc==1) {
-                        pthread_mutex_lock(&m_gc_mutex);
+                    
+                    
+                    if (++m_gc==1) {
+                        m_gc_mutex.lock();
                     }
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                    
                 }
 
 
@@ -532,7 +525,7 @@ void * threadSOG::doComputeCanonized()
 
                 if (id_thread==0)
                 {
-                    pthread_mutex_lock(&m_gc_mutex);
+                    m_gc_mutex.lock();
                //     #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
@@ -540,14 +533,14 @@ void * threadSOG::doComputeCanonized()
                  //   #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
-                    pthread_mutex_unlock(&m_gc_mutex);
+                    m_gc_mutex.unlock();
                 }
                 reached_class->m_lddstate=reduced_meta;
                 //reached_class->m_lddstate=reduced_meta;
                 //nbnode=bdd_pathcount(reached_class->m_lddstate);
 
                 //pthread_spin_lock(&m_accessible);
-                pthread_mutex_lock(&m_graph_mutex);
+                m_graph_mutex.lock();
 
                 LDDState* pos=m_graph->find(reached_class);
 
@@ -559,7 +552,7 @@ void * threadSOG::doComputeCanonized()
 
                     m_graph->addArc();
                     m_graph->insert(reached_class);
-                    pthread_mutex_unlock(&m_graph_mutex);
+                    m_graph_mutex.unlock();
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(reached_class,t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(),LDDEdge(e.first.first,t));
@@ -579,7 +572,7 @@ void * threadSOG::doComputeCanonized()
                 {
                     nb_failed++;
                     m_graph->addArc();
-                    pthread_mutex_unlock(&m_graph_mutex);
+                    m_graph_mutex.unlock();
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(),LDDEdge(pos,t));
                     pos->Predecessors.insert(pos->Predecessors.begin(),LDDEdge(e.first.first,t));
@@ -588,10 +581,9 @@ void * threadSOG::doComputeCanonized()
                 }
                 if (id_thread)
                 {
-                    pthread_mutex_lock(&m_supervise_gc_mutex);
-                    m_gc--;
-                    if (m_gc==0) pthread_mutex_unlock(&m_gc_mutex);
-                    pthread_mutex_unlock(&m_supervise_gc_mutex);
+                    
+                    if (--m_gc==0) m_gc_mutex.unlock();
+                    
                 }
             }
         }
@@ -628,10 +620,7 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     m_graph->setPlace(m_placeName);
     m_id_thread=0;
 
-    pthread_mutex_init(&m_mutex, NULL);
-    pthread_mutex_init(&m_gc_mutex,NULL);
-    pthread_mutex_init(&m_graph_mutex,NULL);
-    pthread_mutex_init(&m_supervise_gc_mutex,NULL);
+    pthread_mutex_init(&m_mutex, NULL);    
     m_gc=0;
     for (int i=0; i<m_nb_thread; i++)
     {
@@ -787,7 +776,7 @@ void threadSOG::computeSOGLace(LDDGraph &g)
 
     //cout<<"Marquage initial is being built..."<<endl;
     LACE_ME;
-    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&m_nonObservable,&m_tb_relation));
+    MDD initial_meta_state(CALL(Accessible_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
 
 
     fire=firable_obs_lace(initial_meta_state,&m_observable,&m_tb_relation);
@@ -864,14 +853,14 @@ void threadSOG::computeSOGLace(LDDGraph &g)
 /********************* Compute canonized SOG with lace *********************************************/
 
 /******************************Canonizer with lace framework  **********************************/
-TASK_DECL_3(MDD, lddmc_canonize,MDD, unsigned int, threadSOG &)
+TASK_DECL_3(MDD, lddmc_canonize,MDD, unsigned int, threadSOG *)
 #define lddmc_canonize(s,level,ds) CALL(lddmc_canonize, s, level,ds)
 
 
-TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
+TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG * ,ds)
 {
 
-    if (level>ds.getPlacesCount() || s==lddmc_false)
+    if (level>ds->getPlacesCount() || s==lddmc_false)
         return lddmc_false;
     if(isSingleMDD(s))
         return s;
@@ -889,7 +878,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
         else
             level++;
     }
-    while(level<ds.getPlacesCount() && !res);
+    while(level<ds->getPlacesCount() && !res);
 
 
     if (s0==lddmc_false && s1==lddmc_false)
@@ -903,7 +892,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
         do
         {
             // cout<<"premiere boucle interne \n";
-            Front=lddmc_minus(ImageForwardLace(Front,ds.getNonObservable(),ds.getTBRelation()),Reach);
+            Front=lddmc_minus(ImageForwardLace(Front,ds->getNonObservable(),ds->getTBRelation()),Reach);
             lddmc_refs_spawn(SPAWN(lddmc_union,Reach,Front));
             s0=CALL(lddmc_minus,s0,Front);
             Reach=lddmc_refs_sync(SYNC(lddmc_union));
@@ -918,7 +907,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG & ,ds)
         do
         {
             //  cout<<"deuxieme boucle interne \n";
-            Front=lddmc_minus(ImageForwardLace(Front,ds.getNonObservable(),ds.getTBRelation()),Reach);
+            Front=lddmc_minus(ImageForwardLace(Front,ds->getNonObservable(),ds->getTBRelation()),Reach);
             lddmc_refs_spawn(SPAWN(lddmc_union,Reach,Front));
             s1=CALL(lddmc_minus,s1,Front);
             Reach=lddmc_refs_sync(SYNC(lddmc_union));
@@ -977,7 +966,7 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
 
     //cout<<"Marquage initial is being built..."<<endl;
     LACE_ME;
-    MDD initial_meta_state(CALL(Accessible_epsilon_lace,M0,&m_nonObservable,&m_tb_relation));
+    MDD initial_meta_state(CALL(Accessible_epsilon_lace,m_initialMarking,&m_nonObservable,&m_tb_relation));
 
     //lddmc_refs_spawn(SPAWN(lddmc_canonize,initial_meta_state,0,*this));
 
@@ -987,16 +976,13 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     //m_old_size=lddmc_nodecount(c->m_lddstate);
     //reduced_initial=lddmc_refs_sync(SYNC(lddmc_canonize));
 
-    c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,*this);
+    c->m_lddstate=CALL(lddmc_canonize,initial_meta_state,0,this);
     //max_meta_state_size=bdd_pathcount(Complete_meta_state);
     m_st[0].push(Pair(couple(c,initial_meta_state),fire));
     m_graph->setInitialState(c);
     m_graph->insert(c);
     //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
     LDDState* reached_class;
-    //  MDD Complete_meta_state;*/
-cout<<"\n=========================================\n";
-
     while (!m_st[0].empty())
     {
 
@@ -1026,7 +1012,7 @@ cout<<"\n=========================================\n";
 
             reached_class=new LDDState;
 
-            reached_class->m_lddstate=lddmc_canonize(Complete_meta_state,0,*this);
+            reached_class->m_lddstate=lddmc_canonize(Complete_meta_state,0,this);
 
             LDDState* pos=m_graph->find(reached_class);
 

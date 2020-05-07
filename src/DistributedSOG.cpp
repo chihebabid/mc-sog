@@ -46,7 +46,7 @@ DistributedSOG::DistributedSOG(const NewNet &R,bool init)
     vector<Place>::const_iterator it_places;
 
     //_______________
-    transitions=R.transitions;
+    m_transitions=R.transitions;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
@@ -63,7 +63,7 @@ DistributedSOG::DistributedSOG(const NewNet &R,bool init)
     {
         liste_marques[i] =it_places->marking;
     }
-    M0=lddmc_cube(liste_marques,R.places.size());
+    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
     delete []liste_marques;
     // place names
 //    __vplaces = &R.places;
@@ -140,7 +140,7 @@ void *DistributedSOG::doCompute()
     {
 
         LDDState *c=new LDDState;
-        MDD Complete_meta_state=Accessible_epsilon(M0);
+        MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
 
         c->m_lddstate=Complete_meta_state;
 
@@ -165,7 +165,7 @@ void *DistributedSOG::doCompute()
         {
             char *message_to_send;
             unsigned int message_size;
-            convert_wholemdd_string(M0,&message_to_send,message_size);
+            convert_wholemdd_string(m_initialMarking,&message_to_send,message_size);
             MPI_Send(message_to_send, message_size, MPI_CHAR, destination, TAG_STATE, MPI_COMM_WORLD);
             delete []message_to_send;
             nbsend++;

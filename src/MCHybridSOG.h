@@ -75,16 +75,9 @@ private:
     void get_md5(const string &chaine, unsigned char *md_chaine);
         
     /// minimum charge function for the load balancing between thread
-    inline int minCharge();
-    
-    /// Copie string of caracter
-    
+    inline uint8_t minCharge();
 
-    MDD M0;
 
-    int m_NbIt;
-    int m_itext, m_itint;
-    int m_MaxIntBdd;
 
     int m_nbmetastate;
 
@@ -96,7 +89,7 @@ private:
     //        int n_tasks, task_id;
 
     int m_charge[128];
-    int m_init;
+   int m_init;
 
     /// Convert an MDD to a string caracter (for the send)
     void convert_wholemdd_stringcpp(MDD cmark, string &chaine);
@@ -105,37 +98,23 @@ private:
     /// there is a message to receive?
     void read_message();
     
-    
-    
     /// receive state message
     void read_state_message();
     void send_state_message();
 
-
-    uint8_t m_nb_thread;
     pthread_t m_list_thread[128];
 
-    atomic<uint8_t> m_id_thread;
-    /// Mutex declaration
-    
-    pthread_mutex_t m_graph_mutex;
-    pthread_mutex_t m_gc_mutex;
-    
-    atomic<uint8_t> m_gc;
-
-    pthread_mutex_t m_mutex_stack[128];
+    atomic<uint8_t> m_id_thread;      
+    //pthread_mutex_t m_mutex_stack[128];
     pthread_mutex_t m_spin_stack[128];
     pthread_mutex_t m_spin_msg[128];
-    // pthread_mutex_t m_spin_charge;
+   
     pthread_spinlock_t m_spin_md5;
-    pthread_mutex_t m_spin_working;
     
 
-    // unsigned int m_count_thread_working;
     bool m_Terminated = false;
     unsigned long m_size_mess = 0;
     int m_nbsend = 0, m_nbrecv = 0;
-    int m_total_nb_send = 0, m_total_nb_recv = 0;
 
     MPI_Status m_status;
     set<uint16_t> getUnmarkedPlaces(LDDState *agg);

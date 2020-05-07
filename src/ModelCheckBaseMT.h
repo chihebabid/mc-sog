@@ -11,7 +11,6 @@ public:
         void loadNet();
         virtual ~ModelCheckBaseMT();
 protected:
-    uint8_t m_nb_thread;
     std::condition_variable m_condBuild;
     bool m_finish_initial=false;
 private:

@@ -43,7 +43,7 @@ void ModelCheckLace::preConfigure() {
     int  i;
     vector<Place>::const_iterator it_places;
 
-    transitions=m_net->transitions;
+    m_transitions=m_net->transitions;
     m_observable=m_net->Observable;
     m_place_proposition=m_net->m_formula_place;
     m_nonObservable=m_net->NonObservable;

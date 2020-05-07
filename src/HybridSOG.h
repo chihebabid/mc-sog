@@ -73,8 +73,6 @@ private:
     /// Copie string of caracter
     void strcpySHA(unsigned char *dest, const unsigned char *source);
 
-    MDD M0;
-
     int m_NbIt;
     int m_itext, m_itint;
     int m_MaxIntBdd;
@@ -106,7 +104,6 @@ private:
     void send_state_message();
 
 
-    int m_nb_thread;
     pthread_t m_list_thread[128];
 
     int m_id_thread;
@@ -115,7 +112,7 @@ private:
     pthread_mutex_t m_graph_mutex;
     pthread_mutex_t m_gc_mutex;
     pthread_mutex_t m_supervise_gc_mutex;
-    unsigned int m_gc;
+
 
     pthread_mutex_t m_mutex_stack[128];
     pthread_mutex_t m_spin_stack[128];

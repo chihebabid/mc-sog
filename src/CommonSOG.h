@@ -6,6 +6,8 @@
 #include "TransSylvan.h"
 #include "NewNet.h"
 #include <stack>
+#include <mutex>
+#include <atomic>
 // #define GCENABLE 0
 class LDDState;
 typedef pair<LDDState *, MDD> couple;
@@ -40,7 +42,7 @@ class CommonSOG
         Set InterfaceTrans;
         set<uint16_t> m_place_proposition;
 
-        vector<class Transition> transitions;
+        vector<class Transition> m_transitions;
 
         MDD Accessible_epsilon(MDD From);
         Set firable_obs(MDD State);
@@ -49,6 +51,9 @@ class CommonSOG
         MDD Canonize(MDD s, unsigned int level);
         bool Set_Div(MDD &M) const;
         bool Set_Bloc(MDD &M) const;
+        uint8_t m_nb_thread;
+        std::mutex m_graph_mutex,m_gc_mutex;  
+        atomic<uint8_t> m_gc;
     private:
 };
 

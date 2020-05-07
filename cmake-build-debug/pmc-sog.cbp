@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="pmc-sog"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\libraries\;CMake Files\libraries\parser\;CMake Files\libraries\parser\src\;CMake Files\libraries\parser\tests\;CMake Files\third-party\;CMake Files\third-party\sylvan\;CMake Files\src\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RdP">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/libRdP.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 RdP"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RdP/fast">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/libRdP.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 RdP/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RdPtest">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/RdPtest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 RdPtest"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RdPtest/fast">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/RdPtest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 RdPtest/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/tests/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sylvan">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/libsylvan.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/."/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 sylvan"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sylvan/fast">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/libsylvan.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/."/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 sylvan/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/third-party/sylvan/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="mc-sog">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/mc-sog" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/src"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 mc-sog"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="mc-sog/fast">
+				<Option output="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/mc-sog" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan"/>
+					<Add directory="/home/chiheb/workspace/ProjectCevelop/mc-sog/src"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 mc-sog/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/RdPMonteur.lex.cpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/RdPMonteur.lex.cpp.rule">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/RdPMonteur.tab.cpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/RdPMonteur.tab.cpp.rule">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/cmake-build-debug/libraries/parser/src/RdPMonteur.tab.hpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src/Net.cpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src/Net.hpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src/RdPMonteur.hpp">
+			<Option target="RdP"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/tests/test.cpp">
+			<Option target="RdPtest"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/CommonSOG.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/CommonSOG.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/DistributedSOG.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/DistributedSOG.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripke.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripke.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripkeIterator.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripkeIterator.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripkeState.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridKripkeState.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridSOG.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/HybridSOG.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/LDDGraph.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/LDDGraph.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/LDDState.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/LDDState.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/MCHybridSOG.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/MCHybridSOG.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckBaseMT.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckBaseMT.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckLace.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckLace.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckerTh.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckerTh.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckerThV2.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/ModelCheckerThV2.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/NewNet.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/NewNet.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SafeDequeue.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SafeDequeue.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripke.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripke.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeIterator.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeIterator.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeIteratorTh.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeIteratorTh.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeState.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeState.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeStateTh.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeStateTh.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeTh.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogKripkeTh.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogTwa.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SogTwa.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SpotSogIterator.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SpotSogIterator.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SpotSogState.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/SpotSogState.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/TransSylvan.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/TransSylvan.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/main.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/stacksafe.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/stacksafe.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/sylvan_sog.c">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/sylvan_sog.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/threadSOG.cpp">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/threadSOG.h">
+			<Option target="mc-sog"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/avl.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/lace.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/lace.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sha2.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sha2.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_bdd.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_bdd.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_cache.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_cache.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_common.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_common.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_config.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_gmp.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_gmp.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_int.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_ldd.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_ldd.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_mt.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_mt.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_mtbdd.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_mtbdd.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_mtbdd_int.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_obj.cpp">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_obj.hpp">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_refs.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_refs.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_seq.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_seq.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_sl.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_sl.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_stats.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_stats.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_table.c">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/sylvan_table.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/tls.h">
+			<Option target="sylvan"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libraries\parser\"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libraries\parser\src\"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/libraries/parser/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libraries\parser\tests\"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/third-party/sylvan/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\third-party\sylvan\"/>
+		</Unit>
+		<Unit filename="/home/chiheb/workspace/ProjectCevelop/mc-sog/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

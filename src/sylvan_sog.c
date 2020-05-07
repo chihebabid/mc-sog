@@ -119,3 +119,6 @@ MDD ldd_firing_fast ( MDD cmark, MDD minus, MDD plus ) {
     //cache_put3(CACHE_LDD_FIRE, cmark, minus, plus, result);
     return result;
     }
+
+
+

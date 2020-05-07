@@ -1,0 +1,660 @@
+#place State_3_1
+#place State_1_3
+#place State_4_4 mk(1<..>)
+#place State_5_2
+#place State_3_0
+#place State_0_4
+#place State_4_1
+#place State_1_5
+#place State_4_2
+#place State_0_5
+#place State_2_0
+#place State_1_4
+#place State_3_2
+#place State_4_3
+#place State_4_0
+#place State_5_3
+#place State_5_0
+#place State_3_5
+#place State_2_5
+#place State_2_2 mk(1<..>)
+#place State_4_5
+#place State_0_1
+#place State_1_2
+#place State_3_4
+#place State_1_1 mk(1<..>)
+#place State_2_3
+#place State_2_4
+#place State_0_2
+#place State_5_5 mk(1<..>)
+#place State_3_3 mk(1<..>)
+#place State_0_3
+#place State_5_1
+#place State_5_4
+#place State_2_1
+#place State_1_0
+#place State_0_0 mk(1<..>)
+#trans OtherProcess_2_1_5
+in {State_2_1:<..>;State_1_5:<..>;}
+out {State_1_5:<..>;State_2_5:<..>;}
+#endtr
+#trans OtherProcess_5_1_0
+in {State_5_1:<..>;State_4_0:<..>;}
+out {State_5_0:<..>;State_4_0:<..>;}
+#endtr
+#trans OtherProcess_4_1_5
+in {State_3_5:<..>;State_4_1:<..>;}
+out {State_3_5:<..>;State_4_5:<..>;}
+#endtr
+#trans OtherProcess_1_3_5
+in {State_0_5:<..>;State_1_3:<..>;}
+out {State_0_5:<..>;State_1_5:<..>;}
+#endtr
+#trans OtherProcess_5_4_3
+in {State_4_3:<..>;State_5_4:<..>;}
+out {State_4_3:<..>;State_5_3:<..>;}
+#endtr
+#trans OtherProcess_2_2_3
+in {State_2_2:<..>;State_1_3:<..>;}
+out {State_1_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_5_4_2
+in {State_4_2:<..>;State_5_4:<..>;}
+out {State_4_2:<..>;State_5_2:<..>;}
+#endtr
+#trans OtherProcess_1_0_2
+in {State_0_2:<..>;State_1_0:<..>;}
+out {State_1_2:<..>;State_0_2:<..>;}
+#endtr
+#trans OtherProcess_3_4_5
+in {State_2_5:<..>;State_3_4:<..>;}
+out {State_2_5:<..>;State_3_5:<..>;}
+#endtr
+#trans MainProcess_1
+in {State_5_1:<..>;State_0_1:<..>;}
+out {State_5_1:<..>;State_0_2:<..>;}
+#endtr
+#trans OtherProcess_3_5_0
+in {State_2_0:<..>;State_3_5:<..>;}
+out {State_3_0:<..>;State_2_0:<..>;}
+#endtr
+#trans OtherProcess_1_4_2
+in {State_1_4:<..>;State_0_2:<..>;}
+out {State_1_2:<..>;State_0_2:<..>;}
+#endtr
+#trans OtherProcess_1_2_3
+in {State_1_2:<..>;State_0_3:<..>;}
+out {State_1_3:<..>;State_0_3:<..>;}
+#endtr
+#trans OtherProcess_2_0_5
+in {State_1_5:<..>;State_2_0:<..>;}
+out {State_2_5:<..>;State_1_5:<..>;}
+#endtr
+#trans OtherProcess_1_3_0
+in {State_0_0:<..>;State_1_3:<..>;}
+out {State_1_0:<..>;State_0_0:<..>;}
+#endtr
+#trans OtherProcess_5_4_1
+in {State_4_1:<..>;State_5_4:<..>;}
+out {State_4_1:<..>;State_5_1:<..>;}
+#endtr
+#trans OtherProcess_3_2_4
+in {State_2_4:<..>;State_3_2:<..>;}
+out {State_2_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_1_2_1
+in {State_0_1:<..>;State_1_2:<..>;}
+out {State_1_1:<..>;State_0_1:<..>;}
+#endtr
+#trans OtherProcess_2_0_2
+in {State_2_0:<..>;State_1_2:<..>;}
+out {State_1_2:<..>;State_2_2:<..>;}
+#endtr
+#trans OtherProcess_3_5_2
+in {State_2_2:<..>;State_3_5:<..>;}
+out {State_2_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_4_0_3
+in {State_3_3:<..>;State_4_0:<..>;}
+out {State_4_3:<..>;State_3_3:<..>;}
+#endtr
+#trans OtherProcess_5_0_3
+in {State_5_0:<..>;State_4_3:<..>;}
+out {State_4_3:<..>;State_5_3:<..>;}
+#endtr
+#trans OtherProcess_5_3_4
+in {State_4_4:<..>;State_5_3:<..>;}
+out {State_4_4:<..>;State_5_4:<..>;}
+#endtr
+#trans OtherProcess_4_5_0
+in {State_3_0:<..>;State_4_5:<..>;}
+out {State_4_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_4_0_4
+in {State_4_0:<..>;State_3_4:<..>;}
+out {State_3_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_4_1_2
+in {State_4_1:<..>;State_3_2:<..>;}
+out {State_3_2:<..>;State_4_2:<..>;}
+#endtr
+#trans OtherProcess_4_3_1
+in {State_3_1:<..>;State_4_3:<..>;}
+out {State_3_1:<..>;State_4_1:<..>;}
+#endtr
+#trans OtherProcess_4_1_0
+in {State_4_1:<..>;State_3_0:<..>;}
+out {State_4_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_5_1_5
+in {State_4_5:<..>;State_5_1:<..>;}
+out {State_5_5:<..>;State_4_5:<..>;}
+#endtr
+#trans OtherProcess_1_5_4
+in {State_0_4:<..>;State_1_5:<..>;}
+out {State_1_4:<..>;State_0_4:<..>;}
+#endtr
+#trans MainProcess_2
+in {State_0_2:<..>;State_5_2:<..>;}
+out {State_0_3:<..>;State_5_2:<..>;}
+#endtr
+#trans OtherProcess_3_4_0
+in {State_3_4:<..>;State_2_0:<..>;}
+out {State_2_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_4_4_5
+in {State_3_5:<..>;State_4_4:<..>;}
+out {State_4_5:<..>;State_3_5:<..>;}
+#endtr
+#trans OtherProcess_5_5_0
+in {State_5_5:<..>;State_4_0:<..>;}
+out {State_4_0:<..>;State_5_0:<..>;}
+#endtr
+#trans OtherProcess_2_4_3
+in {State_1_3:<..>;State_2_4:<..>;}
+out {State_2_3:<..>;State_1_3:<..>;}
+#endtr
+#trans OtherProcess_4_5_3
+in {State_3_3:<..>;State_4_5:<..>;}
+out {State_3_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_3_0_2
+in {State_3_0:<..>;State_2_2:<..>;}
+out {State_2_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_1_1_3
+in {State_0_3:<..>;State_1_1:<..>;}
+out {State_0_3:<..>;State_1_3:<..>;}
+#endtr
+#trans OtherProcess_1_1_4
+in {State_0_4:<..>;State_1_1:<..>;}
+out {State_1_4:<..>;State_0_4:<..>;}
+#endtr
+#trans OtherProcess_2_4_2
+in {State_1_2:<..>;State_2_4:<..>;}
+out {State_1_2:<..>;State_2_2:<..>;}
+#endtr
+#trans OtherProcess_5_1_3
+in {State_4_3:<..>;State_5_1:<..>;}
+out {State_5_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_5_3_1
+in {State_5_3:<..>;State_4_1:<..>;}
+out {State_5_1:<..>;State_4_1:<..>;}
+#endtr
+#trans OtherProcess_4_4_1
+in {State_4_4:<..>;State_3_1:<..>;}
+out {State_4_1:<..>;State_3_1:<..>;}
+#endtr
+#trans OtherProcess_4_0_5
+in {State_3_5:<..>;State_4_0:<..>;}
+out {State_4_5:<..>;State_3_5:<..>;}
+#endtr
+#trans MainProcess_3
+in {State_0_3:<..>;State_5_3:<..>;}
+out {State_0_4:<..>;State_5_3:<..>;}
+#endtr
+#trans OtherProcess_2_3_0
+in {State_2_3:<..>;State_1_0:<..>;}
+out {State_2_0:<..>;State_1_0:<..>;}
+#endtr
+#trans OtherProcess_5_0_1
+in {State_4_1:<..>;State_5_0:<..>;}
+out {State_5_1:<..>;State_4_1:<..>;}
+#endtr
+#trans OtherProcess_3_1_0
+in {State_3_1:<..>;State_2_0:<..>;}
+out {State_2_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_2_5_2
+in {State_2_5:<..>;State_1_2:<..>;}
+out {State_2_2:<..>;State_1_2:<..>;}
+#endtr
+#trans OtherProcess_1_2_5
+in {State_1_2:<..>;State_0_5:<..>;}
+out {State_1_5:<..>;State_0_5:<..>;}
+#endtr
+#trans OtherProcess_2_4_0
+in {State_1_0:<..>;State_2_4:<..>;}
+out {State_1_0:<..>;State_2_0:<..>;}
+#endtr
+#trans OtherProcess_2_5_1
+in {State_2_5:<..>;State_1_1:<..>;}
+out {State_2_1:<..>;State_1_1:<..>;}
+#endtr
+#trans OtherProcess_2_4_5
+in {State_2_4:<..>;State_1_5:<..>;}
+out {State_2_5:<..>;State_1_5:<..>;}
+#endtr
+#trans OtherProcess_4_1_3
+in {State_3_3:<..>;State_4_1:<..>;}
+out {State_3_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_3_5_3
+in {State_2_3:<..>;State_3_5:<..>;}
+out {State_2_3:<..>;State_3_3:<..>;}
+#endtr
+#trans OtherProcess_1_0_1
+in {State_1_0:<..>;State_0_1:<..>;}
+out {State_0_1:<..>;State_1_1:<..>;}
+#endtr
+#trans OtherProcess_2_1_0
+in {State_2_1:<..>;State_1_0:<..>;}
+out {State_1_0:<..>;State_2_0:<..>;}
+#endtr
+#trans OtherProcess_4_0_2
+in {State_4_0:<..>;State_3_2:<..>;}
+out {State_4_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_2_3_1
+in {State_1_1:<..>;State_2_3:<..>;}
+out {State_2_1:<..>;State_1_1:<..>;}
+#endtr
+#trans OtherProcess_1_0_5
+in {State_0_5:<..>;State_1_0:<..>;}
+out {State_0_5:<..>;State_1_5:<..>;}
+#endtr
+#trans OtherProcess_4_3_4
+in {State_3_4:<..>;State_4_3:<..>;}
+out {State_4_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_3_1_2
+in {State_2_2:<..>;State_3_1:<..>;}
+out {State_3_2:<..>;State_2_2:<..>;}
+#endtr
+#trans OtherProcess_2_1_4
+in {State_1_4:<..>;State_2_1:<..>;}
+out {State_2_4:<..>;State_1_4:<..>;}
+#endtr
+#trans OtherProcess_4_0_1
+in {State_4_0:<..>;State_3_1:<..>;}
+out {State_4_1:<..>;State_3_1:<..>;}
+#endtr
+#trans OtherProcess_2_1_2
+in {State_1_2:<..>;State_2_1:<..>;}
+out {State_2_2:<..>;State_1_2:<..>;}
+#endtr
+#trans OtherProcess_3_0_5
+in {State_2_5:<..>;State_3_0:<..>;}
+out {State_3_5:<..>;State_2_5:<..>;}
+#endtr
+#trans OtherProcess_2_1_3
+in {State_1_3:<..>;State_2_1:<..>;}
+out {State_2_3:<..>;State_1_3:<..>;}
+#endtr
+#trans OtherProcess_4_2_0
+in {State_4_2:<..>;State_3_0:<..>;}
+out {State_3_0:<..>;State_4_0:<..>;}
+#endtr
+#trans OtherProcess_4_3_2
+in {State_4_3:<..>;State_3_2:<..>;}
+out {State_4_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_1_0_4
+in {State_0_4:<..>;State_1_0:<..>;}
+out {State_0_4:<..>;State_1_4:<..>;}
+#endtr
+#trans OtherProcess_5_5_2
+in {State_4_2:<..>;State_5_5:<..>;}
+out {State_5_2:<..>;State_4_2:<..>;}
+#endtr
+#trans OtherProcess_2_2_5
+in {State_2_2:<..>;State_1_5:<..>;}
+out {State_1_5:<..>;State_2_5:<..>;}
+#endtr
+#trans OtherProcess_3_4_3
+in {State_2_3:<..>;State_3_4:<..>;}
+out {State_3_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_1_5_1
+in {State_0_1:<..>;State_1_5:<..>;}
+out {State_1_1:<..>;State_0_1:<..>;}
+#endtr
+#trans OtherProcess_5_0_2
+in {State_5_0:<..>;State_4_2:<..>;}
+out {State_5_2:<..>;State_4_2:<..>;}
+#endtr
+#trans OtherProcess_3_3_4
+in {State_3_3:<..>;State_2_4:<..>;}
+out {State_2_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_4_5_2
+in {State_3_2:<..>;State_4_5:<..>;}
+out {State_3_2:<..>;State_4_2:<..>;}
+#endtr
+#trans OtherProcess_1_1_0
+in {State_0_0:<..>;State_1_1:<..>;}
+out {State_1_0:<..>;State_0_0:<..>;}
+#endtr
+#trans OtherProcess_1_4_5
+in {State_1_4:<..>;State_0_5:<..>;}
+out {State_1_5:<..>;State_0_5:<..>;}
+#endtr
+#trans OtherProcess_3_1_3
+in {State_3_1:<..>;State_2_3:<..>;}
+out {State_3_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_4_1_4
+in {State_4_1:<..>;State_3_4:<..>;}
+out {State_3_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_4_4_0
+in {State_4_4:<..>;State_3_0:<..>;}
+out {State_4_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_5_2_0
+in {State_4_0:<..>;State_5_2:<..>;}
+out {State_4_0:<..>;State_5_0:<..>;}
+#endtr
+#trans OtherProcess_1_1_2
+in {State_0_2:<..>;State_1_1:<..>;}
+out {State_0_2:<..>;State_1_2:<..>;}
+#endtr
+#trans OtherProcess_5_3_2
+in {State_5_3:<..>;State_4_2:<..>;}
+out {State_5_2:<..>;State_4_2:<..>;}
+#endtr
+#trans OtherProcess_3_3_1
+in {State_2_1:<..>;State_3_3:<..>;}
+out {State_3_1:<..>;State_2_1:<..>;}
+#endtr
+#trans OtherProcess_3_0_1
+in {State_3_0:<..>;State_2_1:<..>;}
+out {State_2_1:<..>;State_3_1:<..>;}
+#endtr
+#trans OtherProcess_5_2_3
+in {State_5_2:<..>;State_4_3:<..>;}
+out {State_5_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_3_1_4
+in {State_2_4:<..>;State_3_1:<..>;}
+out {State_2_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_5_5_3
+in {State_5_5:<..>;State_4_3:<..>;}
+out {State_5_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_4_5_4
+in {State_4_5:<..>;State_3_4:<..>;}
+out {State_3_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_2_2_0
+in {State_2_2:<..>;State_1_0:<..>;}
+out {State_2_0:<..>;State_1_0:<..>;}
+#endtr
+#trans OtherProcess_2_4_1
+in {State_2_4:<..>;State_1_1:<..>;}
+out {State_1_1:<..>;State_2_1:<..>;}
+#endtr
+#trans OtherProcess_1_4_3
+in {State_0_3:<..>;State_1_4:<..>;}
+out {State_1_3:<..>;State_0_3:<..>;}
+#endtr
+#trans OtherProcess_4_3_0
+in {State_3_0:<..>;State_4_3:<..>;}
+out {State_4_0:<..>;State_3_0:<..>;}
+#endtr
+#trans MainProcess_5
+in {State_5_5:<..>;State_0_5:<..>;}
+out {State_0_0:<..>;State_5_5:<..>;}
+#endtr
+#trans OtherProcess_1_1_5
+in {State_1_1:<..>;State_0_5:<..>;}
+out {State_0_5:<..>;State_1_5:<..>;}
+#endtr
+#trans OtherProcess_3_2_5
+in {State_2_5:<..>;State_3_2:<..>;}
+out {State_2_5:<..>;State_3_5:<..>;}
+#endtr
+#trans OtherProcess_5_3_5
+in {State_4_5:<..>;State_5_3:<..>;}
+out {State_4_5:<..>;State_5_5:<..>;}
+#endtr
+#trans OtherProcess_2_3_4
+in {State_1_4:<..>;State_2_3:<..>;}
+out {State_1_4:<..>;State_2_4:<..>;}
+#endtr
+#trans OtherProcess_5_1_4
+in {State_5_1:<..>;State_4_4:<..>;}
+out {State_5_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_4_2_1
+in {State_4_2:<..>;State_3_1:<..>;}
+out {State_3_1:<..>;State_4_1:<..>;}
+#endtr
+#trans OtherProcess_4_2_3
+in {State_4_2:<..>;State_3_3:<..>;}
+out {State_3_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_3_2_0
+in {State_2_0:<..>;State_3_2:<..>;}
+out {State_3_0:<..>;State_2_0:<..>;}
+#endtr
+#trans OtherProcess_5_4_0
+in {State_5_4:<..>;State_4_0:<..>;}
+out {State_4_0:<..>;State_5_0:<..>;}
+#endtr
+#trans OtherProcess_1_5_3
+in {State_0_3:<..>;State_1_5:<..>;}
+out {State_0_3:<..>;State_1_3:<..>;}
+#endtr
+#trans OtherProcess_4_3_5
+in {State_4_3:<..>;State_3_5:<..>;}
+out {State_3_5:<..>;State_4_5:<..>;}
+#endtr
+#trans OtherProcess_3_5_1
+in {State_2_1:<..>;State_3_5:<..>;}
+out {State_3_1:<..>;State_2_1:<..>;}
+#endtr
+#trans MainProcess_4
+in {State_5_4:<..>;State_0_4:<..>;}
+out {State_5_4:<..>;State_0_5:<..>;}
+#endtr
+#trans OtherProcess_3_0_4
+in {State_3_0:<..>;State_2_4:<..>;}
+out {State_3_4:<..>;State_2_4:<..>;}
+#endtr
+#trans OtherProcess_2_0_1
+in {State_2_0:<..>;State_1_1:<..>;}
+out {State_1_1:<..>;State_2_1:<..>;}
+#endtr
+#trans OtherProcess_1_4_1
+in {State_1_4:<..>;State_0_1:<..>;}
+out {State_0_1:<..>;State_1_1:<..>;}
+#endtr
+#trans OtherProcess_5_5_4
+in {State_5_5:<..>;State_4_4:<..>;}
+out {State_5_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_1_3_4
+in {State_1_3:<..>;State_0_4:<..>;}
+out {State_0_4:<..>;State_1_4:<..>;}
+#endtr
+#trans OtherProcess_1_3_1
+in {State_0_1:<..>;State_1_3:<..>;}
+out {State_1_1:<..>;State_0_1:<..>;}
+#endtr
+#trans OtherProcess_3_3_0
+in {State_2_0:<..>;State_3_3:<..>;}
+out {State_2_0:<..>;State_3_0:<..>;}
+#endtr
+#trans OtherProcess_1_0_3
+in {State_1_0:<..>;State_0_3:<..>;}
+out {State_0_3:<..>;State_1_3:<..>;}
+#endtr
+#trans OtherProcess_3_3_2
+in {State_3_3:<..>;State_2_2:<..>;}
+out {State_2_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_2_0_3
+in {State_1_3:<..>;State_2_0:<..>;}
+out {State_1_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_5_4_5
+in {State_5_4:<..>;State_4_5:<..>;}
+out {State_5_5:<..>;State_4_5:<..>;}
+#endtr
+#trans OtherProcess_2_3_2
+in {State_2_3:<..>;State_1_2:<..>;}
+out {State_1_2:<..>;State_2_2:<..>;}
+#endtr
+#trans OtherProcess_3_3_5
+in {State_3_3:<..>;State_2_5:<..>;}
+out {State_3_5:<..>;State_2_5:<..>;}
+#endtr
+#trans OtherProcess_4_2_5
+in {State_4_2:<..>;State_3_5:<..>;}
+out {State_4_5:<..>;State_3_5:<..>;}
+#endtr
+#trans OtherProcess_5_2_1
+in {State_5_2:<..>;State_4_1:<..>;}
+out {State_4_1:<..>;State_5_1:<..>;}
+#endtr
+#trans OtherProcess_5_0_5
+in {State_4_5:<..>;State_5_0:<..>;}
+out {State_4_5:<..>;State_5_5:<..>;}
+#endtr
+#trans OtherProcess_3_2_3
+in {State_3_2:<..>;State_2_3:<..>;}
+out {State_2_3:<..>;State_3_3:<..>;}
+#endtr
+#trans OtherProcess_4_5_1
+in {State_3_1:<..>;State_4_5:<..>;}
+out {State_4_1:<..>;State_3_1:<..>;}
+#endtr
+#trans OtherProcess_2_5_4
+in {State_2_5:<..>;State_1_4:<..>;}
+out {State_1_4:<..>;State_2_4:<..>;}
+#endtr
+#trans OtherProcess_1_5_0
+in {State_0_0:<..>;State_1_5:<..>;}
+out {State_1_0:<..>;State_0_0:<..>;}
+#endtr
+#trans OtherProcess_5_2_5
+in {State_5_2:<..>;State_4_5:<..>;}
+out {State_5_5:<..>;State_4_5:<..>;}
+#endtr
+#trans OtherProcess_1_2_4
+in {State_1_2:<..>;State_0_4:<..>;}
+out {State_0_4:<..>;State_1_4:<..>;}
+#endtr
+#trans OtherProcess_3_4_2
+in {State_2_2:<..>;State_3_4:<..>;}
+out {State_3_2:<..>;State_2_2:<..>;}
+#endtr
+#trans OtherProcess_1_3_2
+in {State_1_3:<..>;State_0_2:<..>;}
+out {State_0_2:<..>;State_1_2:<..>;}
+#endtr
+#trans OtherProcess_5_2_4
+in {State_4_4:<..>;State_5_2:<..>;}
+out {State_4_4:<..>;State_5_4:<..>;}
+#endtr
+#trans OtherProcess_2_5_3
+in {State_2_5:<..>;State_1_3:<..>;}
+out {State_1_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_1_4_0
+in {State_1_4:<..>;State_0_0:<..>;}
+out {State_1_0:<..>;State_0_0:<..>;}
+#endtr
+#trans OtherProcess_3_2_1
+in {State_3_2:<..>;State_2_1:<..>;}
+out {State_2_1:<..>;State_3_1:<..>;}
+#endtr
+#trans OtherProcess_3_1_5
+in {State_3_1:<..>;State_2_5:<..>;}
+out {State_3_5:<..>;State_2_5:<..>;}
+#endtr
+#trans MainProcess_0
+in {State_0_0:<..>;State_5_0:<..>;}
+out {State_5_0:<..>;State_0_1:<..>;}
+#endtr
+#trans OtherProcess_2_5_0
+in {State_1_0:<..>;State_2_5:<..>;}
+out {State_2_0:<..>;State_1_0:<..>;}
+#endtr
+#trans OtherProcess_5_5_1
+in {State_4_1:<..>;State_5_5:<..>;}
+out {State_5_1:<..>;State_4_1:<..>;}
+#endtr
+#trans OtherProcess_3_0_3
+in {State_3_0:<..>;State_2_3:<..>;}
+out {State_3_3:<..>;State_2_3:<..>;}
+#endtr
+#trans OtherProcess_2_0_4
+in {State_1_4:<..>;State_2_0:<..>;}
+out {State_1_4:<..>;State_2_4:<..>;}
+#endtr
+#trans OtherProcess_2_2_1
+in {State_1_1:<..>;State_2_2:<..>;}
+out {State_1_1:<..>;State_2_1:<..>;}
+#endtr
+#trans OtherProcess_3_5_4
+in {State_3_5:<..>;State_2_4:<..>;}
+out {State_2_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_4_2_4
+in {State_3_4:<..>;State_4_2:<..>;}
+out {State_4_4:<..>;State_3_4:<..>;}
+#endtr
+#trans OtherProcess_2_2_4
+in {State_2_2:<..>;State_1_4:<..>;}
+out {State_1_4:<..>;State_2_4:<..>;}
+#endtr
+#trans OtherProcess_2_3_5
+in {State_1_5:<..>;State_2_3:<..>;}
+out {State_1_5:<..>;State_2_5:<..>;}
+#endtr
+#trans OtherProcess_5_3_0
+in {State_5_3:<..>;State_4_0:<..>;}
+out {State_5_0:<..>;State_4_0:<..>;}
+#endtr
+#trans OtherProcess_1_2_0
+in {State_0_0:<..>;State_1_2:<..>;}
+out {State_1_0:<..>;State_0_0:<..>;}
+#endtr
+#trans OtherProcess_4_4_2
+in {State_4_4:<..>;State_3_2:<..>;}
+out {State_4_2:<..>;State_3_2:<..>;}
+#endtr
+#trans OtherProcess_5_0_4
+in {State_4_4:<..>;State_5_0:<..>;}
+out {State_5_4:<..>;State_4_4:<..>;}
+#endtr
+#trans OtherProcess_4_4_3
+in {State_4_4:<..>;State_3_3:<..>;}
+out {State_3_3:<..>;State_4_3:<..>;}
+#endtr
+#trans OtherProcess_5_1_2
+in {State_5_1:<..>;State_4_2:<..>;}
+out {State_4_2:<..>;State_5_2:<..>;}
+#endtr
+#trans OtherProcess_3_4_1
+in {State_3_4:<..>;State_2_1:<..>;}
+out {State_3_1:<..>;State_2_1:<..>;}
+#endtr
+#trans OtherProcess_1_5_2
+in {State_0_2:<..>;State_1_5:<..>;}
+out {State_0_2:<..>;State_1_2:<..>;}
+#endtr
