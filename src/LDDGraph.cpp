@@ -20,7 +20,7 @@ LDDState *LDDGraph::getInitialState() const {
 
 /*----------------------find()----------------*/
 LDDState *LDDGraph::find(LDDState *c) {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard<std::mutex>  lock(m_mutex);
     for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++)
         if (c->m_lddstate == (*i)->m_lddstate)
             return *i;
@@ -29,7 +29,7 @@ LDDState *LDDGraph::find(LDDState *c) {
 
 LDDState *LDDGraph::insertFind(LDDState *c) {
     LDDState *res = nullptr;
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()) && res == nullptr; i++) {
         if (c->m_lddstate == (*i)->m_lddstate)
             res = *i;
@@ -49,7 +49,7 @@ bool LDDGraph::cmpSHA(const unsigned char *s1, const unsigned char *s2) {
 }
 
 LDDState *LDDGraph::findSHA(unsigned char *c) {
-    std::scoped_lock lock(m_mutex_sha);
+    std::lock_guard<std::mutex> lock(m_mutex_sha);
     for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++)
         if ((*i)->isVirtual() == true)
             if ((cmpSHA(c, (unsigned char *) (*i)->m_SHA2) == 0))
@@ -60,7 +60,7 @@ LDDState *LDDGraph::findSHA(unsigned char *c) {
 /***   Try to find an aggregate by its md5 code, else it is inserted***/
 LDDState *LDDGraph::insertFindSha(unsigned char *c, LDDState *agg) {
     LDDState *res = nullptr;
-    std::scoped_lock lock(m_mutex_sha);
+    std::lock_guard<std::mutex> lock(m_mutex_sha);
     for (auto i = m_GONodes.begin(); !(i == m_GONodes.end()) && !res; i++) {
         if ((*i)->isVirtual() == true)
             if ((cmpSHA(c, (unsigned char *) (*i)->m_SHA2) == 0))
@@ -89,7 +89,7 @@ size_t LDDGraph::findSHAPos(unsigned char *c, bool &res) {
 
 /*----------------------insert() ------------*/
 void LDDGraph::insert(LDDState *c) {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     this->m_GONodes.push_back(c);
     m_nbStates++;
 }

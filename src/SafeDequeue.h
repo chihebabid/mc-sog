@@ -38,7 +38,7 @@ struct empty_queue: std::exception {
 template<typename T>
 class SafeDequeue {
     private:
-        std::mutex mut;
+        mutable std::mutex mut;
         std::queue<T> data_queue;
         std::condition_variable data_cond;
 

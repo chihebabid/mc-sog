@@ -41,9 +41,7 @@ class CommonSOG
         Set m_nonObservable;
         Set InterfaceTrans;
         set<uint16_t> m_place_proposition;
-
         vector<class Transition> m_transitions;
-
         MDD Accessible_epsilon(MDD From);
         Set firable_obs(MDD State);
         MDD get_successor(MDD From, int t);

@@ -46,7 +46,7 @@ template<typename T> class StackSafe {
         void pop ( T& value );
         bool try_pop ( T& value );
         bool empty() const {
-            std::scoped_lock lock(m_mutex);
+            std::lock_guard<std::mutex> lock(m_mutex);
             return m_data.empty();
         };
     };

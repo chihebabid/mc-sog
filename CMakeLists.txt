@@ -4,14 +4,16 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 # project name and language
 project(pmc-sog C CXX)
 
-# C++17 standard
-set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++14")
+
 endif()
 
 # add pn parser

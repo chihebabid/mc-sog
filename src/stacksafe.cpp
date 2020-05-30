@@ -22,19 +22,19 @@ StackSafe<T>::StackSafe() {}
 template<typename T>
 StackSafe<T>::StackSafe ( const StackSafe& other)
 {
-    std::scoped_lock lock ( other.m_mutex );
+    std::lock_guard<std::mutex> lock ( other.m_mutex );
     m_data=other.m_data;
 }
 
 template<typename T>
 void StackSafe<T>::push ( T new_value ){
-    std::scoped_lock lock ( m_mutex );
+    std::lock_guard<std::mutex> lock ( m_mutex );
     m_data.push ( std::move ( new_value ) );
 }
 template<typename T>
 std::shared_ptr<T> StackSafe<T>::pop()
 {
-    std::scoped_lock lock(m_mutex); 
+    std::lock_guard<std::mutex> lock(m_mutex);
     if(m_data.empty()) throw empty_stack();
     std::shared_ptr<T> const res(std::make_shared<T>(m_data.top()));
     m_data.pop();
@@ -43,7 +43,7 @@ std::shared_ptr<T> StackSafe<T>::pop()
 template<typename T>
 void StackSafe<T>::pop(T& value)
 {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     if(m_data.empty()) throw empty_stack();
     value=m_data.top();
     m_data.pop();
@@ -51,7 +51,7 @@ void StackSafe<T>::pop(T& value)
 template<typename T>
 bool StackSafe<T>::try_pop(T& value)
 {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     if(m_data.empty()) return false;
     value=m_data.top();
     m_data.pop();

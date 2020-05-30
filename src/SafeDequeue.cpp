@@ -27,7 +27,7 @@ SafeDequeue<T>::SafeDequeue()
 template<typename T>
 SafeDequeue<T>::SafeDequeue ( const SafeDequeue& other )
 {
-    std::scoped_lock lk ( other.mut );
+    std::lock_guard<std::mutex> lk ( other.mut );
     data_queue=other.data_queue;
 }
 
@@ -40,7 +40,7 @@ SafeDequeue<T>::~SafeDequeue()
 template<typename T>
 void SafeDequeue<T>::push ( T new_value )
 {
-    std::scoped_lock lk ( mut );
+    std::lock_guard<std::mutex> lk ( mut );
     data_queue.push ( new_value );
     data_cond.notify_one();
 
@@ -65,7 +65,7 @@ std::shared_ptr<T> SafeDequeue<T>::wait_and_pop()
 template<typename T>
 bool SafeDequeue<T>::try_pop ( T& value )
 {
-    std::scoped_lock lk ( mut );
+    std::lock_guard<std::mutex> lk ( mut );
     if ( data_queue.empty() ) {
         return false;
     }
@@ -78,7 +78,7 @@ bool SafeDequeue<T>::try_pop ( T& value )
 template<typename T>
 std::shared_ptr<T> SafeDequeue<T>::try_pop()
 {
-    std::scoped_lock lk ( mut );
+    std::lock_guard<std::mutex> lk ( mut );
     if ( data_queue.empty() ) {
         return std::shared_ptr<T>();
     }
@@ -90,7 +90,7 @@ std::shared_ptr<T> SafeDequeue<T>::try_pop()
 template<typename T>
 bool SafeDequeue<T>::empty() const
 {
-    std::scoped_lock lk ( mut );
+    std::lock_guard<std::mutex> lk ( mut );
     return data_queue.empty();
 }
 

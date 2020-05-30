@@ -32,12 +32,9 @@ void ModelCheckerThV2::preConfigure()
 
     sylvan_init_package();
     sylvan_init_ldd();
-    displayMDDTableInfo();
-
-    vector<Place>::const_iterator it_places;
-
     init_gc_seq();
-
+    displayMDDTableInfo();
+    vector<Place>::const_iterator it_places;
     m_transitions = m_net->transitions;
     m_observable = m_net->Observable;
     m_place_proposition = m_net->m_formula_place;
@@ -119,10 +116,10 @@ void ModelCheckerThV2::Compute_successors()
         c->m_lddstate = Complete_meta_state;
         c->setDeadLock ( Set_Bloc ( Complete_meta_state ) );
         c->setDiv ( Set_Div ( Complete_meta_state ) );
-        m_common_stack.push ( Pair ( couple ( c, Complete_meta_state ), fire ) );
-        m_condStack.notify_one();        
         m_graph->setInitialState ( c );
         m_graph->insert ( c );
+        m_common_stack.push ( Pair ( couple ( c, Complete_meta_state ), fire ) );
+        m_condStack.notify_one();
         m_finish_initial = true;
     }
 
@@ -139,8 +136,8 @@ void ModelCheckerThV2::Compute_successors()
                 while ( !e.second.empty() && !m_finish ) {
                     int t = *e.second.begin();
                     e.second.erase ( t );
-                   
                     MDD reduced_meta = Accessible_epsilon ( get_successor ( e.first.second, t ) );
+
                     ldd_refs_push ( reduced_meta );
                     reached_class = new LDDState();
                     reached_class->m_lddstate = reduced_meta;                    
