@@ -9,6 +9,7 @@
 
 #include "SogKripkeTh.h"
 #include <map>
+#include "SylvanWrapper.h"
 using namespace spot;
 SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder): spot::kripke(dict_ptr),m_builder(builder)
 {
@@ -56,13 +57,14 @@ SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
     auto ss = static_cast<const SogKripkeStateTh*>(s);
     LDDState *aggregate=ss->getLDDState();
     bdd cond = state_condition(ss);
-    /*if (iter_cache_)
+    if (iter_cache_)
     {
       auto it = static_cast<SogKripkeIteratorTh*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
       it->recycle(aggregate, cond);
       return it;
-    }*/
+    }
+
   return new SogKripkeIteratorTh(aggregate,cond);
 
     
@@ -80,21 +82,22 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
     auto ss = static_cast<const SogKripkeStateTh*>(s);
 	vector<uint16_t> marked_place = ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 
-
+    SylvanWrapper::m_Size+=SylvanWrapper::getMarksCount(ss->getLDDState()->getLDDValue());
+      SylvanWrapper::m_agg++;
+    cout<<"Expolored states : "<<SylvanWrapper::m_Size<<" , Explored agg : "<<SylvanWrapper::m_agg<<" , Avg per agg : " <<SylvanWrapper::m_Size/SylvanWrapper::m_agg<<endl;
     bdd result=bddtrue;
     // Marked places
     for (auto it=marked_place.begin();it!=marked_place.end();it++) {
-    string name=m_builder->getPlace(*it);
-    spot::formula f=spot::formula::ap(name);
-    result&=bdd_ithvar((dict_->var_map.find(f))->second);
+        string name=m_builder->getPlace(*it);
+        spot::formula f=spot::formula::ap(name);
+        result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
     vector<uint16_t> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
     for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
-    string name=m_builder->getPlace(*it);
-    spot::formula f=spot::formula::ap(name);
-    result&=!bdd_ithvar((dict_->var_map.find(f))->second);
+        string name=m_builder->getPlace(*it);
+        spot::formula f=spot::formula::ap(name);
+        result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }
-
   return result;
   }
 

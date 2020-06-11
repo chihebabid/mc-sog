@@ -77,7 +77,9 @@ add_executable(mc-sog main.cpp
   HybridKripkeIterator.h
   HybridKripkeState.cpp
   HybridKripkeState.h
-  )
+        SylvanWrapper.cpp
+        SylvanWrapper.h
+        )
 
 target_link_libraries(mc-sog
   bddx

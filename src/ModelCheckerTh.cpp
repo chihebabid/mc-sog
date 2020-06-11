@@ -23,7 +23,7 @@ void ModelCheckerTh::preConfigure() {
 	lace_startup(0, NULL, NULL);
 	size_t max = 16LL<<30;
 	if (max > getMaxMemory()) max = getMaxMemory()/10*9;
-	sylvan_set_limits(16LL<<30, 8, 0);
+	sylvan_set_limits(16LL<<29, 8, 0);
 
 	sylvan_init_package();
 	sylvan_init_ldd();
@@ -253,3 +253,4 @@ bool ModelCheckerTh::isNotTerminated() {
 	}
 	return !res;
 }
+

@@ -6,7 +6,7 @@
 #include "sylvan_sog.h"
 #include "sylvan_seq.h"
 #include <sylvan_int.h>
-
+#include "SylvanWrapper.h"
 
 #include <openssl/md5.h>
 #define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
@@ -135,21 +135,17 @@ void *MCHybridSOG::doCompute()
     /****************************************** initial state ********************************************/
     if ( task_id==0 && id_thread==0 ) {
         string* chaine=new string();
-
-
         LDDState *c=new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
         c->m_lddstate=Complete_meta_state;
         ldd_refs_push ( Complete_meta_state );
         //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);
-
         convert_wholemdd_stringcpp ( Complete_meta_state,*chaine );
         get_md5 ( *chaine,Identif );
         //lddmc_getsha(Complete_meta_state, Identif);
         uint16_t destination= ( uint16_t ) ( Identif[0]%n_tasks );
         c->setProcess ( destination );
         if ( destination==0 ) {
-
             m_nbmetastate++;
             Set fire=firable_obs ( Complete_meta_state );
             m_st[1].push ( Pair ( couple ( c,Complete_meta_state ),fire ) );
@@ -163,11 +159,8 @@ void *MCHybridSOG::doCompute()
             m_graph->insertSHA ( c );
             memcpy ( c->m_SHA2,Identif,16 );
             initialstate=Canonize ( Complete_meta_state,0 );
-
             //#endif // REDUCE
             convert_wholemdd_stringcpp ( initialstate,*chaine );
-
-
             pthread_mutex_lock ( &m_spin_msg[0] );
             m_msg[0].push ( MSG ( chaine,destination ) );
             pthread_mutex_unlock ( &m_spin_msg[0] );
@@ -236,8 +229,6 @@ void *MCHybridSOG::doCompute()
                         int t = * ( e.second.begin() );
                         e.second.erase ( t );
                         reached_class=new LDDState();
-
-
                         MDD ldd_reachedclass=Accessible_epsilon ( get_successor ( e.first.second,t ) );
                         ldd_refs_push ( ldd_reachedclass );
 
@@ -425,15 +416,15 @@ void MCHybridSOG::read_message()
         //cout<<"message tag :"<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
         if ( m_status.MPI_TAG==TAG_ASK_STATE ) {
             //cout<<"TAG ASKSTATE received by task "<<task_id<<" from "<<m_status.MPI_SOURCE<<endl;
-            char mess[17];
+            char mess[25];
             MPI_Recv ( mess,16,MPI_BYTE,m_status.MPI_SOURCE,m_status.MPI_TAG,MPI_COMM_WORLD,&m_status );
             bool res;
             m_waitingAgregate=false;
             size_t pos=m_graph->findSHAPos ( mess,res );
             if ( !res ) {
-                //cout<<"Not found"<<endl;
+
                 m_waitingAgregate=true;
-                memcpy ( m_id_md5,mess,16 );
+                memcpy ( m_id_md5,mess,16 ); // Added for stats
             } else {
                 sendPropToMC ( pos );
             }
@@ -480,6 +471,7 @@ void MCHybridSOG::read_message()
             // cout<<"TAG INITIAL received by task "<<task_id<<endl;
             MPI_Recv ( &v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status );
             LDDState *i_agregate=m_graph->getInitialState();
+
             char message[22];
             memcpy ( message,i_agregate->getSHAValue(),16 );
             uint16_t id_p=i_agregate->getProcess();
@@ -776,11 +768,12 @@ set<uint16_t> MCHybridSOG::getUnmarkedPlaces ( LDDState *agg )
 void MCHybridSOG::sendPropToMC ( size_t pos )
 {
     LDDState *agg=m_graph->getLDDStateById ( pos );
+    uint64_t size=SylvanWrapper::getMarksCount(agg->m_lddstate); // Added for stats
     set<uint16_t> marked_places=getMarkedPlaces ( agg );
     set<uint16_t> unmarked_places=getUnmarkedPlaces ( agg );
     uint16_t s_mp=marked_places.size();
     uint16_t s_up=unmarked_places.size();
-    char mess_to_send[8+s_mp*2+s_up*2+5];
+    char mess_to_send[8+s_mp*2+s_up*2+5+8]; // 8 Added for stats
     memcpy ( mess_to_send,&pos,8 );
     //cout<<"************* Pos to send :"<<pos<<endl;
     size_t indice=8;
@@ -800,5 +793,7 @@ void MCHybridSOG::sendPropToMC ( size_t pos )
     divblock=divblock | ( agg->isDeadLock() <<1 );
     memcpy ( mess_to_send+indice,&divblock,1 );
     indice++;
+    memcpy(mess_to_send+indice,&size,8); // Added for stats
+    indice+=8;
     MPI_Send ( mess_to_send,indice,MPI_BYTE,n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD );
 }

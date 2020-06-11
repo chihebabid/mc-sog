@@ -4,6 +4,7 @@
 #include <mpi.h>
 #include "LDDState.h"
 #include "ModelCheckBaseMT.h"
+#include "SylvanWrapper.h"
 constexpr auto TAG_ASK_STATE = 9;
 constexpr auto TAG_ACK_STATE = 10;
 #define TAG_ASK_SUCC 4
@@ -80,6 +81,9 @@ public:
         memcpy(&divblock,message+indice,1);        
         m_div=divblock & 1;
         m_deadlock=(divblock>>1) & 1;
+        indice++; // Added for stats
+       memcpy(&m_size,message+indice,8); // Added for stats
+
         // Get successors 
          MPI_Send(m_id,16,MPI_BYTE,m_container, TAG_ASK_SUCC, MPI_COMM_WORLD);
    
@@ -169,15 +173,17 @@ public:
     }
     list<uint16_t> * getMarkedPlaces() { return &m_marked_places;}
     list<uint16_t> * getUnmarkedPlaces() { return &m_unmarked_places;}
-    vector<succ_t>* getListSucc() { return &m_succ;}    
+    vector<succ_t>* getListSucc() { return &m_succ;}
+    uint64_t getSize() {return m_size;} // Added for stats
 protected:
 
 private:    
     char  m_id[17];
-    uint32_t m_pos;
+    uint32_t m_pos; // Added for stats
     size_t m_hashid;
     bool m_div;
     bool m_deadlock;
+    uint64_t m_size;
     uint16_t m_container;
     list<uint16_t> m_marked_places;
     list<uint16_t> m_unmarked_places;

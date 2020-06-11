@@ -20,7 +20,8 @@ public:
     void ComputeTh_Succ();
 private:
     void preConfigure();
-    bool hasToProcess() const;      
+    bool hasToProcess() const;
+
     SafeDequeue<Pair> m_common_stack;       
     atomic<uint8_t> m_id_thread;
     std::mutex m_mutex; 

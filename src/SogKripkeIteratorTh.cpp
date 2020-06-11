@@ -44,7 +44,7 @@ bool SogKripkeIteratorTh::done() const
 
 SogKripkeStateTh* SogKripkeIteratorTh::dst() const
 {
-    /*cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;*/
+    //cout<<"Source "<<m_lddstate->getLDDValue()<<"Destination :"<<m_lsucc.at(m_current_edge).first->getLDDValue()<<" in "<<m_lsucc.size()<<" / "<<m_current_edge<<endl;
     return new SogKripkeStateTh ( m_lsucc.at ( m_current_edge ).first );
 }
 
@@ -54,14 +54,10 @@ bdd SogKripkeIteratorTh::cond()  const
     if ( m_lsucc.at ( m_current_edge ).second==-1 ) {
         return bddtrue;
     }
-
     string name=m_builder->getTransition ( m_lsucc.at ( m_current_edge ).second );
-    //cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
-
     spot::bdd_dict *p=m_dict_ptr->get();
     spot::formula f=spot::formula::ap ( name );
     bdd   result=bdd_ithvar ( ( p->var_map.find ( f ) )->second );
-
     return result & spot::kripke_succ_iterator::cond();
 }
 
@@ -80,7 +76,7 @@ void SogKripkeIteratorTh::recycle ( LDDState* aggregate, bdd cond )
     spot::kripke_succ_iterator::recycle ( cond );
 }
 
-static ModelCheckBaseMT * SogKripkeIteratorTh::m_builder;
-static spot::bdd_dict_ptr* SogKripkeIteratorTh::m_dict_ptr;
-static LDDState SogKripkeIteratorTh::m_deadlock;
-static LDDState SogKripkeIteratorTh::m_div;
+ModelCheckBaseMT * SogKripkeIteratorTh::m_builder;
+spot::bdd_dict_ptr* SogKripkeIteratorTh::m_dict_ptr;
+LDDState SogKripkeIteratorTh::m_deadlock;
+LDDState SogKripkeIteratorTh::m_div;

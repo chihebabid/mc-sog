@@ -63,6 +63,6 @@ void HybridKripkeIterator::recycle(HybridKripkeState &st, bdd cond)
         spot::kripke_succ_iterator::recycle(cond);
 }
 
-static NewNet * HybridKripkeIterator::m_net;
-static spot::bdd_dict_ptr* HybridKripkeIterator::m_dict_ptr;
+NewNet * HybridKripkeIterator::m_net;
+spot::bdd_dict_ptr* HybridKripkeIterator::m_dict_ptr;
 

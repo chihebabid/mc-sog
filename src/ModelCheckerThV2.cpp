@@ -4,7 +4,10 @@
 #include <sylvan_sog.h>
 #include <sylvan_int.h>
 #include <functional>
-
+#include <iostream>
+#include <fstream>
+#include "SylvanWrapper.h"
+#define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
 using namespace sylvan;
 using namespace std;
 
@@ -28,7 +31,7 @@ void ModelCheckerThV2::preConfigure()
     if ( max > getMaxMemoryV3() ) {
         max = getMaxMemoryV3() /10*9;
     }
-    sylvan_set_limits ( 16LL<<30, 16, 0 );
+    sylvan_set_limits ( 16LL<<29, 8, 0 );
 
     sylvan_init_package();
     sylvan_init_ldd();
@@ -111,6 +114,8 @@ void ModelCheckerThV2::Compute_successors()
     if ( id_thread == 0 ) {
         LDDState *c = new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
+        /*SylvanWrapper::getMarksCount(Complete_meta_state);
+        exit(0);*/
         ldd_refs_push ( Complete_meta_state );
         fire = firable_obs ( Complete_meta_state );
         c->m_lddstate = Complete_meta_state;
@@ -122,7 +127,6 @@ void ModelCheckerThV2::Compute_successors()
         m_condStack.notify_one();
         m_finish_initial = true;
     }
-
     LDDState *reached_class;
     //pthread_barrier_wait ( &m_barrier_builder );
     Pair e;
@@ -132,32 +136,26 @@ void ModelCheckerThV2::Compute_successors()
         lk.unlock();
                             
             if ( m_common_stack.try_pop ( e ) && !m_finish ) {
-
                 while ( !e.second.empty() && !m_finish ) {
                     int t = *e.second.begin();
                     e.second.erase ( t );
                     MDD reduced_meta = Accessible_epsilon ( get_successor ( e.first.second, t ) );
-
                     ldd_refs_push ( reduced_meta );
                     reached_class = new LDDState();
                     reached_class->m_lddstate = reduced_meta;                    
                     LDDState *pos = m_graph->find ( reached_class );
-                    if ( !pos ) {                 
-
+                    if ( !pos ) {
                         m_graph->addArc();
-                        m_graph->insert ( reached_class );               
-                        
+                        m_graph->insert ( reached_class );
                         fire = firable_obs ( reduced_meta );
                         reached_class->setDeadLock ( Set_Bloc ( reduced_meta ) );
                         reached_class->setDiv ( Set_Div ( reduced_meta ) );
-
                         m_common_stack.push ( Pair ( couple ( reached_class, reduced_meta ), fire ) );
                         m_condStack.notify_one();
-                        m_graph_mutex.lock();    
+                        m_graph_mutex.lock();
                         e.first.first->Successors.insert ( e.first.first->Successors.begin(), LDDEdge ( reached_class, t ) );
                         reached_class->Predecessors.insert ( reached_class->Predecessors.begin(), LDDEdge ( e.first.first, t ) );
                         m_graph_mutex.unlock();
-
                     } else {
                         delete reached_class;
                         m_graph->addArc();
@@ -170,8 +168,6 @@ void ModelCheckerThV2::Compute_successors()
                 }
                 e.first.first->setCompletedSucc();m_condBuild.notify_one();
             } //end advance
-            
-        
 
     } while ( !m_finish );
 
@@ -217,5 +213,3 @@ ModelCheckerThV2::~ModelCheckerThV2()
 bool ModelCheckerThV2::hasToProcess() const {
     return m_finish || !m_common_stack.empty();
 }
-
-

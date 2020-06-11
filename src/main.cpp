@@ -31,6 +31,7 @@
 
 #include "SogKripkeTh.h"
 #include "HybridKripke.h"
+#include "SylvanWrapper.h"
 
 // #include "RdPBDD.h"
 
@@ -175,6 +176,8 @@ int main(int argc, char **argv) {
 				displayCheckResult(res);
 				/****************************/
 
+
+
 				/*auto startTime = std::chrono::steady_clock::now();
 				 bool res = (check.check() == 0);
 				 auto finalTime = std::chrono::steady_clock::now();
@@ -205,6 +208,7 @@ int main(int argc, char **argv) {
 
 				 }*/
 			}
+
 			delete mcl;
 		}
 

@@ -8,6 +8,7 @@
 #include <stack>
 #include <mutex>
 #include <atomic>
+
 // #define GCENABLE 0
 class LDDState;
 typedef pair<LDDState *, MDD> couple;
@@ -15,6 +16,7 @@ typedef pair<couple, Set> Pair;
 typedef stack<Pair> pile;
 
 class LDDGraph;
+
 
 class CommonSOG
 {
@@ -52,7 +54,9 @@ class CommonSOG
         uint8_t m_nb_thread;
         std::mutex m_graph_mutex,m_gc_mutex;  
         atomic<uint8_t> m_gc;
+    MDD fireTransition(MDD cmark,MDD minus, MDD plus);
     private:
+
 };
 
 #endif // COMMONSOG_H
