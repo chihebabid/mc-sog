@@ -245,7 +245,7 @@ int main(int argc, char **argv) {
 					DR.computeSOGLaceCanonized(g);
 					g.printCompleteInformation();
 				}
-
+                /*
 				cout << "Perform Model checking ?";
 				char c;
 				cin >> c;
@@ -292,7 +292,7 @@ int main(int argc, char **argv) {
 						file.close();
 					} else
 						std::cout << "formula is verified\n";
-				}
+				}*/
 
 			}
 		}
@@ -390,6 +390,7 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+
 	MPI_Finalize();
 	return (EXIT_SUCCESS);
 }

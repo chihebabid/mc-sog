@@ -2,6 +2,7 @@
 #include <sylvan.h>
 #include <string.h>
 #include <map>
+#include "SylvanWrapper.h"
 
 LDDGraph::~LDDGraph() {
     //dtor
@@ -91,7 +92,7 @@ size_t LDDGraph::findSHAPos(unsigned char *c, bool &res) {
 void LDDGraph::insert(LDDState *c) {
     std::lock_guard<std::mutex> lock(m_mutex);
     this->m_GONodes.push_back(c);
-    m_nbStates++;
+    //m_nbStates++;
 }
 
 
@@ -133,18 +134,19 @@ void LDDGraph::printCompleteInformation() {
     long count_ldd = 0L;
     for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++) {
         count_ldd += lddmc_nodecount((*i)->m_lddstate);
+        m_nbMarking+= SylvanWrapper::getMarksCount((*i)->m_lddstate);
     }
     cout << "\n\nGRAPH SIZE : \n";
     cout << "\n\tNB LDD NODES : " << count_ldd;
     cout << "\n\tNB MARKING : " << m_nbMarking;
-    cout << "\n\tNB NODES : " << m_nbStates;
+    cout << "\n\tNB NODES : " << m_GONodes.size();
     cout << "\n\tNB ARCS : " << m_nbArcs << endl;
-    cout << " \n\nCOMPLETE INFORMATION ?(y/n)\n";
+    /*cout << " \n\nCOMPLETE INFORMATION ?(y/n)\n";
     char c;
-    cin >> c;
+    cin >> c;*/
     //InitVisit(initialstate,n);
 
-    size_t n = 1;
+   /* size_t n = 1;
     //cout<<"NB BDD NODE : "<<NbBdm_current_state->getContainerProcess()dNode(initialstate,n)<<endl;
     NbBddNode(m_initialstate, n);
     // cout<<"NB BDD NODE : "<<bdd_anodecount(m_Tab,(int)m_nbStates)<<endl;
@@ -156,7 +158,7 @@ void LDDGraph::printCompleteInformation() {
     if (c == 'y' || c == 'Y') {
         size_t n = 1;
         printGraph(m_initialstate, n);
-    }
+    }*/
 }
 
 /*----------------------InitVisit()------------------------*/

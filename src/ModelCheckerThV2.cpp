@@ -25,7 +25,7 @@ getMaxMemoryV3()
 void ModelCheckerThV2::preConfigure()
 {
 
-    lace_init ( 1, 0 );
+    lace_init ( m_nb_thread, 0 );
     lace_startup ( 0, NULL, NULL );
     size_t max = 16LL<<34;
     if ( max > getMaxMemoryV3() ) {

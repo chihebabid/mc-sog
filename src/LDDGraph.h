@@ -32,8 +32,8 @@ class LDDGraph
 		void Reset();
 		LDDState *m_initialstate;
 		LDDState *m_currentstate;
-		long m_nbStates;
-		long m_nbMarking;
+        uint64_t m_nbStates;
+		uint64_t m_nbMarking;
 		atomic<uint32_t> m_nbArcs;
 		LDDState* find(LDDState*);
         LDDState* insertFind(LDDState*);
@@ -49,7 +49,7 @@ class LDDGraph
 		void printpredecessors(LDDState *);
 		inline void addArc()  {m_nbArcs++;}
 		void insert(LDDState*);
-		LDDGraph(CommonSOG *constuctor) {m_nbStates=m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
+		LDDGraph(CommonSOG *constuctor) {m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph
 		LDDState* getInitialState() const;
 		void printCompleteInformation();

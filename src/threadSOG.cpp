@@ -32,17 +32,20 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     if (uselace)  {
     lace_init(m_nb_thread, 10000000);
     }
-    else lace_init(1, 10000000);
+    else lace_init(1, 0);
     lace_startup(0, NULL, NULL);
 
     // Simple Sylvan initialization, also initialize MDD support
     //sylvan_set_sizes(1LL<<27, 1LL<<27, 1LL<<20, 1LL<<22);
-    sylvan_set_limits(2LL<<30, 16, 3);
+    sylvan_set_limits(16LL<<30, 8, 0);
+
+    //sylvan_set_limits(2LL<<30, 16, 3);
     //sylvan_set_sizes(1LL<<30, 2LL<<20, 1LL<<18, 1LL<<20);
     //sylvan_init_bdd(1);
     sylvan_init_package();
     sylvan_init_ldd();
     LACE_ME;
+    displayMDDTableInfo();
     /*sylvan_gc_hook_pregc(TASK(gc_start));
     sylvan_gc_hook_postgc(TASK(gc_end));
     sylvan_gc_enable();*/
@@ -65,7 +68,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     m_transitionName=R.transitionName;
     m_placeName=R.m_placePosName;
 
-    cout<<"Toutes les Transitions:"<<endl;
+   /* cout<<"Toutes les Transitions:"<<endl;
     map<string,uint16_t>::iterator it2=m_transitionName.begin();
     for (;it2!=m_transitionName.end();it2++) {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
@@ -75,7 +78,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     cout<<"Transitions observables :"<<endl;
     Set::iterator it=m_observable.begin();
     for (;it!=m_observable.end();it++) {cout<<*it<<"  ";}
-    cout<<endl;
+    cout<<endl;*/
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
