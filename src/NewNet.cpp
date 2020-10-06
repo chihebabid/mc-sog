@@ -84,7 +84,7 @@ NewNet::NewNet(const char *f, const char *Formula_trans, const char *Int_trans)
     {
         places.clear();
         transitions.clear();
-        placeName.clear();
+        m_placeName.clear();
         transitionName.clear();
     }
     if (strlen(Formula_trans) > 0)
@@ -132,7 +132,7 @@ NewNet::NewNet(const char *f, const set<string> & f_trans)
     {
         places.clear();
         transitions.clear();
-        placeName.clear();
+        m_placeName.clear();
         transitionName.clear();
     }
     if (f_trans.size() > 0)
@@ -165,7 +165,7 @@ void NewNet::setListObservable(const set<string> & list_t)
 {
     int pos_trans(TRANSITIONS T, string trans);
     Observable.clear();
-    for (auto it=placeName.begin();it!=placeName.end();it++) {
+    for (auto it=m_placeName.begin();it!=m_placeName.end();it++) {
         pair<int,string> elt((*it).second,(*it).first);
         m_placePosName.insert(elt);
     }
@@ -183,9 +183,8 @@ void NewNet::setListObservable(const set<string> & list_t)
         {
             cout<<"Error: "<<*i<<" is not a transition!"<<endl;
             // Check if the proposition corresponds to a place
-            map<string, uint16_t>::iterator pi = placeName.find(*i);
-            if (pi!=placeName.end())
-                cout<<"Place was found!"<<endl;
+            map<string, uint16_t>::iterator pi = m_placeName.find(*i);
+            assert (pi!=m_placeName.end());
             m_formula_place.insert(pi->second);
             m_lplaceAP.insert(*i);
             // Adding adjacent transitions of a place as observable transitions
@@ -207,7 +206,7 @@ void NewNet::setListObservable(const set<string> & list_t)
         else
         {
             Formula_Trans.insert(pos);
-            map<string,uint16_t>::iterator ti=transitionName.find(*i);
+            map<string ,uint16_t>::iterator ti=transitionName.find(*i);
             Observable.insert(pos);
         }
     }
@@ -365,10 +364,10 @@ ostream &operator<<(ostream &os, const Set &s)
 /*----------------------------------------------------------------------*/
 bool NewNet::addPlace(const string &place, int marking, int capacity)
 {
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end())
+    map<string , uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end())
     {
-        placeName[place] = places.size();
+        m_placeName[string(place)] = places.size();
         Place p(place, marking, capacity);
         places.push_back(p);
         return true;
@@ -379,10 +378,10 @@ bool NewNet::addPlace(const string &place, int marking, int capacity)
 
 bool NewNet::addQueue(const string &place, int capacity)
 {
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end())
+    map<string , uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end())
     {
-        placeName[place] = places.size();
+        m_placeName[place] = places.size();
         Place p(place, -1, capacity);
         places.push_back(p);
         return true;
@@ -393,10 +392,10 @@ bool NewNet::addQueue(const string &place, int capacity)
 
 bool NewNet::addLossQueue(const string &place, int capacity)
 {
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end())
     {
-        placeName[place] = places.size();
+        m_placeName[place] = places.size();
         Place p(place, -2, capacity);
         places.push_back(p);
         return true;
@@ -422,8 +421,8 @@ bool NewNet::addTrans(const string &trans)
 bool NewNet::addPre(const string &place, const string &trans, int valuation)
 {
     int p, t;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || places[pi->second].isQueue())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
@@ -440,8 +439,8 @@ bool NewNet::addPre(const string &place, const string &trans, int valuation)
 bool NewNet::addPost(const string &place, const string &trans, int valuation)
 {
     int p, t;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || places[pi->second].isQueue())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
@@ -458,12 +457,12 @@ bool NewNet::addPost(const string &place, const string &trans, int valuation)
 bool NewNet::addPreQueue(const string &place, const string &trans, int valuation)
 {
     int p, t;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || !places[pi->second].isQueue())
+    map<string , uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || !places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
-    map<string, uint16_t>::const_iterator ti = transitionName.find(trans);
+    map<string , uint16_t>::const_iterator ti = transitionName.find(trans);
     if (ti == transitionName.end())
         return false;
     else
@@ -477,12 +476,12 @@ bool NewNet::addPostQueue(const string &place, const string &trans,
                           int valuation)
 {
     int p, t;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || !places[pi->second].isQueue())
+    map<string , uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || !places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
-    map<string, uint16_t>::const_iterator ti = transitionName.find(trans);
+    map<string , uint16_t>::const_iterator ti = transitionName.find(trans);
     if (ti == transitionName.end())
         return false;
     else
@@ -496,8 +495,8 @@ bool NewNet::addInhibitor(const string &place, const string &trans,
                           int valuation)
 {
     int p, t;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end())
         return false;
     else
         p = pi->second;
@@ -515,8 +514,8 @@ bool NewNet::addPreAuto(const string &place, const string &trans,
                         const string &valuation)
 {
     int p, t, v;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || places[pi->second].isQueue())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
@@ -525,8 +524,8 @@ bool NewNet::addPreAuto(const string &place, const string &trans,
         return false;
     else
         t = ti->second;
-    map<string, uint16_t>::const_iterator pv = placeName.find(valuation);
-    if (pv == placeName.end() || places[pv->second].isQueue())
+    map<string, uint16_t>::const_iterator pv = m_placeName.find(valuation);
+    if (pv == m_placeName.end() || places[pv->second].isQueue())
         return false;
     else
         v = pv->second;
@@ -539,8 +538,8 @@ bool NewNet::addPostAuto(const string &place, const string &trans,
                          const string &valuation)
 {
     int p, t, v;
-    map<string, uint16_t>::const_iterator pi = placeName.find(place);
-    if (pi == placeName.end() || places[pi->second].isQueue())
+    map<string, uint16_t>::const_iterator pi = m_placeName.find(place);
+    if (pi == m_placeName.end() || places[pi->second].isQueue())
         return false;
     else
         p = pi->second;
@@ -549,8 +548,8 @@ bool NewNet::addPostAuto(const string &place, const string &trans,
         return false;
     else
         t = ti->second;
-    map<string, uint16_t>::const_iterator pv = placeName.find(valuation);
-    if (pv == placeName.end() || places[pi->second].isQueue())
+    map<string, uint16_t>::const_iterator pv = m_placeName.find(valuation);
+    if (pv == m_placeName.end() || places[pi->second].isQueue())
         return false;
     else
         v = pv->second;
@@ -562,8 +561,8 @@ bool NewNet::addPostAuto(const string &place, const string &trans,
 bool NewNet::addReset(const string &place, const string &trans)
 {
     int p, t;
-    auto pi = placeName.find(place);
-    if (pi == placeName.end())
+    auto pi = m_placeName.find(place);
+    if (pi == m_placeName.end())
         return false;
     else
         p = pi->second;

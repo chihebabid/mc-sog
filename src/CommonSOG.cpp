@@ -1,11 +1,10 @@
+#include <string>
+#include "SylvanWrapper.h"
 #include "CommonSOG.h"
-#include "sylvan.h"
-#include "sylvan_seq.h"
-#include <sylvan_sog.h>
-#include <sylvan_int.h>
+
 #include <stack>
 
-#define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
+
 const vector<class Place> *_places = NULL;
 
 CommonSOG::CommonSOG() {
@@ -28,10 +27,9 @@ MDD CommonSOG::Accessible_epsilon(MDD From) {
         M1 = M2;
         for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
             //fireTransition
-
             MDD succ = fireTransition(M2, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
 
-            M2 = lddmc_union_mono(M2, succ);
+            M2 = SylvanWrapper::lddmc_union_mono(M2, succ);
 
         }
 
@@ -62,7 +60,7 @@ MDD CommonSOG::ImageForward(MDD From) {
     MDD Res = lddmc_false;
     for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
         MDD succ = fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
-        Res = lddmc_union_mono(Res, succ);
+        Res = SylvanWrapper::lddmc_union_mono(Res, succ);
     }
     return Res;
 }
@@ -73,16 +71,16 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
     if (level > m_nbPlaces || s == lddmc_false) {
         return lddmc_false;
     }
-    if (isSingleMDD(s)) {
+    if (SylvanWrapper::isSingleMDD(s)) {
         return s;
     }
     MDD s0 = lddmc_false, s1 = lddmc_false;
 
     bool res = false;
     do {
-        if (get_mddnbr(s, level) > 1) {
-            s0 = ldd_divide_rec(s, level);
-            s1 = ldd_minus(s, s0);
+        if (SylvanWrapper::get_mddnbr(s, level) > 1) {
+            s0 = SylvanWrapper::ldd_divide_rec(s, level);
+            s1 = SylvanWrapper::ldd_minus(s, s0);
             res = true;
         } else {
             level++;
@@ -100,9 +98,9 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
         Reach = s1;
         do {
             // cout<<"premiere boucle interne \n";
-            Front = ldd_minus(ImageForward(Front), Reach);
-            Reach = lddmc_union_mono(Reach, Front);
-            s0 = ldd_minus(s0, Front);
+            Front = SylvanWrapper::ldd_minus(ImageForward(Front), Reach);
+            Reach = SylvanWrapper::lddmc_union_mono(Reach, Front);
+            s0 = SylvanWrapper::ldd_minus(s0, Front);
         } while ((Front != lddmc_false) && (s0 != lddmc_false));
     }
     if ((s0 != lddmc_false) && (s1 != lddmc_false)) {
@@ -110,16 +108,16 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
         Reach = s0;
         do {
             //  cout<<"deuxieme boucle interne \n";
-            Front = ldd_minus(ImageForward(Front), Reach);
-            Reach = lddmc_union_mono(Reach, Front);
-            s1 = ldd_minus(s1, Front);
+            Front = SylvanWrapper::ldd_minus(ImageForward(Front), Reach);
+            Reach = SylvanWrapper::lddmc_union_mono(Reach, Front);
+            s1 = SylvanWrapper::ldd_minus(s1, Front);
         } while (Front != lddmc_false && s1 != lddmc_false);
     }
 
 
     MDD Repr = lddmc_false;
 
-    if (isSingleMDD(s0)) {
+    if (SylvanWrapper::isSingleMDD(s0)) {
         Repr = s0;
     } else {
 
@@ -127,10 +125,10 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
 
     }
 
-    if (isSingleMDD(s1)) {
-        Repr = lddmc_union_mono(Repr, s1);
+    if (SylvanWrapper::isSingleMDD(s1)) {
+        Repr = SylvanWrapper::lddmc_union_mono(Repr, s1);
     } else {
-        Repr = lddmc_union_mono(Repr, Canonize(s1, level));
+        Repr = SylvanWrapper::lddmc_union_mono(Repr, Canonize(s1, level));
     }
 
 
@@ -173,22 +171,22 @@ bool CommonSOG::Set_Div(MDD &M) const {
     Reached = lddmc_false;
     From = M;
     do {
-
+        Reached = lddmc_false;
         for (i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
-
             MDD To = fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
-            Reached = lddmc_union_mono(Reached, To);
-            //Reached=To;
+            Reached = SylvanWrapper::lddmc_union_mono(Reached, To);
         }
 
         if (Reached == From) {
-            return true;
+            MDD Reached_obs=lddmc_false;
+            for (i = m_observable.begin(); !(i == m_observable.end()) && (Reached_obs==lddmc_false); i++) {
+                Reached_obs= fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+            }
+            if (Reached_obs==lddmc_false) return true;
+            return false;
         }
         From = Reached;
-        Reached = lddmc_false;
-
-    } while (Reached != lddmc_false && Reached != lddmc_true);
-
+    } while (Reached != lddmc_false);
     return false;
 }
 
@@ -205,13 +203,7 @@ bool CommonSOG::Set_Bloc(MDD &M) const {
     //BLOCAGE
 }
 
-string CommonSOG::getTransition(int pos) {
-    return m_graph->getTransition(pos);
-}
 
-string CommonSOG::getPlace(int pos) {
-    return m_graph->getPlace(pos);
-}
 
 LDDGraph *CommonSOG::m_graph;
 struct elt_t {
@@ -222,76 +214,17 @@ struct elt_t {
 };
 
 MDD CommonSOG::fireTransition(MDD cmark, MDD minus, MDD plus) {
-    return lddmc_firing_mono(cmark,minus,plus);
-    // for an empty set of source states, or an empty transition relation, return the empty set
+    return SylvanWrapper::lddmc_firing_mono(cmark,minus,plus);
+}
 
-    MDD result;
-    mddnode_t n_cmark, n_plus, n_minus;
-    uint32_t value, value_minus, value_plus;
-    std::stack<elt_t> lstack;
-    elt_t elt;
-    elt.cmark = cmark;
-    elt.plus = plus;
-    elt.minus = minus;
-    elt.level = 0;
-    lstack.push(elt);
-    result = lddmc_false;
-    uint32_t *currentMarking = new uint32_t[m_nbPlaces];
-    elt_t relt;
-    bool goDown = false;
-    //MDD temp;
-    while (!lstack.empty() || goDown) {
-        if (!goDown) {
-            elt = lstack.top();
-            lstack.pop();
-            n_cmark = GETNODE(elt.cmark);
-            n_minus = GETNODE(elt.minus);
-            n_plus = GETNODE(elt.plus);
-            value = mddnode_getvalue(n_cmark);
-            value_minus = mddnode_getvalue(n_minus);
-            value_plus = mddnode_getvalue(n_plus);
-        } else  goDown = false;
+//string_view CommonSOG::getTransition(int pos) {
+    // cout<<"yes it is : "<<m_transitions.at(pos).name<<endl;
+    // cout<<"Ok "<<m_graph->getTransition(pos)<<endl;
+//    return string_view {m_transitions.at(pos).name};
+//}
 
-        //cout << "Level : " << elt.level << endl;
-        //cout << "Current : " << value << " Minus : " << value_minus << " Plus : " << value_plus << endl;
-        if (value >= value_minus) {
-            *(currentMarking + elt.level) = value - value_minus + value_plus;
-            if (elt.level == m_nbPlaces - 1) {
-                MDD b = ldd_cube(currentMarking, m_nbPlaces);
-                result = lddmc_union_mono(result, b);
-            } else { // Goto next level and push right
-                if (mddnode_getright(n_cmark) != lddmc_false) { // Look for another node in the same level
-                    relt = elt;
-                    relt.cmark = mddnode_getright(n_cmark);
-                    lstack.push(relt);
-                }
-                //}  while (temp>lddmc_true);
-                if (elt.level < m_nbPlaces - 1) { // Go down
-                    elt.level++;
-                    elt.cmark = mddnode_getdown(n_cmark);
-                    n_cmark = GETNODE(elt.cmark);
-                    elt.minus = mddnode_getdown(n_minus);
-                    n_minus = GETNODE(elt.minus);
-                    elt.plus = mddnode_getdown(n_plus);
-                    n_plus = GETNODE(elt.plus);
-                    goDown = true;
-                    value = mddnode_getvalue(n_cmark);
-                    value_minus = mddnode_getvalue(n_minus);
-                    value_plus = mddnode_getvalue(n_plus);
-                }
-            }
-        } else {
-             // Look for another node in the same level
-            elt.cmark = mddnode_getright(n_cmark);
-             while (elt.cmark>lddmc_true && !goDown) {
-                 n_cmark = GETNODE(elt.cmark);
-                 value = mddnode_getvalue(n_cmark);
-                 if (value >= value_minus) goDown = true; else elt.cmark = mddnode_getright(n_cmark);
-             }
-
-            }
-        }
-    delete[]currentMarking;
-
-    return result;
+string_view CommonSOG::getPlace(int pos) {
+    // cout<<"yes it is : "<<m_transitions.at(pos).name<<endl;
+    // cout<<"Ok "<<m_graph->getPlace(pos)<<endl;
+    return string_view {m_graph->getPlace(pos)};
 }

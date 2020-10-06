@@ -1,5 +1,5 @@
 #include "LDDGraph.h"
-#include <sylvan.h>
+
 #include <string.h>
 #include <map>
 #include "SylvanWrapper.h"
@@ -15,9 +15,7 @@ void LDDGraph::setInitialState(LDDState *c) {
 
 }
 
-LDDState *LDDGraph::getInitialState() const {
-    return m_GONodes.at(0);
-}
+
 
 /*----------------------find()----------------*/
 LDDState *LDDGraph::find(LDDState *c) {
@@ -133,7 +131,7 @@ int LDDGraph::NbBddNode(LDDState *S, size_t &nb) {
 void LDDGraph::printCompleteInformation() {
     long count_ldd = 0L;
     for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++) {
-        count_ldd += lddmc_nodecount((*i)->m_lddstate);
+        count_ldd += SylvanWrapper::lddmc_nodecount((*i)->m_lddstate);
         m_nbMarking+= SylvanWrapper::getMarksCount((*i)->m_lddstate);
     }
     cout << "\n\nGRAPH SIZE : \n";
@@ -215,18 +213,24 @@ LDDState *LDDGraph::getLDDStateById(unsigned int id) {
     return m_GONodes.at(id);
 }
 
-string LDDGraph::getTransition(uint16_t pos) {
+string_view LDDGraph::getTransition(uint16_t pos) {
 
     map<string, uint16_t>::iterator it = m_transition->begin();
+
     while (it != m_transition->end()) {
-        if (it->second == pos)
+
+        if (it->second == pos) {
+            //cout<<"first : "<<it->first<<endl;
+
             return it->first;
+        }
         it++;
     }
+
     return it->first;
 }
 
-string LDDGraph::getPlace(uint16_t pos) {
+string_view LDDGraph::getPlace(uint16_t pos) {
     return m_places->find(pos)->second;
 }
 

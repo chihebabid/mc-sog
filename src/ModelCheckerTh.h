@@ -14,7 +14,6 @@ public:
     static void *threadHandler(void *context);
     void *Compute_successors();
     void ComputeTh_Succ();
-
 private:
     void preConfigure();
     bool isNotTerminated();

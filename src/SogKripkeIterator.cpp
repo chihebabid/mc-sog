@@ -45,7 +45,7 @@ SogKripkeState* SogKripkeIterator::dst() const
 bdd SogKripkeIterator::cond()  const {
     if (m_lsucc.at(m_current_edge).second==-1) return bddtrue;
 
-    string name=m_graph->getTransition(m_lsucc.at(m_current_edge).second);
+    string name=string(m_graph->getTransition(m_lsucc.at(m_current_edge).second));
     //cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
 
     spot::bdd_dict *p=m_dict_ptr->get();

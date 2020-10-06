@@ -13,7 +13,6 @@ class SogTwa : public spot::twa
         SpotSogIterator* succ_iter(const spot::state* s) const override;
         std::string format_state(const spot::state* s) const override;
 
-    protected:
 
     private:
     LDDGraph* m_sog;

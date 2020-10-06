@@ -88,9 +88,6 @@ private:
 
     int m_charge[128];
     int m_init;
-
-    /// Convert an MDD to a string caracter (for the send)
-    void convert_wholemdd_stringcpp(MDD cmark, string &chaine);
     /// Convert a string caracter to an MDD
     MDD decodage_message(const char *chaine);
     /// there is a message to receive?

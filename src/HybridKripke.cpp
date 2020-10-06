@@ -79,9 +79,11 @@ HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
       it->recycle(*st,cond);
       return it;
     }
+#ifdef TESTENABLE
     SylvanWrapper::m_agg++;
      SylvanWrapper::m_Size+=ss->getSize();
     cout<<"Expolored states : "<<SylvanWrapper::m_Size<<" , Explored agg : "<<SylvanWrapper::m_agg<<" , Avg per agg : " <<SylvanWrapper::m_Size/SylvanWrapper::m_agg<<endl;
+#endif
   return new HybridKripkeIterator(*st,cond);
 
 }
@@ -93,13 +95,13 @@ bdd HybridKripke::state_condition(const spot::state* s) const
     list<uint16_t>* marked_place=ss->getMarkedPlaces();
     bdd result=bddtrue;     
     for (auto it=marked_place->begin();it!=marked_place->end();it++) {
-        string name=m_net->getPlaceName(*it);
+        string name=string(m_net->getPlaceName(*it));
         spot::formula f=spot::formula::ap(name);
         result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
     list<uint16_t>* unmarked_place=ss->getUnmarkedPlaces();
     for (auto it=unmarked_place->begin();it!=unmarked_place->end();it++) {
-        string name=m_net->getPlaceName(*it);
+        string name=string(m_net->getPlaceName(*it));
         spot::formula f=spot::formula::ap(name);
         result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }

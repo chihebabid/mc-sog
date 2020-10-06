@@ -1,7 +1,8 @@
 #ifndef TRANSSYLVAN_H
-#include <sylvan.h>
 #define TRANSSYLVAN_H
-using namespace sylvan;
+
+
+
 class TransSylvan {
  public:
   TransSylvan(const MDD &_minus, const MDD &_plus);

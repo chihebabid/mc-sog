@@ -1,5 +1,5 @@
-#ifndef MODELCHECKERTHV2_H
-#define MODELCHECKERTHV2_H
+#ifndef ModelCheckerCPPThread_H
+#define ModelCheckerCPPThread_H
 #include "ModelCheckBaseMT.h"
 #include "stacksafe.h"
 #include "SafeDequeue.h"
@@ -9,12 +9,14 @@
 #include <condition_variable>
 typedef pair<LDDState *, int> couple_th;
 typedef stack<pair<LDDState *,int>> pile_t;
-
-class ModelCheckerThV2 : public ModelCheckBaseMT
+/*
+ * Multi-threading with C++14 Library
+ */
+class ModelCheckerCPPThread : public ModelCheckBaseMT
 {
 public:
-    ModelCheckerThV2(const NewNet &R,int nbThread);
-    ~ModelCheckerThV2();
+    ModelCheckerCPPThread(const NewNet &R,int nbThread);
+    ~ModelCheckerCPPThread();
     static void threadHandler(void *context);
     void Compute_successors();
     void ComputeTh_Succ();

@@ -12,7 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++14")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g3 -fpermissive -std=c++17 -pthread")
 
 endif()
 
@@ -22,11 +22,7 @@ message(STATUS "Building Petri Net parser ...")
 include_directories("${PARSER_DIR}/src")
 add_subdirectory(${PARSER_DIR})
 
-# add sylvan
-message(STATUS "Building Sylvan ...")
-set(SYLVAN_DIR "${CMAKE_SOURCE_DIR}/third-party/sylvan")
-include_directories(${SYLVAN_DIR})
-add_subdirectory(${SYLVAN_DIR})
+
 
 # build spot if it is not installed on the system
 find_library(SPOT_LIBRARY "spot")
@@ -40,7 +36,7 @@ if(NOT SPOT_LIBRARY)
 
   ExternalProject_Add(SpotLibrary
     PREFIX                ${SPOT_DIR}
-    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.9.tar.gz
+    URL                   http://www.lrde.epita.fr/dload/spot/spot-2.9.4.tar.gz
     DOWNLOAD_NO_PROGRESS  YES
     CONFIGURE_COMMAND     ./configure --disable-doxygen --disable-python --enable-silent-rules --silent --prefix=<INSTALL_DIR>
     BUILD_COMMAND         make -j
