@@ -17,14 +17,9 @@ class SogKripkeTh: public spot::kripke {
         SogKripkeIteratorTh* succ_iter(const spot::state* s) const override;
         std::string format_state(const spot::state* s) const override;
         bdd state_condition(const spot::state* s) const override;
-
         ModelCheckBaseMT *m_builder;
 
-    protected:
 
-    private:
-    std::map<int, int> place_prop;
-    //LDDGraph* m_sog;
 };
 
 #endif // SOGKRIPKE_H_INCLUDED

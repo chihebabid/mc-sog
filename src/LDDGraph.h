@@ -23,8 +23,8 @@ class LDDGraph
         CommonSOG *m_constructor;
 	public:
         CommonSOG* getConstructor() {return m_constructor;}
-        string getTransition(uint16_t pos);
-        string getPlace(uint16_t pos);
+        string_view getTransition(uint16_t pos);
+        string_view getPlace(uint16_t pos);
         void setPlace(map<uint16_t,string>& list_places);
         void setTransition(map<string,uint16_t>& list_transitions);
         MetaLDDNodes m_GONodes;
@@ -51,7 +51,10 @@ class LDDGraph
 		void insert(LDDState*);
 		LDDGraph(CommonSOG *constuctor) {m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph
-		LDDState* getInitialState() const;
+		//LDDState* getInitialState() const;
+        LDDState *getInitialState() const {
+            return m_GONodes.at(0);
+        }
 		void printCompleteInformation();
 		virtual ~LDDGraph();
 };

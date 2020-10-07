@@ -1,3 +1,7 @@
+#include <cstdint>
+#include <cstddef>
+#include <string>
+#include "SylvanWrapper.h"
 #include "TransSylvan.h"
 
 TransSylvan::TransSylvan(const MDD &_minus, const MDD &_plus):m_minus(_minus),m_plus(_plus)

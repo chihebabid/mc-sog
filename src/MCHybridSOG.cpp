@@ -3,13 +3,9 @@
 
 
 #include <cstdio>
-#include "sylvan_sog.h"
-#include "sylvan_seq.h"
-#include <sylvan_int.h>
-#include "SylvanWrapper.h"
 
 #include <openssl/md5.h>
-#define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
+
 
 #define LENGTH_ID 16
 //#define LENGTH_MSG 180
@@ -25,25 +21,19 @@
 #define TAG_ACK_SUCC 11
 #define TAG_NOTCOMPLETED 20
 //#define DEBUG_GC 1
-using namespace sylvan;
+
 using namespace std;
 MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
 {
 
     m_comm_world=comm_world;
-    lace_init ( 1, 0 );
-    lace_startup ( 0, NULL, NULL );
+    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 8, 0 );
 
-    //sylvan_set_limits ( 16LL<<30, 8, 0 );
-    sylvan_set_limits ( 16LL<<30, 8, 0 );
-
-    //sylvan_set_limits ( 2LL<<31, 2, 1 ); // sylvan_set_limits(2LL<<31, 2, 1);
-    //sylvan_set_sizes(1LL<<27, 1LL<<31, 1LL<<20, 1LL<<22);
-
-    sylvan_init_package();
-    sylvan_init_ldd();
-    sylvan_gc_enable();
-    displayMDDTableInfo();
+    //sylvan_init_package();
+    SylvanWrapper::sylvan_init_package();
+    SylvanWrapper::sylvan_init_ldd();
+    SylvanWrapper::init_gc_seq();
+    SylvanWrapper::displayMDDTableInfo();
     m_net=&R;
 
     m_init=init;
@@ -51,14 +41,14 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
     int i, domain;
     vector<Place>::const_iterator it_places;
 
-    init_gc_seq();
+    //#init_gc_seq();
     //_______________
     m_transitions=R.transitions;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
-    m_transitionName=R.transitionName;
-    m_placeName=R.m_placePosName;
+    m_transitionName=&R.transitionName;
+    m_placeName=&R.m_placePosName;
     InterfaceTrans=R.InterfaceTrans;
 
     m_nbPlaces=R.places.size();
@@ -70,8 +60,8 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
     for ( i=0,it_places=R.places.begin(); it_places!=R.places.end(); i++,it_places++ ) {
         liste_marques[i] =it_places->marking;
     }
-    m_initialMarking=lddmc_cube ( liste_marques,R.places.size() );
-    ldd_refs_push ( m_initialMarking );
+    m_initialMarking=SylvanWrapper::lddmc_cube ( liste_marques,R.places.size() );
+    //#ldd_refs_push ( m_initialMarking );
 
     delete []liste_marques;
     // place names
@@ -102,11 +92,11 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
             postc[it->first] = postc[it->first] + it->second;
         }
 
-        MDD _minus=lddmc_cube ( prec,m_nbPlaces );
-        ldd_refs_push ( _minus );
+        MDD _minus=SylvanWrapper::lddmc_cube ( prec,m_nbPlaces );
+        //#ldd_refs_push ( _minus );
 
-        MDD _plus=lddmc_cube ( postc,m_nbPlaces );
-        ldd_refs_push ( _plus );
+        MDD _plus=SylvanWrapper::lddmc_cube ( postc,m_nbPlaces );
+        //#ldd_refs_push ( _plus );
         m_tb_relation.push_back ( TransSylvan ( _minus,_plus ) );
     }
     //sylvan_gc_seq();
@@ -135,17 +125,21 @@ void *MCHybridSOG::doCompute()
     /****************************************** initial state ********************************************/
     if ( task_id==0 && id_thread==0 ) {
         string* chaine=new string();
+
+
         LDDState *c=new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
         c->m_lddstate=Complete_meta_state;
-        ldd_refs_push ( Complete_meta_state );
+        //#ldd_refs_push ( Complete_meta_state );
         //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);
-        convert_wholemdd_stringcpp ( Complete_meta_state,*chaine );
+
+        SylvanWrapper::convert_wholemdd_stringcpp ( Complete_meta_state,*chaine );
         get_md5 ( *chaine,Identif );
         //lddmc_getsha(Complete_meta_state, Identif);
         uint16_t destination= ( uint16_t ) ( Identif[0]%n_tasks );
         c->setProcess ( destination );
         if ( destination==0 ) {
+
             m_nbmetastate++;
             Set fire=firable_obs ( Complete_meta_state );
             m_st[1].push ( Pair ( couple ( c,Complete_meta_state ),fire ) );
@@ -159,8 +153,11 @@ void *MCHybridSOG::doCompute()
             m_graph->insertSHA ( c );
             memcpy ( c->m_SHA2,Identif,16 );
             initialstate=Canonize ( Complete_meta_state,0 );
+
             //#endif // REDUCE
-            convert_wholemdd_stringcpp ( initialstate,*chaine );
+            SylvanWrapper::convert_wholemdd_stringcpp ( initialstate,*chaine );
+
+
             pthread_mutex_lock ( &m_spin_msg[0] );
             m_msg[0].push ( MSG ( chaine,destination ) );
             pthread_mutex_unlock ( &m_spin_msg[0] );
@@ -229,18 +226,20 @@ void *MCHybridSOG::doCompute()
                         int t = * ( e.second.begin() );
                         e.second.erase ( t );
                         reached_class=new LDDState();
+
+
                         MDD ldd_reachedclass=Accessible_epsilon ( get_successor ( e.first.second,t ) );
-                        ldd_refs_push ( ldd_reachedclass );
+                        //#ldd_refs_push ( ldd_reachedclass );
 
                         if ( id_thread==1 )
                             //displayMDDTableInfo();
-                            if ( isGCRequired() ) {
+                            if ( SylvanWrapper::isGCRequired() ) {
                                 m_gc_mutex.lock();
 #ifdef DEBUG_GC
 
                                 displayMDDTableInfo();
 #endif // DEBUG_GC
-                                sylvan_gc_seq();
+                               // sylvan_gc_seq();
 #ifdef DEBUG_GC
 
                                 displayMDDTableInfo();
@@ -258,7 +257,7 @@ void *MCHybridSOG::doCompute()
 
                         //MDD Reduced=ldd_reachedclass;
                         string* message_to_send1=new string();
-                        convert_wholemdd_stringcpp ( ldd_reachedclass,*message_to_send1 );
+                        SylvanWrapper::convert_wholemdd_stringcpp ( ldd_reachedclass,*message_to_send1 );
                         get_md5 ( *message_to_send1,Identif );
 
 
@@ -312,12 +311,12 @@ void *MCHybridSOG::doCompute()
 
 #ifndef REDUCE
                                 reached=Canonize ( ldd_reachedclass,0 );
-                                ldd_refs_push ( ldd_reachedclass );
+//# ldd_refs_push ( ldd_reachedclass );
 #endif
 
                                 //MDD Reduced=ldd_reachedclass;
                                 string* message_to_send2=new string();
-                                convert_wholemdd_stringcpp ( reached,*message_to_send2 );
+                                SylvanWrapper::convert_wholemdd_stringcpp ( reached,*message_to_send2 );
                                 m_graph->addArc();
                                 m_graph_mutex.lock();
                                 e.first.first->Successors.insert ( e.first.first->Successors.begin(),LDDEdge ( reached_class,t ) );
@@ -359,13 +358,13 @@ void *MCHybridSOG::doCompute()
                     Agregate->m_lddstate=MState;
                     if ( !m_graph->insertFind( Agregate ) ) {
                         //cout<<"enter D"<<endl;
-                        ldd_refs_push ( MState );
+                        //#ldd_refs_push ( MState );
                         Agregate->setDiv ( Set_Div ( MState ) );
                         Agregate->setDeadLock ( Set_Bloc ( MState ) );
                         Agregate->setProcess ( task_id );
                         //m_graph_mutex.lock();
                         string* chaine=new string();
-                        convert_wholemdd_stringcpp ( MState,*chaine );
+                        SylvanWrapper::convert_wholemdd_stringcpp ( MState,*chaine );
                         get_md5 ( *chaine,Identif );
                         delete chaine;
                         memcpy ( Agregate->m_SHA2,Identif,16 );
@@ -416,15 +415,15 @@ void MCHybridSOG::read_message()
         //cout<<"message tag :"<<m_status.MPI_TAG<<" by task "<<task_id<<endl;
         if ( m_status.MPI_TAG==TAG_ASK_STATE ) {
             //cout<<"TAG ASKSTATE received by task "<<task_id<<" from "<<m_status.MPI_SOURCE<<endl;
-            char mess[25];
+            char mess[17];
             MPI_Recv ( mess,16,MPI_BYTE,m_status.MPI_SOURCE,m_status.MPI_TAG,MPI_COMM_WORLD,&m_status );
             bool res;
             m_waitingAgregate=false;
             size_t pos=m_graph->findSHAPos ( mess,res );
             if ( !res ) {
-
+                //cout<<"Not found"<<endl;
                 m_waitingAgregate=true;
-                memcpy ( m_id_md5,mess,16 ); // Added for stats
+                memcpy ( m_id_md5,mess,16 );
             } else {
                 sendPropToMC ( pos );
             }
@@ -471,7 +470,6 @@ void MCHybridSOG::read_message()
             // cout<<"TAG INITIAL received by task "<<task_id<<endl;
             MPI_Recv ( &v, 1, MPI_INT, m_status.MPI_SOURCE, m_status.MPI_TAG, MPI_COMM_WORLD, &m_status );
             LDDState *i_agregate=m_graph->getInitialState();
-
             char message[22];
             memcpy ( message,i_agregate->getSHAValue(),16 );
             uint16_t id_p=i_agregate->getProcess();
@@ -638,8 +636,8 @@ MDD MCHybridSOG::decodage_message ( const char *chaine )
             list_marq[j]= ( uint32_t ) ( ( unsigned char ) chaine[index]-1 );
             index++;
         }
-        MDD N=lddmc_cube ( list_marq,m_nbPlaces );
-        M=lddmc_union_mono ( M,N );
+        MDD N=SylvanWrapper::lddmc_cube ( list_marq,m_nbPlaces );
+        M=SylvanWrapper::lddmc_union_mono ( M,N );
     }
     return M;
 }
@@ -649,44 +647,7 @@ void * MCHybridSOG::threadHandler ( void *context )
     return ( ( MCHybridSOG* ) context )->doCompute();
 }
 
-void MCHybridSOG::convert_wholemdd_stringcpp ( MDD cmark,string &res )
-{
-    typedef pair<string,MDD> Pair_stack;
-    vector<Pair_stack> local_stack;
 
-    unsigned int compteur=0;
-    MDD explore_mdd=cmark;
-
-    string chaine;
-
-    res="  ";
-    local_stack.push_back ( Pair_stack ( chaine,cmark ) );
-    do {
-        Pair_stack element=local_stack.back();
-        chaine=element.first;
-        explore_mdd=element.second;
-        local_stack.pop_back();
-        compteur++;
-        while ( explore_mdd!= lddmc_false  && explore_mdd!=lddmc_true ) {
-            mddnode_t n_val = GETNODE ( explore_mdd );
-            if ( mddnode_getright ( n_val ) !=lddmc_false ) {
-                local_stack.push_back ( Pair_stack ( chaine,mddnode_getright ( n_val ) ) );
-            }
-            unsigned int val = mddnode_getvalue ( n_val );
-
-            chaine.push_back ( ( unsigned char ) ( val )+1 );
-            explore_mdd=mddnode_getdown ( n_val );
-        }
-        /*printchaine(&chaine);printf("\n");*/
-        res+=chaine;
-    } while ( local_stack.size() !=0 );
-    //delete chaine;
-
-    compteur= ( compteur<<1 ) | 1;
-    res[1]= ( unsigned char ) ( ( compteur>>8 )+1 );
-    res[0]= ( unsigned char ) ( compteur & 255 );
-
-}
 
 
 void  MCHybridSOG::get_md5 ( const string& chaine,unsigned char *md_chaine )
@@ -722,7 +683,7 @@ void MCHybridSOG::sendSuccToMC()
     MPI_Send ( mess_tosend,message_size,MPI_BYTE,n_tasks, TAG_ACK_SUCC,MPI_COMM_WORLD );
 
 }
-
+/*
 set<uint16_t> MCHybridSOG::getMarkedPlaces ( LDDState *agg )
 {
     set<uint16_t> result;
@@ -741,8 +702,9 @@ set<uint16_t> MCHybridSOG::getMarkedPlaces ( LDDState *agg )
 
     }
     return result;
-}
+}*/
 
+/*
 set<uint16_t> MCHybridSOG::getUnmarkedPlaces ( LDDState *agg )
 {
     set<uint16_t> result;
@@ -763,17 +725,16 @@ set<uint16_t> MCHybridSOG::getUnmarkedPlaces ( LDDState *agg )
 
     }
     return result;
-}
+}*/
 // Send propositions to Model checker
 void MCHybridSOG::sendPropToMC ( size_t pos )
 {
     LDDState *agg=m_graph->getLDDStateById ( pos );
-    uint64_t size=SylvanWrapper::getMarksCount(agg->m_lddstate); // Added for stats
-    set<uint16_t> marked_places=getMarkedPlaces ( agg );
-    set<uint16_t> unmarked_places=getUnmarkedPlaces ( agg );
+    vector<uint16_t> marked_places=agg->getMarkedPlaces ( m_place_proposition );
+    vector<uint16_t> unmarked_places=agg->getUnmarkedPlaces ( m_place_proposition );
     uint16_t s_mp=marked_places.size();
     uint16_t s_up=unmarked_places.size();
-    char mess_to_send[8+s_mp*2+s_up*2+5+8]; // 8 Added for stats
+    char mess_to_send[8+s_mp*2+s_up*2+5];
     memcpy ( mess_to_send,&pos,8 );
     //cout<<"************* Pos to send :"<<pos<<endl;
     size_t indice=8;
@@ -793,7 +754,5 @@ void MCHybridSOG::sendPropToMC ( size_t pos )
     divblock=divblock | ( agg->isDeadLock() <<1 );
     memcpy ( mess_to_send+indice,&divblock,1 );
     indice++;
-    memcpy(mess_to_send+indice,&size,8); // Added for stats
-    indice+=8;
     MPI_Send ( mess_to_send,indice,MPI_BYTE,n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD );
 }

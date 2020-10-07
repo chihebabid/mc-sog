@@ -6,15 +6,13 @@
 #include <fstream>
 #include <mpi.h>
 
-#include "DistributedSOG.h"
+
+#include "LDDGraph.h"
+#include "ModelCheckerCPPThread.h"
+#include "ModelCheckerTh.h"
 #include "threadSOG.h"
 #include "HybridSOG.h"
 #include "MCHybridSOG.h"
-#include "LDDGraph.h"
-#include "ModelCheckLace.h"
-#include "ModelCheckerTh.h"
-#include "ModelCheckerThV2.h"
-
 #include <spot/misc/version.hh>
 #include <spot/twaalgos/dot.hh>
 #include <spot/tl/parse.hh>
@@ -119,277 +117,284 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &n_tasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
 
-	if (n_tasks == 1) {
-		if (n_tasks == 1 && (!strcmp(argv[1], "otfL") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP"))) {
-			cout << "Performing on the fly Model checking..." << endl;
-			if (!strcmp(argv[1], "otfP"))
-				cout << "Multi-threaded algorithm based on Pthread library!" << endl;
-			else if (!strcmp(argv[1], "otfL"))
-				cout << "Multi-threaded algorithm based on Lace framework!" << endl;
-            else 
+
+    if (n_tasks == 1) {
+        if (n_tasks == 1 && (!strcmp(argv[1], "otfL") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP"))) {
+            cout << "Performing on the fly Model checking..." << endl;
+            if (!strcmp(argv[1], "otfP"))
+                cout << "Multi-threaded algorithm based on Pthread library!" << endl;
+            else if (!strcmp(argv[1], "otfL"))
+                cout << "Multi-threaded algorithm based on Lace framework!" << endl;
+            else
                 cout << "Multi-threaded algorithm based on C++ Thread library!" << endl;
-			cout << "Building automata for not(formula)\n";
-			auto d = spot::make_bdd_dict();
+            cout << "Building automata for not(formula)\n";
+            auto d = spot::make_bdd_dict();
 
-			spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-			cout << "Formula automata built.\n";
-			/*cout << "Want to save the graph in a dot file ?";
-			 char c;
-			 cin >> c;
-			 if (c == 'y') {
-			 fstream file;
-			 string st(formula);
-			 st += ".dot";
-			 file.open(st.c_str(), fstream::out);
-			 spot::print_dot(file, af);
-			 file.close();
-			 }
-			 cout << "Loading net information..." << endl;*/
-			ModelCheckBaseMT *mcl;
-			if (!strcmp(argv[1], "otfL"))
-				mcl = new ModelCheckLace(Rnewnet, nb_th);
-			else if (!strcmp(argv[1], "otfP"))
-				mcl = new ModelCheckerTh(Rnewnet, nb_th);
-            else 
-                mcl = new ModelCheckerThV2(Rnewnet, nb_th);
-			mcl->loadNet();
-			auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
-			cout << "Performing on the fly Modelchecking" << endl;
-			if (strcmp(algorithm, "")) {
-				cout << "Spot emptiness check algorithm : "<<algorithm<< endl;
-				shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(k,af);
-				//spot::couvreur99_check_shy check = spot::couvreur99_check_shy(product);
-				/****************************/
-				const char *err;
-				spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
+            spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+            cout << "Formula automata built.\n";
+            /*cout << "Want to save the graph in a dot file ?";
+             char c;
+             cin >> c;
+             if (c == 'y') {
+             fstream file;
+             string st(formula);
+             st += ".dot";
+             file.open(st.c_str(), fstream::out);
+             spot::print_dot(file, af);
+             file.close();
+             }
+             cout << "Loading net information..." << endl;*/
+            ModelCheckBaseMT *mcl;
+            /*if (!strcmp(argv[1], "otfL"))
+                mcl = new ModelCheckLace(Rnewnet, nb_th);
+            else*/
+            if (!strcmp(argv[1], "otfP"))
+                mcl = new ModelCheckerTh(Rnewnet, nb_th);
+            else
+                mcl = new ModelCheckerCPPThread(Rnewnet, nb_th);
+            mcl->loadNet();
+            auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
+            cout << "Performing on the fly Modelchecking" << endl;
+            if (strcmp(algorithm, "")) {
+                cout << "Spot emptiness check algorithm : "<<algorithm<< endl;
+                shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(k,af);
+                //spot::couvreur99_check_shy check = spot::couvreur99_check_shy(product);
+                /****************************/
+                const char *err;
+                spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
 
-				if (!echeck_inst) {
-					cerr << "Failed to parse argument near `" << err << "'" << endl;
-					cerr << "Spot unknown emptiness algorithm" << endl;
-					exit(2);
-				}
-				auto startTime = std::chrono::steady_clock::now();
-				spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
-				bool res = (echptr->check() == 0);
-				auto finalTime = std::chrono::steady_clock::now();
-				displayTime(startTime, finalTime);
-				displayCheckResult(res);
-				/****************************/
+                if (!echeck_inst) {
+                    cerr << "Failed to parse argument near `" << err << "'" << endl;
+                    cerr << "Spot unknown emptiness algorithm" << endl;
+                    exit(2);
+                }
+                auto startTime = std::chrono::steady_clock::now();
+                spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
+                bool res = (echptr->check() == 0);
+                auto finalTime = std::chrono::steady_clock::now();
+                displayTime(startTime, finalTime);
+                displayCheckResult(res);
+                /****************************/
 
+                /*auto startTime = std::chrono::steady_clock::now();
+                 bool res = (check.check() == 0);
+                 auto finalTime = std::chrono::steady_clock::now();
+                 displayTime(startTime, finalTime);
+                 displayCheckResult(res);*/
 
-
-				/*auto startTime = std::chrono::steady_clock::now();
-				 bool res = (check.check() == 0);
-				 auto finalTime = std::chrono::steady_clock::now();
-				 displayTime(startTime, finalTime);
-				 displayCheckResult(res);*/
-
-			} else {
-				auto startTime = std::chrono::steady_clock::now();
-				bool res = (k->intersecting_run(af) == 0);
-				auto finalTime = std::chrono::steady_clock::now();
-				displayTime(startTime, finalTime);
-				displayCheckResult(res);
-				/*
-				 if (!resauto run = k->intersecting_run(af)) {
-				 cout << "formula is violated by the following run:\n" << *run << endl;
-				 cout << "==================================" << endl;
-				 /*run->highlight(5); // 5 is a color number.
-				 fstream file;
-				 file.open("violated.dot",fstream::out);
-				 cout<<"Property is violated!"<<endl;
-				 cout<<"Check the dot file."<<endl;
-				 spot::print_dot(file, k, ".kA");
-				 file.close();*/
-				/*} else {
-				 std::cout << "formula is verified\n";
-				 auto finalTime = std::chrono::high_resolution_clock::now();
-				 displayTime(startTime, finalTime);
-
-				 }*/
-			}
-
-			delete mcl;
-		}
-
-		else {
-			cout << "number of task = 1 \n " << endl;
-			bool uselace = (!strcmp(argv[1], "lc")) || (!strcmp(argv[1], "l"));
-			threadSOG DR(Rnewnet, nb_th, uselace);
-			LDDGraph g(&DR);
-
-			if (nb_th == 1) {
-				cout << "******************Sequential version******************* \n" << endl;
-				DR.computeSeqSOG(g);
-				g.printCompleteInformation();
-			} else {
-				cout << "*******************Multithread version****************** \n" << endl;
-				if (!strcmp(argv[1], "p")) {
-					cout << "Construction with pthread library." << endl;
-					cout << "Count of threads to be created: " << nb_th << endl;
-					DR.computeDSOG(g, false);
-					g.printCompleteInformation();
-				} else if (!strcmp(argv[1], "pc")) {
-					cout << "Canonized construction with pthread library." << endl;
-					cout << "Count of threads to be created: " << nb_th << endl;
-					DR.computeDSOG(g, true);
-					g.printCompleteInformation();
-				} else if (!strcmp(argv[1], "l")) {
-					cout << "Construction with lace framework." << endl;
-					cout << "Count of workers to be created: " << nb_th << endl;
-					DR.computeSOGLace(g);
-					g.printCompleteInformation();
-				} else if (!strcmp(argv[1], "lc")) {
-					cout << "Canonised construction with lace framework." << endl;
-					cout << "Count of workers to be created: " << nb_th << endl;
-					DR.computeSOGLaceCanonized(g);
-					g.printCompleteInformation();
-				}
+            } else {
+                auto startTime = std::chrono::steady_clock::now();
+                bool res = (k->intersecting_run(af) == 0);
+                auto finalTime = std::chrono::steady_clock::now();
+                displayTime(startTime, finalTime);
+                displayCheckResult(res);
                 /*
-				cout << "Perform Model checking ?";
-				char c;
-				cin >> c;
-				if (c == 'y') {
-					cout << "Building automata for not(formula)\n";
-					auto d = spot::make_bdd_dict();
-					// d->register_ap("jbhkj");
-					spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-					cout << "Formula automata built.\n";
-					cout << "Want to save the graph in a dot file ?";
-					cin >> c;
-					if (c == 'y') {
-						fstream file;
-						string st(formula);
-						st += ".dot";
-						file.open(st.c_str(), fstream::out);
-						spot::print_dot(file, af);
-						file.close();
-					}
-					//auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
+                 if (!resauto run = k->intersecting_run(af)) {
+                 cout << "formula is violated by the following run:\n" << *run << endl;
+                 cout << "==================================" << endl;
+                 /*run->highlight(5); // 5 is a color number.
+                 fstream file;
+                 file.open("violated.dot",fstream::out);
+                 cout<<"Property is violated!"<<endl;
+                 cout<<"Check the dot file."<<endl;
+                 spot::print_dot(file, k, ".kA");
+                 file.close();*/
+                /*} else {
+                 std::cout << "formula is verified\n";
+                 auto finalTime = std::chrono::high_resolution_clock::now();
+                 displayTime(startTime, finalTime);
 
-					spot::twa_graph_ptr k = spot::make_twa_graph(
-							std::make_shared<SogKripke>(d, DR.getGraph(), Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP()),
-							spot::twa::prop_set::all(), true);
+                 }*/
+            }
+            delete mcl;
+        }
 
-					cout << "SOG translated to SPOT succeeded.." << endl;
-					cout << "Want to save the graph in a dot file ?";
-					cin >> c;
-					if (c == 'y') {
-						fstream file;
-						string st(argv[3]);
-						st += ".dot";
-						file.open(st.c_str(), fstream::out);
-						spot::print_dot(file, k, "ka");
-						file.close();
-					}
-					if (auto run = k->intersecting_run(af)) {
-						run->highlight(5);
-						fstream file;
-						file.open("violated.dot", fstream::out);
-						cout << "Property is violated" << endl;
-						cout << "Check the dot file to get a violation run" << endl;
-						spot::print_dot(file, k, ".kA");
-						file.close();
-					} else
-						std::cout << "formula is verified\n";
-				}*/
+        else {
+            cout << "number of task = 1 \n " << endl;
+            bool uselace = (!strcmp(argv[1], "lc")) || (!strcmp(argv[1], "l"));
+            threadSOG DR(Rnewnet, nb_th, uselace);
+            LDDGraph g(&DR);
 
-			}
-		}
+            if (nb_th == 1) {
+                cout << "******************Sequential version******************* \n" << endl;
+                DR.computeSeqSOG(g);
+                g.printCompleteInformation();
+            } else {
+                cout << "*******************Multithread version****************** \n" << endl;
+                if (!strcmp(argv[1], "p")) {
+                    cout << "Construction with pthread library." << endl;
+                    cout << "Count of threads to be created: " << nb_th << endl;
+                    DR.computeDSOG(g, false);
+                    g.printCompleteInformation();
+                } else if (!strcmp(argv[1], "pc")) {
+                    cout << "Canonized construction with pthread library." << endl;
+                    cout << "Count of threads to be created: " << nb_th << endl;
+                    DR.computeDSOG(g, true);
+                    g.printCompleteInformation();
+                } /*else if (!strcmp(argv[1], "l")) {
+                    cout << "Construction with lace framework." << endl;
+                    cout << "Count of workers to be created: " << nb_th << endl;
+                    DR.computeSOGLace(g);
+                    g.printCompleteInformation();
+                } else if (!strcmp(argv[1], "lc")) {
+                    cout << "Canonised construction with lace framework." << endl;
+                    cout << "Count of workers to be created: " << nb_th << endl;
+                    DR.computeSOGLaceCanonized(g);
+                    g.printCompleteInformation();
+                }*/
 
-	}
-	if (n_tasks > 1) {
-		if (nb_th > 1) {
-			if (task_id == 0)
-				cout << "**************Hybrid version**************** \n" << endl;
-			if (strcmp(argv[1], "otf")) {
-				HybridSOG DR(Rnewnet);
-				LDDGraph g(&DR);
-				if (task_id == 0)
-					cout << "Building the Distributed SOG by " << n_tasks << " processes..." << endl;
-				DR.computeDSOG(g);
-			} else {
-				n_tasks--;
-				if (task_id == n_tasks) {
-					cout << "Model checking on the fly..." << endl;
-					cout << " One process will perform Model checking" << endl;
-					cout << n_tasks << " process will build the Distributed SOG" << endl;
-				}
-				MPI_Comm gprocess;
-				MPI_Comm_split(MPI_COMM_WORLD, task_id == n_tasks ? 0 : 1, task_id, &gprocess);
-				//cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
-				if (task_id != n_tasks) {
-					cout << "N task :" << n_tasks << endl;
-					MCHybridSOG DR(Rnewnet, gprocess, false);
-					LDDGraph g(&DR);
-					DR.computeDSOG(g);
-				} else {
-					cout << "************************************" << endl;
-					cout << "On the fly Model checker by process " << task_id << endl;
-					auto d = spot::make_bdd_dict();
-					spot::twa_graph_ptr af = spot::translator(d).run(not_f);
-					auto k = std::make_shared<HybridKripke>(d, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP(), Rnewnet);
-					if (strcmp(algorithm, "")) {
-						std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
-						const char *err;
-						spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
+                cout << "Perform Model checking ?";
+                char c;
+                cin >> c;
+                if (c == 'y') {
+                    cout << "Building automata for not(formula)\n";
+                    auto d = spot::make_bdd_dict();
 
-						if (!echeck_inst) {
-							cerr << "Failed to parse argument near `" << err << "'" << endl;
-							cerr << "Spot unknown emptiness algorithm" << endl;
-							exit(2);
-						}
-						else
-							cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
-						auto startTime = std::chrono::high_resolution_clock::now();
-						spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
-						bool res = (echptr->check() == 0);
-						auto finalTime = std::chrono::high_resolution_clock::now();
-						displayTime(startTime, finalTime);
-						displayCheckResult(res);
-						/*spot::couvreur99_check check = spot::couvreur99_check(product);
-						 auto startTime = std::chrono::steady_clock::now();
-						 bool res = (check.check() == 0);
-						 auto finalTime = std::chrono::steady_clock::now();
-						 displayTime(startTime, finalTime);
-						 displayCheckResult(res);*/
-					} else {
-						auto startTime = std::chrono::steady_clock::now();
-						bool res = (k->intersecting_run(af) == 0);
-						auto finalTime = std::chrono::steady_clock::now();
-						displayTime(startTime, finalTime);
-						displayCheckResult(res);
-					}
+                    spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+                    cout << "Formula automata built.\n";
+                    cout << "Want to save the graph in a dot file ?";
+                    cin >> c;
+                    if (c == 'y') {
+                        fstream file;
+                        string st(formula);
+                        st += ".dot";
+                        file.open(st.c_str(), fstream::out);
+                        spot::print_dot(file, af);
+                        file.close();
+                    }
+                    //auto k = std::make_shared<SogKripke>(d,DR.getGraph(),R.getListTransitionAP(),R.getListPlaceAP());
 
-					/*if (auto run = k->intersecting_run(af))
-					 {
-					 std::cout << "formula is violated by the following run:\n"<<*run<<endl;
-					 auto t2 = std::chrono::high_resolution_clock::now();
-					 std::cout << "temps de verification "
-					 << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
-					 << " milliseconds\n";
-					 cout<<"=================================="<<endl;
-					 }
-					 else
-					 {
-					 std::cout << "formula is verified\n";
-					 auto t2 = std::chrono::high_resolution_clock::now();
-					 std::cout << "temps de verification "
-					 << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
-					 << " milliseconds\n";
+                    spot::twa_graph_ptr k = spot::make_twa_graph(
+                            std::make_shared<SogKripke>(d, DR.getGraph(), Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP()),
+                            spot::twa::prop_set::all(), true);
 
-					 }*/
-				}
-			}
-		} else {
-			cout << "*************Distibuted version******************* \n" << endl;
-			{
-				DistributedSOG DR(Rnewnet);cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
-				LDDGraph g(nullptr);
-				DR.computeDSOG(g);
-			}
-		}
-	}
+                    cout << "SOG translated to SPOT succeeded.." << endl;
+                    cout << "Want to save the graph in a dot file ?";
+                    cin >> c;
+                    if (c == 'y') {
+                        fstream file;
+                        string st(argv[3]);
+                        st += ".dot";
+                        file.open(st.c_str(), fstream::out);
+                        spot::print_dot(file, k, "ka");
+                        file.close();
+                    }
+                    if (auto run = k->intersecting_run(af)) {
+                        run->highlight(5);
+                        fstream file;
+                        file.open("violated.dot", fstream::out);
+                        cout << "Property is violated" << endl;
+                        cout << "Check the dot file to get a violation run" << endl;
+                        spot::print_dot(file, k, ".kA");
+                        file.close();
+                    } else
+                        std::cout << "formula is verified\n";
+                }
+
+            }
+        }
+
+
+    }
+
+    if (n_tasks > 1) {
+        if (nb_th > 1) {
+            if (task_id == 0)
+                cout << "**************Hybrid version**************** \n" << endl;
+            if (strcmp(argv[1], "otf")) {
+                HybridSOG DR(Rnewnet);
+                LDDGraph g(&DR);
+                if (task_id == 0)
+                    cout << "Building the Distributed SOG by " << n_tasks << " processes..." << endl;
+                DR.computeDSOG(g);
+            } else {
+                n_tasks--;
+                if (task_id == n_tasks) {
+                    cout << "Model checking on the fly..." << endl;
+                    cout << " One process will perform Model checking" << endl;
+                    cout << n_tasks << " process will build the Distributed SOG" << endl;
+                }
+                MPI_Comm gprocess;
+                MPI_Comm_split(MPI_COMM_WORLD, task_id == n_tasks ? 0 : 1, task_id, &gprocess);
+                //cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
+                if (task_id != n_tasks) {
+                    cout << "N task :" << n_tasks << endl;
+                    MCHybridSOG DR(Rnewnet, gprocess, false);
+                    LDDGraph g(&DR);
+                    DR.computeDSOG(g);
+                } else {
+                    cout << "************************************" << endl;
+                    cout << "On the fly Model checker by process " << task_id << endl;
+                    auto d = spot::make_bdd_dict();
+                    spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+                    auto k = std::make_shared<HybridKripke>(d, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP(), Rnewnet);
+                    if (strcmp(algorithm, "")) {
+                        std::shared_ptr < spot::twa_product > product = make_shared<spot::twa_product>(af, k);
+                        const char *err;
+                        spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm, &err);
+
+                        if (!echeck_inst) {
+                            cerr << "Failed to parse argument near `" << err << "'" << endl;
+                            cerr << "Spot unknown emptiness algorithm" << endl;
+                            exit(2);
+                        }
+                        else
+                            cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
+                        auto startTime = std::chrono::high_resolution_clock::now();
+                        spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
+                        bool res = (echptr->check() == 0);
+                        auto finalTime = std::chrono::high_resolution_clock::now();
+                        displayTime(startTime, finalTime);
+                        displayCheckResult(res);
+                        /*spot::couvreur99_check check = spot::couvreur99_check(product);
+                         auto startTime = std::chrono::steady_clock::now();
+                         bool res = (check.check() == 0);
+                         auto finalTime = std::chrono::steady_clock::now();
+                         displayTime(startTime, finalTime);
+                         displayCheckResult(res);*/
+                    } else {
+                        auto startTime = std::chrono::steady_clock::now();
+                        bool res = (k->intersecting_run(af) == 0);
+                        auto finalTime = std::chrono::steady_clock::now();
+                        displayTime(startTime, finalTime);
+                        displayCheckResult(res);
+                    }
+
+                    /*if (auto run = k->intersecting_run(af))
+                     {
+                     std::cout << "formula is violated by the following run:\n"<<*run<<endl;
+                     auto t2 = std::chrono::high_resolution_clock::now();
+                     std::cout << "temps de verification "
+                     << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                     << " milliseconds\n";
+                     cout<<"=================================="<<endl;
+                     }
+                     else
+                     {
+                     std::cout << "formula is verified\n";
+                     auto t2 = std::chrono::high_resolution_clock::now();
+                     std::cout << "temps de verification "
+                     << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
+                     << " milliseconds\n";
+
+                     }*/
+                }
+            }
+        } else {
+            /*cout << "*************Distibuted version******************* \n" << endl;
+            {
+                DistributedSOG DR(Rnewnet);cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
+                LDDGraph g(nullptr);
+                DR.computeDSOG(g);
+            }*/
+        }
+    }
+
+
+
+
+
+
 
 	MPI_Finalize();
 	return (EXIT_SUCCESS);

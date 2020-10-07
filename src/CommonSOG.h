@@ -28,17 +28,23 @@ class CommonSOG
         vector<TransSylvan>* getTBRelation();
         Set * getNonObservable();
         unsigned int getPlacesCount();
-        set<uint16_t> & getPlaceProposition() {return m_place_proposition;}
-        string getTransition(int pos);
-        string getPlace(int pos);
+        inline set<uint16_t> & getPlaceProposition() {return m_place_proposition;}
+        inline string_view getTransition(int pos) {
+            {
+                return string_view {m_transitions.at(pos).name};
+            }
+        }
+        string_view getPlace(int pos);
+
+
     protected:
         NewNet* m_net;
         int m_nbPlaces = 0;
         static LDDGraph *m_graph;
         vector<TransSylvan> m_tb_relation;
         MDD m_initialMarking;
-        map<string, uint16_t> m_transitionName;
-        map<uint16_t,string> m_placeName;
+        map<string, uint16_t> * m_transitionName;
+        map<uint16_t,string> * m_placeName;
         Set m_observable;
         Set m_nonObservable;
         Set InterfaceTrans;

@@ -54,10 +54,10 @@ bdd SogKripkeIteratorTh::cond()  const
     if ( m_lsucc.at ( m_current_edge ).second==-1 ) {
         return bddtrue;
     }
-    string name=m_builder->getTransition ( m_lsucc.at ( m_current_edge ).second );
+    spot::formula f=spot::formula::ap (string(m_builder->getTransition ( m_lsucc.at ( m_current_edge ).second )));
     spot::bdd_dict *p=m_dict_ptr->get();
-    spot::formula f=spot::formula::ap ( name );
     bdd   result=bdd_ithvar ( ( p->var_map.find ( f ) )->second );
+    //cout<<"leaving "<<__func__<<endl;
     return result & spot::kripke_succ_iterator::cond();
 }
 

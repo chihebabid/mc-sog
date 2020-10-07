@@ -1,12 +1,12 @@
 #ifndef LDDSTATE_H
 #define LDDSTATE_H
-#include <sylvan.h>
+
 #include <set>
 #include <vector>
 #include <string>
-
+#include "SylvanWrapper.h"
 using namespace std;
-using namespace sylvan;
+
 typedef set<int> Set;
 
 class LDDState {
@@ -34,7 +34,7 @@ class LDDState {
   bool isVirtual() {return m_virtual;}
   void setVirtual(){m_virtual=true;}
   void setDiv(bool di) {m_boucle=di;}
-  bool isDiv() {return m_boucle;}
+  inline bool isDiv() {return m_boucle;}
   void setDeadLock(bool de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
   inline void setVisited() {m_visited=true;}

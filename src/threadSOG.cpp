@@ -5,19 +5,16 @@
 //#define DEBUG_GC
 #include "threadSOG.h"
 
-#include "sylvan.h"
-#include "sylvan_seq.h"
-#include <sylvan_sog.h>
-#include <sylvan_int.h>
 
-using namespace sylvan;
 
+
+/*
 void write_to_dot(const char *ch,MDD m)
 {
     FILE *fp=fopen(ch,"w");
     lddmc_fprintdot(fp,m);
     fclose(fp);
-}
+}*/
 
 /*************************************************/
 
@@ -29,23 +26,14 @@ void write_to_dot(const char *ch,MDD m)
 threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
 {
     m_nb_thread=nbThread;
-    if (uselace)  {
-    lace_init(m_nb_thread, 10000000);
-    }
-    else lace_init(1, 0);
-    lace_startup(0, NULL, NULL);
+   uselace=uselace;
+    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 8, 0 );
 
-    // Simple Sylvan initialization, also initialize MDD support
-    //sylvan_set_sizes(1LL<<27, 1LL<<27, 1LL<<20, 1LL<<22);
-    sylvan_set_limits(16LL<<30, 8, 0);
-
-    //sylvan_set_limits(2LL<<30, 16, 3);
-    //sylvan_set_sizes(1LL<<30, 2LL<<20, 1LL<<18, 1LL<<20);
-    //sylvan_init_bdd(1);
-    sylvan_init_package();
-    sylvan_init_ldd();
-    LACE_ME;
-    displayMDDTableInfo();
+    //sylvan_init_package();
+    SylvanWrapper::sylvan_init_package();
+    SylvanWrapper::sylvan_init_ldd();
+    SylvanWrapper::init_gc_seq();
+    SylvanWrapper::displayMDDTableInfo();
     /*sylvan_gc_hook_pregc(TASK(gc_start));
     sylvan_gc_hook_postgc(TASK(gc_end));
     sylvan_gc_enable();*/
@@ -56,7 +44,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     vector<Place>::const_iterator it_places;
 
 
-    init_gc_seq();
+
 
 
     //_______________
@@ -65,12 +53,12 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     m_place_proposition=R.m_formula_place;
     m_nonObservable=R.NonObservable;
 
-    m_transitionName=R.transitionName;
-    m_placeName=R.m_placePosName;
+    m_transitionName=&R.transitionName;
+    m_placeName=&R.m_placePosName;
 
-   /* cout<<"Toutes les Transitions:"<<endl;
-    map<string,uint16_t>::iterator it2=m_transitionName.begin();
-    for (;it2!=m_transitionName.end();it2++) {
+    cout<<"Toutes les Transitions:"<<endl;
+    map<string,uint16_t>::iterator it2=m_transitionName->begin();
+    for (;it2!=m_transitionName->end();it2++) {
         cout<<(*it2).first<<" : "<<(*it2).second<<endl;}
 
 
@@ -78,7 +66,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
     cout<<"Transitions observables :"<<endl;
     Set::iterator it=m_observable.begin();
     for (;it!=m_observable.end();it++) {cout<<*it<<"  ";}
-    cout<<endl;*/
+    cout<<endl;
     InterfaceTrans=R.InterfaceTrans;
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;
@@ -90,7 +78,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
         liste_marques[i] =it_places->marking;
     }
 
-    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
+    m_initialMarking=SylvanWrapper::lddmc_cube(liste_marques,R.places.size());
 
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc= new uint32_t [m_nbPlaces];
@@ -126,10 +114,10 @@ threadSOG::threadSOG(const NewNet &R, int nbThread,bool uselace,bool init)
             Precond = Precond & ((*it) >= prec[*it]);
         }
 
-        MDD _minus=lddmc_cube(prec,m_nbPlaces);
-        ldd_refs_push(_minus);
-        MDD _plus=lddmc_cube(postc,m_nbPlaces);
-        ldd_refs_push(_plus);
+        MDD _minus=SylvanWrapper::lddmc_cube(prec,m_nbPlaces);
+        //#ldd_refs_push(_minus);
+        MDD _plus=SylvanWrapper::lddmc_cube(postc,m_nbPlaces);
+        //#ldd_refs_push(_plus);
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
 
@@ -190,14 +178,14 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
     c->m_lddstate=Complete_meta_state;
     //TabMeta[m_nbmetastate]=c->m_lddstate;
     m_nbmetastate++;
-    old_size=lddmc_nodecount(c->m_lddstate);
+
     //max_meta_state_size=bdd_pathcount(Complete_meta_state);
     st.push(Pair(couple(c,Complete_meta_state),fire));
 
     g.setInitialState(c);
     g.insert(c);
     //LACE_ME;
-    g.m_nbMarking+=lddmc_nodecount(c->m_lddstate);
+    g.m_nbMarking+=SylvanWrapper::lddmc_nodecount(c->m_lddstate);
     do
     {
         m_NbIt++;
@@ -216,7 +204,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g)
                 MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
                 //MDD reduced_meta=Canonize(Complete_meta_state,0);
 
-                ldd_refs_push(Complete_meta_state);
+                //#ldd_refs_push(Complete_meta_state);
                 //ldd_refs_push(reduced_meta);
                   //sylvan_gc_seq();
 
@@ -301,7 +289,7 @@ void * threadSOG::doCompute()
         // cout<<bddtable<<M0<<endl;
 
         MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
-        ldd_refs_push(Complete_meta_state);
+        //#ldd_refs_push(Complete_meta_state);
        // MDD canonised_initial=Canonize(Complete_meta_state,0);
         //ldd_refs_push(canonised_initial);
         fire=firable_obs(Complete_meta_state);
@@ -309,7 +297,7 @@ void * threadSOG::doCompute()
         c->m_lddstate=Complete_meta_state;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
         m_nbmetastate++;
-        m_old_size=lddmc_nodecount(c->m_lddstate);
+        m_old_size=SylvanWrapper::lddmc_nodecount(c->m_lddstate);
         //max_meta_state_size=bdd_pathcount(Complete_meta_state);
 
         m_st[0].push(Pair(couple(c,Complete_meta_state),fire));
@@ -356,7 +344,7 @@ void * threadSOG::doCompute()
 
                 MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
 
-                ldd_refs_push(Complete_meta_state);
+                //#ldd_refs_push(Complete_meta_state);
 
                 //MDD reduced_meta=Canonize(Complete_meta_state,0);
                 //ldd_refs_push(reduced_meta);
@@ -367,7 +355,7 @@ void * threadSOG::doCompute()
                //     #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
-                    sylvan_gc_seq();
+                    //# sylvan_gc_seq();
                  //   #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
@@ -463,16 +451,16 @@ void * threadSOG::doComputeCanonized()
         // cout<<bddtable<<M0<<endl;
 
         MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
-        ldd_refs_push(Complete_meta_state);
+        //#ldd_refs_push(Complete_meta_state);
         MDD canonised_initial=Canonize(Complete_meta_state,0);
-        ldd_refs_push(canonised_initial);
+        //#ldd_refs_push(canonised_initial);
         fire=firable_obs(Complete_meta_state);
 
 
         c->m_lddstate=canonised_initial;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
         m_nbmetastate++;
-        m_old_size=lddmc_nodecount(c->m_lddstate);
+        m_old_size=SylvanWrapper::lddmc_nodecount(c->m_lddstate);
         //max_meta_state_size=bdd_pathcount(Complete_meta_state);
 
         m_st[0].push(Pair(couple(c,Complete_meta_state),fire));
@@ -521,10 +509,10 @@ void * threadSOG::doComputeCanonized()
 
                 MDD Complete_meta_state=Accessible_epsilon(get_successor(e.first.second,t));
 
-                ldd_refs_push(Complete_meta_state);
+                //#ldd_refs_push(Complete_meta_state);
 
                 MDD reduced_meta=Canonize(Complete_meta_state,0);
-                ldd_refs_push(reduced_meta);
+                //#ldd_refs_push(reduced_meta);
 
                 if (id_thread==0)
                 {
@@ -532,7 +520,7 @@ void * threadSOG::doComputeCanonized()
                //     #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
-                    sylvan_gc_seq();
+                    //#  sylvan_gc_seq();
                  //   #ifdef DEBUG_GC
                  //   displayMDDTableInfo();
                  //   #endif // DEBUG_GC
@@ -619,8 +607,8 @@ void threadSOG::computeDSOG(LDDGraph &g,bool canonised)
     cout << "number of threads "<<m_nb_thread<<endl;
     int rc;
     m_graph=&g;
-    m_graph->setTransition(m_transitionName);
-    m_graph->setPlace(m_placeName);
+    m_graph->setTransition(*m_transitionName);
+    m_graph->setPlace(*m_placeName);
     m_id_thread=0;
 
     pthread_mutex_init(&m_mutex, NULL);    
@@ -701,7 +689,7 @@ threadSOG::~threadSOG()
 /******************* Functions computing SOG with Lace *****************/
 
 /***** Saturation with Lace *********/
-
+/*
 TASK_3 (MDD, ImageForwardLace,MDD, From, Set* , NonObservable, vector<TransSylvan>*, tb_relation)
 {
     MDD Res=lddmc_false;
@@ -762,14 +750,15 @@ TASK_3 (MDD, Accessible_epsilon_lace, MDD, From, Set*, nonObservable, vector<Tra
     return M2;
 }
 
-
+*/
 /********************* Compute SOG with lace *********************************************/
+/*
 void threadSOG::computeSOGLace(LDDGraph &g)
 {
     clock_gettime(CLOCK_REALTIME, &start);
     Set fire;
     m_graph=&g;
-    m_graph->setTransition(m_transitionName);
+    m_graph->setTransition(*m_transitionName);
     m_graph->setPlace(m_placeName);
     m_nbmetastate=0;
     m_MaxIntBdd=0;
@@ -850,16 +839,16 @@ void threadSOG::computeSOGLace(LDDGraph &g)
     tps = (finish.tv_sec - start.tv_sec);
     tps += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
-}
+}*/
 
 
 /********************* Compute canonized SOG with lace *********************************************/
 
 /******************************Canonizer with lace framework  **********************************/
-TASK_DECL_3(MDD, lddmc_canonize,MDD, unsigned int, threadSOG *)
-#define lddmc_canonize(s,level,ds) CALL(lddmc_canonize, s, level,ds)
+/*TASK_DECL_3(MDD, lddmc_canonize,MDD, unsigned int, threadSOG *)
+#define lddmc_canonize(s,level,ds) CALL(lddmc_canonize, s, level,ds)*/
 
-
+/*
 TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG * ,ds)
 {
 
@@ -934,7 +923,7 @@ TASK_IMPL_3(MDD, lddmc_canonize,MDD, s,unsigned int, level, threadSOG * ,ds)
         if (isSingleMDD(s1)) {
             /*lddmc_refs_spawn(SPAWN(lddmc_canonize,s0,level,ds));
             Repr=lddmc_refs_sync(SYNC(lddmc_canonize));*/
-            Repr=CALL(lddmc_canonize,s0,level,ds);
+/*            Repr=CALL(lddmc_canonize,s0,level,ds);
             Repr=lddmc_union(Repr,s1);
             }
         else {
@@ -1045,7 +1034,7 @@ void threadSOG::computeSOGLaceCanonized(LDDGraph &g)
     tps = (finish.tv_sec - start.tv_sec);
     tps += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     std::cout << "TIME OF CONSTRUCTION OF THE SOG " << tps << " seconds\n";
-}
+}*/
 
 
 

@@ -1,11 +1,6 @@
 #include "ModelCheckerTh.h"
+#include <unistd.h>
 
-#include "sylvan.h"
-#include "sylvan_seq.h"
-#include <sylvan_sog.h>
-#include <sylvan_int.h>
-
-using namespace sylvan;
 
 ModelCheckerTh::ModelCheckerTh(const NewNet &R, int nbThread) :
 		ModelCheckBaseMT(R, nbThread) {
@@ -19,19 +14,15 @@ getMaxMemory()
 }
 void ModelCheckerTh::preConfigure() {
 
-	lace_init(1, 0);
-	lace_startup(0, NULL, NULL);
-	size_t max = 16LL<<30;
-	if (max > getMaxMemory()) max = getMaxMemory()/10*9;
-	sylvan_set_limits(16LL<<29, 8, 0);
-
-	sylvan_init_package();
-	sylvan_init_ldd();
-	displayMDDTableInfo();
+    SylvanWrapper::sylvan_set_limits ( 16LL<<29, 8, 0 );
+    SylvanWrapper::sylvan_init_package();
+    SylvanWrapper::sylvan_init_ldd();
+    SylvanWrapper::init_gc_seq();
+    SylvanWrapper::displayMDDTableInfo();
 
 	vector<Place>::const_iterator it_places;
 
-	init_gc_seq();
+	//init_gc_seq();
 
 
 	m_transitions = m_net->transitions;
@@ -39,8 +30,8 @@ void ModelCheckerTh::preConfigure() {
 	m_place_proposition = m_net->m_formula_place;
 	m_nonObservable = m_net->NonObservable;
 
-	m_transitionName = m_net->transitionName;
-	m_placeName = m_net->m_placePosName;
+    m_transitionName = &m_net->transitionName;
+    m_placeName = &m_net->m_placePosName;
 
 	InterfaceTrans = m_net->InterfaceTrans;
 
@@ -53,8 +44,8 @@ void ModelCheckerTh::preConfigure() {
 		liste_marques[i] = it_places->marking;
 	}
 
-	m_initialMarking = lddmc_cube(liste_marques, m_net->places.size());
-    ldd_refs_push(m_initialMarking);
+	m_initialMarking = SylvanWrapper::lddmc_cube(liste_marques, m_net->places.size());
+    //ldd_refs_push(m_initialMarking);
 	uint32_t *prec = new uint32_t[m_nbPlaces];
 	uint32_t *postc = new uint32_t[m_nbPlaces];
 	// Transition relation
@@ -83,10 +74,10 @@ void ModelCheckerTh::preConfigure() {
 			Precond = Precond & ((*it) >= prec[*it]);
 		}
 
-		MDD _minus = lddmc_cube(prec, m_nbPlaces);
-		ldd_refs_push(_minus);
-		MDD _plus = lddmc_cube(postc, m_nbPlaces);
-		ldd_refs_push(_plus);
+		MDD _minus = SylvanWrapper::lddmc_cube(prec, m_nbPlaces);
+        //#ldd_refs_push(_minus);
+		MDD _plus = SylvanWrapper::lddmc_cube(postc, m_nbPlaces);
+        //#ldd_refs_push(_plus);
 		m_tb_relation.push_back(TransSylvan(_minus, _plus));
 	}
 	delete[] prec;
@@ -104,7 +95,7 @@ void* ModelCheckerTh::Compute_successors() {
 	if (id_thread == 0) {
 		LDDState *c = new LDDState;
 		MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
-		ldd_refs_push(Complete_meta_state);
+        //#ldd_refs_push(Complete_meta_state);
 		
 		fire = firable_obs(Complete_meta_state);
 		c->m_lddstate = Complete_meta_state;
@@ -150,7 +141,7 @@ void* ModelCheckerTh::Compute_successors() {
 				}
 #endif
 				MDD reduced_meta = Accessible_epsilon(get_successor(e.first.second, t));
-                ldd_refs_push(reduced_meta);
+                //#ldd_refs_push(reduced_meta);
 				reached_class = new LDDState();
 				reached_class->m_lddstate = reduced_meta;
 				//pthread_spin_lock(&m_accessible);
@@ -253,4 +244,3 @@ bool ModelCheckerTh::isNotTerminated() {
 	}
 	return !res;
 }
-

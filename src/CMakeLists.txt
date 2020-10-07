@@ -27,18 +27,12 @@ add_executable(mc-sog main.cpp
   NewNet.h
   CommonSOG.cpp
   CommonSOG.h
-  DistributedSOG.cpp
-  DistributedSOG.h
-  HybridSOG.cpp
-  HybridSOG.h
-  threadSOG.cpp
-  threadSOG.h
   LDDGraph.cpp
   LDDGraph.h
   LDDState.cpp
   LDDState.h
   TransSylvan.cpp
-  sylvan_sog.c
+
   SpotSogState.cpp
   SpotSogState.h
   SpotSogIterator.cpp
@@ -53,24 +47,18 @@ add_executable(mc-sog main.cpp
   SogKripke.h
   ModelCheckBaseMT.cpp
   ModelCheckBaseMT.h
-  ModelCheckLace.cpp
-  ModelCheckLace.h
+
   SogKripkeTh.cpp
   SogKripkeTh.h
   SogKripkeStateTh.cpp
   SogKripkeStateTh.h
   SogKripkeIteratorTh.cpp
   SogKripkeIteratorTh.h
-  ModelCheckerTh.cpp
-  ModelCheckerTh.h
+
   stacksafe.cpp
   stacksafe.h
   SafeDequeue.cpp
   SafeDequeue.h
-  ModelCheckerThV2.cpp
-  ModelCheckerThV2.h  
-  MCHybridSOG.cpp
-  MCHybridSOG.h
   HybridKripke.cpp
   HybridKripke.h
   HybridKripkeIterator.cpp
@@ -79,12 +67,16 @@ add_executable(mc-sog main.cpp
   HybridKripkeState.h
         SylvanWrapper.cpp
         SylvanWrapper.h
-        )
+        SylvanCacheWrapper.cpp SylvanCacheWrapper.h
+        ModelCheckerCPPThread.cpp ModelCheckerCPPThread.h
+        ModelCheckerTh.cpp ModelCheckerTh.h
+        threadSOG.cpp threadSOG.h
+        HybridSOG.cpp HybridSOG.h
+        MCHybridSOG.cpp MCHybridSOG.h)
 
 target_link_libraries(mc-sog
   bddx
   spot
-  sylvan
   RdP
   ${MPI_LIBRARIES}
   ${OPENSSL_LIBRARIES}

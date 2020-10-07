@@ -89,10 +89,9 @@ private:
     //        int n_tasks, task_id;
 
     int m_charge[128];
-   int m_init;
+     int m_init;
 
-    /// Convert an MDD to a string caracter (for the send)
-    void convert_wholemdd_stringcpp(MDD cmark, string &chaine);
+
     /// Convert a string caracter to an MDD
     MDD decodage_message(const char *chaine);
     /// there is a message to receive?
@@ -117,8 +116,8 @@ private:
     int m_nbsend = 0, m_nbrecv = 0;
 
     MPI_Status m_status;
-    set<uint16_t> getUnmarkedPlaces(LDDState *agg);
-    set<uint16_t> getMarkedPlaces(LDDState *agg);
+    /*set<uint16_t> getUnmarkedPlaces(LDDState *agg);
+    set<uint16_t> getMarkedPlaces(LDDState *agg);*/
 
 };
 

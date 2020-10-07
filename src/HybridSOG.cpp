@@ -4,13 +4,8 @@
 using namespace std;
 #include <stdio.h>
 
-#include "sylvan_seq.h"
-#include "sylvan_sog.h"
-#include <sylvan_int.h>
-
-using namespace sylvan;
 #include <openssl/md5.h>
-#define GETNODE(mdd) ((mddnode_t)llmsset_index_to_ptr(nodes, mdd))
+
 
 #define LENGTH_ID 16
 //#define LENGTH_MSG 180
@@ -55,16 +50,10 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
 {
 
 
-    lace_init(1, 0);
-    lace_startup(0, NULL, NULL);
-
-    // Simple Sylvan initialization, also initialize MDD support
-    sylvan_set_limits(2LL<<31, 2, 1);   // sylvan_set_limits(2LL<<31, 2, 1);
-    //sylvan_set_sizes(1LL<<27, 1LL<<31, 1LL<<20, 1LL<<22);
-
-    sylvan_init_package();
-    sylvan_init_ldd();
-    sylvan_gc_enable();
+    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 8, 0 );
+    SylvanWrapper::sylvan_init_package();
+    SylvanWrapper::sylvan_init_ldd();
+    SylvanWrapper::init_gc_seq();
     m_net=&R;
 
     m_init=init;
@@ -72,14 +61,14 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
     int i, domain;
     vector<Place>::const_iterator it_places;
 
-    init_gc_seq();
+
     //_______________
     m_transitions=R.transitions;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;
-    m_transitionName=R.transitionName;
-    m_placeName=R.m_placePosName;
+    m_transitionName=&R.transitionName;
+    m_placeName=&R.m_placePosName;
     InterfaceTrans=R.InterfaceTrans;
 
     m_nbPlaces=R.places.size();
@@ -92,8 +81,8 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
     {
         liste_marques[i] =it_places->marking;
     }
-    m_initialMarking=lddmc_cube(liste_marques,R.places.size());
-    ldd_refs_push(m_initialMarking);
+    m_initialMarking=SylvanWrapper::lddmc_cube(liste_marques,R.places.size());
+    //# ldd_refs_push(m_initialMarking);
 
     delete []liste_marques;
     // place names
@@ -129,11 +118,11 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
             postc[it->first] = postc[it->first] + it->second;
         }
 
-        MDD _minus=lddmc_cube(prec,m_nbPlaces);
-        ldd_refs_push(_minus);
+        MDD _minus=SylvanWrapper::lddmc_cube(prec,m_nbPlaces);
+        //#ldd_refs_push(_minus);
 
-        MDD _plus=lddmc_cube(postc,m_nbPlaces);
-        ldd_refs_push(_plus);
+        MDD _plus=SylvanWrapper::lddmc_cube(postc,m_nbPlaces);
+        //#ldd_refs_push(_plus);
         m_tb_relation.push_back(TransSylvan(_minus,_plus));
     }
     //sylvan_gc_seq();
@@ -170,10 +159,10 @@ void *HybridSOG::doCompute()
         LDDState *c=new LDDState;
         MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
         c->m_lddstate=Complete_meta_state;
-        ldd_refs_push(Complete_meta_state);
+        //#ldd_refs_push(Complete_meta_state);
      //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);
 
-        convert_wholemdd_stringcpp(Complete_meta_state,*chaine);
+        SylvanWrapper::convert_wholemdd_stringcpp(Complete_meta_state,*chaine);
         //DisplayMessage(chaine->c_str());
         //write_to_dot("normal.dot",Complete_meta_state);
         //exit(0);
@@ -209,7 +198,7 @@ void *HybridSOG::doCompute()
             initialstate=Canonize(Complete_meta_state,0);
             }
             //#endif // REDUCE
-            convert_wholemdd_stringcpp(initialstate,*chaine);
+            SylvanWrapper::convert_wholemdd_stringcpp(initialstate,*chaine);
 
 
             pthread_mutex_lock(&m_spin_msg[0]);
@@ -312,17 +301,17 @@ void *HybridSOG::doCompute()
 
                             MDD ldd_reachedclass=Accessible_epsilon(get_successor(e.first.second,t));
 
-                            ldd_refs_push(ldd_reachedclass);
+                            //#ldd_refs_push(ldd_reachedclass);
 
                             if (id_thread==1)
-                                if (isGCRequired())
+                                if (SylvanWrapper::isGCRequired())
                                 {
                                     pthread_mutex_lock(&m_gc_mutex);
 #ifdef DEBUG_GC
 
                                     displayMDDTableInfo();
 #endif // DEBUG_GC
-                                    sylvan_gc_seq();
+                                    //# sylvan_gc_seq();
 #ifdef DEBUG_GC
 
                                     displayMDDTableInfo();
@@ -340,7 +329,7 @@ void *HybridSOG::doCompute()
 
                                     //MDD Reduced=ldd_reachedclass;
                             string* message_to_send1=new string();
-                            convert_wholemdd_stringcpp(ldd_reachedclass,*message_to_send1);
+                            SylvanWrapper::convert_wholemdd_stringcpp(ldd_reachedclass,*message_to_send1);
                             get_md5(*message_to_send1,Identif);
 
 
@@ -410,7 +399,7 @@ void *HybridSOG::doCompute()
                                 #endif
                                     //MDD Reduced=ldd_reachedclass;
                                  string* message_to_send2=new string();
-                                 convert_wholemdd_stringcpp(reached,*message_to_send2);
+                                 SylvanWrapper::convert_wholemdd_stringcpp(reached,*message_to_send2);
                                  get_md5(*message_to_send2,Identif);
 
 
@@ -479,7 +468,7 @@ void *HybridSOG::doCompute()
                             pthread_mutex_lock(&m_spin_stack[min_charge]);
                             m_st[min_charge].push(Pair(couple(Agregate,MState),fire));
                             pthread_mutex_unlock(&m_spin_stack[min_charge]);
-                            ldd_refs_push(MState);
+                            //#ldd_refs_push(MState);
                             m_charge[min_charge]++;
                         }
 
@@ -884,8 +873,8 @@ MDD HybridSOG::decodage_message(const char *chaine)
             list_marq[j]=(uint32_t)((unsigned char)chaine[index]-1);
             index++;
         }
-        MDD N=lddmc_cube(list_marq,m_nbPlaces);
-        M=lddmc_union_mono(M,N);
+        MDD N=SylvanWrapper::lddmc_cube(list_marq,m_nbPlaces);
+        M=SylvanWrapper::lddmc_union_mono(M,N);
     }
     return M;
 }
@@ -921,48 +910,7 @@ void * HybridSOG::threadHandler(void *context)
     return ((HybridSOG*)context)->doCompute();
 }
 
-void HybridSOG::convert_wholemdd_stringcpp(MDD cmark,string &res)
-{
-    typedef pair<string,MDD> Pair_stack;
-    vector<Pair_stack> local_stack;
 
-    unsigned int compteur=0;
-    MDD explore_mdd=cmark;
-
-    string chaine;
-
-    res="  ";
-    local_stack.push_back(Pair_stack(chaine,cmark));
-    do
-    {
-        Pair_stack element=local_stack.back();
-        chaine=element.first;
-        explore_mdd=element.second;
-        local_stack.pop_back();
-        compteur++;
-        while ( explore_mdd!= lddmc_false  && explore_mdd!=lddmc_true)
-        {
-            mddnode_t n_val = GETNODE(explore_mdd);
-            if (mddnode_getright(n_val)!=lddmc_false)
-            {
-                local_stack.push_back(Pair_stack(chaine,mddnode_getright(n_val)));
-            }
-            unsigned int val = mddnode_getvalue(n_val);
-
-            chaine.push_back((unsigned char)(val)+1);
-            explore_mdd=mddnode_getdown(n_val);
-        }
-        /*printchaine(&chaine);printf("\n");*/
-        res+=chaine;
-    }
-    while (local_stack.size()!=0);
-    //delete chaine;
-
-    compteur=(compteur<<1) | 1;
-    res[1]=(unsigned char)((compteur>>8)+1);
-    res[0]=(unsigned char)(compteur & 255);
-
-}
 
 
 void  HybridSOG::get_md5(const string& chaine,unsigned char *md_chaine)
