@@ -58,23 +58,6 @@ vector<uint16_t> LDDState::getUnmarkedPlaces(set<uint16_t>& lplacesAP) {
         }
     }
     return result;
-    /*cout<<"Display begin"<<endl;
-    for (auto & iter : lplacesAP)
-        cout<<iter<<endl;
-    cout<<"Display end"<<endl;*/
-    /*uint16_t depth=0;
-    while (mdd>lddmc_true)
-    {
-        //printf("mddd : %d \n",mdd);
-        mddnode_t node=SylvanWrapper::GETNODE(mdd);
-        if (lplacesAP.find(depth)!=lplacesAP.end())
-        if (SylvanWrapper::mddnode_getvalue(node)==0) {
-            result.push_back(depth);
-        }
-        mdd=SylvanWrapper::mddnode_getdown(node);
-        depth++;
-    }
-    return result;*/
 }
 
 

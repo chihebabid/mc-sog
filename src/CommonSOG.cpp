@@ -178,12 +178,12 @@ bool CommonSOG::Set_Div(MDD &M) const {
         }
 
         if (Reached == From) {
-            MDD Reached_obs=lddmc_false;
+            /*MDD Reached_obs=lddmc_false;
             for (i = m_observable.begin(); !(i == m_observable.end()) && (Reached_obs==lddmc_false); i++) {
                 Reached_obs= fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
             }
-            if (Reached_obs==lddmc_false) return true;
-            return false;
+            if (Reached_obs==lddmc_false) return true;*/
+            return true;
         }
         From = Reached;
     } while (Reached != lddmc_false);
