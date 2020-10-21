@@ -49,9 +49,6 @@ mpirun -n 1 hybrid-sog arg1 arg2 arg3 arg4 [arg5]
 arg1: specifies method of creating threads or/and specifies if modelchecking should be performed on the fly. It can be set with one of the following values:
      * p : using pthread library
      * pc : using pthread library and applying canonization on nodes
-     * l : using lace framework
-     * lc : using lace framework and applying canonization on nodes
-     * otfL : perform modelchecking on the fly using laceframework
      * otfP : perform modelchecking on the fly using pthread
      * otfC : perform modelchecking on the fly using c++17 algorithms and a work-stealing approach for the construction of aggregates
 arg2: specify the number of threads/workers to be created
