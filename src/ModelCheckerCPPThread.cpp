@@ -30,7 +30,7 @@ void ModelCheckerCPPThread::preConfigure()
     if ( max > getMaxMemoryV3() ) {
         max = getMaxMemoryV3() /10*9;
     }*/
-    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 8, 0 );
+    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 10, 0 );
 
     //sylvan_init_package();
     SylvanWrapper::sylvan_init_package();
@@ -59,8 +59,8 @@ void ModelCheckerCPPThread::preConfigure()
     }
 
     m_initialMarking = SylvanWrapper::lddmc_cube ( liste_marques, m_net->places.size() );
-
     SylvanWrapper::lddmc_refs_push ( m_initialMarking );
+
     uint32_t *prec = new uint32_t[m_nbPlaces];
     uint32_t *postc = new uint32_t[m_nbPlaces];
     // Transition relation
@@ -117,9 +117,6 @@ void ModelCheckerCPPThread::Compute_successors()
     if ( id_thread == 0 ) {
         LDDState *c = new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
-        /*SylvanWrapper::getMarksCount(Complete_meta_state);
-        exit(0);*/
-
         SylvanWrapper::lddmc_refs_push ( Complete_meta_state );
 
         fire = firable_obs ( Complete_meta_state );

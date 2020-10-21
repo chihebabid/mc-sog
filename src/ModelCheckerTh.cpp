@@ -14,7 +14,7 @@ getMaxMemory()
 }
 void ModelCheckerTh::preConfigure() {
 
-    SylvanWrapper::sylvan_set_limits ( 16LL<<29, 8, 0 );
+    SylvanWrapper::sylvan_set_limits ( 16LL<<30, 10, 0 );
     SylvanWrapper::sylvan_init_package();
     SylvanWrapper::sylvan_init_ldd();
     SylvanWrapper::init_gc_seq();
