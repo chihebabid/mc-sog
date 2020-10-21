@@ -12,7 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -g0 -falign-functions  -falign-jumps  -falign-loops -falign-labels  -freorder-blocks  -freorder-blocks-algorithm=stc -freorder-blocks-and-partition  -fprefetch-loop-arrays -foptimize-strlen -fcaller-saves  -finline-functions  -funswitch-loops -fpermissive -std=c++17 -pthread")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fpermissive -std=c++17 -pthread -Og ")
 
 endif()
 

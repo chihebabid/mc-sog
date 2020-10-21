@@ -27,7 +27,7 @@ MDD CommonSOG::Accessible_epsilon(MDD From) {
         M1 = M2;
         for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
             //fireTransition
-            MDD succ = fireTransition(M2, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+            MDD succ = SylvanWrapper::lddmc_firing_mono(M2, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
 
             M2 = SylvanWrapper::lddmc_union_mono(M2, succ);
 
@@ -42,7 +42,7 @@ Set CommonSOG::firable_obs(MDD State) {
     Set res;
     for (Set::const_iterator i = m_observable.begin(); !(i == m_observable.end()); i++) {
         //cout<<"firable..."<<endl;
-        MDD succ = fireTransition(State, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+        MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
         if (succ != lddmc_false) {
             res.insert(*i);
         }
@@ -52,14 +52,14 @@ Set CommonSOG::firable_obs(MDD State) {
 }
 
 MDD CommonSOG::get_successor(MDD From, int t) {
-    return fireTransition(From, m_tb_relation[(t)].getMinus(), m_tb_relation[(t)].getPlus());
+    return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[(t)].getPlus());
 }
 
 
 MDD CommonSOG::ImageForward(MDD From) {
     MDD Res = lddmc_false;
     for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
-        MDD succ = fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+        MDD succ = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
         Res = SylvanWrapper::lddmc_union_mono(Res, succ);
     }
     return Res;
@@ -173,7 +173,7 @@ bool CommonSOG::Set_Div(MDD &M) const {
     do {
         Reached = lddmc_false;
         for (i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
-            MDD To = fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+            MDD To = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
             Reached = SylvanWrapper::lddmc_union_mono(Reached, To);
         }
 
@@ -213,9 +213,9 @@ struct elt_t {
     uint32_t level;
 };
 
-MDD CommonSOG::fireTransition(MDD cmark, MDD minus, MDD plus) {
+/*MDD CommonSOG::fireTransition(MDD cmark, MDD minus, MDD plus) {
     return SylvanWrapper::lddmc_firing_mono(cmark,minus,plus);
-}
+}*/
 
 //string_view CommonSOG::getTransition(int pos) {
     // cout<<"yes it is : "<<m_transitions.at(pos).name<<endl;
