@@ -26,7 +26,7 @@ add_subdirectory(${PARSER_DIR})
 
 # build spot if it is not installed on the system
 find_library(SPOT_LIBRARY "spot")
-
+find_library(BDDX_LIBRARY "bddx")
 
 if(NOT SPOT_LIBRARY)
   include(ExternalProject)
@@ -46,6 +46,7 @@ if(NOT SPOT_LIBRARY)
   include_directories("${SPOT_DIR}/include")
 else ()
  message(STATUS "Found spot: ${SPOT_LIBRARY}")
+ message(STATUS "Found bddx: ${BDDX_LIBRARY}")
 
 
  find_path(SPOT_INCLUDE_PATH "spot")
