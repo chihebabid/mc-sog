@@ -30,7 +30,7 @@ class LDDGraph
         MetaLDDNodes m_GONodes;
         LDDState *getLDDStateById(unsigned int id);
 		void Reset();
-		LDDState *m_initialstate;
+		LDDState *m_initialstate=nullptr;
 		LDDState *m_currentstate;
         uint64_t m_nbStates;
 		uint64_t m_nbMarking;
@@ -54,6 +54,9 @@ class LDDGraph
 		//LDDState* getInitialState() const;
         LDDState *getInitialState() const {
             return m_GONodes.at(0);
+        }
+        LDDState *getInitialAggregate() {
+            return m_initialstate;
         }
 		void printCompleteInformation();
 		virtual ~LDDGraph();

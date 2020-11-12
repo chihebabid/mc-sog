@@ -10,6 +10,7 @@
 #include "LDDGraph.h"
 #include "ModelCheckerCPPThread.h"
 #include "ModelCheckerTh.h"
+#include "ModelCheckThReq.h"
 #include "threadSOG.h"
 #include "HybridSOG.h"
 #include "MCHybridSOG.h"
@@ -119,12 +120,12 @@ int main(int argc, char **argv) {
 
 
     if (n_tasks == 1) {
-        if (n_tasks == 1 && (!strcmp(argv[1], "otfL") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP"))) {
+        if (n_tasks == 1 && (!strcmp(argv[1], "otfPR") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP"))) {
             cout << "Performing on the fly Model checking..." << endl;
             if (!strcmp(argv[1], "otfP"))
                 cout << "Multi-threaded algorithm based on Pthread library!" << endl;
-            else if (!strcmp(argv[1], "otfL"))
-                cout << "Multi-threaded algorithm based on Lace framework!" << endl;
+            else if (!strcmp(argv[1], "otfPR"))
+                cout << "Multi-threaded algorithm (progressive) based on PThread!" << endl;
             else
                 cout << "Multi-threaded algorithm based on C++ Thread library!" << endl;
             cout << "Building automata for not(formula)\n";
@@ -150,8 +151,10 @@ int main(int argc, char **argv) {
             else*/
             if (!strcmp(argv[1], "otfP"))
                 mcl = new ModelCheckerTh(Rnewnet, nb_th);
-            else
+            else if (!strcmp(argv[1], "otfC"))
                 mcl = new ModelCheckerCPPThread(Rnewnet, nb_th);
+            else
+                mcl=new ModelCheckThReq(Rnewnet, nb_th);
             mcl->loadNet();
             auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
             cout << "Performing on the fly Modelchecking" << endl;
@@ -231,17 +234,7 @@ int main(int argc, char **argv) {
                     cout << "Count of threads to be created: " << nb_th << endl;
                     DR.computeDSOG(g, true);
                     g.printCompleteInformation();
-                } /*else if (!strcmp(argv[1], "l")) {
-                    cout << "Construction with lace framework." << endl;
-                    cout << "Count of workers to be created: " << nb_th << endl;
-                    DR.computeSOGLace(g);
-                    g.printCompleteInformation();
-                } else if (!strcmp(argv[1], "lc")) {
-                    cout << "Canonised construction with lace framework." << endl;
-                    cout << "Count of workers to be created: " << nb_th << endl;
-                    DR.computeSOGLaceCanonized(g);
-                    g.printCompleteInformation();
-                }*/
+                }
 
                 cout << "Perform Model checking ?";
                 char c;
@@ -389,13 +382,6 @@ int main(int argc, char **argv) {
             }*/
         }
     }
-
-
-
-
-
-
-
 	MPI_Finalize();
 	return (EXIT_SUCCESS);
 }

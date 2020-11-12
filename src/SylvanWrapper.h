@@ -123,7 +123,7 @@ public:
 
     static void sylvan_init_package(void);
 
-    static mddnode_t GETNODE(MDD mdd) { return ((mddnode_t) llmsset_index_to_ptr(m_nodes, mdd)); }
+    inline static mddnode_t GETNODE(MDD mdd) { return ((mddnode_t) llmsset_index_to_ptr(m_nodes, mdd)); }
 
     static void *llmsset_index_to_ptr(const llmsset2_t dbs, size_t index) {
         return dbs->data + index * 16;

@@ -11,8 +11,6 @@ LDDGraph::~LDDGraph() {
 
 void LDDGraph::setInitialState(LDDState *c) {
     m_currentstate = m_initialstate = c;
-    //
-
 }
 
 

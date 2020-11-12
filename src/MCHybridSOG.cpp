@@ -14,12 +14,12 @@
 #define TAG_INITIAL 3
 #define TAG_ASK_SUCC 4
 
-#define TAG_AGREGATE 5
+
 #define TAG_ACK_INITIAL 8
 #define TAG_ASK_STATE 9
 #define TAG_ACK_STATE 10
 #define TAG_ACK_SUCC 11
-#define TAG_NOTCOMPLETED 20
+
 //#define DEBUG_GC 1
 
 using namespace std;
@@ -655,7 +655,6 @@ void  MCHybridSOG::get_md5 ( const string& chaine,unsigned char *md_chaine )
     pthread_spin_lock ( &m_spin_md5 );
     MD5 ( chaine.c_str(), chaine.size(),md_chaine );
     pthread_spin_unlock ( &m_spin_md5 );
-    //md_chaine[16]='\0';
 }
 
 void MCHybridSOG::sendSuccToMC()

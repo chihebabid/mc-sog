@@ -21,10 +21,8 @@ private:
     pile m_st[MAXT];
     int m_charge[MAXT];
     bool m_terminaison[MAXT];
-    atomic<uint8_t> m_id_thread;    
-    
+    atomic<uint8_t> m_id_thread;
     pthread_barrier_t m_barrier_builder;
-
     volatile bool m_finish=false;    
     pthread_mutex_t m_mutex_stack[MAXT];
     pthread_t m_list_thread[MAXT];

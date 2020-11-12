@@ -72,7 +72,8 @@ add_executable(mc-sog main.cpp
         ModelCheckerTh.cpp ModelCheckerTh.h
         threadSOG.cpp threadSOG.h
         HybridSOG.cpp HybridSOG.h
-        MCHybridSOG.cpp MCHybridSOG.h)
+        MCHybridSOG.cpp MCHybridSOG.h
+        ModelCheckThReq.cpp ModelCheckThReq.h)
 
 target_link_libraries(mc-sog
   bddx

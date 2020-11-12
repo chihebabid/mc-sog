@@ -145,17 +145,17 @@ void* ModelCheckerTh::Compute_successors() {
 				reached_class = new LDDState();
 				reached_class->m_lddstate = reduced_meta;
 				//pthread_spin_lock(&m_accessible);
-				
+
 				LDDState *pos = m_graph->find(reached_class);
-				if (!pos) {					
+				if (!pos) {
+                    m_graph_mutex.lock();
+                    e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
+                    reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
+                    m_graph_mutex.unlock();
 					m_graph->addArc();
 					m_graph->insert(reached_class);                    
 					reached_class->setDeadLock(Set_Bloc(reduced_meta));
 					reached_class->setDiv(Set_Div(reduced_meta));
-                    m_graph_mutex.lock();					
-                    e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
-					reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-                    m_graph_mutex.unlock();					
 					fire = firable_obs(reduced_meta);					
 					min_charge = minCharge();
 					//m_min_charge=(m_min_charge+1) % m_nb_thread;
@@ -164,11 +164,12 @@ void* ModelCheckerTh::Compute_successors() {
 					pthread_spin_unlock(&m_spin_stack[min_charge]);
 					m_charge[min_charge]++;
 				} else {
-					m_graph->addArc();
-					m_graph_mutex.lock();
-					e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
-					pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
+                    //m_graph_mutex.lock();
+                    m_graph_mutex.lock();
+                    e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
+                    pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
                     m_graph_mutex.unlock();
+					m_graph->addArc();
 					delete reached_class;
 				}
 #ifdef GCENABLE
@@ -201,7 +202,7 @@ void ModelCheckerTh::ComputeTh_Succ() {
 	pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread + 1);
 
 	for (int i = 0; i < m_nb_thread; i++) {
-		pthread_spin_init(&m_spin_stack[i], NULL);
+		pthread_spin_init(&m_spin_stack[i],0);
 		m_charge[i] = 0;
 		m_terminaison[i] = false;
 	}
@@ -219,7 +220,6 @@ ModelCheckerTh::~ModelCheckerTh() {
 	for (int i = 0; i < m_nb_thread; i++) {
 		pthread_join(m_list_thread[i], NULL);
 	}
-
 }
 
 uint8_t ModelCheckerTh::minCharge() {
