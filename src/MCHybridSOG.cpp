@@ -61,7 +61,7 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
         liste_marques[i] =it_places->marking;
     }
     m_initialMarking=SylvanWrapper::lddmc_cube ( liste_marques,R.places.size() );
-    //#ldd_refs_push ( m_initialMarking );
+    //SylvanWrapper::lddmc_refs_push( m_initialMarking );
 
     delete []liste_marques;
     // place names
@@ -93,10 +93,10 @@ MCHybridSOG::MCHybridSOG ( const NewNet &R,MPI_Comm &comm_world,bool init )
         }
 
         MDD _minus=SylvanWrapper::lddmc_cube ( prec,m_nbPlaces );
-        //#ldd_refs_push ( _minus );
+        //SylvanWrapper::lddmc_refs_push ( _minus );
 
         MDD _plus=SylvanWrapper::lddmc_cube ( postc,m_nbPlaces );
-        //#ldd_refs_push ( _plus );
+      //  SylvanWrapper::lddmc_refs_push ( _plus );
         m_tb_relation.push_back ( TransSylvan ( _minus,_plus ) );
     }
     //sylvan_gc_seq();
@@ -130,7 +130,7 @@ void *MCHybridSOG::doCompute()
         LDDState *c=new LDDState;
         MDD Complete_meta_state=Accessible_epsilon ( m_initialMarking );
         c->m_lddstate=Complete_meta_state;
-        //#ldd_refs_push ( Complete_meta_state );
+        //SylvanWrapper::lddmc_refs_push ( Complete_meta_state );
         //   MDD reduced_initialstate=Canonize(Complete_meta_state,0);
 
         SylvanWrapper::convert_wholemdd_stringcpp ( Complete_meta_state,*chaine );
@@ -229,23 +229,23 @@ void *MCHybridSOG::doCompute()
 
 
                         MDD ldd_reachedclass=Accessible_epsilon ( get_successor ( e.first.second,t ) );
-                        //#ldd_refs_push ( ldd_reachedclass );
+                       // SylvanWrapper::lddmc_refs_push ( ldd_reachedclass );
 
-                        if ( id_thread==1 )
+                        //if ( id_thread==1 ) {
                             //displayMDDTableInfo();
-                            if ( SylvanWrapper::isGCRequired() ) {
-                                m_gc_mutex.lock();
-#ifdef DEBUG_GC
+                            //if ( SylvanWrapper::isGCRequired() ) {
+                           //     m_gc_mutex.lock();
+//#ifdef DEBUG_GC
 
-                                displayMDDTableInfo();
-#endif // DEBUG_GC
-                               // sylvan_gc_seq();
-#ifdef DEBUG_GC
+                             //   SylvanWrapper::displayMDDTableInfo();
+//#endif // DEBUG_GC
+                               //SylvanWrapper::sylvan_gc_seq();
+//#ifdef DEBUG_GC
 
-                                displayMDDTableInfo();
-#endif // DEBUG_GC
-                                m_gc_mutex.unlock();
-                            }
+                               // SylvanWrapper::displayMDDTableInfo();
+//#endif // DEBUG_GC
+                                //m_gc_mutex.unlock();
+                           // }
 
 
                         //pthread_spin_unlock(&m_spin_md5);
@@ -311,7 +311,7 @@ void *MCHybridSOG::doCompute()
 
 #ifndef REDUCE
                                 reached=Canonize ( ldd_reachedclass,0 );
-//# ldd_refs_push ( ldd_reachedclass );
+                               // SylvanWrapper::lddmc_refs_push( reached );
 #endif
 
                                 //MDD Reduced=ldd_reachedclass;
@@ -401,7 +401,7 @@ void *MCHybridSOG::doCompute()
 
     }
 
-
+  //  cout<<"Finnnnnn...."<<endl;
 }
 
 

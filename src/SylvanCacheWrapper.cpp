@@ -133,8 +133,18 @@ int SylvanCacheWrapper::cache_put(uint64_t a, uint64_t b, uint64_t c, uint64_t r
     return 1;
 }
 
+void SylvanCacheWrapper::cache_clear()
+{
+    // a bit silly, but this works just fine, and does not require writing 0 everywhere...
+    cache_free();
+    cache_create(m_cache_size, m_cache_max);
+}
 
-
+void SylvanCacheWrapper::cache_free()
+{
+    munmap(m_cache_table, m_cache_max * sizeof(struct cache_entry));
+    munmap(m_cache_status, m_cache_max * sizeof(uint32_t));
+}
 
 
 

@@ -74,6 +74,7 @@ public:
     static  int __attribute__((unused)) cache_put3(uint64_t opid, uint64_t dd, uint64_t d2, uint64_t d3, uint64_t res);
     static int cache_put(uint64_t a, uint64_t b, uint64_t c, uint64_t res);
     static int cache_get(uint64_t a, uint64_t b, uint64_t c, uint64_t *res);
+    static void cache_clear();
 private:
     static size_t             m_cache_size;         // power of 2
     static size_t             m_cache_max;
@@ -81,6 +82,7 @@ private:
     static uint32_t*          m_cache_status;
     static uint64_t           m_next_opid;
     static uint64_t cache_hash(uint64_t a, uint64_t b, uint64_t c);
+    static void cache_free();
 };
 
 

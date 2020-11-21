@@ -381,7 +381,6 @@ MDD SylvanWrapper::lddmc_makenode(uint32_t value, MDD ifeq, MDD ifneq) {
     if (index == 0) {
         /* lddmc_refs_push(ifeq);
          lddmc_refs_push(ifneq);*/
-
         // sylvan_gc();/*********************************************************************************************/
         /*lddmc_refs_pop(1);*/
 
@@ -634,8 +633,8 @@ MDD SylvanWrapper::lddmc_union_mono(MDD a, MDD b) {
 
     /* Access cache */
     MDD result;
-    if (SylvanCacheWrapper::cache_get3(CACHE_LDD_UNION, a, b, 0,&result)) {
-       // std::cout<<"Cache succeeded!"<<std::endl;
+    if (SylvanCacheWrapper::cache_get3(CACHE_LDD_UNION, a, b, 0, &result)) {
+        // std::cout<<"Cache succeeded!"<<std::endl;
         return result;
     }
 
@@ -745,8 +744,7 @@ MDD SylvanWrapper::ldd_divide_internal(MDD a, int current_level, int level) {
     if (a == lddmc_true) return lddmc_true;
 
     MDD result;
-    if (SylvanCacheWrapper::cache_get3(CACHE_MDD_DIVIDE, a, current_level, level, &result))
-    {
+    if (SylvanCacheWrapper::cache_get3(CACHE_MDD_DIVIDE, a, current_level, level, &result)) {
         return result;
     }
 
@@ -827,9 +825,9 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, MDD minus, MDD plus) {
     MDD _cmark = cmark, _minus = minus, _plus = plus;
 
     if (SylvanCacheWrapper::cache_get3(CACHE_LDD_FIRE, cmark, minus, plus, &result)) {
-          return result;
+        return result;
     }
-    MDD cache_cmark=cmark;
+    MDD cache_cmark = cmark;
     mddnode_t n_cmark = GETNODE(_cmark);
     mddnode_t n_plus = GETNODE(_plus);
     mddnode_t n_minus = GETNODE(_minus);
@@ -860,18 +858,16 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, MDD minus, MDD plus) {
 }
 
 // so: proj: -2 (end; quantify rest), -1 (end; keep rest), 0 (quantify), 1 (keep)
-MDD SylvanWrapper::lddmc_project( const MDD mdd, const MDD proj)
-{
+MDD SylvanWrapper::lddmc_project(const MDD mdd, const MDD proj) {
     if (mdd == lddmc_false) return lddmc_false; // projection of empty is empty
     if (mdd == lddmc_true) return lddmc_true; // projection of universe is universe...
     mddnode_t p_node = GETNODE(proj);
     uint32_t p_val = mddnode_getvalue(p_node);
-    if (p_val == (uint32_t)-1) return mdd;
-    if (p_val == (uint32_t)-2) return lddmc_true; // because we always end with true.
+    if (p_val == (uint32_t) -1) return mdd;
+    if (p_val == (uint32_t) -2) return lddmc_true; // because we always end with true.
 
     MDD result;
-    if (SylvanCacheWrapper::cache_get3(CACHE_MDD_PROJECT, mdd, proj, 0, &result))
-    {
+    if (SylvanCacheWrapper::cache_get3(CACHE_MDD_PROJECT, mdd, proj, 0, &result)) {
         return result;
     }
 
@@ -879,9 +875,9 @@ MDD SylvanWrapper::lddmc_project( const MDD mdd, const MDD proj)
 
     if (p_val == 1)   // keep
     {
-        MDD down = lddmc_project( mddnode_getdown(n), mddnode_getdown(p_node));
+        MDD down = lddmc_project(mddnode_getdown(n), mddnode_getdown(p_node));
         //lddmc_refs_push(down);
-       // MDD right = lddmc_refs_sync(SYNC(lddmc_project));
+        // MDD right = lddmc_refs_sync(SYNC(lddmc_project));
         //lddmc_refs_pop(1);
         result = lddmc_makenode(mddnode_getvalue(n), down, right);
     } else     // quantify
@@ -889,16 +885,13 @@ MDD SylvanWrapper::lddmc_project( const MDD mdd, const MDD proj)
         if (mddnode_getdown(n) == lddmc_true)   // assume lowest level
         {
             result = lddmc_true;
-        }
-        else
-        {
+        } else {
             int count = 0;
             result = lddmc_false;
-            MDD p_down = mddnode_getdown(p_node), _mdd=mdd;
-            while (1)
-            {
+            MDD p_down = mddnode_getdown(p_node), _mdd = mdd;
+            while (1) {
                 //lddmc_refs_spawn(SPAWN(lddmc_project, mddnode_getdown(n), p_down));
-                MDD down= lddmc_project (mddnode_getdown(n), p_down);
+                MDD down = lddmc_project(mddnode_getdown(n), p_down);
                 result = lddmc_union_mono(result, down);
                 count++;
                 _mdd = mddnode_getright(n);
@@ -915,57 +908,282 @@ MDD SylvanWrapper::lddmc_project( const MDD mdd, const MDD proj)
     return result;
 }
 
-int SylvanWrapper::isGCRequired()
-{
-    return (m_g_created>llmsset_get_size(m_nodes)/2);
+int SylvanWrapper::isGCRequired() {
+    return (m_g_created > llmsset_get_size(m_nodes) / 2);
 }
 
-void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark,string &res)
-{
-    typedef pair<string,MDD> Pair_stack;
+void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark, string &res) {
+    typedef pair<string, MDD> Pair_stack;
     vector<Pair_stack> local_stack;
 
-    unsigned int compteur=0;
-    MDD explore_mdd=cmark;
+    unsigned int compteur = 0;
+    MDD explore_mdd = cmark;
 
     string chaine;
 
-    res="  ";
-    local_stack.push_back(Pair_stack(chaine,cmark));
-    do
-    {
-        Pair_stack element=local_stack.back();
-        chaine=element.first;
-        explore_mdd=element.second;
+    res = "  ";
+    local_stack.push_back(Pair_stack(chaine, cmark));
+    do {
+        Pair_stack element = local_stack.back();
+        chaine = element.first;
+        explore_mdd = element.second;
         local_stack.pop_back();
         compteur++;
-        while ( explore_mdd!= lddmc_false  && explore_mdd!=lddmc_true)
-        {
+        while (explore_mdd != lddmc_false && explore_mdd != lddmc_true) {
             mddnode_t n_val = GETNODE(explore_mdd);
-            if (mddnode_getright(n_val)!=lddmc_false)
-            {
-                local_stack.push_back(Pair_stack(chaine,mddnode_getright(n_val)));
+            if (mddnode_getright(n_val) != lddmc_false) {
+                local_stack.push_back(Pair_stack(chaine, mddnode_getright(n_val)));
             }
             unsigned int val = mddnode_getvalue(n_val);
 
-            chaine.push_back((unsigned char)(val)+1);
-            explore_mdd=mddnode_getdown(n_val);
+            chaine.push_back((unsigned char) (val) + 1);
+            explore_mdd = mddnode_getdown(n_val);
         }
         /*printchaine(&chaine);printf("\n");*/
-        res+=chaine;
-    }
-    while (local_stack.size()!=0);
+        res += chaine;
+    } while (local_stack.size() != 0);
     //delete chaine;
 
-    compteur=(compteur<<1) | 1;
-    res[1]=(unsigned char)((compteur>>8)+1);
-    res[0]=(unsigned char)(compteur & 255);
+    compteur = (compteur << 1) | 1;
+    res[1] = (unsigned char) ((compteur >> 8) + 1);
+    res[0] = (unsigned char) (compteur & 255);
 
+}
+
+void SylvanWrapper::sylvan_gc_seq() {
+    if (m_g_created > llmsset_get_size(m_nodes) / 1000) {
+        cout<<"Cache executed"<<endl;
+        SylvanCacheWrapper::cache_clear();
+        llmsset_clear_data(m_nodes);
+        ldd_gc_mark_protected();
+        llmsset_destroy_unmarked(m_nodes);
+        sylvan_rehash_all();
+        m_g_created = seq_llmsset_count_marked(m_nodes);
+    }
+}
+
+
+void SylvanWrapper::sylvan_rehash_all()
+{
+    // clear hash array
+    llmsset_clear_hashes_seq(m_nodes);
+
+    // rehash marked nodes
+    if (llmsset_rehash_seq(m_nodes) != 0) {
+        fprintf(stderr, "sylvan_gc_rehash error: not all nodes could be rehashed!\n");
+        exit(1);
+    }
+}
+
+
+int SylvanWrapper::llmsset_rehash_seq (llmsset2_t dbs)
+{
+    return llmsset_rehash_par_seq( dbs, 0, dbs->table_size);
+}
+
+
+int SylvanWrapper::llmsset_rehash_par_seq(llmsset2_t  dbs, size_t  first, size_t  count)
+{
+    if (count > 512) {
+
+        int bad = llmsset_rehash_par_seq(dbs, first + count/2, count - count/2);
+        return bad + llmsset_rehash_par_seq(dbs, first, count/2);
+    } else {
+        int bad = 0;
+        uint64_t *ptr = dbs->bitmap2 + (first / 64);
+        uint64_t mask = 0x8000000000000000LL >> (first & 63);
+        for (size_t k=0; k<count; k++) {
+            if (*ptr & mask) {
+                if (llmsset_rehash_bucket(dbs, first+k) == 0) bad++;
+            }
+            mask >>= 1;
+            if (mask == 0) {
+                ptr++;
+                mask = 0x8000000000000000LL;
+            }
+        }
+        return bad;
+    }
+}
+
+
+int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx)
+{
+    const uint64_t * const d_ptr = ((uint64_t*)dbs->data) + 2*d_idx;
+    const uint64_t a = d_ptr[0];
+    const uint64_t b = d_ptr[1];
+
+    uint64_t hash_rehash = 14695981039346656037LLU;
+    const int custom = is_custom_bucket(dbs, d_idx) ? 1 : 0;
+    if (custom) hash_rehash = dbs->hash_cb(a, b, hash_rehash);
+    else hash_rehash = llmsset_hash(a, b, hash_rehash);
+    const uint64_t step = (((hash_rehash >> 20) | 1) << 3);
+    const uint64_t new_v = (hash_rehash & MASK_HASH) | d_idx;
+    int i=0;
+
+    uint64_t idx, last;
+#if LLMSSET_MASK
+    last = idx = hash_rehash & dbs->mask;
+#else
+    last = idx = hash_rehash % dbs->table_size;
+#endif
+
+    for (;;) {
+        volatile uint64_t *bucket = &dbs->table[idx];
+        if (*bucket == 0 && cas(bucket, 0, new_v)) return 1;
+
+        // find next idx on probe sequence
+        idx = (idx & CL_MASK) | ((idx+1) & CL_MASK_R);
+        if (idx == last) {
+            if (++i == *(volatile int16_t*)&dbs->threshold) {
+                // failed to find empty spot in probe sequence
+                // solution: increase probe sequence length...
+                __sync_fetch_and_add(&dbs->threshold, 1);
+            }
+
+            // go to next cache line in probe sequence
+            hash_rehash += step;
+
+#if LLMSSET_MASK
+            last = idx = hash_rehash & dbs->mask;
+#else
+            last = idx = hash_rehash % dbs->table_size;
+#endif
+        }
+    }
+}
+
+
+int SylvanWrapper::is_custom_bucket(const llmsset2_t dbs, uint64_t index)
+{
+    uint64_t *ptr = dbs->bitmapc + (index/64);
+    uint64_t mask = 0x8000000000000000LL >> (index&63);
+    return (*ptr & mask) ? 1 : 0;
 }
 
 
 
 
+
+
+void SylvanWrapper::llmsset_clear_hashes_seq( llmsset2_t dbs)
+{
+    // just reallocate...
+    if (mmap(dbs->table, dbs->max_size * 8, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0) != (void*)-1) {
+#if defined(madvise) && defined(MADV_RANDOM)
+        madvise(dbs->table, sizeof(uint64_t[dbs->max_size]), MADV_RANDOM);
+#endif
+    } else {
+        // reallocate failed... expensive fallback
+        memset(dbs->table, 0, dbs->max_size * 8);
+    }
+}
+
+
+
+void SylvanWrapper::llmsset_destroy_unmarked(llmsset2_t dbs) {
+    if (dbs->destroy_cb == NULL) return; // no custom function
+    llmsset_destroy(dbs, 0, dbs->table_size);
+}
+
+void SylvanWrapper::llmsset_destroy(llmsset2_t dbs, size_t first, size_t count) {
+    if (count > 1024) {
+        size_t split = count / 2;
+        llmsset_destroy(dbs, first, split);
+        llmsset_destroy(dbs, first + split, count - split);
+
+    } else {
+        for (size_t k = first; k < first + count; k++) {
+            volatile uint64_t *ptr2 = dbs->bitmap2 + (k / 64);
+            volatile uint64_t *ptrc = dbs->bitmapc + (k / 64);
+            uint64_t mask = 0x8000000000000000LL >> (k & 63);
+
+// if not marked but is custom
+            if ((*ptr2 & mask) == 0 && (*ptrc & mask)) {
+                uint64_t *d_ptr = ((uint64_t *) dbs->data) + 2 * k;
+                dbs->destroy_cb(d_ptr[0], d_ptr[1]);
+                *ptrc &= ~mask;
+            }
+        }
+    }
+}
+
+
+void SylvanWrapper::llmsset_clear_data(llmsset2_t dbs) {
+    if (mmap(dbs->bitmap1, dbs->max_size / (512 * 8), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED,
+             -1, 0) != (void *) -1) {
+
+    } else {
+
+        memset(dbs->bitmap1, 0, dbs->max_size / (512 * 8));
+    }
+
+    if (mmap(dbs->bitmap2, dbs->max_size / 8, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0) !=
+        (void *) -1) {
+
+    } else {
+        memset(dbs->bitmap2, 0, dbs->max_size / 8);
+
+    }
+
+    // forbid first two positions (index 0 and 1)
+    dbs->bitmap2[0] = 0xc000000000000000LL;
+    /*LACE_ME;
+    TOGETHER(llmsset_reset_region);*/
+}
+
+void SylvanWrapper::ldd_gc_mark_protected() {
+    ldd_refs_mark_p_par(m_sequentiel_refs->pbegin, m_sequentiel_refs->pcur - m_sequentiel_refs->pbegin);
+    ldd_refs_mark_r_par(m_sequentiel_refs->rbegin, m_sequentiel_refs->rcur - m_sequentiel_refs->rbegin);
+}
+
+void SylvanWrapper::ldd_refs_mark_r_par(MDD *begin, size_t count) {
+    if (count < 32) {
+        while (count) {
+            ldd_gc_mark_rec(*begin++);
+            count--;
+        }
+    } else {
+        ldd_refs_mark_r_par(begin, count / 2);
+        ldd_refs_mark_r_par(begin + (count / 2), count - count / 2);
+
+    }
+}
+
+
+void SylvanWrapper::ldd_refs_mark_p_par(const MDD **begin, size_t count) {
+    if (count < 32) {
+        while (count) {
+            ldd_gc_mark_rec(**(begin++));
+            count--;
+        }
+    } else {
+        ldd_refs_mark_p_par(begin, count / 2);
+        ldd_refs_mark_p_par(begin + (count / 2), count - count / 2);
+
+    }
+}
+
+void SylvanWrapper::ldd_gc_mark_rec(MDD mdd) {
+    if (mdd <= lddmc_true) return;
+
+    if (llmsset_mark(m_nodes, mdd)) {
+        mddnode_t n = LDD_GETNODE(mdd);
+        ldd_gc_mark_rec(mddnode_getright(n));
+        ldd_gc_mark_rec(mddnode_getdown(n));
+
+    }
+}
+
+int SylvanWrapper::llmsset_mark(const llmsset2_t dbs, uint64_t index) {
+    volatile uint64_t *ptr = dbs->bitmap2 + (index / 64);
+    uint64_t mask = 0x8000000000000000LL >> (index & 63);
+    for (;;) {
+        uint64_t v = *ptr;
+        if (v & mask) return 0;
+        if (cas(ptr, v, v | mask)) return 1;
+    }
+}
 
 
 size_t SylvanWrapper::m_table_min = 0;

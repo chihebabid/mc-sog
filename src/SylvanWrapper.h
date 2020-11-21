@@ -240,7 +240,24 @@ public:
     static MDD lddmc_project( const MDD mdd, const MDD proj);
     static int isGCRequired();
     static void convert_wholemdd_stringcpp(MDD cmark,std::string &res);
+    static void sylvan_gc_seq();
 private:
+    static int is_custom_bucket(const llmsset2_t dbs, uint64_t index);
+    static int llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx);
+    static int llmsset_rehash_seq (llmsset2_t dbs);
+    static int llmsset_rehash_par_seq(llmsset2_t  dbs, size_t  first, size_t  count);
+    static void llmsset_clear_hashes_seq( llmsset2_t dbs);
+    static void sylvan_rehash_all();
+    static void llmsset_destroy(llmsset2_t dbs, size_t first, size_t count);
+    static void llmsset_destroy_unmarked( llmsset2_t dbs);
+    static void llmsset_clear_data(llmsset2_t dbs);
+    static void ldd_gc_mark_protected();
+    static void ldd_refs_mark_p_par( const MDD** begin, size_t count);
+    static void ldd_gc_mark_rec(MDD mdd);
+    static int  llmsset_mark(const llmsset2_t dbs, uint64_t index);
+    static void ldd_refs_mark_r_par( MDD* begin, size_t count);
+
+
     static llmsset2_t m_nodes;
     static size_t m_table_min, m_table_max, m_cache_min, m_cache_max;
     static volatile int m_gc;
@@ -253,6 +270,8 @@ private:
     //static lddmc_refs_internal_t m_lddmc_refs_key; // This is local to a thread
 
     static uint32_t m_g_created;
+
+
 
 
 };

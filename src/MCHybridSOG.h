@@ -111,7 +111,7 @@ private:
     pthread_spinlock_t m_spin_md5;
     
 
-    bool m_Terminated = false;
+    volatile bool m_Terminated = false;
     unsigned long m_size_mess = 0;
     int m_nbsend = 0, m_nbrecv = 0;
 

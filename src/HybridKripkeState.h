@@ -40,7 +40,7 @@ public:
         }
         else {        
         memcpy(m_id,e.id,16);        
-        MPI_Send(m_id,16,MPI_BYTE,e.pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);       
+        MPI_Send(m_id,16,MPI_BYTE,e.pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);
         
         MPI_Status status; //int nbytes;
         MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_STATE, MPI_COMM_WORLD, &status);
@@ -92,36 +92,26 @@ public:
     MPI_Probe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
     MPI_Get_count(&status, MPI_BYTE, &nbytes);
     char inmsg[nbytes+1];
-    //cout<<"Received bytes : "<<nbytes<<endl;
     MPI_Recv(inmsg, nbytes, MPI_BYTE,status.MPI_SOURCE,TAG_ACK_SUCC,MPI_COMM_WORLD, &status);
     uint32_t nb_succ;
     memcpy(&nb_succ,inmsg,4);
-    //cout<<"Number of successors "<<nb_succ<<endl;
     indice=4;
-    succ_t *succ_elt;
+    succ_t succ_elt;
     //printf("List of successors of %.16s\n",m_id);
     for (uint32_t i=0;i<nb_succ;i++) {
-        succ_elt=new succ_t;        
-        memcpy(succ_elt->id,inmsg+indice,16);
+        //succ_elt=new succ_t;
+        memcpy(succ_elt.id,inmsg+indice,16);
         indice+=16;
         
-        memcpy(&(succ_elt->pcontainer),inmsg+indice,2);
+        memcpy(&(succ_elt.pcontainer),inmsg+indice,2);
         indice+=2;
-        memcpy(&(succ_elt->transition),inmsg+indice,2);
+        memcpy(&(succ_elt.transition),inmsg+indice,2);
         indice+=2;        
-        succ_elt->_virtual=false;
-        m_succ.push_back(*succ_elt);   
-        delete succ_elt;
+        succ_elt._virtual=false;
+        m_succ.push_back(succ_elt);
+       // delete succ_elt;
     }  
-    
-    if (m_div) {
-        succ_t el;
-        el.id[0]='v';                   
-        el.transition=-1;
-        el._virtual=true;
-        //cout<<"yep..."<<endl;
-        m_succ.push_back(el);
-    }
+
     if (m_deadlock) {
         succ_t el;
         el.id[0]='d';
@@ -130,6 +120,17 @@ public:
         el.transition=-1;
         m_succ.push_back(el);
     }
+       if (m_div) {
+           /*succ_t el;
+           el.id[0]='v';
+           el.transition=-1;
+           el._virtual=true;
+           m_succ.push_back(el);*/
+           succ_t el=e;
+          el._virtual=false;
+           el.transition=-1;
+           m_succ.push_back(el);
+       }
     }
         
         

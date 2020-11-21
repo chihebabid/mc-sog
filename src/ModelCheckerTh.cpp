@@ -145,10 +145,10 @@ void* ModelCheckerTh::Compute_successors() {
 				reached_class = new LDDState();
 				reached_class->m_lddstate = reduced_meta;
 				//pthread_spin_lock(&m_accessible);
-
+                m_graph_mutex.lock();
 				LDDState *pos = m_graph->find(reached_class);
 				if (!pos) {
-                    m_graph_mutex.lock();
+
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
                     m_graph_mutex.unlock();
@@ -165,7 +165,7 @@ void* ModelCheckerTh::Compute_successors() {
 					m_charge[min_charge]++;
 				} else {
                     //m_graph_mutex.lock();
-                    m_graph_mutex.lock();
+
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
                     pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
                     m_graph_mutex.unlock();

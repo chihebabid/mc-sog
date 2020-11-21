@@ -382,6 +382,7 @@ int main(int argc, char **argv) {
             }*/
         }
     }
-	MPI_Finalize();
+    MPI_Finalize();
+    exit(0);
 	return (EXIT_SUCCESS);
 }
