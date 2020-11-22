@@ -161,7 +161,7 @@ void *MCHybridSOG::doCompute()
             pthread_mutex_lock ( &m_spin_msg[0] );
             m_msg[0].push ( MSG ( chaine,destination ) );
             pthread_mutex_unlock ( &m_spin_msg[0] );
-            delete c;
+            //delete c;
         }
     }
 
