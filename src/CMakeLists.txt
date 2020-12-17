@@ -24,6 +24,7 @@ endif()
 
 # Hybrid SOG executable
 add_executable(mc-sog main.cpp
+        PMCSOGConfig.h
   NewNet.cpp
   NewNet.h
   CommonSOG.cpp
