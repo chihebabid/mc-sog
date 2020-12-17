@@ -2,20 +2,10 @@
 #include "SylvanWrapper.h"
 #include "CommonSOG.h"
 
-#include <stack>
+CommonSOG::CommonSOG() =default;
+CommonSOG::~CommonSOG() =default;
 
-
-const vector<class Place> *_places = NULL;
-
-CommonSOG::CommonSOG() {
-    //ctor
-}
-
-CommonSOG::~CommonSOG() {
-    //dtor
-}
-
-LDDGraph *CommonSOG::getGraph() const {
+LDDGraph *CommonSOG::getGraph()  {
     return m_graph;
 }
 
@@ -23,16 +13,12 @@ MDD CommonSOG::Accessible_epsilon(MDD From) {
     MDD M1;
     MDD M2 = From;
     do {
-
         M1 = M2;
-        for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
+        for (auto i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
             //fireTransition
             MDD succ = SylvanWrapper::lddmc_firing_mono(M2, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
-
             M2 = SylvanWrapper::lddmc_union_mono(M2, succ);
-
         }
-
     } while (M1 != M2);
     return M2;
 }
@@ -40,13 +26,11 @@ MDD CommonSOG::Accessible_epsilon(MDD From) {
 // Return the set of firable observable transitions from an agregate
 Set CommonSOG::firable_obs(MDD State) {
     Set res;
-    for (Set::const_iterator i = m_observable.begin(); !(i == m_observable.end()); i++) {
-        //cout<<"firable..."<<endl;
-        MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+    for (auto i : m_observable) {
+        MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
         if (succ != lddmc_false) {
-            res.insert(*i);
+            res.insert(i);
         }
-
     }
     return res;
 }
@@ -58,8 +42,8 @@ MDD CommonSOG::get_successor(MDD From, int t) {
 
 MDD CommonSOG::ImageForward(MDD From) {
     MDD Res = lddmc_false;
-    for (Set::const_iterator i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
-        MDD succ = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+    for (auto i : m_nonObservable) {
+        MDD succ = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
         Res = SylvanWrapper::lddmc_union_mono(Res, succ);
     }
     return Res;
@@ -115,7 +99,7 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
     }
 
 
-    MDD Repr = lddmc_false;
+    MDD Repr;
 
     if (SylvanWrapper::isSingleMDD(s0)) {
         Repr = s0;
@@ -137,28 +121,6 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
 
 }
 
-void CommonSOG::printhandler(ostream &o, int var) {
-    o << (*_places)[var / 2].name;
-    if (var % 2) {
-        o << "_p";
-    }
-}
-
-
-vector<TransSylvan> *CommonSOG::getTBRelation() {
-    return &m_tb_relation;
-}
-
-Set *CommonSOG::getNonObservable() {
-    return &m_nonObservable;
-}
-
-
-/*********Returns the count of places******************************************/
-unsigned int CommonSOG::getPlacesCount() {
-    return m_nbPlaces;
-}
-
 /**** Detect divergence in an agregate ****/
 bool CommonSOG::Set_Div(MDD &M) const {
 
@@ -167,8 +129,7 @@ bool CommonSOG::Set_Div(MDD &M) const {
     }
     Set::const_iterator i;
     MDD Reached, From;
-    //cout<<"Ici detect divergence \n";
-    Reached = lddmc_false;
+
     From = M;
     do {
         Reached = lddmc_false;
@@ -178,12 +139,7 @@ bool CommonSOG::Set_Div(MDD &M) const {
         }
 
         if (Reached == From) {
-            /*MDD Reached_obs=lddmc_false;
-            for (i = m_observable.begin(); !(i == m_observable.end()) && (Reached_obs==lddmc_false); i++) {
-                Reached_obs= fireTransition(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
-            }
-            if (Reached_obs==lddmc_false) return true;*/
-            return true;
+           return true;
         }
         From = Reached;
     } while (Reached != lddmc_false);
@@ -194,9 +150,9 @@ bool CommonSOG::Set_Div(MDD &M) const {
 bool CommonSOG::Set_Bloc(MDD &M) const {
 
     MDD cur = lddmc_true;
-    for (vector<TransSylvan>::const_iterator i = m_tb_relation.begin(); i != m_tb_relation.end(); i++) {
+    for (auto i : m_tb_relation) {
 
-        cur = cur & (TransSylvan(*i).getMinus());
+        cur = cur & (i.getMinus());
 
     }
     return ((M & cur) != lddmc_false);
@@ -206,12 +162,7 @@ bool CommonSOG::Set_Bloc(MDD &M) const {
 
 
 LDDGraph *CommonSOG::m_graph;
-struct elt_t {
-    MDD cmark;
-    MDD minus;
-    MDD plus;
-    uint32_t level;
-};
+
 
 /*MDD CommonSOG::fireTransition(MDD cmark, MDD minus, MDD plus) {
     return SylvanWrapper::lddmc_firing_mono(cmark,minus,plus);
@@ -224,7 +175,6 @@ struct elt_t {
 //}
 
 string_view CommonSOG::getPlace(int pos) {
-    // cout<<"yes it is : "<<m_transitions.at(pos).name<<endl;
-    // cout<<"Ok "<<m_graph->getPlace(pos)<<endl;
+
     return string_view {m_graph->getPlace(pos)};
 }

@@ -1,17 +1,8 @@
 #include "NewNet.h"
 #include <spot/misc/version.hh>
-#include <spot/twaalgos/dot.hh>
-#include <spot/tl/parse.hh>
-#include <spot/tl/print.hh>
-#include <spot/twaalgos/translate.hh>
-#include <spot/twaalgos/emptiness.hh>
-
-
 #include <algorithm>
-#include <ext/hash_map>
 #include <iomanip>
 #include <iostream>
-#include <fstream>
 #include <map>
 #include <string>
 #include <vector>
@@ -135,7 +126,7 @@ NewNet::NewNet(const char *f, const set<string> & f_trans)
         m_placeName.clear();
         transitionName.clear();
     }
-    if (f_trans.size() > 0)
+    if (!f_trans.empty())
     {
         cout<<"Transition set of formula is not empty\n";
         for (set<string>::iterator p=f_trans.begin(); p!=f_trans.end(); p++)
@@ -240,7 +231,7 @@ bool NewNet::Set_Formula_Trans(const char *f)
     for (i = 0; i < nb_formula_trans; i++)
     {
         cout << " z: " << z << endl;
-        if (z == NULL)
+        if (z == nullptr)
         {
             cout << "error in formula trans format " << endl;
             return false;
@@ -256,8 +247,8 @@ bool NewNet::Set_Formula_Trans(const char *f)
         else
             Formula_Trans.insert(pos);
         /*cout<<"insertion de :"<<transitions[pos].name<<endl;*/
-        z = strtok(NULL, " \t\n");
-        if (z == NULL)
+        z = strtok(nullptr, " \t\n");
+        if (z == nullptr)
         {
             nb = fread(Buff, 1, TAILLEBUFF - 1, in);
             Buff[nb] = '\0';
@@ -275,7 +266,7 @@ bool NewNet::Set_Interface_Trans(const char *f)
     int pos_trans(TRANSITIONS, string);
     char Buff[TAILLEBUFF], *z;
     in = fopen(f, "r");
-    if (in == NULL)
+    if (in == nullptr)
     {
         cout << "file " << f << " doesn't exist" << endl;
         exit(1);
@@ -289,7 +280,7 @@ bool NewNet::Set_Interface_Trans(const char *f)
     for (i = 0; i < int_trans; i++)
     {
         cout << " z: " << z << endl;
-        if (z == NULL)
+        if (z == nullptr)
         {
             cout << "error in interface format " << endl;
             return false;
@@ -304,8 +295,8 @@ bool NewNet::Set_Interface_Trans(const char *f)
         }
         else
             InterfaceTrans.insert(pos);
-        z = strtok(NULL, " \t\n");
-        if (z == NULL)
+        z = strtok(nullptr, " \t\n");
+        if (z == nullptr)
         {
             nb = fread(Buff, 1, TAILLEBUFF - 1, in);
             Buff[nb] = '\0';
@@ -344,7 +335,7 @@ ostream &operator<<(ostream &os, const Set &s)
 {
     bool b = false;
 
-    if (s.size())
+    if (!s.empty())
     {
         for (Set::const_iterator i = s.begin(); !(i == s.end()); i++)
         {

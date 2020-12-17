@@ -1,12 +1,8 @@
 #include <spot/kripke/kripke.hh>
-#include "LDDState.h"
 #include "HybridKripkeState.h"
 
 
-HybridKripkeState::~HybridKripkeState()
-{
-    //dtor
-    //cout<<__func__<<endl;
-}
+HybridKripkeState::~HybridKripkeState()=default;
+
 
 //static ModelCheckBaseMT * HybridKripkeState::m_builder;

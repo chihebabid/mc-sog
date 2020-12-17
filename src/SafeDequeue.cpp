@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "SafeDequeue.h"
 
 template<typename T>
@@ -46,22 +47,6 @@ void SafeDequeue<T>::push ( T new_value )
 
 }
 
-/*template<typename T>
-void SafeDequeue<T>::wait_and_pop ( T& value )
-{
-    
-}*/
-
-template<typename T>
-std::shared_ptr<T> SafeDequeue<T>::wait_and_pop()
-{
-    std::unique_lock<std::mutex> lk ( mut );
-    data_cond.wait ( lk,[this] {return !data_queue.empty();} );
-    std::shared_ptr<T> res ( std::make_shared<T> ( data_queue.front() ) );
-    data_queue.pop();
-    return res;
-}
-
 template<typename T>
 bool SafeDequeue<T>::try_pop ( T& value )
 {
@@ -75,17 +60,7 @@ bool SafeDequeue<T>::try_pop ( T& value )
 }
 
 
-template<typename T>
-std::shared_ptr<T> SafeDequeue<T>::try_pop()
-{
-    std::lock_guard<std::mutex> lk ( mut );
-    if ( data_queue.empty() ) {
-        return std::shared_ptr<T>();
-    }
-    std::shared_ptr<T> res ( std::make_shared<T> ( data_queue.front() ) );
-    data_queue.pop();
-    return res;
-}
+
 
 template<typename T>
 bool SafeDequeue<T>::empty() const
@@ -98,3 +73,4 @@ bool SafeDequeue<T>::empty() const
 template class SafeDequeue<Pair>;
 typedef pair<string *, unsigned int> MSG;
 template class SafeDequeue<MSG>;
+template class SafeDequeue<couple_th>;

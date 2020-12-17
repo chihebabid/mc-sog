@@ -14,8 +14,7 @@ bool HybridKripkeIterator::first() {
 
     //cout<<"entering "<<__func__<<endl;
     m_current_edge=0;
-    
-    return m_current_state->getListSucc()->size()!=0;
+    return !m_current_state->getListSucc()->empty();
 
 }
 

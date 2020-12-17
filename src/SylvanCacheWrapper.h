@@ -14,19 +14,19 @@ extern "C" {
 #endif /* __cplusplus */
 
 // MDD operations
-static const uint64_t CACHE_MDD_RELPROD             = (20LL<<40);
-static const uint64_t CACHE_MDD_MINUS               = (21LL<<40);
-static const uint64_t CACHE_MDD_UNION               = (22LL<<40);
-static const uint64_t CACHE_MDD_INTERSECT           = (23LL<<40);
-static const uint64_t CACHE_MDD_PROJECT             = (24LL<<40);
-static const uint64_t CACHE_MDD_JOIN                = (25LL<<40);
-static const uint64_t CACHE_MDD_MATCH               = (26LL<<40);
-static const uint64_t CACHE_MDD_RELPREV             = (27LL<<40);
-static const uint64_t CACHE_MDD_SATCOUNT            = (28LL<<40);
-static const uint64_t CACHE_MDD_DIVIDE              = (29LL<<40);
-static const uint64_t CACHE_LDD_MINUS               = (30LL<<40);
-static const uint64_t CACHE_LDD_FIRE                = (31LL<<40);
-static const uint64_t CACHE_LDD_UNION                = (32LL<<40);
+static const uint64_t CACHE_MDD_RELPROD             = (10LL<<40);
+static const uint64_t CACHE_MDD_MINUS               = (11LL<<40);
+static const uint64_t CACHE_MDD_UNION               = (12LL<<40);
+static const uint64_t CACHE_MDD_INTERSECT           = (13LL<<40);
+static const uint64_t CACHE_MDD_PROJECT             = (14LL<<40);
+static const uint64_t CACHE_MDD_JOIN                = (15LL<<40);
+static const uint64_t CACHE_MDD_MATCH               = (16LL<<40);
+static const uint64_t CACHE_MDD_RELPREV             = (17LL<<40);
+static const uint64_t CACHE_MDD_SATCOUNT            = (18LL<<40);
+static const uint64_t CACHE_MDD_DIVIDE              = (19LL<<40);
+static const uint64_t CACHE_LDD_MINUS               = (20LL<<40);
+static const uint64_t CACHE_LDD_FIRE                = (21LL<<40);
+static const uint64_t CACHE_LDD_UNION                = (22LL<<40);
 
 
 #ifdef __cplusplus

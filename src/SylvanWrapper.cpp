@@ -13,6 +13,7 @@
 #include <sys/mman.h> // for mmap
 #include <iostream>
 #include <string>
+#include <stack>
 #include "SylvanCacheWrapper.h"
 #include "SylvanWrapper.h"
 
@@ -38,18 +39,18 @@ MDD lddmc_true = 1;
 
 uint64_t SylvanWrapper::getMarksCount(MDD cmark) {
     //typedef pair<string,MDD> Pair_stack;
-    vector<MDD> local_stack;
+    stack<MDD> local_stack;
     uint64_t compteur = 0;
     MDD explore_mdd;
-    local_stack.push_back(cmark);
+    local_stack.push(cmark);
     do {
-        explore_mdd = local_stack.back();
-        local_stack.pop_back();
+        explore_mdd = local_stack.top();
+        local_stack.pop();
         compteur++;
         while (explore_mdd != lddmc_false && explore_mdd != lddmc_true) {
             mddnode_t n_val = GETNODE(explore_mdd);
             if (mddnode_getright(n_val) != lddmc_false) {
-                local_stack.push_back(mddnode_getright(n_val));
+                local_stack.push(mddnode_getright(n_val));
             }
             //unsigned int val = mddnode_getvalue ( n_val );
             explore_mdd = mddnode_getdown(n_val);
@@ -136,7 +137,7 @@ llmsset2_t SylvanWrapper::llmsset_create(size_t initial_size, size_t max_size) {
     // that is a problem with multiple tables.
     // so, for now, do NOT use multiple tables!!
 
-    /*LACE_ME;*/
+
     INIT_THREAD_LOCAL(my_region);
 
     llmsset_reset_region();
@@ -241,10 +242,7 @@ void SylvanWrapper::sylvan_init_package(void) {
 }
 
 void SylvanWrapper::sylvan_init_ldd() {
-    /*sylvan_register_quit(lddmc_quit);
-    sylvan_gc_add_mark(TASK(lddmc_gc_mark_external_refs));
-    sylvan_gc_add_mark(TASK(lddmc_gc_mark_protected));
-    sylvan_gc_add_mark(TASK(lddmc_gc_mark_serialize));*/
+
     //m_lddmc_protected_created=0; // Should be initialized in the constructor
     refs_create(&m_lddmc_refs, 1024);
     if (!m_lddmc_protected_created) {
@@ -252,7 +250,7 @@ void SylvanWrapper::sylvan_init_ldd() {
         m_lddmc_protected_created = 1;
     }
 
-    //LACE_ME;
+
     lddmc_refs_init();
 }
 
@@ -262,8 +260,7 @@ void SylvanWrapper::lddmc_refs_init_task() {
     s->pend = s->pbegin + 1024;
     s->rcur = s->rbegin = (MDD *) malloc(sizeof(MDD) * 1024);
     s->rend = s->rbegin + 1024;
-    /* s->scur = s->sbegin = (lddmc_refs_task_t)malloc(sizeof(struct lddmc_refs_task) * 1024);
-     s->send = s->sbegin + 1024;*/
+
     SET_THREAD_LOCAL(lddmc_refs_key, s);
 }
 
@@ -392,11 +389,7 @@ MDD SylvanWrapper::lddmc_makenode(uint32_t value, MDD ifeq, MDD ifneq) {
         }
     }
 
-    /*if (created) {
-        sylvan_stats_count(LDD_NODES_CREATED);
 
-    }
-    else sylvan_stats_count(LDD_NODES_REUSED);*/
 
     return (MDD) index;
 }
@@ -634,7 +627,7 @@ MDD SylvanWrapper::lddmc_union_mono(MDD a, MDD b) {
     /* Access cache */
     MDD result;
     if (SylvanCacheWrapper::cache_get3(CACHE_LDD_UNION, a, b, 0, &result)) {
-        // std::cout<<"Cache succeeded!"<<std::endl;
+        //cout<<"cache get "<<__func__ <<endl;
         return result;
     }
 
@@ -711,7 +704,6 @@ MDD SylvanWrapper::lddmc_make_copynode(MDD ifeq, MDD ifneq) {
 
 bool SylvanWrapper::isSingleMDD(MDD mdd) {
     mddnode_t node;
-
     while (mdd > lddmc_true) {
         node = GETNODE(mdd);
         if (mddnode_getright(node) != lddmc_false) return false;
@@ -721,7 +713,7 @@ bool SylvanWrapper::isSingleMDD(MDD mdd) {
 }
 
 // Renvoie le nbre de noeuds à un niveau donné
-int SylvanWrapper::get_mddnbr(MDD mdd, int level) {
+int SylvanWrapper::get_mddnbr(MDD mdd, unsigned int level) {
     mddnode_t node;
     for (int j = 0; j < level; j++) {
         node = GETNODE(mdd);
@@ -816,7 +808,7 @@ MDD SylvanWrapper::ldd_minus(MDD a, MDD b) {
 }
 
 
-MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, MDD minus, MDD plus) {
+MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) {
     // for an empty set of source states, or an empty transition relation, return the empty set
     if (cmark == lddmc_true) return lddmc_true;
     if (minus == lddmc_false || plus == lddmc_false) return lddmc_false;
@@ -825,6 +817,7 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, MDD minus, MDD plus) {
     MDD _cmark = cmark, _minus = minus, _plus = plus;
 
     if (SylvanCacheWrapper::cache_get3(CACHE_LDD_FIRE, cmark, minus, plus, &result)) {
+
         return result;
     }
     MDD cache_cmark = cmark;
@@ -911,40 +904,38 @@ MDD SylvanWrapper::lddmc_project(const MDD mdd, const MDD proj) {
 int SylvanWrapper::isGCRequired() {
     return (m_g_created > llmsset_get_size(m_nodes) / 2);
 }
-
+/*
+ * Convert MDD cmark to a string
+ */
 void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark, string &res) {
     typedef pair<string, MDD> Pair_stack;
-    vector<Pair_stack> local_stack;
-
+    stack<Pair_stack> local_stack;
     unsigned int compteur = 0;
     MDD explore_mdd = cmark;
-
     string chaine;
-
     res = "  ";
-    local_stack.push_back(Pair_stack(chaine, cmark));
+    local_stack.push(Pair_stack(chaine, cmark));
     do {
-        Pair_stack element = local_stack.back();
+        Pair_stack element = local_stack.top();
         chaine = element.first;
         explore_mdd = element.second;
-        local_stack.pop_back();
+        local_stack.pop();
         compteur++;
         while (explore_mdd != lddmc_false && explore_mdd != lddmc_true) {
             mddnode_t n_val = GETNODE(explore_mdd);
             if (mddnode_getright(n_val) != lddmc_false) {
-                local_stack.push_back(Pair_stack(chaine, mddnode_getright(n_val)));
+                local_stack.push(Pair_stack(chaine, mddnode_getright(n_val)));
             }
             unsigned int val = mddnode_getvalue(n_val);
-
             chaine.push_back((unsigned char) (val) + 1);
             explore_mdd = mddnode_getdown(n_val);
         }
-        /*printchaine(&chaine);printf("\n");*/
         res += chaine;
-    } while (local_stack.size() != 0);
+    } while (!local_stack.empty());
     //delete chaine;
 
     compteur = (compteur << 1) | 1;
+    //cout<<"compteur "<<compteur<<endl;
     res[1] = (unsigned char) ((compteur >> 8) + 1);
     res[0] = (unsigned char) (compteur & 255);
 
@@ -952,7 +943,6 @@ void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark, string &res) {
 
 void SylvanWrapper::sylvan_gc_seq() {
     if (m_g_created > llmsset_get_size(m_nodes) / 1000) {
-        cout<<"Cache executed"<<endl;
         SylvanCacheWrapper::cache_clear();
         llmsset_clear_data(m_nodes);
         ldd_gc_mark_protected();

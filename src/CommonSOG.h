@@ -23,20 +23,16 @@ class CommonSOG
     public:
         CommonSOG();
         virtual ~CommonSOG();
-        LDDGraph *getGraph() const;
-        static void printhandler(ostream &o, int var);
-        vector<TransSylvan>* getTBRelation();
-        Set * getNonObservable();
-        unsigned int getPlacesCount();
+        static LDDGraph *getGraph();
+
         inline set<uint16_t> & getPlaceProposition() {return m_place_proposition;}
         inline string_view getTransition(int pos) {
             {
                 return string_view {m_transitions.at(pos).name};
             }
         }
-        string_view getPlace(int pos);
-
-
+        static string_view getPlace(int pos);
+        void finish() {m_finish=true;}
     protected:
         NewNet* m_net;
         int m_nbPlaces = 0;
@@ -60,6 +56,7 @@ class CommonSOG
         uint8_t m_nb_thread;
         std::mutex m_graph_mutex,m_gc_mutex;  
         atomic<uint8_t> m_gc;
+        volatile bool m_finish=false;
     //MDD fireTransition(MDD cmark,MDD minus, MDD plus);
     private:
 

@@ -6,6 +6,7 @@
 #define PMC_SOG_SYLVANWRAPPER_H
 #include <cstdint>
 #include <cstddef>
+#include <string>
 
 /**
  * Lockless hash table (set) to store 16-byte keys.
@@ -121,7 +122,7 @@ public:
 
     static void sylvan_set_limits(size_t memorycap, int table_ratio, int initial_ratio);
 
-    static void sylvan_init_package(void);
+    static void sylvan_init_package();
 
     inline static mddnode_t GETNODE(MDD mdd) { return ((mddnode_t) llmsset_index_to_ptr(m_nodes, mdd)); }
 
@@ -176,7 +177,7 @@ public:
 
     static bool isSingleMDD(MDD mdd);
 
-    static int get_mddnbr(MDD mdd, int level);
+    static int get_mddnbr(MDD mdd, unsigned int level);
 
     static MDD ldd_divide_rec(MDD a, int level);
 
@@ -184,7 +185,7 @@ public:
 
     static MDD ldd_minus(MDD a, MDD b);
 
-    static MDD lddmc_firing_mono(MDD cmark, MDD minus, MDD plus);
+    static MDD lddmc_firing_mono(MDD cmark, const MDD minus, const MDD plus);
 
     static size_t lddmc_nodecount_mark(MDD mdd);
 
