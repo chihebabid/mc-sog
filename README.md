@@ -51,6 +51,7 @@ arg1: specifies method of creating threads or/and specifies if modelchecking sho
      * pc : using pthread library and applying canonization on nodes
      * otfP : perform modelchecking on the fly using pthread
      * otfC : perform modelchecking on the fly using c++17 algorithms and a work-stealing approach for the construction of aggregates
+     * otfPR : progressive construction of the SOG during model checking (c++17 posix threads) 
 arg2: specify the number of threads/workers to be created
 arg3: specify the net to build its SOG
 arg4: specify the LTL formula file
