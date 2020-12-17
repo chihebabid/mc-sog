@@ -30,12 +30,12 @@ HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap,NewNet &net_):HybridKripke(dict_ptr) {
     m_net=&net_;
     HybridKripkeIterator::m_net=&net_;
-    for (auto it=l_transap.begin();it!=l_transap.end();it++) {
-        register_ap(*it);
+    for (auto it:l_transap) {
+        register_ap(it);
     }
     
-    for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
-        register_ap(*it);
+    for (auto it:l_placeap)
+        register_ap(it);
     
 
 }
@@ -45,15 +45,13 @@ state* HybridKripke::get_init_state() const {
     int v;
     MPI_Send( &v, 1, MPI_INT, 0, TAG_INITIAL, MPI_COMM_WORLD); 
      char message[23];
-    MPI_Status status; int nbytes;
+    MPI_Status status;
     MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_INITIAL, MPI_COMM_WORLD, &status);
-    MPI_Get_count(&status, MPI_BYTE, &v);
     MPI_Recv(message, 22, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_INITIAL,MPI_COMM_WORLD, &status);
     succ_t* elt=new succ_t;    
     memcpy(elt->id,message,16);   
     memcpy(&elt->pcontainer,message+16,2);    
     elt->_virtual=false;
-
     return new HybridKripkeState(*elt);    
 
 }
@@ -69,15 +67,15 @@ std::string HybridKripke::format_state(const spot::state* s) const
 
 HybridKripkeIterator* HybridKripke::succ_iter(const spot::state* s) const {
     //cout<<__func__<<endl;
-    auto ss = static_cast<const HybridKripkeState*>(s);    
+    auto ss = static_cast<const HybridKripkeState*>(s);
     bdd cond = state_condition(ss);
     HybridKripkeState* st=ss;
    if (iter_cache_)
     {
-      auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
+     /* auto it = static_cast<HybridKripkeIterator*>(iter_cache_);
       iter_cache_ = nullptr;    // empty the cache
       it->recycle(*st,cond);
-      return it;
+      return it;*/
     }
 #ifdef TESTENABLE
     SylvanWrapper::m_agg++;

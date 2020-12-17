@@ -7,9 +7,9 @@
 #include "SylvanWrapper.h"
 constexpr auto TAG_ASK_STATE = 9;
 constexpr auto TAG_ACK_STATE = 10;
-#define TAG_ASK_SUCC 4
-#define TAG_ACK_SUCC 11
-#define TAG_NOTCOMPLETED 20
+constexpr auto TAG_ASK_SUCC = 4;
+constexpr auto TAG_ACK_SUCC = 11;
+
 typedef struct {
     char id[16];
     int16_t transition;
@@ -23,7 +23,7 @@ public:
     HybridKripkeState(succ_t &e):m_container(e.pcontainer) {  
       
    if (e._virtual) { //div or deadlock
-            if (e.id[0]=='v') { // div
+            /*if (e.id[0]=='v') { // div
                 //cout<<"div created..."<<endl;
                 m_hashid=0xFFFFFFFFFFFFFFFE;
                 m_id[0]='v';
@@ -32,26 +32,25 @@ public:
                 elt.transition=-1;
                 elt._virtual=true;
                 m_succ.push_back(elt);
-            }
-            else {
+            }*/
+            /*else {*/
                 m_id[0]='d';
                 m_hashid=0xFFFFFFFFFFFFFFFF; // deadlock                
-            }
+           /* }*/
         }
         else {        
-        memcpy(m_id,e.id,16);        
+        memcpy(m_id,e.id,16);
         MPI_Send(m_id,16,MPI_BYTE,e.pcontainer, TAG_ASK_STATE, MPI_COMM_WORLD);
-        
         MPI_Status status; //int nbytes;
         MPI_Probe(MPI_ANY_SOURCE, TAG_ACK_STATE, MPI_COMM_WORLD, &status);
         uint32_t nbytes;
         MPI_Get_count(&status, MPI_BYTE, &nbytes);
         // Receive hash id =idprocess | position
         char message[nbytes];
+
         MPI_Recv(message, nbytes, MPI_BYTE,MPI_ANY_SOURCE,TAG_ACK_STATE,MPI_COMM_WORLD, &status);
-        memcpy(&m_hashid,message,8);     
-        //cout<<"Pos :"<<m_hashid<<endl;
-        //cout<<"Process :"<<m_container<<endl;
+
+        memcpy(&m_hashid,message,8);
         m_hashid=m_hashid | (size_t(m_container)<<56);
         
         // Determine Place propositions
@@ -84,9 +83,9 @@ public:
         indice++; // Added for stats
        memcpy(&m_size,message+indice,8); // Added for stats
 
-        // Get successors 
+        // Get successors
          MPI_Send(m_id,16,MPI_BYTE,m_container, TAG_ASK_SUCC, MPI_COMM_WORLD);
-   
+
      // Receive list of successors     
      
     MPI_Probe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
@@ -120,12 +119,7 @@ public:
         el.transition=-1;
         m_succ.push_back(el);
     }
-       if (m_div) {
-           /*succ_t el;
-           el.id[0]='v';
-           el.transition=-1;
-           el._virtual=true;
-           m_succ.push_back(el);*/
+      if (m_div) {
            succ_t el=e;
           el._virtual=false;
            el.transition=-1;
@@ -180,7 +174,6 @@ protected:
 
 private:    
     char  m_id[17];
-    uint32_t m_pos; // Added for stats
     size_t m_hashid;
     bool m_div;
     bool m_deadlock;

@@ -8,8 +8,6 @@
 class HybridKripkeIterator : public spot::kripke_succ_iterator
 {
 public:
-    static LDDState m_deadlock;
-    static LDDState m_div;
     static NewNet * m_net;
     static spot::bdd_dict_ptr* m_dict_ptr;
     
@@ -20,12 +18,12 @@ public:
     bool next() override;
     bool done() const override;
     HybridKripkeState* dst() const override;
-    bdd cond() const override final;
+    bdd cond() const override;
 
    // HybridKripkeState* current_state() const;
 
     void recycle(HybridKripkeState &st, bdd cond);   
-    std::string format_transition() const;
+
     
 
 private:

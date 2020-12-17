@@ -19,10 +19,10 @@ SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder)
     SogKripkeIteratorTh::m_deadlock.setLDDValue(1);
     SogKripkeIteratorTh::m_deadlock.setVisited();
     SogKripkeIteratorTh::m_deadlock.setCompletedSucc();
-    SogKripkeIteratorTh::m_div.setLDDValue(0);
+    /*SogKripkeIteratorTh::m_div.setLDDValue(0);
     SogKripkeIteratorTh::m_div.setVisited();
     SogKripkeIteratorTh::m_div.setCompletedSucc();
-    SogKripkeIteratorTh::m_div.Successors.push_back(pair<LDDState*,int>(&SogKripkeIteratorTh::m_div,-1));
+    SogKripkeIteratorTh::m_div.Successors.push_back(pair<LDDState*,int>(&SogKripkeIteratorTh::m_div,-1));*/
 }
 
 SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeTh(dict_ptr,builder) {
@@ -38,7 +38,7 @@ SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *bu
 
 state* SogKripkeTh::get_init_state() const {
    LDDState *ss=m_builder->getInitialMetaState();   
-    return new SogKripkeStateTh(ss);//new SpotSogState();
+    return new SogKripkeStateTh(ss);
 
 }
 // Allows to print state label representing its id
@@ -48,7 +48,7 @@ std::string SogKripkeTh::format_state(const spot::state* s) const
     auto ss = static_cast<const SogKripkeStateTh*>(s);
     std::ostringstream out;
     out << "( " << ss->getLDDState()->getLDDValue() <<  ")";
-   // cout << " ( " << ss->getLDDState()->getLDDValue() <<  ")";
+
     return out.str();
   }
 

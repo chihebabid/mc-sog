@@ -1,6 +1,3 @@
-#include <cstdint>
-#include <cstddef>
-#include <string>
 #include "SylvanWrapper.h"
 #include "TransSylvan.h"
 
@@ -9,22 +6,12 @@ TransSylvan::TransSylvan(const MDD &_minus, const MDD &_plus):m_minus(_minus),m_
     //ctor
 }
 
-TransSylvan::~TransSylvan()
-{
-    //dtor
-}
-void TransSylvan::setMinus(MDD _minus) {
-    m_minus=_minus;
-}
+TransSylvan::~TransSylvan()=default;
 
-void TransSylvan::setPlus(MDD _plus) {
-    m_plus=_plus;
-}
-
-MDD TransSylvan::getMinus() {
+MDD TransSylvan::getMinus() const {
     return m_minus;
 }
 
-MDD TransSylvan::getPlus() {
+MDD TransSylvan::getPlus() const {
     return m_plus;
 }

@@ -21,6 +21,7 @@ else()
   set_target_properties(bddx PROPERTIES IMPORTED_LOCATION ${SPOT_LIBRARY})
 endif()
 
+
 # Hybrid SOG executable
 add_executable(mc-sog main.cpp
   NewNet.cpp
@@ -73,7 +74,9 @@ add_executable(mc-sog main.cpp
         threadSOG.cpp threadSOG.h
         HybridSOG.cpp HybridSOG.h
         MCHybridSOG.cpp MCHybridSOG.h
-        ModelCheckThReq.cpp ModelCheckThReq.h)
+        ModelCheckThReq.cpp ModelCheckThReq.h md5_hash.h )
+
+target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}")
 
 target_link_libraries(mc-sog
   bddx

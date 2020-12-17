@@ -27,6 +27,7 @@
 
 typedef pair<LDDState *, MDD> couple;
 typedef pair<couple, Set> Pair;
+typedef pair<LDDState *, int> couple_th;
 struct empty_queue: std::exception {
     ~empty_queue() {};
     const char* what() const noexcept {return "";}
@@ -62,16 +63,6 @@ class SafeDequeue {
         SafeDequeue& operator= ( const SafeDequeue& ) = delete;
         void push ( T new_value );
         bool try_pop ( T& value );
-        std::shared_ptr<T> try_pop();
-        void wait_and_pop ( T& value ) {
-            std::unique_lock<std::mutex> lk ( mut );
-            data_cond.wait ( lk,[this] {return !data_queue.empty();} );
-            value=data_queue.front();
-            data_queue.pop();
-            };
-
-        
-        std::shared_ptr<T> wait_and_pop();
         bool empty() const;
     };
 

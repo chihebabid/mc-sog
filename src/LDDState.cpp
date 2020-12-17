@@ -1,13 +1,10 @@
 
 #include "LDDState.h"
 #include "LDDGraph.h"
-#include <iostream>
 #include "SylvanWrapper.h"
 
-LDDState::~LDDState()
-{
-    //dtor
-}
+LDDState::~LDDState()=default;
+
 void LDDState::setLDDValue(MDD m) {
     m_lddstate=m;
 }
@@ -60,4 +57,10 @@ vector<uint16_t> LDDState::getUnmarkedPlaces(set<uint16_t>& lplacesAP) {
     return result;
 }
 
+uint8_t LDDState::getMCurrentLevel() const {
+    return m_currentLevel;
+}
 
+void LDDState::setMCurrentLevel(uint8_t mCurrentLevel) {
+    m_currentLevel = max(m_currentLevel,mCurrentLevel);
+}

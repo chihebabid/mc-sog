@@ -31,7 +31,7 @@
 #include "SogKripkeTh.h"
 #include "HybridKripke.h"
 #include "SylvanWrapper.h"
-
+#include "PMCSOGConfig.h"
 // #include "RdPBDD.h"
 
 using namespace std;
@@ -78,9 +78,8 @@ void displayCheckResult(bool res) {
 	else
 		cout << "Property is violated..." << endl;
 }
-void displayTime(auto startTime, auto finalTime) {
-	cout << "Verification duration : " << std::chrono::duration_cast < std::chrono::milliseconds
-			> (finalTime - startTime).count() << " milliseconds\n";
+void displayTime(auto startTime,auto finalTime) {
+	cout << "Verification duration : " << std::chrono::duration_cast < std::chrono::milliseconds> (finalTime - startTime).count() << " milliseconds\n";
 
 }
 /***********************************************/
@@ -96,13 +95,18 @@ int main(int argc, char **argv) {
 	}
 
 	nb_th = atoi(argv[2]) == 0 ? 1 : atoi(argv[2]);
-
-	cout << "Net file : " << argv[3] << endl;
-	cout << "Formula file : " << formula << endl;
-	cout << "Checking algorithm : " << algorithm << endl;
-
-	cout << "thread : " << argv[2] << endl;
-
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &n_tasks);
+    MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
+    if (!task_id) {
+        cout << "PMC-SOG : Parallel Model Checking tool based on Symbolic Observation Graphs " << endl;
+        cout << "Version " <<PMCSOG_VERSION_MAJOR<<"."<<PMCSOG_VERSION_MINOR<<"."<<PMCSOG_VERSION_PATCH<<endl;
+        cout << "(c) 2018 - 2020"<<endl;
+        cout << "Net file : " << argv[3] << endl;
+        cout << "Formula file : " << formula << endl;
+        cout << "Checking algorithm : " << algorithm << endl;
+        cout << "#threads : " << nb_th << endl;
+    }
 	if (nb_th == 0) {
 		cout << "number of thread <= 0 " << endl;
 		exit(0);
@@ -111,12 +115,7 @@ int main(int argc, char **argv) {
 	cout << "______________________________________\n";
 	cout << "Fetching formula..." << endl;
 	set<string> list_propositions = buildPropositions(formula);
-
 	NewNet Rnewnet(argv[3], list_propositions);
-
-	MPI_Init(&argc, &argv);
-	MPI_Comm_size(MPI_COMM_WORLD, &n_tasks);
-	MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
 
 
     if (n_tasks == 1) {
@@ -133,22 +132,8 @@ int main(int argc, char **argv) {
 
             spot::twa_graph_ptr af = spot::translator(d).run(not_f);
             cout << "Formula automata built.\n";
-            /*cout << "Want to save the graph in a dot file ?";
-             char c;
-             cin >> c;
-             if (c == 'y') {
-             fstream file;
-             string st(formula);
-             st += ".dot";
-             file.open(st.c_str(), fstream::out);
-             spot::print_dot(file, af);
-             file.close();
-             }
-             cout << "Loading net information..." << endl;*/
             ModelCheckBaseMT *mcl;
-            /*if (!strcmp(argv[1], "otfL"))
-                mcl = new ModelCheckLace(Rnewnet, nb_th);
-            else*/
+
             if (!strcmp(argv[1], "otfP"))
                 mcl = new ModelCheckerTh(Rnewnet, nb_th);
             else if (!strcmp(argv[1], "otfC"))
@@ -177,13 +162,6 @@ int main(int argc, char **argv) {
                 auto finalTime = std::chrono::steady_clock::now();
                 displayTime(startTime, finalTime);
                 displayCheckResult(res);
-                /****************************/
-
-                /*auto startTime = std::chrono::steady_clock::now();
-                 bool res = (check.check() == 0);
-                 auto finalTime = std::chrono::steady_clock::now();
-                 displayTime(startTime, finalTime);
-                 displayCheckResult(res);*/
 
             } else {
                 auto startTime = std::chrono::steady_clock::now();
@@ -191,24 +169,9 @@ int main(int argc, char **argv) {
                 auto finalTime = std::chrono::steady_clock::now();
                 displayTime(startTime, finalTime);
                 displayCheckResult(res);
-                /*
-                 if (!resauto run = k->intersecting_run(af)) {
-                 cout << "formula is violated by the following run:\n" << *run << endl;
-                 cout << "==================================" << endl;
-                 /*run->highlight(5); // 5 is a color number.
-                 fstream file;
-                 file.open("violated.dot",fstream::out);
-                 cout<<"Property is violated!"<<endl;
-                 cout<<"Check the dot file."<<endl;
-                 spot::print_dot(file, k, ".kA");
-                 file.close();*/
-                /*} else {
-                 std::cout << "formula is verified\n";
-                 auto finalTime = std::chrono::high_resolution_clock::now();
-                 displayTime(startTime, finalTime);
-
-                 }*/
             }
+            mcl->finish();
+            cout<<"Number of built aggregates: "<<mcl->getGraph()->m_GONodes.size()<<endl;
             delete mcl;
         }
 

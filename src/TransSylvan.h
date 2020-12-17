@@ -7,12 +7,8 @@ class TransSylvan {
  public:
   TransSylvan(const MDD &_minus, const MDD &_plus);
   virtual ~TransSylvan();
-  void setMinus(MDD _minus);
-  void setPlus(MDD _plus);
-  MDD getMinus();
-  MDD getPlus();
-
- protected:
+  [[nodiscard]] MDD getMinus() const;
+  [[nodiscard]] MDD getPlus() const;
  private:
   MDD m_minus, m_plus;
 };
