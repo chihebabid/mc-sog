@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(pmc-sog C CXX)
 project(pmc-sog VERSION 0.4.1)
 
-configure_file(PMCSOGConfig.h.in PMCSOGConfig.h)
+configure_file(PMCSOGConfig.h.in src/PMCSOGConfig.h)
 
 
 #set(CMAKE_CXX_STANDARD 14)
