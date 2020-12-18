@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 # project name and language
 project(pmc-sog C CXX)
-project(pmc-sog VERSION 0.4.0)
+project(pmc-sog VERSION 0.4.1)
 
 configure_file(PMCSOGConfig.h.in PMCSOGConfig.h)
 
@@ -15,7 +15,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
     #used flags -Og -DNDEBUG
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++17 -pthread -g3")#-DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -fdelete-null-pointer-checks") #
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++17 -pthread -DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -fdelete-null-pointer-checks")#-DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -fdelete-null-pointer-checks") #
 
 endif()
 
