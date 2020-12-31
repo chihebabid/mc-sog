@@ -22,9 +22,12 @@ else()
 endif()
 
 
+
+ 
+
 # Hybrid SOG executable
 add_executable(mc-sog main.cpp
-        PMCSOGConfig.h
+  PMCSOGConfig.h
   NewNet.cpp
   NewNet.h
   CommonSOG.cpp
@@ -77,7 +80,8 @@ add_executable(mc-sog main.cpp
         MCHybridSOG.cpp MCHybridSOG.h
         ModelCheckThReq.cpp ModelCheckThReq.h md5_hash.h )
 
-target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}")
+
+target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")
 
 target_link_libraries(mc-sog
   bddx
