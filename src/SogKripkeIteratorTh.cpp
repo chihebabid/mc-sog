@@ -6,15 +6,18 @@
 
 SogKripkeIteratorTh::SogKripkeIteratorTh ( LDDState* lddstate, bdd cnd ) :m_lddstate ( lddstate ), kripke_succ_iterator ( cnd )
 {
-    for ( int i=0; i<m_lddstate->getSuccessors()->size(); i++ ) {
-        m_lsucc.push_back ( m_lddstate->getSuccessors()->at ( i ) );
-    }
+    m_lsucc.reserve(m_lddstate->getSuccessors()->size()+ 2);
     if ( lddstate->isDeadLock() ) {
         m_lsucc.push_back ( pair<LDDState*,int> ( &m_deadlock,-1 ) );
     }
     if ( lddstate->isDiv() ) {
         m_lsucc.push_back ( pair<LDDState*,int> ( (LDDState*)lddstate,-1 ) );
     }
+
+    for ( int i=0; i<m_lddstate->getSuccessors()->size(); i++ ) {
+        m_lsucc.push_back ( m_lddstate->getSuccessors()->at ( i ) );
+    }
+
 
 }
 bool SogKripkeIteratorTh::first()

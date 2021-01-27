@@ -1,4 +1,3 @@
-// version 0.1
 #include <time.h>
 #include <chrono>
 #include <iostream>

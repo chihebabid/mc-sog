@@ -95,6 +95,21 @@ public:
     uint32_t nb_succ;
     memcpy(&nb_succ,inmsg,4);
     indice=4;
+       m_succ.reserve(nb_succ+2);
+       if (m_deadlock) {
+           succ_t el;
+           el.id[0]='d';
+           el.pcontainer=0;
+           el._virtual=true;
+           el.transition=-1;
+           m_succ.push_back(el);
+       }
+       if (m_div) {
+           succ_t el=e;
+           el._virtual=false;
+           el.transition=-1;
+           m_succ.push_back(el);
+       }
     succ_t succ_elt;
     //printf("List of successors of %.16s\n",m_id);
     for (uint32_t i=0;i<nb_succ;i++) {
@@ -108,23 +123,9 @@ public:
         indice+=2;        
         succ_elt._virtual=false;
         m_succ.push_back(succ_elt);
-       // delete succ_elt;
     }  
 
-    if (m_deadlock) {
-        succ_t el;
-        el.id[0]='d';
-        el.pcontainer=0;
-        el._virtual=true;
-        el.transition=-1;
-        m_succ.push_back(el);
-    }
-      if (m_div) {
-           succ_t el=e;
-          el._virtual=false;
-           el.transition=-1;
-           m_succ.push_back(el);
-       }
+
     }
         
         

@@ -135,6 +135,7 @@ LDDState *ModelCheckThReq::getInitialMetaState() {
     c->setDiv(Set_Div(initial_meta_state));
     c->setDeadLock(Set_Bloc(initial_meta_state));
     if (!fire.empty()) {
+
         for (auto it = fire.begin(); it != fire.end(); it++)
             m_common_stack.push(couple_th(c, *it));
         std::unique_lock<std::mutex> lk(m_mutexBuildCompleted);

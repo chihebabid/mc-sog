@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 # project name and language
 project(pmc-sog C CXX)
-project(pmc-sog VERSION 0.4.1)
+project(pmc-sog VERSION 0.4.2)
 
 configure_file(PMCSOGConfig.h.in src/PMCSOGConfig.h)
 
