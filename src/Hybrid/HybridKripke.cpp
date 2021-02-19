@@ -27,7 +27,7 @@ HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
     HybridKripkeIterator::m_div.Successors.push_back(pair<LDDState*,int>(&HybridKripkeIterator::m_div,-1));*/
 }
 
-HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_transap,set<string> &l_placeap,NewNet &net_):HybridKripke(dict_ptr) {
+HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr, set<string> &l_transap, set<string> &l_placeap, NewNet &net_): HybridKripke(dict_ptr) {
     m_net=&net_;
     HybridKripkeIterator::m_net=&net_;
     for (auto it:l_transap) {
@@ -41,7 +41,7 @@ HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr,set<string> &l_tra
 }
 
 
-state* HybridKripke::get_init_state() const {    
+state* HybridKripke::get_init_state() const {
     int v;
     MPI_Send( &v, 1, MPI_INT, 0, TAG_INITIAL, MPI_COMM_WORLD); 
      char message[23];

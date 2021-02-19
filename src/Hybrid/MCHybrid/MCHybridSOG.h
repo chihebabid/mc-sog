@@ -15,7 +15,7 @@
 #include "TransSylvan.h"
 
 #include <mpi.h>
-#include <sha2.h>
+#include <misc/sha2.h>
 
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -33,7 +33,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include "SafeDequeue.h"
+#include "misc/SafeDequeue.h"
 // namespace mpi = boost::mpi;
 
 //#define MASTER 0
@@ -51,7 +51,7 @@ enum class state {waitInitial,waitingBuild,waitingSucc};
 class MCHybridSOG : public CommonSOG
 {
 public:
-    MCHybridSOG(const NewNet &,MPI_Comm &, bool init = false);
+    MCHybridSOG(const NewNet &, MPI_Comm &, bool init = false);
     void buildFromNet(int index);
     /// principal functions to construct the SOG
     void computeDSOG(LDDGraph &g);

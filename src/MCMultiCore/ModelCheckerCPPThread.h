@@ -1,8 +1,8 @@
 #ifndef ModelCheckerCPPThread_H
 #define ModelCheckerCPPThread_H
 #include "ModelCheckBaseMT.h"
-#include "stacksafe.h"
-#include "SafeDequeue.h"
+#include "misc/stacksafe.h"
+#include "misc/SafeDequeue.h"
 #include <atomic>
 #include <thread>
 #include <mutex>

@@ -4,7 +4,7 @@
 #include <atomic>
 #include <mutex>
 #include <thread>
-#include "SafeDequeue.h"
+#include "misc/SafeDequeue.h"
 
 typedef pair<LDDState *, int> couple_th;
 //typedef stack<pair<LDDState *,int>> pile_t;

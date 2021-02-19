@@ -15,7 +15,7 @@
 #include "TransSylvan.h"
 
 #include <mpi.h>
-#include <sha2.h>
+#include <misc/sha2.h>
 #include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>

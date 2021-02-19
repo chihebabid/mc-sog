@@ -23,83 +23,9 @@ getMaxMemoryV3() {
 }
 
 void ModelCheckerCPPThread::preConfigure() {
-
-    /*lace_init ( 1, 0 );
-    lace_startup ( 0, NULL, NULL );
-    size_t max = 16LL<<34;
-    if ( max > getMaxMemoryV3() ) {
-        max = getMaxMemoryV3() /10*9;
-    }*/
-    SylvanWrapper::sylvan_set_limits(16LL << 30, 10, 0);
-
-    //sylvan_init_package();
-    SylvanWrapper::sylvan_init_package();
-    SylvanWrapper::sylvan_init_ldd();
-    SylvanWrapper::init_gc_seq();
-    SylvanWrapper::displayMDDTableInfo();
-
-    vector<Place>::const_iterator it_places;
-    m_transitions = m_net->transitions;
-    m_observable = m_net->Observable;
-    m_place_proposition = m_net->m_formula_place;
-    m_nonObservable = m_net->NonObservable;
-
-    m_transitionName = &m_net->transitionName;
-    m_placeName = &m_net->m_placePosName;
-
-    InterfaceTrans = m_net->InterfaceTrans;
-
-    cout << "Nombre de places : " << m_nbPlaces << endl;
-    cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
-
-    uint32_t *liste_marques = new uint32_t[m_net->places.size()];
-    uint32_t i;
-    for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); i++, it_places++) {
-        liste_marques[i] = it_places->marking;
-    }
-
-    m_initialMarking = SylvanWrapper::lddmc_cube(liste_marques, m_net->places.size());
-    SylvanWrapper::lddmc_refs_push(m_initialMarking);
-
-    uint32_t *prec = new uint32_t[m_nbPlaces];
-    uint32_t *postc = new uint32_t[m_nbPlaces];
-    // Transition relation
-    for (vector<Transition>::const_iterator t = m_net->transitions.begin(); t != m_net->transitions.end(); t++) {
-        // Initialisation
-        for (i = 0; i < m_nbPlaces; i++) {
-            prec[i] = 0;
-            postc[i] = 0;
-        }
-        // Calculer les places adjacentes a la transition t
-        set<int> adjacentPlace;
-        for (vector<pair<int, int> >::const_iterator it = t->pre.begin(); it != t->pre.end(); it++) {
-            adjacentPlace.insert(it->first);
-            prec[it->first] = prec[it->first] + it->second;
-            //printf("It first %d \n",it->first);
-            //printf("In prec %d \n",prec[it->first]);
-        }
-        // arcs post
-        for (auto it = t->post.begin(); it != t->post.end(); it++) {
-            adjacentPlace.insert(it->first);
-            postc[it->first] = postc[it->first] + it->second;
-
-        }
-        for (set<int>::const_iterator it = adjacentPlace.begin(); it != adjacentPlace.end(); it++) {
-            MDD Precond = lddmc_true;
-            Precond = Precond & ((*it) >= prec[*it]);
-        }
-
-        MDD _minus = SylvanWrapper::lddmc_cube(prec, m_nbPlaces);
-        SylvanWrapper::lddmc_refs_push(_minus);
-        MDD _plus = SylvanWrapper::lddmc_cube(postc, m_nbPlaces);
-        SylvanWrapper::lddmc_refs_push(_plus);
-        m_tb_relation.emplace_back(TransSylvan(_minus, _plus));
-    }
-    delete[] prec;
-    delete[] postc;
+    initializeLDD();
+    loadNetFromFile();
     ComputeTh_Succ();
-
-
 }
 
 

@@ -7,12 +7,12 @@
 
 
 #include "LDDGraph.h"
-#include "ModelCheckerCPPThread.h"
-#include "ModelCheckerTh.h"
-#include "ModelCheckThReq.h"
+#include "MCMultiCore/ModelCheckerCPPThread.h"
+#include "MCMultiCore/ModelCheckerTh.h"
+#include "MCMultiCore/ModelCheckThReq.h"
 #include "threadSOG.h"
 #include "HybridSOG.h"
-#include "MCHybridSOG.h"
+#include "Hybrid/MCHybrid/MCHybridSOG.h"
 #include <spot/misc/version.hh>
 #include <spot/twaalgos/dot.hh>
 #include <spot/tl/parse.hh>
@@ -28,7 +28,8 @@
 #include "SogKripke.h"
 
 #include "SogKripkeTh.h"
-#include "HybridKripke.h"
+#include "Hybrid/HybridKripke.h"
+#include "Hybrid/MCHybridReq/MCHybridSOGReq.h"
 #include "SylvanWrapper.h"
 #include "PMCSOGConfig.h"
 // #include "RdPBDD.h"
@@ -128,8 +129,9 @@ int main(int argc, char **argv) {
                 cout << "Multi-threaded algorithm based on C++ Thread library!" << endl;
             cout << "Building automata for not(formula)\n";
             auto d = spot::make_bdd_dict();
+            spot::translator obj=spot::translator(d);
 
-            spot::twa_graph_ptr af = spot::translator(d).run(not_f);
+            spot::twa_graph_ptr af = obj.run(not_f);
             cout << "Formula automata built.\n";
             ModelCheckBaseMT *mcl;
 
@@ -256,7 +258,7 @@ int main(int argc, char **argv) {
         if (nb_th > 1) {
             if (task_id == 0)
                 cout << "**************Hybrid version**************** \n" << endl;
-            if (strcmp(argv[1], "otf")) {
+            if (strcmp(argv[1], "otf") && strcmp(argv[1], "otfPR")  ) {
                 HybridSOG DR(Rnewnet);
                 LDDGraph g(&DR);
                 if (task_id == 0)
@@ -274,9 +276,14 @@ int main(int argc, char **argv) {
                 //cout<<" Task id "<<task_id<<"/"<<n_tasks<<endl;
                 if (task_id != n_tasks) {
                     cout << "N task :" << n_tasks << endl;
-                    MCHybridSOG DR(Rnewnet, gprocess, false);
-                    LDDGraph g(&DR);
-                    DR.computeDSOG(g);
+                    CommonSOG* DR;
+                    if (strcmp(argv[1], "otf")==0) DR= new MCHybridSOG(Rnewnet, gprocess, false);
+                    else {
+                        cout<<"Progressive construction..."<<endl;
+                        DR= new MCHybridSOGReq(Rnewnet, gprocess, false);
+                    }
+                    LDDGraph g(DR);
+                    DR->computeDSOG(g);
                 } else {
                     cout << "************************************" << endl;
                     cout << "On the fly Model checker by process " << task_id << endl;
@@ -301,12 +308,6 @@ int main(int argc, char **argv) {
                         auto finalTime = std::chrono::high_resolution_clock::now();
                         displayTime(startTime, finalTime);
                         displayCheckResult(res);
-                        /*spot::couvreur99_check check = spot::couvreur99_check(product);
-                         auto startTime = std::chrono::steady_clock::now();
-                         bool res = (check.check() == 0);
-                         auto finalTime = std::chrono::steady_clock::now();
-                         displayTime(startTime, finalTime);
-                         displayCheckResult(res);*/
                     } else {
                         auto startTime = std::chrono::steady_clock::now();
                         bool res = (k->intersecting_run(af) == 0);
@@ -314,34 +315,8 @@ int main(int argc, char **argv) {
                         displayTime(startTime, finalTime);
                         displayCheckResult(res);
                     }
-
-                    /*if (auto run = k->intersecting_run(af))
-                     {
-                     std::cout << "formula is violated by the following run:\n"<<*run<<endl;
-                     auto t2 = std::chrono::high_resolution_clock::now();
-                     std::cout << "temps de verification "
-                     << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
-                     << " milliseconds\n";
-                     cout<<"=================================="<<endl;
-                     }
-                     else
-                     {
-                     std::cout << "formula is verified\n";
-                     auto t2 = std::chrono::high_resolution_clock::now();
-                     std::cout << "temps de verification "
-                     << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()
-                     << " milliseconds\n";
-
-                     }*/
                 }
             }
-        } else {
-            /*cout << "*************Distibuted version******************* \n" << endl;
-            {
-                DistributedSOG DR(Rnewnet);cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
-                LDDGraph g(nullptr);
-                DR.computeDSOG(g);
-            }*/
         }
     }
     MPI_Finalize();

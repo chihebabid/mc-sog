@@ -60,25 +60,28 @@ add_executable(mc-sog main.cpp
   SogKripkeIteratorTh.cpp
   SogKripkeIteratorTh.h
 
-  stacksafe.cpp
-  stacksafe.h
-  SafeDequeue.cpp
-  SafeDequeue.h
-  HybridKripke.cpp
-  HybridKripke.h
-  HybridKripkeIterator.cpp
-  HybridKripkeIterator.h
-  HybridKripkeState.cpp
-  HybridKripkeState.h
+        misc/stacksafe.cpp
+        misc/stacksafe.h
+        misc/SafeDequeue.cpp
+        misc/SafeDequeue.h
+        Hybrid/HybridKripke.cpp
+        Hybrid/HybridKripke.h
+        Hybrid/HybridKripkeIterator.cpp
+        Hybrid/HybridKripkeIterator.h
+        Hybrid/HybridKripkeState.cpp
+        Hybrid/HybridKripkeState.h
         SylvanWrapper.cpp
         SylvanWrapper.h
         SylvanCacheWrapper.cpp SylvanCacheWrapper.h
-        ModelCheckerCPPThread.cpp ModelCheckerCPPThread.h
-        ModelCheckerTh.cpp ModelCheckerTh.h
+        MCMultiCore/ModelCheckerCPPThread.cpp MCMultiCore/ModelCheckerCPPThread.h
+        MCMultiCore/ModelCheckerTh.cpp MCMultiCore/ModelCheckerTh.h
         threadSOG.cpp threadSOG.h
         HybridSOG.cpp HybridSOG.h
-        MCHybridSOG.cpp MCHybridSOG.h
-        ModelCheckThReq.cpp ModelCheckThReq.h md5_hash.h )
+        Hybrid/MCHybrid/MCHybridSOG.cpp Hybrid/MCHybrid/MCHybridSOG.h
+        MCMultiCore/ModelCheckThReq.cpp MCMultiCore/ModelCheckThReq.h
+        Hybrid/MCHybridReq/MCHybridSOGReq.cpp
+        Hybrid/MCHybridReq/MCHybridSOGReq.h
+        misc/md5_hash.h)
 
 
 target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")
