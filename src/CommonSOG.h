@@ -50,7 +50,7 @@ class CommonSOG
         vector<class Transition> m_transitions;
         MDD Accessible_epsilon(MDD From);
         Set firable_obs(MDD State);
-        MDD get_successor(MDD From, int t);
+        MDD get_successor(const MDD& From,const int& t);
         MDD ImageForward(MDD From);
         MDD Canonize(MDD s, unsigned int level);
         bool Set_Div(MDD &M) const;
@@ -59,8 +59,10 @@ class CommonSOG
         std::mutex m_graph_mutex,m_gc_mutex;  
         atomic<uint8_t> m_gc;
         volatile bool m_finish=false;
+        // Functions for POR
+        void AddConflict(const MDD& S,const int &transition,Set& ample);
     private:
-
+        bool isFirable(const int &transition);
 };
 
 #endif // COMMONSOG_H

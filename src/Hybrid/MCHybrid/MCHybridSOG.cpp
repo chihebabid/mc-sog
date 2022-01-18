@@ -112,7 +112,7 @@ void *MCHybridSOG::doCompute() {
             /******************************* Construction des aggregats ************************************/
 
         else {
-            while (m_Terminated == false) {
+            while (!m_Terminated) {
             std::unique_lock<std::mutex> lk(m_mutexCond);
             m_condStack.wait(lk, [this] { return !m_common_stack.empty() || !m_received_msg.empty() || m_Terminated; });
             lk.unlock();

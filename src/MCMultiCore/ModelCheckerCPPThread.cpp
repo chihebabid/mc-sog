@@ -96,6 +96,7 @@ void ModelCheckerCPPThread::threadHandler(void *context) {
 void ModelCheckerCPPThread::ComputeTh_Succ() {
 
     m_id_thread = 0;
+
     pthread_barrier_init(&m_barrier_builder, nullptr, m_nb_thread + 1);
     m_finish = false;
     for (int i = 0; i < m_nb_thread; i++) {

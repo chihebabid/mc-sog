@@ -35,7 +35,7 @@ Set CommonSOG::firable_obs(MDD State) {
     return res;
 }
 
-MDD CommonSOG::get_successor(MDD From, int t) {
+MDD CommonSOG::get_successor(const MDD& From, const int& t) {
     return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[(t)].getPlus());
 }
 
@@ -123,18 +123,15 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
 
 /**** Detect divergence in an agregate ****/
 bool CommonSOG::Set_Div(MDD &M) const {
-
     if (m_nonObservable.empty()) {
         return false;
     }
-    Set::const_iterator i;
-    MDD Reached, From;
-
-    From = M;
+    MDD Reached, From {M};
     do {
         Reached = lddmc_false;
-        for (i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
-            MDD To = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(*i)].getMinus(), m_tb_relation[(*i)].getPlus());
+        for (auto  i : m_nonObservable )
+        {
+            MDD To = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(i)].getMinus(), m_tb_relation[(i)].getPlus());
             Reached = SylvanWrapper::lddmc_union_mono(Reached, To);
         }
 
@@ -151,9 +148,7 @@ bool CommonSOG::Set_Bloc(MDD &M) const {
 
     MDD cur = lddmc_true;
     for (auto i : m_tb_relation) {
-
         cur = cur & (i.getMinus());
-
     }
     return ((M & cur) != lddmc_false);
     //BLOCAGE
@@ -252,5 +247,28 @@ void CommonSOG::loadNetFromFile() {
     }
     delete[] prec;
     delete[] postc;
+}
+
+void CommonSOG::AddConflict(const MDD &S, const int &transition,Set &ample) {
+   // if ()
+   MDD img= get_successor(S,transition);
+   if (img!=lddmc_true && img!=lddmc_false) {
+        for (auto i=0; i<m_transitions.size();i++) {
+            if (i!=transition) {
+                auto interPre = [this](const int & t1,const int &t2)-> bool {
+                    auto & preT1=m_transitions[t1].pre;
+                    auto & preT2=m_transitions[t2].pre;
+                    bool found=false;
+                    for (auto elt : preT1);
+                    return true;
+                };
+            }
+        }
+   }
+
+
+
+}
+bool CommonSOG::isFirable(const int &transition) {
 
 }

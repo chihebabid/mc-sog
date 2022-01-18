@@ -22,8 +22,7 @@
 #define REDUCE 1
 using namespace std;
 
-MCHybridSOGReq::MCHybridSOGReq(const NewNet &R, MPI_Comm &comm_world, bool init) {
-    m_comm_world = comm_world;
+MCHybridSOGReq::MCHybridSOGReq(const NewNet &R, MPI_Comm &comm_world, bool init):m_comm_world(comm_world) {
     initializeLDD();
     m_net = &R;
     m_init = init;
@@ -425,8 +424,8 @@ void MCHybridSOGReq::sendPropToMC(size_t pos) {
     size_t indice = 8;
     memcpy(mess_to_send + indice, &s_mp, 2);
     indice += 2;
-    for (auto it = marked_places.begin(); it != marked_places.end(); it++) {
-        memcpy(mess_to_send + indice, &(*it), 2);
+    for (auto it : marked_places) {
+        memcpy(mess_to_send + indice, &(it), 2);
         indice += 2;
     }
     memcpy(mess_to_send + indice, &s_up, 2);

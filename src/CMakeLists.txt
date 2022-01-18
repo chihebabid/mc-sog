@@ -75,6 +75,7 @@ add_executable(mc-sog main.cpp
         SylvanCacheWrapper.cpp SylvanCacheWrapper.h
         MCMultiCore/ModelCheckerCPPThread.cpp MCMultiCore/ModelCheckerCPPThread.h
         MCMultiCore/ModelCheckerTh.cpp MCMultiCore/ModelCheckerTh.h
+        MCMultiCore/MCThReqPor.cpp MCMultiCore/MCThReqPor.h
         threadSOG.cpp threadSOG.h
         HybridSOG.cpp HybridSOG.h
         Hybrid/MCHybrid/MCHybridSOG.cpp Hybrid/MCHybrid/MCHybridSOG.h
