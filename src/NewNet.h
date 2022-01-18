@@ -16,7 +16,7 @@ class Node {
  public:
   Node(){};
   ~Node(){};
-  vector<pair<int, int> > pre, post, inhibitor, preAuto, postAuto;
+  vector<pair<int, int>> pre, post, inhibitor, preAuto, postAuto;
   vector<int> reset;
   void addPre(int, int);
   void addPost(int, int);

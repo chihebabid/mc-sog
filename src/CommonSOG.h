@@ -60,9 +60,12 @@ class CommonSOG
         atomic<uint8_t> m_gc;
         volatile bool m_finish=false;
         // Functions for POR
+        /*
+         * Determine ample set in S for transition
+         */
         void AddConflict(const MDD& S,const int &transition,Set& ample);
     private:
-        bool isFirable(const int &transition);
+
 };
 
 #endif // COMMONSOG_H
