@@ -817,7 +817,6 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) 
     MDD _cmark = cmark, _minus = minus, _plus = plus;
 
     if (SylvanCacheWrapper::cache_get3(CACHE_LDD_FIRE, cmark, minus, plus, &result)) {
-
         return result;
     }
     MDD cache_cmark = cmark;

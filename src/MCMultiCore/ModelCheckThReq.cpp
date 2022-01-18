@@ -32,7 +32,7 @@ void ModelCheckThReq::preConfigure() {
  * Creates builder threads
  */
 void ModelCheckThReq::ComputeTh_Succ() {
-    int rc;
+
     m_id_thread = 0;
     //cout<<"Enter : "<<__func__ <<endl;
     pthread_barrier_init(&m_barrier_threads, NULL, m_nb_thread + 1);

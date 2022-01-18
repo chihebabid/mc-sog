@@ -25,7 +25,7 @@ void* ModelCheckerTh::Compute_successors() {
 	int min_charge = 0;
 
 	if (id_thread == 0) {
-		LDDState *c = new LDDState;
+		auto *c = new LDDState;
 		MDD Complete_meta_state=Accessible_epsilon(m_initialMarking);
         //#ldd_refs_push(Complete_meta_state);
 		
@@ -131,7 +131,7 @@ void ModelCheckerTh::ComputeTh_Succ() {
 	m_gc=0;
 #endif	
 	
-	pthread_barrier_init(&m_barrier_builder, NULL, m_nb_thread + 1);
+	pthread_barrier_init(&m_barrier_builder, nullptr, m_nb_thread + 1);
 
 	for (int i = 0; i < m_nb_thread; i++) {
 		pthread_spin_init(&m_spin_stack[i],0);
@@ -141,7 +141,7 @@ void ModelCheckerTh::ComputeTh_Succ() {
 
 	for (int i = 0; i < m_nb_thread; i++) {
 		int rc;
-		if ((rc = pthread_create(&m_list_thread[i], NULL, threadHandler, this))) {
+		if ((rc = pthread_create(&m_list_thread[i], nullptr, threadHandler, this))) {
 			cout << "error: pthread_create, rc: " << rc << endl;
 		}
 	}
@@ -150,7 +150,7 @@ void ModelCheckerTh::ComputeTh_Succ() {
 ModelCheckerTh::~ModelCheckerTh() {
 	m_finish = true;
 	for (int i = 0; i < m_nb_thread; i++) {
-		pthread_join(m_list_thread[i], NULL);
+		pthread_join(m_list_thread[i], nullptr);
 	}
 }
 
