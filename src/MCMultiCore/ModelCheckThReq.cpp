@@ -159,8 +159,6 @@ void *ModelCheckThReq::Compute_successors() {
 
         }
     } while (!m_finish);
-
-
 }
 
 

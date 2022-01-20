@@ -274,10 +274,18 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     } else {
         for (auto i = 0; i < m_transitions.size(); i++) {
             if (i != transition) {
-                auto &preT1 = m_transitions[i].post;
+                auto &postT1 = m_transitions[i].post;
                 auto &preT2 = m_transitions[transition].pre;
-                if (!haveCommonPre(preT1, preT2)) ample.insert(i);
+                if (!haveCommonPre(postT1, preT2)) ample.insert(i);
             }
         }
     }
+}
+
+Set CommonSOG::computeAmple(const MDD &s) {
+    Set ample;
+    for (auto &t : ample) {
+        AddConflict(s,t,ample);
+    }
+    return ample;
 }
