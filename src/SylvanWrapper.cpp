@@ -815,16 +815,17 @@ bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
     MDD _cmark = cmark, _minus = minus;
     mddnode_t n_cmark = GETNODE(_cmark);
     mddnode_t n_minus = GETNODE(_minus);
+    std::cout<<(int)mddnode_getvalue(n_cmark)<<" \n";
     while (!result) {
         uint32_t value;
         value = mddnode_getvalue(n_cmark);
         uint32_t value_minus = mddnode_getvalue(n_minus);
 
         if (value >= value_minus) {
-            mddnode_t node_mark=mddnode_getdown(n_cmark);
-            if (node_mark==lddmc_true) return true;
-            mddnode_t node_minus=mddnode_getdown(n_minus);
-            result=isFirable(node_mark, mddnode_getdown(node_minus));
+            MDD _mark=mddnode_getdown(n_cmark);
+            if (_mark==lddmc_true) return true;
+            MDD _minus=mddnode_getdown(n_minus);
+            result=isFirable(_mark, _minus);
         }
         cmark = mddnode_getright(n_cmark);
         if (cmark == lddmc_false || result) return result;

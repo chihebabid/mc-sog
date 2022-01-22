@@ -1,4 +1,4 @@
-#include <time.h>
+#include <ctime>
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -62,9 +62,9 @@ set<string> buildPropositions(const string &fileName) {
 		std::cerr << "Only LTL formulas are supported.\n";
 		return transitionSet;
 	}
-	spot::atomic_prop_set *p_list = spot::atomic_prop_collect(fo, 0);
-	for (spot::atomic_prop_set::const_iterator i = p_list->begin(); i != p_list->end(); i++) {
-		transitionSet.insert((*i).ap_name());
+	spot::atomic_prop_set *p_list = spot::atomic_prop_collect(fo, nullptr);
+	for (const auto i : *p_list) {
+		transitionSet.insert(i.ap_name());
 	}
 	print_spin_ltl(std::cout, fo) << '\n';
 	cout << "Building formula negation\n";
@@ -84,7 +84,7 @@ void displayTime(auto startTime,auto finalTime) {
 }
 /***********************************************/
 int main(int argc, char **argv) {
-	int choix;
+
 	if (argc < 3)
 		return 0;
 	char formula[100] = "";
@@ -159,14 +159,14 @@ int main(int argc, char **argv) {
                 }
                 auto startTime = std::chrono::steady_clock::now();
                 spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
-                bool res = (echptr->check() == 0);
+                bool res = (echptr->check() == nullptr);
                 auto finalTime = std::chrono::steady_clock::now();
                 displayTime(startTime, finalTime);
                 displayCheckResult(res);
 
             } else {
                 auto startTime = std::chrono::steady_clock::now();
-                bool res = (k->intersecting_run(af) == 0);
+                bool res = (k->intersecting_run(af) == nullptr);
                 auto finalTime = std::chrono::steady_clock::now();
                 displayTime(startTime, finalTime);
                 displayCheckResult(res);
@@ -304,13 +304,13 @@ int main(int argc, char **argv) {
                             cout<<"Spot emptiness check algorithm : "<<algorithm<<endl;
                         auto startTime = std::chrono::high_resolution_clock::now();
                         spot::emptiness_check_ptr echptr = echeck_inst->instantiate(product);
-                        bool res = (echptr->check() == 0);
+                        bool res = (echptr->check() == nullptr);
                         auto finalTime = std::chrono::high_resolution_clock::now();
                         displayTime(startTime, finalTime);
                         displayCheckResult(res);
                     } else {
                         auto startTime = std::chrono::steady_clock::now();
-                        bool res = (k->intersecting_run(af) == 0);
+                        bool res = (k->intersecting_run(af) == nullptr);
                         auto finalTime = std::chrono::steady_clock::now();
                         displayTime(startTime, finalTime);
                         displayCheckResult(res);
