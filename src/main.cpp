@@ -78,9 +78,9 @@ void displayCheckResult(bool res) {
 	else
 		cout << "Property is violated..." << endl;
 }
+
 void displayTime(auto startTime,auto finalTime) {
 	cout << "Verification duration : " << std::chrono::duration_cast < std::chrono::milliseconds> (finalTime - startTime).count() << " milliseconds\n";
-
 }
 /***********************************************/
 int main(int argc, char **argv) {

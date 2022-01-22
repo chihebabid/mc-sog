@@ -806,8 +806,35 @@ MDD SylvanWrapper::ldd_minus(MDD a, MDD b) {
     SylvanCacheWrapper::cache_put(CACHE_LDD_MINUS, a, b, result);
     return result;
 }
+/*
+ * Check whether transition removing @minus tokens is firable in marking @cmark
+ */
+bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
+    if (cmark == lddmc_true) return true;
+    bool result {false};
+    MDD _cmark = cmark, _minus = minus;
+    mddnode_t n_cmark = GETNODE(_cmark);
+    mddnode_t n_minus = GETNODE(_minus);
+    while (!result) {
+        uint32_t value;
+        value = mddnode_getvalue(n_cmark);
+        uint32_t value_minus = mddnode_getvalue(n_minus);
+
+        if (value >= value_minus) {
+            mddnode_t node_mark=mddnode_getdown(n_cmark);
+            if (node_mark==lddmc_true) return true;
+            mddnode_t node_minus=mddnode_getdown(n_minus);
+            result=isFirable(node_mark, mddnode_getdown(node_minus));
+        }
+        cmark = mddnode_getright(n_cmark);
+        if (cmark == lddmc_false || result) return result;
+        n_cmark = GETNODE(cmark);
+    }
+
+    return result;
 
 
+}
 MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) {
     // for an empty set of source states, or an empty transition relation, return the empty set
     if (cmark == lddmc_true) return lddmc_true;

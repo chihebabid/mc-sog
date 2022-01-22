@@ -242,6 +242,7 @@ public:
     static int isGCRequired();
     static void convert_wholemdd_stringcpp(MDD cmark,std::string &res);
     static void sylvan_gc_seq();
+    static bool isFirable(MDD cmark, MDD minus);
 private:
     static int is_custom_bucket(const llmsset2_t dbs, uint64_t index);
     static int llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx);
