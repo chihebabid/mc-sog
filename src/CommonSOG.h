@@ -42,7 +42,7 @@ public:
 
     virtual void computeDSOG(LDDGraph &g) {};
 protected:
-    void initializeLDD();
+    static void initializeLDD();
     void loadNetFromFile();
     const NewNet *m_net;
     int m_nbPlaces = 0;

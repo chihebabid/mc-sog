@@ -41,7 +41,6 @@ MDD CommonSOG::get_successor(const MDD &From, const int &t) {
     return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[(t)].getPlus());
 }
 
-
 MDD CommonSOG::ImageForward(MDD From) {
     MDD Res = lddmc_false;
     for (auto i: m_nonObservable) {
@@ -50,7 +49,6 @@ MDD CommonSOG::ImageForward(MDD From) {
     }
     return Res;
 }
-
 
 /*----------------------------------------------CanonizeR()------------------------------------*/
 MDD CommonSOG::Canonize(MDD s, unsigned int level) {
@@ -61,7 +59,6 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
         return s;
     }
     MDD s0 = lddmc_false, s1 = lddmc_false;
-
     bool res = false;
     do {
         if (SylvanWrapper::get_mddnbr(s, level) > 1) {
@@ -72,8 +69,6 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
             level++;
         }
     } while (level < m_nbPlaces && !res);
-
-
     if (s0 == lddmc_false && s1 == lddmc_false) {
         return lddmc_false;
     }
@@ -83,7 +78,6 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
         Front = s1;
         Reach = s1;
         do {
-            // cout<<"premiere boucle interne \n";
             Front = SylvanWrapper::ldd_minus(ImageForward(Front), Reach);
             Reach = SylvanWrapper::lddmc_union_mono(Reach, Front);
             s0 = SylvanWrapper::ldd_minus(s0, Front);
@@ -100,15 +94,11 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
         } while (Front != lddmc_false && s1 != lddmc_false);
     }
 
-
     MDD Repr;
-
     if (SylvanWrapper::isSingleMDD(s0)) {
         Repr = s0;
     } else {
-
         Repr = Canonize(s0, level);
-
     }
 
     if (SylvanWrapper::isSingleMDD(s1)) {
@@ -148,8 +138,8 @@ bool CommonSOG::Set_Div(MDD &M) const {
 /**** Detetc deadlocks ****/
 bool CommonSOG::Set_Bloc(MDD &M) const {
 
-    MDD cur = lddmc_true;
-    for (auto i: m_tb_relation) {
+    MDD cur {lddmc_true};
+    for (const auto & i: m_tb_relation) {
         cur = cur & (i.getMinus());
     }
     return ((M & cur) != lddmc_false);
@@ -202,7 +192,7 @@ void CommonSOG::loadNetFromFile() {
     cout << "Nombre de places : " << m_nbPlaces << endl;
     cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
 
-    uint32_t *liste_marques = new uint32_t[m_net->places.size()];
+    auto *liste_marques = new uint32_t[m_net->places.size()];
     for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); i++, it_places++) {
         liste_marques[i] = it_places->marking;
     }
@@ -211,11 +201,10 @@ void CommonSOG::loadNetFromFile() {
     SylvanWrapper::lddmc_refs_push(m_initialMarking);
     delete[]liste_marques;
 
-    uint32_t *prec = new uint32_t[m_nbPlaces];
-    uint32_t *postc = new uint32_t[m_nbPlaces];
+    auto *prec = new uint32_t[m_nbPlaces];
+    auto *postc = new uint32_t[m_nbPlaces];
     // Transition relation
-    for (auto t = m_net->transitions.begin();
-         t != m_net->transitions.end(); t++) {
+    for (const auto & t :  m_net->transitions)  {
         // Initialisation
         for (i = 0; i < m_nbPlaces; i++) {
             prec[i] = 0;
@@ -223,16 +212,14 @@ void CommonSOG::loadNetFromFile() {
         }
         // Calculer les places adjacentes a la transition t
         set<int> adjacentPlace;
-        for (vector<pair<int, int> >::const_iterator it = t->pre.begin(); it != t->pre.end(); it++) {
-            adjacentPlace.insert(it->first);
-            prec[it->first] = prec[it->first] + it->second;
-            //printf("It first %d \n",it->first);
-            //printf("In prec %d \n",prec[it->first]);
+        for (const auto & it : t.pre) {
+            adjacentPlace.insert(it.first);
+            prec[it.first] = prec[it.first] + it.second;
         }
         // arcs post
-        for (vector<pair<int, int> >::const_iterator it = t->post.begin(); it != t->post.end(); it++) {
-            adjacentPlace.insert(it->first);
-            postc[it->first] = postc[it->first] + it->second;
+        for (const auto & it : t.post) {
+            adjacentPlace.insert(it.first);
+            postc[it.first] = postc[it.first] + it.second;
 
         }
         for (set<int>::const_iterator it = adjacentPlace.begin(); it != adjacentPlace.end(); it++) {
@@ -244,7 +231,7 @@ void CommonSOG::loadNetFromFile() {
         SylvanWrapper::lddmc_refs_push(_minus);
         MDD _plus = SylvanWrapper::lddmc_cube(postc, m_nbPlaces);
         SylvanWrapper::lddmc_refs_push(_plus);
-        m_tb_relation.push_back(TransSylvan(_minus, _plus));
+        m_tb_relation.emplace_back(TransSylvan(_minus, _plus));
     }
     delete[] prec;
     delete[] postc;
@@ -252,7 +239,6 @@ void CommonSOG::loadNetFromFile() {
 
 void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     auto haveCommonPre = [&](vector<pair<int, int>> &preT1, vector<pair<int, int>> &preT2) -> bool {
-        bool found = false;
         for (auto &elt1: preT1) {
             for (auto &elt2: preT2) {
                 if (std::get<0>(elt1) == std::get<0>(elt2)) return true;
@@ -260,10 +246,7 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
         }
         return false;
     };
-
-    MDD img = get_successor(S, transition);
-    if (img != lddmc_true && img != lddmc_false) {
-
+    if (SylvanWrapper::isFirable(S,m_tb_relation[transition].getMinus())) {
         for (auto i = 0; i < m_transitions.size(); i++) {
             if (i != transition) {
                 auto &preT1 = m_transitions[i].pre;
@@ -284,7 +267,20 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
 
 Set CommonSOG::computeAmple(const MDD &s) {
     Set ample;
-    for (auto &t : ample) {
+    Set enabledT;
+    // Compute enabled transitions in s
+    uint16_t index=0;
+    for (auto index=0;index<m_tb_relation.size();index++) {
+        if (SylvanWrapper::isFirable(s,m_tb_relation[index].getMinus()))
+            enabledT.insert(index);
+    }
+    if (enabledT.size()) {
+        auto it=enabledT.begin();
+        ample.insert(*it);
+        enabledT.erase(it);
+    }
+
+    for (auto &t : enabledT) {
         AddConflict(s,t,ample);
     }
     return ample;
