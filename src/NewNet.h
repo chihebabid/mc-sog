@@ -41,6 +41,7 @@ class Place : public Node {
 class Transition : public Node {
  public:
   string name;
+  bool mObservable {false};
   Transition(const string &t) : name(t){};
   ~Transition(){};
 };

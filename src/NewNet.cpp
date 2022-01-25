@@ -145,8 +145,10 @@ NewNet::NewNet(const char *f, const set<string> & f_trans)
         Set_Non_Observables();
     }
     else
-        for (unsigned int i = 0; i < transitions.size(); i++)
+        for (unsigned int i = 0; i < transitions.size(); i++) {
             Observable.insert(i);
+            transitions[i].mObservable=true;
+        }
     cout << "FIN CREATION \n";
 }
 

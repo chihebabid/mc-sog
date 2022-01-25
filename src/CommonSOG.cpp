@@ -187,13 +187,11 @@ void CommonSOG::loadNetFromFile() {
     m_placeName = &m_net->m_placePosName;
 
 
-    InterfaceTrans = m_net->InterfaceTrans;
-
     cout << "Nombre de places : " << m_nbPlaces << endl;
     cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
 
     auto *liste_marques = new uint32_t[m_net->places.size()];
-    for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); i++, it_places++) {
+    for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); ++i, ++it_places) {
         liste_marques[i] = it_places->marking;
     }
 
@@ -222,9 +220,9 @@ void CommonSOG::loadNetFromFile() {
             postc[it.first] = postc[it.first] + it.second;
 
         }
-        for (set<int>::const_iterator it = adjacentPlace.begin(); it != adjacentPlace.end(); it++) {
+        for (const auto &it : adjacentPlace) {
             MDD Precond = lddmc_true;
-            Precond = Precond & ((*it) >= prec[*it]);
+            Precond = Precond & ((it) >= prec[it]);
         }
 
         MDD _minus = SylvanWrapper::lddmc_cube(prec, m_nbPlaces);
@@ -269,12 +267,11 @@ Set CommonSOG::computeAmple(const MDD &s) {
     Set ample;
     Set enabledT;
     // Compute enabled transitions in s
-    uint16_t index=0;
     for (auto index=0;index<m_tb_relation.size();index++) {
         if (SylvanWrapper::isFirable(s,m_tb_relation[index].getMinus()))
             enabledT.insert(index);
     }
-    if (enabledT.size()) {
+    if (!enabledT.empty()) {
         auto it=enabledT.begin();
         ample.insert(*it);
         enabledT.erase(it);
@@ -284,4 +281,41 @@ Set CommonSOG::computeAmple(const MDD &s) {
         AddConflict(s,t,ample);
     }
     return ample;
+}
+
+MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
+    MDD From {s}, Reach2 {s};
+    MDD Reach1;
+    Set ample;
+    set<MDD> myStack;
+    myStack.insert(s);
+    tObs.erase(tObs.begin(),tObs.end());
+    MDD To=lddmc_true;
+    do {
+        Reach1=Reach2;
+        ample=computeAmple(From);
+        if (ample.size()==0) dead=true;
+        else {
+            for (const auto & t : ample) {
+                MDD succ= get_successor(s,t);
+                if (m_transitions[t].mObservable) {
+                    tObs.insert(t);
+                }
+                else {
+                    //Compute div
+                    if (myStack.find(succ)!=myStack.end()) {
+                        div=true;
+                    }
+                    else {
+                        To=SylvanWrapper::lddmc_union_mono(To,succ);
+                        myStack.insert(succ);
+                    }
+
+                }
+            }
+        }
+        From=To;
+        Reach2=SylvanWrapper::lddmc_union_mono(Reach2,To);
+    } while (Reach1!=Reach2);
+    return Reach1;
 }

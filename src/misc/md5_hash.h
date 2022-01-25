@@ -18,7 +18,7 @@ public:
      * \param message message to processing
      * \return get md5-hash from message
      */
-    [[nodiscard]] static void compute(const std::string& message,unsigned char *result)
+    static void compute(const std::string& message,unsigned char *result)
     {
         // These vars will contain the hash
         uint32_t a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;

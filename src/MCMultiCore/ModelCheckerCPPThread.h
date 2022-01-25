@@ -19,6 +19,7 @@ public:
     ~ModelCheckerCPPThread();
     static void threadHandler(void *context);
     void Compute_successors();
+    void ComputeSuccessorsPOR();
     void ComputeTh_Succ();
 private:
     void preConfigure();

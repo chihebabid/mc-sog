@@ -10,7 +10,7 @@ class TransSylvan {
   [[nodiscard]] MDD getMinus() const;
   [[nodiscard]] MDD getPlus() const;
  private:
-  MDD m_minus, m_plus;
+    MDD m_minus, m_plus;
 };
 
 #endif  // TRANSSYLVAN_H

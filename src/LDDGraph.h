@@ -37,7 +37,7 @@ class LDDGraph
         LDDState* insertFindByMDD(MDD,bool&);
 		LDDState* findSHA(unsigned char*);
 		LDDState* insertFindSha(unsigned char*,LDDState*);
-        size_t findSHAPos(unsigned char*,bool &res);
+        size_t findSHAPos(unsigned char* ch,bool &res);
 		void insertSHA(LDDState *c);
 		void InitVisit(LDDState * S,size_t nb);
 

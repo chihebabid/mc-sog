@@ -76,7 +76,10 @@ protected:
     atomic<uint8_t> m_gc;
     volatile bool m_finish = false;
 
-
+    /*
+    * Saturate
+    */
+    MDD saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead);
 private:
     /*
      * Compute ample set @ample for state @s
@@ -87,6 +90,7 @@ private:
      * Determine ample set in S for transition
      */
     void AddConflict(const MDD &S, const int &transition, Set &ample);
+
 };
 
 #endif // COMMONSOG_H
