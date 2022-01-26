@@ -14,9 +14,9 @@ void LDDGraph::setInitialState(LDDState *c) {
 /*----------------------find()----------------*/
 LDDState *LDDGraph::find(LDDState *c) {
     std::shared_lock<std::shared_mutex> lock(m_mutex);
-    for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++)
-        if (c->m_lddstate == (*i)->m_lddstate)
-            return *i;
+    for (const auto & i : m_GONodes)
+        if (c->m_lddstate == i->m_lddstate)
+            return i;
     return nullptr;
 }
 
@@ -151,10 +151,6 @@ void LDDGraph::printGraph(LDDState *s, size_t &nb) {
         cout << "\nSTATE NUMBER " << nb << " sha : " << s->getSHAValue() << " LDD v :" << s->getLDDValue() << endl;
 
         s->setVisited();
-        /*printsuccessors(s);
-        getchar();
-        printpredecessors(s);
-        getchar();*/
         LDDEdges::const_iterator i;
         for (i = s->Successors.begin(); !(i == s->Successors.end()); i++) {
             if ((*i).first->isVisited() == false) {
@@ -178,15 +174,11 @@ string_view LDDGraph::getTransition(uint16_t pos) {
     map<string, uint16_t>::iterator it = m_transition->begin();
 
     while (it != m_transition->end()) {
-
         if (it->second == pos) {
-            //cout<<"first : "<<it->first<<endl;
-
-            return it->first;
+           return it->first;
         }
         it++;
     }
-
     return it->first;
 }
 

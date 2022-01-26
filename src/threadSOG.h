@@ -30,8 +30,8 @@ class threadSOG : public CommonSOG {
         static void *threadHandlerCanonized ( void *context );
         void *doCompute();
         void *doComputeCanonized();
-        void computeSOGLace ( LDDGraph &g );
-        void computeSOGLaceCanonized ( LDDGraph &g );
+        void *doComputePOR();
+
 
 
 
@@ -56,7 +56,7 @@ class threadSOG : public CommonSOG {
         bool m_terminaison[128];
         int m_min_charge;
         int m_bound, m_init;
-        int m_id_thread;
+        std::atomic<int> m_id_thread;
         pthread_mutex_t m_mutex;
         pthread_mutex_t m_mutex_stack[128];
         pthread_spinlock_t m_spin_stack[128];

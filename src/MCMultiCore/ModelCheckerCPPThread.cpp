@@ -53,7 +53,6 @@ void ModelCheckerCPPThread::ComputeSuccessorsPOR() {
         std::unique_lock<std::mutex> lk(m_mutexStack);
         m_condStack.wait(lk, std::bind(&ModelCheckerCPPThread::hasToProcess, this));
         lk.unlock();
-
         if (m_common_stack.try_pop(e) && !m_finish) {
             while (!e.second.empty() && !m_finish) {
                 int t = *e.second.begin();
@@ -64,7 +63,7 @@ void ModelCheckerCPPThread::ComputeSuccessorsPOR() {
                 LDDState *pos = m_graph->insertFindByMDD(reducedMS, res);
                 m_graph->addArc();
                 if (!res) {
-                    fireObs = firable_obs(reducedMS);
+
                     pos->setDeadLock(_dead);
                     pos->setDiv(_div);
                     m_common_stack.push(Pair(couple(pos, reducedMS), fireObs));
@@ -149,9 +148,7 @@ void ModelCheckerCPPThread::threadHandler(void *context) {
 }
 
 void ModelCheckerCPPThread::ComputeTh_Succ() {
-
     m_id_thread = 0;
-
     pthread_barrier_init(&m_barrier_builder, nullptr, m_nb_thread + 1);
     m_finish = false;
     for (int i = 0; i < m_nb_thread; i++) {
@@ -169,7 +166,6 @@ ModelCheckerCPPThread::~ModelCheckerCPPThread() {
         m_list_thread[i]->join();
         delete m_list_thread[i];
     }
-
 }
 
 bool ModelCheckerCPPThread::hasToProcess() const {

@@ -38,7 +38,7 @@ Set CommonSOG::firable_obs(MDD State) {
 }
 
 MDD CommonSOG::get_successor(const MDD &From, const int &t) {
-    return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[(t)].getPlus());
+    return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[t].getPlus());
 }
 
 MDD CommonSOG::ImageForward(MDD From) {
