@@ -56,23 +56,23 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     m_placeName = &R.m_placePosName;
 
     cout << "All transitions:" << endl;
-    map<string, uint16_t>::iterator it2 = m_transitionName->begin();
-    for (; it2 != m_transitionName->end(); it2++) {
-        cout << (*it2).first << " : " << (*it2).second << endl;
+
+    for (const auto &it2 : *m_transitionName) {
+        cout << it2.first << " : " << it2.second << endl;
     }
 
 
     cout << "Observable transitions:" << endl;
 
-    for (Set::iterator it = m_observable.begin(); it != m_observable.end(); it++) { cout << *it << "  "; }
+    for (const auto & it : m_observable) { cout << it << "  "; }
     cout << endl;
     InterfaceTrans = R.InterfaceTrans;
     m_nbPlaces = R.places.size();
     cout << "Nombre de places : " << m_nbPlaces << endl;
     cout << "Derniere place : " << R.places[m_nbPlaces - 1].name << endl;
 
-    uint32_t *liste_marques = new uint32_t[R.places.size()];
-    for (i = 0, it_places = R.places.begin(); it_places != R.places.end(); i++, it_places++) {
+    auto *liste_marques = new uint32_t[R.places.size()];
+    for (i = 0, it_places = R.places.begin(); it_places != R.places.end(); ++i, ++it_places) {
         liste_marques[i] = it_places->marking;
     }
 
@@ -81,8 +81,7 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     auto *prec = new uint32_t[m_nbPlaces];
     auto *postc = new uint32_t[m_nbPlaces];
     // Transition relation
-    for (vector<Transition>::const_iterator t = R.transitions.begin();
-         t != R.transitions.end(); t++) {
+    for (const auto & t : R.transitions) {
         // Initialisation
         for (i = 0; i < m_nbPlaces; i++) {
             prec[i] = 0;
@@ -90,27 +89,26 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
         }
         // Calculer les places adjacentes a la transition t
         set<int> adjacentPlace;
-        for (vector<pair<int, int> >::const_iterator it = t->pre.begin(); it != t->pre.end(); it++) {
-            adjacentPlace.insert(it->first);
-            prec[it->first] = prec[it->first] + it->second;
-            //printf("It first %d \n",it->first);
-            //printf("In prec %d \n",prec[it->first]);
+        for (const auto & it : t.pre) {
+            adjacentPlace.insert(it.first);
+            prec[it.first] = prec[it.first] + it.second;
+
         }
         // arcs post
-        for (const auto & it : t->post) {
+        for (const auto & it : t.post) {
             adjacentPlace.insert(it.first);
             postc[it.first] = postc[it.first] + it.second;
         }
-        for (set<int>::const_iterator it = adjacentPlace.begin(); it != adjacentPlace.end(); it++) {
+        for (const auto & it : adjacentPlace) {
             MDD Precond = lddmc_true;
-            Precond = Precond & ((*it) >= prec[*it]);
+            Precond = Precond & (it >= prec[it]);
         }
 
         MDD _minus = SylvanWrapper::lddmc_cube(prec, m_nbPlaces);
         //#ldd_refs_push(_minus);
         MDD _plus = SylvanWrapper::lddmc_cube(postc, m_nbPlaces);
         //#ldd_refs_push(_plus);
-        m_tb_relation.push_back(TransSylvan(_minus, _plus));
+        m_tb_relation.emplace_back(TransSylvan(_minus, _plus));
     }
 
     // sylvan_gc_seq();
@@ -136,8 +134,6 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
     // double d,tps;
     //d=(double)clock() / (double)CLOCKS_PER_SEC;
 
-    double old_size;
-
     m_nbmetastate = 0;
     m_MaxIntBdd = 0;
     typedef pair<LDDState *, MDD> couple;
@@ -150,7 +146,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
     Set fire;
     //FILE *fp=fopen("test.dot","w");
     // size_t max_meta_state_size;
-    LDDState *c = new LDDState;
+    auto *c = new LDDState;
 
 
     // cout<<"Marquage initial :\n";
@@ -186,7 +182,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
             reached_class = new LDDState;
             {
                 //  cout<<"Avant Accessible epsilon \n";
-                MDD Complete_meta_state = Accessible_epsilon(get_successor(e.first.second, t));
+                Complete_meta_state = Accessible_epsilon(get_successor(e.first.second, t));
                 //MDD reduced_meta=Canonize(Complete_meta_state,0);
 
                 //#ldd_refs_push(Complete_meta_state);
@@ -260,7 +256,7 @@ void *threadSOG::doCompute() {
         m_itext = m_itint = 0;
 
 
-        LDDState *c = new LDDState;
+        auto *c = new LDDState;
 
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
@@ -404,7 +400,7 @@ void *threadSOG::doComputeCanonized() {
         m_itext = m_itint = 0;
 
 
-        LDDState *c = new LDDState;
+        auto *c = new LDDState;
 
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
@@ -556,16 +552,16 @@ void threadSOG::computeDSOG(LDDGraph &g, bool canonised) {
     m_graph->setPlace(*m_placeName);
     m_id_thread = 0;
 
-    pthread_mutex_init(&m_mutex, NULL);
+    pthread_mutex_init(&m_mutex, nullptr);
     m_gc = 0;
     for (int i = 0; i < m_nb_thread; i++) {
-        pthread_spin_init(&m_spin_stack[i], NULL);
+        pthread_spin_init(&m_spin_stack[i], 0);
         m_charge[i] = 0;
         m_terminaison[i] = false;
     }
 
     for (int i = 0; i < m_nb_thread - 1; i++) {
-        if ((rc = pthread_create(&m_list_thread[i], NULL, canonised ? threadHandlerCanonized : threadHandler, this))) {
+        if ((rc = pthread_create(&m_list_thread[i], nullptr, canonised ? threadHandlerCanonized : threadHandler, this))) {
             cout << "error: pthread_create, rc: " << rc << endl;
         }
     }
@@ -573,7 +569,7 @@ void threadSOG::computeDSOG(LDDGraph &g, bool canonised) {
     if (canonised) doComputeCanonized();
     else doCompute();
     for (int i = 0; i < m_nb_thread - 1; i++) {
-        pthread_join(m_list_thread[i], NULL);
+        pthread_join(m_list_thread[i], nullptr);
     }
     clock_gettime(CLOCK_REALTIME, &finish);
 
