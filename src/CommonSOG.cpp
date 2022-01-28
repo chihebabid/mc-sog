@@ -10,7 +10,7 @@ LDDGraph *CommonSOG::getGraph() {
     return m_graph;
 }
 
-MDD CommonSOG::Accessible_epsilon(MDD From) {
+MDD CommonSOG::Accessible_epsilon(const MDD& From) {
     MDD M1;
     MDD M2 = From;
     do {
@@ -26,7 +26,7 @@ MDD CommonSOG::Accessible_epsilon(MDD From) {
 }
 
 // Return the set of firable observable transitions from an agregate
-Set CommonSOG::firable_obs(MDD State) {
+Set CommonSOG::firable_obs(const MDD& State) {
     Set res;
     for (auto i: m_observable) {
         MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
@@ -41,7 +41,7 @@ MDD CommonSOG::get_successor(const MDD &From, const int &t) {
     return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[t].getPlus());
 }
 
-MDD CommonSOG::ImageForward(MDD From) {
+MDD CommonSOG::ImageForward(const MDD& From) {
     MDD Res = lddmc_false;
     for (auto i: m_nonObservable) {
         MDD succ = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
@@ -51,7 +51,7 @@ MDD CommonSOG::ImageForward(MDD From) {
 }
 
 /*----------------------------------------------CanonizeR()------------------------------------*/
-MDD CommonSOG::Canonize(MDD s, unsigned int level) {
+MDD CommonSOG::Canonize(const MDD& s, unsigned int level) {
     if (level > m_nbPlaces || s == lddmc_false) {
         return lddmc_false;
     }
@@ -114,7 +114,7 @@ MDD CommonSOG::Canonize(MDD s, unsigned int level) {
 }
 
 /**** Detect divergence in an agregate ****/
-bool CommonSOG::Set_Div(MDD &M) const {
+bool CommonSOG::Set_Div(const MDD &M) const {
     if (m_nonObservable.empty()) {
         return false;
     }
@@ -136,7 +136,7 @@ bool CommonSOG::Set_Div(MDD &M) const {
 }
 
 /**** Detetc deadlocks ****/
-bool CommonSOG::Set_Bloc(MDD &M) const {
+bool CommonSOG::Set_Bloc(const MDD &M) const {
 
     MDD cur {lddmc_true};
     for (const auto & i: m_tb_relation) {
@@ -294,7 +294,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
     do {
         Reach1=Reach2;
         ample=computeAmple(From);
-        if (ample.size()==0) dead=true;
+        if (ample.empty()) dead=true;
         else {
             for (const auto & t : ample) {
                 MDD succ= get_successor(s,t);

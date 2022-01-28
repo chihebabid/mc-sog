@@ -53,24 +53,23 @@ protected:
     map<uint16_t, string> *m_placeName;
     Set m_observable;
     Set m_nonObservable;
-    Set InterfaceTrans;
+
     set<uint16_t> m_place_proposition;
     vector<class Transition> m_transitions;
 
-    MDD Accessible_epsilon(MDD From);
+    MDD Accessible_epsilon(const MDD& From);
 
-    Set firable_obs(MDD State);
+    Set firable_obs(const MDD& State);
 
     MDD get_successor(const MDD &From, const int &t);
 
-    MDD ImageForward(MDD From);
+    MDD ImageForward(const MDD& From);
 
-    MDD Canonize(MDD s, unsigned int level);
+    MDD Canonize(const MDD& s, unsigned int level);
 
-    bool Set_Div(MDD &M) const;
+    bool Set_Div(const MDD &M) const;
 
-    bool Set_Bloc(MDD &M) const;
-
+    bool Set_Bloc(const MDD &M) const;
     uint8_t m_nb_thread;
     std::mutex m_graph_mutex, m_gc_mutex;
     atomic<uint8_t> m_gc;

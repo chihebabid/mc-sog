@@ -69,7 +69,6 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
     m_place_proposition=R.m_formula_place;
     m_transitionName=&R.transitionName;
     m_placeName=&R.m_placePosName;
-    InterfaceTrans=R.InterfaceTrans;
 
     m_nbPlaces=R.places.size();
     cout<<"Nombre de places : "<<m_nbPlaces<<endl;

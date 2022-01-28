@@ -100,9 +100,9 @@ void LDDGraph::insertSHA(LDDState *c) {
 /*----------------------Visualisation du graphe------------------------*/
 void LDDGraph::printCompleteInformation() {
     long count_ldd = 0L;
-    for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++) {
-        count_ldd += SylvanWrapper::lddmc_nodecount((*i)->m_lddstate);
-        m_nbMarking += SylvanWrapper::getMarksCount((*i)->m_lddstate);
+    for (const auto & i : m_GONodes) {
+        count_ldd += SylvanWrapper::lddmc_nodecount(i->m_lddstate);
+        m_nbMarking += SylvanWrapper::getMarksCount(i->m_lddstate);
     }
     cout << "\n\nGRAPH SIZE : \n";
     cout << "\n\tNB LDD NODES : " << count_ldd;

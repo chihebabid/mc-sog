@@ -8,59 +8,39 @@
 //#include "MDGraph.h"
 //#include "bvec.h"
 #include <pthread.h>
-#include <stdio.h>
+#include <cstdio>
 #include <sys/types.h>
 #include <unistd.h>
+#include <thread>
 #include "LDDGraph.h"
 #include "TransSylvan.h"
 #include "CommonSOG.h"
 #include <atomic>
 
-
-extern unsigned int nb_th;
-
 class threadSOG : public CommonSOG {
     public:
         threadSOG ( const NewNet &, int nbThread=2,bool uselace=false,bool init = false );
-        void buildFromNet ( int index );
-        void computeDSOG ( LDDGraph &g,bool canonised );
+        void computeDSOG ( LDDGraph &g,uint8_t&& method );
         void computeSeqSOG ( LDDGraph &g );
-        virtual ~threadSOG();
-        static void *threadHandler ( void *context );
-        static void *threadHandlerCanonized ( void *context );
+        virtual ~threadSOG()=default;
+        static void *threadHandler ( void *context,const uint8_t& method);
         void *doCompute();
         void *doComputeCanonized();
         void *doComputePOR();
-
-
-
-
     protected:
     private:
-
         int minCharge();
         bool isNotTerminated();
-
         timespec start, finish;
-
-        //-----------------
-
-        int m_NbIt;
-        int m_itext, m_itint;
-        int m_MaxIntBdd;
-        MDD *m_TabMeta;
-        int m_nbmetastate;
-        double m_old_size;
         pile m_st[128];
         int m_charge[128];
         bool m_terminaison[128];
         int m_min_charge;
-        int m_bound, m_init;
+        int m_init;
         std::atomic<int> m_id_thread;
         pthread_mutex_t m_mutex;
-        pthread_mutex_t m_mutex_stack[128];
         pthread_spinlock_t m_spin_stack[128];
-        pthread_t m_list_thread[128];
+        std::thread* m_list_thread[128];
     };
 
-#endif  // DISTRIBUTEDSOG_H
+#endif

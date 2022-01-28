@@ -25,7 +25,6 @@ void write_to_dot(const char *ch,MDD m)
 
 threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     m_nb_thread = nbThread;
-    uselace = uselace;
     SylvanWrapper::sylvan_set_limits(16LL << 30, 8, 0);
 
     //sylvan_init_package();
@@ -57,16 +56,15 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
 
     cout << "All transitions:" << endl;
 
-    for (const auto &it2 : *m_transitionName) {
+    for (const auto &it2: *m_transitionName) {
         cout << it2.first << " : " << it2.second << endl;
     }
 
 
     cout << "Observable transitions:" << endl;
 
-    for (const auto & it : m_observable) { cout << it << "  "; }
+    for (const auto &it: m_observable) { cout << it << "  "; }
     cout << endl;
-    InterfaceTrans = R.InterfaceTrans;
     m_nbPlaces = R.places.size();
     cout << "Nombre de places : " << m_nbPlaces << endl;
     cout << "Derniere place : " << R.places[m_nbPlaces - 1].name << endl;
@@ -81,25 +79,25 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     auto *prec = new uint32_t[m_nbPlaces];
     auto *postc = new uint32_t[m_nbPlaces];
     // Transition relation
-    for (const auto & t : R.transitions) {
+    for (const auto &t: R.transitions) {
         // Initialisation
-        for (i = 0; i < m_nbPlaces; i++) {
+        for (i = 0; i < m_nbPlaces; ++i) {
             prec[i] = 0;
             postc[i] = 0;
         }
         // Calculer les places adjacentes a la transition t
         set<int> adjacentPlace;
-        for (const auto & it : t.pre) {
+        for (const auto &it: t.pre) {
             adjacentPlace.insert(it.first);
             prec[it.first] = prec[it.first] + it.second;
 
         }
         // arcs post
-        for (const auto & it : t.post) {
+        for (const auto &it: t.post) {
             adjacentPlace.insert(it.first);
             postc[it.first] = postc[it.first] + it.second;
         }
-        for (const auto & it : adjacentPlace) {
+        for (const auto &it: adjacentPlace) {
             MDD Precond = lddmc_true;
             Precond = Precond & (it >= prec[it]);
         }
@@ -134,14 +132,13 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
     // double d,tps;
     //d=(double)clock() / (double)CLOCKS_PER_SEC;
 
-    m_nbmetastate = 0;
-    m_MaxIntBdd = 0;
+
+
     typedef pair<LDDState *, MDD> couple;
     typedef pair<couple, Set> Pair;
     typedef stack<Pair> pile;
     pile st;
-    m_NbIt = 0;
-    m_itext = m_itint = 0;
+
     LDDState *reached_class;
     Set fire;
     //FILE *fp=fopen("test.dot","w");
@@ -162,9 +159,7 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
 
     c->m_lddstate = Complete_meta_state;
     //TabMeta[m_nbmetastate]=c->m_lddstate;
-    m_nbmetastate++;
-
-    //max_meta_state_size=bdd_pathcount(Complete_meta_state);
+     //max_meta_state_size=bdd_pathcount(Complete_meta_state);
     st.push(Pair(couple(c, Complete_meta_state), fire));
 
     g.setInitialState(c);
@@ -172,12 +167,10 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
     //LACE_ME;
     g.m_nbMarking += SylvanWrapper::lddmc_nodecount(c->m_lddstate);
     do {
-        m_NbIt++;
-        Pair e = st.top();
+        auto e = st.top();
         st.pop();
-        m_nbmetastate--;
         while (!e.second.empty()) {
-            int t = *e.second.begin();
+            auto t = *e.second.begin();
             e.second.erase(t);
             reached_class = new LDDState;
             {
@@ -192,16 +185,14 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
                 reached_class->m_lddstate = Complete_meta_state;
 
                 // reached_class->m_lddstate=reduced_meta;
-                LDDState *pos = g.find(reached_class);
+                auto *pos = g.find(reached_class);
                 //nbnode=sylvan_pathcount(reached_class->m_lddstate);
                 if (!pos) {
                     //  cout<<"not found"<<endl;
                     reached_class->m_boucle = Set_Div(Complete_meta_state);
-
                     fire = firable_obs(Complete_meta_state);
                     st.push(Pair(couple(reached_class, Complete_meta_state), fire));
                     //TabMeta[nbmetastate]=reached_class->m_lddstate;
-                    m_nbmetastate++;
                     //old_size=bdd_anodecount(TabMeta,nbmetastate);
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
@@ -222,16 +213,6 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
 
 
     clock_gettime(CLOCK_REALTIME, &finish);
-    //tps=(double)clock() / (double)CLOCKS_PER_SEC-d;
-    // cout<<"TIME OF CONSTRUCTION : "<<tps<<" second"<<endl;
-    // cout<<" MAXIMAL INTERMEDIARY MDD SIZE \n"<<m_MaxIntBdd<<endl;
-    //cout<<"OLD SIZE : "<<old_size<<endl;
-    //cout<<"NB SHARED NODES : "<<bdd_anodecount(TabMeta,nbmetastate)<<endl;
-    cout << "NB META STATE DANS CONSTRUCTION : " << m_nbmetastate << endl;
-    // cout<<"NB ITERATIONS CONSTRUCTION : "<<m_NbIt<<endl;
-    //  cout<<"Nb Iteration externes : "<<m_itext<<endl;
-    // cout<<"Nb Iteration internes : "<<m_itint<<endl;
-    // cout<<"Nb failed :"<<nb_failed<<endl;
     double tps;
     tps = (finish.tv_sec - start.tv_sec);
     tps += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
@@ -243,19 +224,12 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
 /************ Non Canonised construction with pthread ***********************************/
 void *threadSOG::doCompute() {
     int id_thread;
-    int nb_it = 0, nb_failed = 0;
     id_thread = m_id_thread++;
     Set fire;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
         m_min_charge = 0;
-        m_nbmetastate = 0;
-        m_MaxIntBdd = 0;
-        m_NbIt = 0;
-        m_itext = m_itint = 0;
-
-
         auto *c = new LDDState;
 
         //cout<<"Marquage initial is being built..."<<endl;
@@ -268,9 +242,7 @@ void *threadSOG::doCompute() {
         fire = firable_obs(Complete_meta_state);
 
         c->m_lddstate = Complete_meta_state;
-        //m_TabMeta[m_nbmetastate]=c->m_lddstate;
-        m_nbmetastate++;
-        m_old_size = SylvanWrapper::lddmc_nodecount(c->m_lddstate);
+
         //max_meta_state_size=bdd_pathcount(Complete_meta_state);
 
         m_st[0].push(Pair(couple(c, Complete_meta_state), fire));
@@ -288,8 +260,6 @@ void *threadSOG::doCompute() {
     do {
 
         while (!m_st[id_thread].empty()) {
-
-            nb_it++;
             m_terminaison[id_thread] = false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
             Pair e = m_st[id_thread].top();
@@ -297,7 +267,6 @@ void *threadSOG::doCompute() {
             m_st[id_thread].pop();
 
             pthread_spin_unlock(&m_spin_stack[id_thread]);
-            m_nbmetastate--;
 
             m_charge[id_thread]--;
             while (!e.second.empty()) {
@@ -349,7 +318,6 @@ void *threadSOG::doCompute() {
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-                    m_nbmetastate++;
                     //pthread_mutex_lock(&m_mutex);
                     fire = firable_obs(Complete_meta_state);
                     //if (max_succ<fire.size()) max_succ=fire.size();
@@ -361,7 +329,6 @@ void *threadSOG::doCompute() {
                     pthread_spin_unlock(&m_spin_stack[m_min_charge]);
                     m_charge[m_min_charge]++;
                 } else {
-                    nb_failed++;
                     m_graph->addArc();
                     m_graph_mutex.unlock();
 
@@ -394,14 +361,8 @@ void *threadSOG::doComputeCanonized() {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
         m_min_charge = 0;
-        m_nbmetastate = 0;
-        m_MaxIntBdd = 0;
-        m_NbIt = 0;
-        m_itext = m_itint = 0;
-
 
         auto *c = new LDDState;
-
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
 
@@ -414,8 +375,6 @@ void *threadSOG::doComputeCanonized() {
 
         c->m_lddstate = canonised_initial;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
-        m_nbmetastate++;
-        m_old_size = SylvanWrapper::lddmc_nodecount(c->m_lddstate);
         //max_meta_state_size=bdd_pathcount(Complete_meta_state);
 
         m_st[0].push(Pair(couple(c, Complete_meta_state), fire));
@@ -441,7 +400,6 @@ void *threadSOG::doComputeCanonized() {
             m_st[id_thread].pop();
 
             pthread_spin_unlock(&m_spin_stack[id_thread]);
-            m_nbmetastate--;
 
             m_charge[id_thread]--;
             while (!e.second.empty()) {
@@ -496,7 +454,7 @@ void *threadSOG::doComputeCanonized() {
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-                    m_nbmetastate++;
+
                     //pthread_mutex_lock(&m_mutex);
                     fire = firable_obs(Complete_meta_state);
                     //if (max_succ<fire.size()) max_succ=fire.size();
@@ -538,15 +496,14 @@ bool threadSOG::isNotTerminated() {
     int i = 0;
     while (i < m_nb_thread && res) {
         res = m_terminaison[i];
-        i++;
+        ++i;
     }
     return !res;
 }
 
-void threadSOG::computeDSOG(LDDGraph &g, bool canonised) {
+void threadSOG::computeDSOG(LDDGraph &g,uint8_t&& method){
 
     cout << "number of threads " << int(m_nb_thread) << endl;
-    int rc;
     m_graph = &g;
     m_graph->setTransition(*m_transitionName);
     m_graph->setPlace(*m_placeName);
@@ -554,22 +511,33 @@ void threadSOG::computeDSOG(LDDGraph &g, bool canonised) {
 
     pthread_mutex_init(&m_mutex, nullptr);
     m_gc = 0;
-    for (int i = 0; i < m_nb_thread; i++) {
+    for (int i = 0; i < m_nb_thread; ++i) {
         pthread_spin_init(&m_spin_stack[i], 0);
         m_charge[i] = 0;
         m_terminaison[i] = false;
     }
 
-    for (int i = 0; i < m_nb_thread - 1; i++) {
-        if ((rc = pthread_create(&m_list_thread[i], nullptr, canonised ? threadHandlerCanonized : threadHandler, this))) {
-            cout << "error: pthread_create, rc: " << rc << endl;
+    for (int i = 0; i < m_nb_thread - 1; ++i) {
+
+        m_list_thread[i] = new std::thread(threadHandler, this,method);
+        if (m_list_thread[i] == nullptr) {
+            cout << "error: creating threads #" << i << endl;
         }
     }
+    switch (method) {
+        case 0 : doCompute();
+            break;
+        case 1:
+            doComputeCanonized();
+            break;
+        case 2:
+            doComputePOR();
+            break;
+    }
 
-    if (canonised) doComputeCanonized();
-    else doCompute();
-    for (int i = 0; i < m_nb_thread - 1; i++) {
-        pthread_join(m_list_thread[i], nullptr);
+    for (int i = 0; i < m_nb_thread - 1; ++i) {
+        m_list_thread[i]->join();
+        delete m_list_thread[i];
     }
     clock_gettime(CLOCK_REALTIME, &finish);
 
@@ -582,20 +550,21 @@ void threadSOG::computeDSOG(LDDGraph &g, bool canonised) {
 
 }
 
-void *threadSOG::threadHandler(void *context) {
-   return ((threadSOG *) context)->doCompute();
-   // return ((threadSOG *) context)->doComputePOR();
-}
-
-void *threadSOG::threadHandlerCanonized(void *context) {
-    return ((threadSOG *) context)->doComputeCanonized();
-    //return ((threadSOG *) context)->doComputePOR();
+void *threadSOG::threadHandler(void *context,const uint8_t& method) {
+    switch (method) {
+        case 0 : return ((threadSOG *) context)->doCompute();
+        case 1:
+            return ((threadSOG *) context)->doComputeCanonized();
+        case 2:
+            return ((threadSOG *) context)->doComputePOR();
+    }
+    return ((threadSOG *) context)->doCompute();
 }
 
 int threadSOG::minCharge() {
     int pos = 0;
     int min_charge = m_charge[0];
-    for (int i = 1; i < m_nb_thread; i++) {
+    for (int i = 1; i < m_nb_thread; ++i) {
         if (m_charge[i] < min_charge) {
             min_charge = m_charge[i];
             pos = i;
@@ -605,64 +574,37 @@ int threadSOG::minCharge() {
 
 }
 
-
-
-
-
-//}
-
-
-threadSOG::~threadSOG() {
-    //dtor
-}
-
-
 void *threadSOG::doComputePOR() {
     int id_thread;
-    int nb_it = 0, nb_failed = 0;
     id_thread = m_id_thread++;
-
-
     Set fireObs;
     bool _div, _dead;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
         m_min_charge = 0;
-        m_nbmetastate = 0;
-        m_MaxIntBdd = 0;
-        m_NbIt = 0;
-        m_itext = m_itint = 0;
 
-
-        LDDState *c = new LDDState;
+        auto *c = new LDDState;
         //cout<<"Marquage initial is being built..."<<endl;
         // cout<<bddtable<<M0<<endl;
         MDD Complete_meta_state{saturatePOR(m_initialMarking, fireObs, _div, _dead)};
         c->m_lddstate = Complete_meta_state;
-        //m_TabMeta[m_nbmetastate]=c->m_lddstate;
-        m_nbmetastate++;
-        m_old_size = SylvanWrapper::lddmc_nodecount(c->m_lddstate);
-        //max_meta_state_size=bdd_pathcount(Complete_meta_state);
 
         m_st[0].push(Pair(couple(c, Complete_meta_state), fireObs));
         m_graph->setInitialState(c);
         m_graph->insert(c);
         //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
         m_charge[0] = 1;
-
     }
 
     LDDState *reached_class;
     do {
         while (!m_st[id_thread].empty()) {
-            nb_it++;
             m_terminaison[id_thread] = false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
             Pair e = m_st[id_thread].top();
             m_st[id_thread].pop();
             pthread_spin_unlock(&m_spin_stack[id_thread]);
-            m_nbmetastate--;
 
             m_charge[id_thread]--;
             while (!e.second.empty()) {
@@ -675,8 +617,7 @@ void *threadSOG::doComputePOR() {
                     }
                 }
 
-
-                MDD Complete_meta_state {saturatePOR(get_successor(e.first.second, t), fireObs, _div, _dead)};
+                MDD Complete_meta_state{saturatePOR(get_successor(e.first.second, t), fireObs, _div, _dead)};
                 /* if (id_thread==0)
                  {
                      m_gc_mutex.lock();
@@ -703,7 +644,7 @@ void *threadSOG::doComputePOR() {
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-                    m_nbmetastate++;
+
                     m_min_charge = minCharge();
                     //m_min_charge=(m_min_charge+1) % m_nb_thread;
                     pthread_spin_lock(&m_spin_stack[m_min_charge]);
@@ -711,14 +652,11 @@ void *threadSOG::doComputePOR() {
                     pthread_spin_unlock(&m_spin_stack[m_min_charge]);
                     m_charge[m_min_charge]++;
                 } else {
-                    nb_failed++;
-                    m_graph->addArc();
                     m_graph_mutex.unlock();
-
+                    m_graph->addArc();
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
                     pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
                     delete reached_class;
-
                 }
                 if (id_thread) {
                     if (--m_gc == 0) m_gc_mutex.unlock();

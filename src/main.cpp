@@ -191,12 +191,12 @@ int main(int argc, char **argv) {
                 if (!strcmp(argv[1], "p")) {
                     cout << "Construction with pthread library." << endl;
                     cout << "Count of threads to be created: " << nb_th << endl;
-                    DR.computeDSOG(g, false);
+                    DR.computeDSOG(g, 0);
                     g.printCompleteInformation();
                 } else if (!strcmp(argv[1], "pc")) {
                     cout << "Canonized construction with pthread library." << endl;
                     cout << "Count of threads to be created: " << nb_th << endl;
-                    DR.computeDSOG(g, true);
+                    DR.computeDSOG(g, 1);
                     g.printCompleteInformation();
                 }
 
