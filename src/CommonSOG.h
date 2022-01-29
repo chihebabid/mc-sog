@@ -23,7 +23,6 @@ class LDDGraph;
 class CommonSOG {
 public:
     CommonSOG();
-
     virtual ~CommonSOG();
 
     static LDDGraph *getGraph();
@@ -37,9 +36,7 @@ public:
     }
 
     static string_view getPlace(int pos);
-
     void finish() { m_finish = true; }
-
     virtual void computeDSOG(LDDGraph &g) {};
 protected:
     static void initializeLDD();

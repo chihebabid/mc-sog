@@ -831,10 +831,7 @@ bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
         if (cmark == lddmc_false || result) return result;
         n_cmark = GETNODE(cmark);
     }
-
     return result;
-
-
 }
 MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) {
     // for an empty set of source states, or an empty transition relation, return the empty set

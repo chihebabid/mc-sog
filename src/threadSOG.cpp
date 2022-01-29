@@ -39,11 +39,6 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
 
     m_init = init;
     int i;
-    vector<Place>::const_iterator it_places;
-
-
-
-
 
     //_______________
     m_transitions = R.transitions;
@@ -63,13 +58,17 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
 
     cout << "Observable transitions:" << endl;
 
-    for (const auto &it: m_observable) { cout << it << "  "; }
+    for (const auto &it: m_observable) {
+        m_transitions[it].mObservable=true;
+        cout << it << "  ";
+    }
     cout << endl;
     m_nbPlaces = R.places.size();
     cout << "Nombre de places : " << m_nbPlaces << endl;
     cout << "Derniere place : " << R.places[m_nbPlaces - 1].name << endl;
 
     auto *liste_marques = new uint32_t[R.places.size()];
+    auto it_places= R.places.begin();
     for (i = 0, it_places = R.places.begin(); it_places != R.places.end(); ++i, ++it_places) {
         liste_marques[i] = it_places->marking;
     }
@@ -126,14 +125,6 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
 
     //-------------------------------------------------------------------
     //-------------------------------------------------------------------
-    int nb_failed = 0;
-    // cout<<"COMPUTE CANONICAL DETERMINISTIC GRAPH_________________________ \n";
-    //cout<<"nb MDD var : "<<bdd_varnum()<<endl;
-    // double d,tps;
-    //d=(double)clock() / (double)CLOCKS_PER_SEC;
-
-
-
     typedef pair<LDDState *, MDD> couple;
     typedef pair<couple, Set> Pair;
     typedef stack<Pair> pile;
@@ -188,7 +179,6 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
                 auto *pos = g.find(reached_class);
                 //nbnode=sylvan_pathcount(reached_class->m_lddstate);
                 if (!pos) {
-                    //  cout<<"not found"<<endl;
                     reached_class->m_boucle = Set_Div(Complete_meta_state);
                     fire = firable_obs(Complete_meta_state);
                     st.push(Pair(couple(reached_class, Complete_meta_state), fire));
@@ -200,7 +190,6 @@ void threadSOG::computeSeqSOG(LDDGraph &g) {
                     g.insert(reached_class);
                 } else {
                     //  cout<<" found"<<endl;
-                    nb_failed++;
                     delete reached_class;
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
                     pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
@@ -338,10 +327,7 @@ void *threadSOG::doCompute() {
 
                 }
                 if (id_thread) {
-
-
                     if (--m_gc == 0) m_gc_mutex.unlock();
-
                 }
             }
         }
@@ -354,25 +340,18 @@ void *threadSOG::doCompute() {
 /************ Canonised construction based on Pthread library ***********************************/
 void *threadSOG::doComputeCanonized() {
     int id_thread;
-    int nb_it = 0, nb_failed = 0;
     id_thread = m_id_thread++;
     Set fire;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
         m_min_charge = 0;
-
         auto *c = new LDDState;
-        //cout<<"Marquage initial is being built..."<<endl;
-        // cout<<bddtable<<M0<<endl;
-
         MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
         //#ldd_refs_push(Complete_meta_state);
         MDD canonised_initial = Canonize(Complete_meta_state, 0);
         //#ldd_refs_push(canonised_initial);
         fire = firable_obs(Complete_meta_state);
-
-
         c->m_lddstate = canonised_initial;
         //m_TabMeta[m_nbmetastate]=c->m_lddstate;
         //max_meta_state_size=bdd_pathcount(Complete_meta_state);
@@ -382,17 +361,12 @@ void *threadSOG::doComputeCanonized() {
         m_graph->insert(c);
         //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
         m_charge[0] = 1;
-
     }
 
     LDDState *reached_class;
 
-
     do {
-
         while (!m_st[id_thread].empty()) {
-
-            nb_it++;
             m_terminaison[id_thread] = false;
             pthread_spin_lock(&m_spin_stack[id_thread]);
             Pair e = m_st[id_thread].top();
@@ -466,14 +440,12 @@ void *threadSOG::doComputeCanonized() {
                     pthread_spin_unlock(&m_spin_stack[m_min_charge]);
                     m_charge[m_min_charge]++;
                 } else {
-                    nb_failed++;
                     m_graph->addArc();
                     m_graph_mutex.unlock();
 
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
                     pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
                     delete reached_class;
-
                 }
                 if (id_thread) {
 
@@ -518,12 +490,12 @@ void threadSOG::computeDSOG(LDDGraph &g,uint8_t&& method){
     }
 
     for (int i = 0; i < m_nb_thread - 1; ++i) {
-
         m_list_thread[i] = new std::thread(threadHandler, this,method);
         if (m_list_thread[i] == nullptr) {
             cout << "error: creating threads #" << i << endl;
         }
     }
+
     switch (method) {
         case 0 : doCompute();
             break;
@@ -551,8 +523,10 @@ void threadSOG::computeDSOG(LDDGraph &g,uint8_t&& method){
 }
 
 void *threadSOG::threadHandler(void *context,const uint8_t& method) {
+
     switch (method) {
-        case 0 : return ((threadSOG *) context)->doCompute();
+        case 0:
+            return ((threadSOG *) context)->doCompute();
         case 1:
             return ((threadSOG *) context)->doComputeCanonized();
         case 2:
@@ -583,17 +557,14 @@ void *threadSOG::doComputePOR() {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
         m_min_charge = 0;
-
         auto *c = new LDDState;
-        //cout<<"Marquage initial is being built..."<<endl;
-        // cout<<bddtable<<M0<<endl;
         MDD Complete_meta_state{saturatePOR(m_initialMarking, fireObs, _div, _dead)};
+        cout<<"Size of obs : "<<fireObs.size()<<endl;
         c->m_lddstate = Complete_meta_state;
-
-        m_st[0].push(Pair(couple(c, Complete_meta_state), fireObs));
+        Set cpy=fireObs;
+        m_st[0].push(Pair(couple(c, Complete_meta_state), cpy));
         m_graph->setInitialState(c);
         m_graph->insert(c);
-        //m_graph->nbMarking+=bdd_pathcount(c->m_lddstate);
         m_charge[0] = 1;
     }
 
@@ -616,8 +587,8 @@ void *threadSOG::doComputePOR() {
                         m_gc_mutex.lock();
                     }
                 }
-
-                MDD Complete_meta_state{saturatePOR(get_successor(e.first.second, t), fireObs, _div, _dead)};
+                Set cpy=fireObs;
+                MDD Complete_meta_state{saturatePOR(get_successor(e.first.second, t), cpy, _div, _dead)};
                 /* if (id_thread==0)
                  {
                      m_gc_mutex.lock();
@@ -648,7 +619,8 @@ void *threadSOG::doComputePOR() {
                     m_min_charge = minCharge();
                     //m_min_charge=(m_min_charge+1) % m_nb_thread;
                     pthread_spin_lock(&m_spin_stack[m_min_charge]);
-                    m_st[m_min_charge].push(Pair(couple(reached_class, Complete_meta_state), fireObs));
+                    Set cpy=fireObs;
+                    m_st[m_min_charge].push(Pair(couple(reached_class, Complete_meta_state), cpy));
                     pthread_spin_unlock(&m_spin_stack[m_min_charge]);
                     m_charge[m_min_charge]++;
                 } else {

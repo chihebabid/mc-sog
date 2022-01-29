@@ -63,7 +63,7 @@ set<string> buildPropositions(const string &fileName) {
 		return transitionSet;
 	}
 	spot::atomic_prop_set *p_list = spot::atomic_prop_collect(fo, nullptr);
-	for (const auto i : *p_list) {
+	for (const auto & i : *p_list) {
 		transitionSet.insert(i.ap_name());
 	}
 	print_spin_ltl(std::cout, fo) << '\n';
@@ -188,15 +188,18 @@ int main(int argc, char **argv) {
                 g.printCompleteInformation();
             } else {
                 cout << "*******************Multithread version****************** \n" << endl;
+                cout << "Count of threads to be created: " << nb_th << endl;
                 if (!strcmp(argv[1], "p")) {
                     cout << "Construction with pthread library." << endl;
-                    cout << "Count of threads to be created: " << nb_th << endl;
                     DR.computeDSOG(g, 0);
                     g.printCompleteInformation();
                 } else if (!strcmp(argv[1], "pc")) {
                     cout << "Canonized construction with pthread library." << endl;
-                    cout << "Count of threads to be created: " << nb_th << endl;
                     DR.computeDSOG(g, 1);
+                    g.printCompleteInformation();
+                } else {
+                    cout << "Partial Order Reduction with pthread library." << endl;
+                    DR.computeDSOG(g, 2);
                     g.printCompleteInformation();
                 }
 

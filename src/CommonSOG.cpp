@@ -28,7 +28,7 @@ MDD CommonSOG::Accessible_epsilon(const MDD& From) {
 // Return the set of firable observable transitions from an agregate
 Set CommonSOG::firable_obs(const MDD& State) {
     Set res;
-    for (auto i: m_observable) {
+    for (const auto& i: m_observable) {
         MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
         if (succ != lddmc_false) {
             res.insert(i);
@@ -137,7 +137,6 @@ bool CommonSOG::Set_Div(const MDD &M) const {
 
 /**** Detetc deadlocks ****/
 bool CommonSOG::Set_Bloc(const MDD &M) const {
-
     MDD cur {lddmc_true};
     for (const auto & i: m_tb_relation) {
         cur = cur & (i.getMinus());
@@ -161,7 +160,6 @@ LDDGraph *CommonSOG::m_graph;
 //}
 
 string_view CommonSOG::getPlace(int pos) {
-
     return string_view{m_graph->getPlace(pos)};
 }
 
@@ -239,25 +237,28 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     auto haveCommonPre = [&](vector<pair<int, int>> &preT1, vector<pair<int, int>> &preT2) -> bool {
         for (auto &elt1: preT1) {
             for (auto &elt2: preT2) {
+               // cout<<" Get0Elt1 : "<<std::get<0>(elt1)<<", Get0Elt2 : "<<std::get<0>(elt2)<<endl;
                 if (std::get<0>(elt1) == std::get<0>(elt2)) return true;
             }
         }
         return false;
     };
+   // cout<<"Transition to deal with : "<<transition<<endl;
     if (SylvanWrapper::isFirable(S,m_tb_relation[transition].getMinus())) {
-        for (auto i = 0; i < m_transitions.size(); i++) {
+        //cout<<"Checked\n";
+        for ( auto i = 0; i < m_transitions.size(); ++i) {
             if (i != transition) {
                 auto &preT1 = m_transitions[i].pre;
                 auto &preT2 = m_transitions[transition].pre;
-                if (!haveCommonPre(preT1, preT2)) ample.insert(i);
+                if (haveCommonPre(preT1, preT2)) ample.insert(i);
             }
         }
     } else {
-        for (auto i = 0; i < m_transitions.size(); i++) {
+        for (auto i = 0; i < m_transitions.size(); ++i) {
             if (i != transition) {
                 auto &postT1 = m_transitions[i].post;
                 auto &preT2 = m_transitions[transition].pre;
-                if (!haveCommonPre(postT1, preT2)) ample.insert(i);
+                if (haveCommonPre(postT1, preT2)) ample.insert(i);
             }
         }
     }
@@ -271,15 +272,17 @@ Set CommonSOG::computeAmple(const MDD &s) {
         if (SylvanWrapper::isFirable(s,m_tb_relation[index].getMinus()))
             enabledT.insert(index);
     }
+   // cout<<"Size of enabledT : "<<enabledT.size()<<endl;
     if (!enabledT.empty()) {
         auto it=enabledT.begin();
         ample.insert(*it);
         enabledT.erase(it);
     }
-
-    for (auto &t : enabledT) {
+    for (const auto &t : ample) {
+    //for (int i=0;i<m_transitions.size();++i) {
         AddConflict(s,t,ample);
     }
+    //cout<<"Size of ample : "<<ample.size()<<endl;
     return ample;
 }
 
@@ -297,7 +300,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
         if (ample.empty()) dead=true;
         else {
             for (const auto & t : ample) {
-                MDD succ= get_successor(s,t);
+                MDD succ= get_successor(From,t);
                 if (m_transitions[t].mObservable) {
                     tObs.insert(t);
                 }
@@ -305,6 +308,16 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
                     //Compute div
                     if (myStack.find(succ)!=myStack.end()) {
                         div=true;
+                        for (uint16_t i=0;i<m_transitions.size();++i) {
+                            if (SylvanWrapper::isFirable(From,m_tb_relation[i].getMinus())) {
+                                if (m_transitions[i].mObservable) tObs.insert(t);
+                                else {
+                                    MDD newM= get_successor(From,i);
+                                    To=SylvanWrapper::lddmc_union_mono(To,newM);
+                                    myStack.insert(newM);
+                                }
+                            }
+                        }
                     }
                     else {
                         To=SylvanWrapper::lddmc_union_mono(To,succ);
@@ -317,5 +330,6 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
         From=To;
         Reach2=SylvanWrapper::lddmc_union_mono(Reach2,To);
     } while (Reach1!=Reach2);
+  //  cout<<"Size of obs : "<<tObs.size()<<endl;
     return Reach1;
 }
