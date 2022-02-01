@@ -9,7 +9,6 @@ public:
         virtual LDDState * getInitialMetaState();
         virtual void buildSucc(LDDState *agregate);
         void loadNet();
-
         virtual ~ModelCheckBaseMT();
 protected:
     std::condition_variable m_condBuild;
@@ -17,6 +16,5 @@ protected:
 private:
     virtual void preConfigure()=0;    
     std::mutex m_mutexBuild;
-
 };
 #endif

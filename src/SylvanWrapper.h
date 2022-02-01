@@ -174,7 +174,7 @@ public:
     static size_t lddmc_nodecount(MDD mdd);
 
     static MDD lddmc_union_mono(MDD a, MDD b);
-
+    static MDD lddmc_intersect(MDD a, MDD b);
     static bool isSingleMDD(MDD mdd);
 
     static int get_mddnbr(MDD mdd, unsigned int level);

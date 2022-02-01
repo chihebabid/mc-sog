@@ -1,6 +1,7 @@
 #include <string>
 #include "SylvanWrapper.h"
 #include "CommonSOG.h"
+#include <cassert>
 
 CommonSOG::CommonSOG() = default;
 
@@ -39,6 +40,10 @@ Set CommonSOG::firable_obs(const MDD& State) {
 
 MDD CommonSOG::get_successor(const MDD &From, const int &t) {
     return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getMinus(), m_tb_relation[t].getPlus());
+}
+
+MDD CommonSOG::get_pred(const MDD &From, const int &t) {
+    return SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(t)].getPlus(), m_tb_relation[t].getMinus());
 }
 
 MDD CommonSOG::ImageForward(const MDD& From) {
@@ -232,13 +237,45 @@ void CommonSOG::loadNetFromFile() {
     delete[] prec;
     delete[] postc;
 }
-
+void CommonSOG::AddConflict2(const MDD &S, const int &transition, Set &ample) {
+    auto haveCommonPre = [&](vector<pair<int, int>> &preT1, vector<pair<int, int>> &preT2) -> bool {
+        for (auto &elt1: preT1) {
+            for (auto &elt2: preT2) {
+                if (elt1.first == elt2.first) return true;
+            }
+        }
+        return false;
+    };
+    if (SylvanWrapper::lddmc_intersect(S, get_pred(get_successor(S,transition),transition))==S) {
+        for(auto i = 0; i < m_transitions.size(); ++i) {
+            auto &preT1 = m_transitions[i].pre;
+            auto &preT2 = m_transitions[transition].pre;
+            if (haveCommonPre(preT1, preT2)) ample.insert(i);
+        }
+    }
+    else {
+        if (!SylvanWrapper::isFirable(S,transition)) {
+            for(auto i = 0; i < m_transitions.size(); ++i) {
+                auto &preT = m_transitions[transition].pre;
+                auto &postT1 = m_transitions[i].post;
+                if (haveCommonPre(preT, postT1)) ample.insert(i);
+            }
+        }
+        else {
+            for(auto i = 0; i < m_transitions.size(); ++i) {
+                auto &preT = m_transitions[transition].pre;
+                auto &postT1 = m_transitions[i].post;
+                auto &preT1 = m_transitions[i].pre;
+                if (haveCommonPre(preT, postT1) || haveCommonPre(preT,preT1)) ample.insert(i);
+            }
+        }
+    }
+}
 void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     auto haveCommonPre = [&](vector<pair<int, int>> &preT1, vector<pair<int, int>> &preT2) -> bool {
         for (auto &elt1: preT1) {
             for (auto &elt2: preT2) {
-               // cout<<" Get0Elt1 : "<<std::get<0>(elt1)<<", Get0Elt2 : "<<std::get<0>(elt2)<<endl;
-                if (std::get<0>(elt1) == std::get<0>(elt2)) return true;
+                if (elt1.first == elt2.first) return true;
             }
         }
         return false;
@@ -256,9 +293,9 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     } else {
         for (auto i = 0; i < m_transitions.size(); ++i) {
             if (i != transition) {
+                auto &preT = m_transitions[transition].pre;
                 auto &postT1 = m_transitions[i].post;
-                auto &preT2 = m_transitions[transition].pre;
-                if (haveCommonPre(postT1, preT2)) ample.insert(i);
+                if (haveCommonPre(preT, postT1)) ample.insert(i);
             }
         }
     }
@@ -266,23 +303,44 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
 
 Set CommonSOG::computeAmple(const MDD &s) {
     Set ample;
-    Set enabledT;
+
     // Compute enabled transitions in s
-    for (auto index=0;index<m_tb_relation.size();index++) {
-        if (SylvanWrapper::isFirable(s,m_tb_relation[index].getMinus()))
-            enabledT.insert(index);
+    for (auto index=0;index<m_tb_relation.size();++index) {
+        if (SylvanWrapper::isFirable(s,m_tb_relation[index].getMinus())) {
+            ample.insert(index); break;
+        }
     }
-   // cout<<"Size of enabledT : "<<enabledT.size()<<endl;
-    if (!enabledT.empty()) {
-        auto it=enabledT.begin();
-        ample.insert(*it);
-        enabledT.erase(it);
+
+    for (const auto& t: ample) {
+            AddConflict(s, t, ample);
     }
-    for (const auto &t : ample) {
-    //for (int i=0;i<m_transitions.size();++i) {
-        AddConflict(s,t,ample);
-    }
-    //cout<<"Size of ample : "<<ample.size()<<endl;
+
+    return ample;
+}
+
+Set CommonSOG::computeAmple2(const MDD &S) {
+    Set ample;
+    MDD pre,img;
+    do {
+
+        for (auto index=0;index<m_tb_relation.size();++index) {
+            if (SylvanWrapper::isFirable(S,m_tb_relation[index].getMinus())) {
+                ample.insert(index); break;
+            }
+        }
+       for (const auto& t: ample) {
+           AddConflict2(S, t, ample);
+       }
+        //AddConflict2(S, *ample.begin(), ample);
+
+        img=lddmc_true;
+        for (const auto& t : ample)
+            img=SylvanWrapper::lddmc_union_mono(img,SylvanWrapper::lddmc_firing_mono(S,m_tb_relation[t].getMinus(),m_tb_relation[t].getPlus()));
+        pre=lddmc_false;
+        for (const auto& t : ample)
+            pre=SylvanWrapper::lddmc_union_mono(pre,SylvanWrapper::lddmc_firing_mono(img,m_tb_relation[t].getPlus(),m_tb_relation[t].getMinus()));
+
+    } while (SylvanWrapper::lddmc_intersect(S, pre)!=S);
     return ample;
 }
 
@@ -292,44 +350,52 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
     Set ample;
     set<MDD> myStack;
     myStack.insert(s);
-    tObs.erase(tObs.begin(),tObs.end());
-    MDD To=lddmc_true;
+    tObs.clear();
+    MDD To=lddmc_false;
     do {
         Reach1=Reach2;
+
         ample=computeAmple(From);
-        if (ample.empty()) dead=true;
+        if (ample.empty()) {
+            dead=true;
+        }
         else {
             for (const auto & t : ample) {
-                MDD succ= get_successor(From,t);
-                if (m_transitions[t].mObservable) {
-                    tObs.insert(t);
-                }
-                else {
-                    //Compute div
-                    if (myStack.find(succ)!=myStack.end()) {
-                        div=true;
-                        for (uint16_t i=0;i<m_transitions.size();++i) {
-                            if (SylvanWrapper::isFirable(From,m_tb_relation[i].getMinus())) {
-                                if (m_transitions[i].mObservable) tObs.insert(t);
-                                else {
-                                    MDD newM= get_successor(From,i);
-                                    To=SylvanWrapper::lddmc_union_mono(To,newM);
-                                    myStack.insert(newM);
+                MDD succ=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[t].getMinus(),m_tb_relation[t].getPlus());
+                if (succ!=lddmc_true && succ!=lddmc_false) {
+                    //cout<<"Transition of ample : "<<t<<endl;
+                    if (m_transitions[t].mObservable) {
+                        //cout<<"Obs detected "<<t<<endl;
+                        tObs.insert(t);
+                    } else {
+                       //if (!SylvanWrapper::isFirable(From,m_tb_relation[t].getMinus())) exit(0);
+//                    //cout<<"From :"<<From<<"by transition "<<t<<" succ : "<<succ<<endl;
+                        //Compute div
+                        if (myStack.find(succ) != myStack.end()) {
+                            div = true;
+                            //cout<<"loop"<<endl;
+                            for (uint16_t i = 0; i < m_tb_relation.size(); ++i) {
+                                MDD newM=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[i].getMinus(),m_tb_relation[i].getPlus());
+                                if (newM!=lddmc_false && newM!=lddmc_true) {
+                                    if (m_transitions[i].mObservable) {
+                                        tObs.insert(i);
+                                    } else {
+                                        To = SylvanWrapper::lddmc_union_mono(To, newM);
+                                        myStack.insert(newM);
+                                    }
                                 }
                             }
+                        } else {
+                            To = SylvanWrapper::lddmc_union_mono(To, succ);
+                            myStack.insert(succ);
                         }
                     }
-                    else {
-                        To=SylvanWrapper::lddmc_union_mono(To,succ);
-                        myStack.insert(succ);
-                    }
-
                 }
-            }
+            } //end for
         }
         From=To;
         Reach2=SylvanWrapper::lddmc_union_mono(Reach2,To);
+        To=lddmc_false;
     } while (Reach1!=Reach2);
-  //  cout<<"Size of obs : "<<tObs.size()<<endl;
-    return Reach1;
+    return Reach2;
 }

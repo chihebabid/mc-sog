@@ -115,9 +115,6 @@ void* ModelCheckerTh::Compute_successors() {
 		}
 		m_terminaison[id_thread] = true;
 	} while (isNotTerminated() && !m_finish);
-	
-	
-
 }
 
 void* ModelCheckerTh::threadHandler(void *context) {

@@ -390,7 +390,6 @@ MDD SylvanWrapper::lddmc_makenode(uint32_t value, MDD ifeq, MDD ifneq) {
     }
 
 
-
     return (MDD) index;
 }
 
@@ -806,12 +805,13 @@ MDD SylvanWrapper::ldd_minus(MDD a, MDD b) {
     SylvanCacheWrapper::cache_put(CACHE_LDD_MINUS, a, b, result);
     return result;
 }
+
 /*
  * Check whether transition removing @minus tokens is firable in marking @cmark
  */
 bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
     if (cmark == lddmc_true) return true;
-    bool result {false};
+    bool result{false};
     MDD _cmark = cmark, _minus = minus;
     mddnode_t n_cmark = GETNODE(_cmark);
     mddnode_t n_minus = GETNODE(_minus);
@@ -822,10 +822,10 @@ bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
         uint32_t value_minus = mddnode_getvalue(n_minus);
 
         if (value >= value_minus) {
-            MDD _mark=mddnode_getdown(n_cmark);
-            if (_mark==lddmc_true) return true;
-            MDD _minus=mddnode_getdown(n_minus);
-            result=isFirable(_mark, _minus);
+            MDD _mark = mddnode_getdown(n_cmark);
+            if (_mark == lddmc_true) return true;
+            MDD _minus = mddnode_getdown(n_minus);
+            result = isFirable(_mark, _minus);
         }
         cmark = mddnode_getright(n_cmark);
         if (cmark == lddmc_false || result) return result;
@@ -833,7 +833,8 @@ bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
     }
     return result;
 }
-MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) {
+
+MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus, const MDD plus) {
     // for an empty set of source states, or an empty transition relation, return the empty set
     if (cmark == lddmc_true) return lddmc_true;
     if (minus == lddmc_false || plus == lddmc_false) return lddmc_false;
@@ -848,8 +849,6 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus,const MDD plus) 
     mddnode_t n_cmark = GETNODE(_cmark);
     mddnode_t n_plus = GETNODE(_plus);
     mddnode_t n_minus = GETNODE(_minus);
-
-
     result = lddmc_false;
 
     for (;;) {
@@ -928,6 +927,7 @@ MDD SylvanWrapper::lddmc_project(const MDD mdd, const MDD proj) {
 int SylvanWrapper::isGCRequired() {
     return (m_g_created > llmsset_get_size(m_nodes) / 2);
 }
+
 /*
  * Convert MDD cmark to a string
  */
@@ -977,11 +977,9 @@ void SylvanWrapper::sylvan_gc_seq() {
 }
 
 
-void SylvanWrapper::sylvan_rehash_all()
-{
+void SylvanWrapper::sylvan_rehash_all() {
     // clear hash array
     llmsset_clear_hashes_seq(m_nodes);
-
     // rehash marked nodes
     if (llmsset_rehash_seq(m_nodes) != 0) {
         fprintf(stderr, "sylvan_gc_rehash error: not all nodes could be rehashed!\n");
@@ -990,25 +988,23 @@ void SylvanWrapper::sylvan_rehash_all()
 }
 
 
-int SylvanWrapper::llmsset_rehash_seq (llmsset2_t dbs)
-{
-    return llmsset_rehash_par_seq( dbs, 0, dbs->table_size);
+int SylvanWrapper::llmsset_rehash_seq(llmsset2_t dbs) {
+    return llmsset_rehash_par_seq(dbs, 0, dbs->table_size);
 }
 
 
-int SylvanWrapper::llmsset_rehash_par_seq(llmsset2_t  dbs, size_t  first, size_t  count)
-{
+int SylvanWrapper::llmsset_rehash_par_seq(llmsset2_t dbs, size_t first, size_t count) {
     if (count > 512) {
 
-        int bad = llmsset_rehash_par_seq(dbs, first + count/2, count - count/2);
-        return bad + llmsset_rehash_par_seq(dbs, first, count/2);
+        int bad = llmsset_rehash_par_seq(dbs, first + count / 2, count - count / 2);
+        return bad + llmsset_rehash_par_seq(dbs, first, count / 2);
     } else {
         int bad = 0;
         uint64_t *ptr = dbs->bitmap2 + (first / 64);
         uint64_t mask = 0x8000000000000000LL >> (first & 63);
-        for (size_t k=0; k<count; k++) {
+        for (size_t k = 0; k < count; k++) {
             if (*ptr & mask) {
-                if (llmsset_rehash_bucket(dbs, first+k) == 0) bad++;
+                if (llmsset_rehash_bucket(dbs, first + k) == 0) bad++;
             }
             mask >>= 1;
             if (mask == 0) {
@@ -1021,9 +1017,8 @@ int SylvanWrapper::llmsset_rehash_par_seq(llmsset2_t  dbs, size_t  first, size_t
 }
 
 
-int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx)
-{
-    const uint64_t * const d_ptr = ((uint64_t*)dbs->data) + 2*d_idx;
+int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx) {
+    const uint64_t *const d_ptr = ((uint64_t *) dbs->data) + 2 * d_idx;
     const uint64_t a = d_ptr[0];
     const uint64_t b = d_ptr[1];
 
@@ -1033,7 +1028,7 @@ int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx)
     else hash_rehash = llmsset_hash(a, b, hash_rehash);
     const uint64_t step = (((hash_rehash >> 20) | 1) << 3);
     const uint64_t new_v = (hash_rehash & MASK_HASH) | d_idx;
-    int i=0;
+    int i = 0;
 
     uint64_t idx, last;
 #if LLMSSET_MASK
@@ -1047,9 +1042,9 @@ int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx)
         if (*bucket == 0 && cas(bucket, 0, new_v)) return 1;
 
         // find next idx on probe sequence
-        idx = (idx & CL_MASK) | ((idx+1) & CL_MASK_R);
+        idx = (idx & CL_MASK) | ((idx + 1) & CL_MASK_R);
         if (idx == last) {
-            if (++i == *(volatile int16_t*)&dbs->threshold) {
+            if (++i == *(volatile int16_t *) &dbs->threshold) {
                 // failed to find empty spot in probe sequence
                 // solution: increase probe sequence length...
                 __sync_fetch_and_add(&dbs->threshold, 1);
@@ -1068,22 +1063,17 @@ int SylvanWrapper::llmsset_rehash_bucket(const llmsset2_t dbs, uint64_t d_idx)
 }
 
 
-int SylvanWrapper::is_custom_bucket(const llmsset2_t dbs, uint64_t index)
-{
-    uint64_t *ptr = dbs->bitmapc + (index/64);
-    uint64_t mask = 0x8000000000000000LL >> (index&63);
+int SylvanWrapper::is_custom_bucket(const llmsset2_t dbs, uint64_t index) {
+    uint64_t *ptr = dbs->bitmapc + (index / 64);
+    uint64_t mask = 0x8000000000000000LL >> (index & 63);
     return (*ptr & mask) ? 1 : 0;
 }
 
 
-
-
-
-
-void SylvanWrapper::llmsset_clear_hashes_seq( llmsset2_t dbs)
-{
+void SylvanWrapper::llmsset_clear_hashes_seq(llmsset2_t dbs) {
     // just reallocate...
-    if (mmap(dbs->table, dbs->max_size * 8, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0) != (void*)-1) {
+    if (mmap(dbs->table, dbs->max_size * 8, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0) !=
+        (void *) -1) {
 #if defined(madvise) && defined(MADV_RANDOM)
         madvise(dbs->table, sizeof(uint64_t[dbs->max_size]), MADV_RANDOM);
 #endif
@@ -1092,7 +1082,6 @@ void SylvanWrapper::llmsset_clear_hashes_seq( llmsset2_t dbs)
         memset(dbs->table, 0, dbs->max_size * 8);
     }
 }
-
 
 
 void SylvanWrapper::llmsset_destroy_unmarked(llmsset2_t dbs) {
@@ -1197,6 +1186,64 @@ int SylvanWrapper::llmsset_mark(const llmsset2_t dbs, uint64_t index) {
         if (v & mask) return 0;
         if (cas(ptr, v, v | mask)) return 1;
     }
+}
+
+/*
+ * Intersection
+ */
+
+MDD SylvanWrapper::lddmc_intersect(MDD a, MDD b) {
+/* Terminal cases */
+    if (a == b) return a;
+    if (a == lddmc_false || b == lddmc_false) return lddmc_false;
+    assert(a != lddmc_true && b != lddmc_true);
+
+/* Test gc */
+//sylvan_gc_test();
+
+
+
+/* Get nodes */
+    mddnode_t na = LDD_GETNODE(a);
+    mddnode_t nb = LDD_GETNODE(b);
+    uint32_t na_value = mddnode_getvalue(na);
+    uint32_t nb_value = mddnode_getvalue(nb);
+
+/* Skip nodes if possible */
+    while (na_value != nb_value) {
+        if (na_value < nb_value) {
+            a = mddnode_getright(na);
+            if (a == lddmc_false) return lddmc_false;
+            na = LDD_GETNODE(a);
+            na_value = mddnode_getvalue(na);
+        }
+        if (nb_value < na_value) {
+            b = mddnode_getright(nb);
+            if (b == lddmc_false) return lddmc_false;
+            nb = LDD_GETNODE(b);
+            nb_value = mddnode_getvalue(nb);
+        }
+    }
+
+/* Access cache */
+    MDD result;
+    if (SylvanCacheWrapper::cache_get3(CACHE_MDD_INTERSECT, a, b, 0, &result)) {
+
+        return result;
+    }
+
+/* Perform recursive calculation */
+
+    MDD down = lddmc_intersect( mddnode_getdown(na), mddnode_getdown(nb));
+    //lddmc_refs_push(down);
+    MDD right = lddmc_intersect(mddnode_getright(na), mddnode_getright(nb));
+    //ldd_refs_pop(1);
+    result = lddmc_makenode(na_value, down, right);
+
+/* Write to cache */
+    SylvanCacheWrapper::cache_put3(CACHE_MDD_INTERSECT, a, b, 0, result);
+
+    return result;
 }
 
 

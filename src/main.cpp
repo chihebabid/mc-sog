@@ -98,6 +98,7 @@ int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &n_tasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
+    n_tasks=1;
     if (!task_id) {
         cout << "PMC-SOG : Parallel Model Checking tool based on Symbolic Observation Graphs " << endl;
         cout << "Version " <<PMCSOG_VERSION_MAJOR<<"."<<PMCSOG_VERSION_MINOR<<"."<<PMCSOG_VERSION_PATCH<<endl;
@@ -323,6 +324,6 @@ int main(int argc, char **argv) {
         }
     }
     MPI_Finalize();
-    exit(0);
+
 	return (EXIT_SUCCESS);
 }

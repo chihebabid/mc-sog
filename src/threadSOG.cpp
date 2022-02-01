@@ -215,10 +215,11 @@ void *threadSOG::doCompute() {
     int id_thread;
     id_thread = m_id_thread++;
     Set fire;
+    int min_charge=0;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
-        m_min_charge = 0;
+
         auto *c = new LDDState;
 
         //cout<<"Marquage initial is being built..."<<endl;
@@ -311,12 +312,12 @@ void *threadSOG::doCompute() {
                     fire = firable_obs(Complete_meta_state);
                     //if (max_succ<fire.size()) max_succ=fire.size();
                     //pthread_mutex_unlock(&m_mutex);
-                    m_min_charge = minCharge();
+                    min_charge = minCharge();
                     //m_min_charge=(m_min_charge+1) % m_nb_thread;
-                    pthread_spin_lock(&m_spin_stack[m_min_charge]);
-                    m_st[m_min_charge].push(Pair(couple(reached_class, Complete_meta_state), fire));
-                    pthread_spin_unlock(&m_spin_stack[m_min_charge]);
-                    m_charge[m_min_charge]++;
+                    pthread_spin_lock(&m_spin_stack[min_charge]);
+                    m_st[min_charge].push(Pair(couple(reached_class, Complete_meta_state), fire));
+                    pthread_spin_unlock(&m_spin_stack[min_charge]);
+                    m_charge[min_charge]++;
                 } else {
                     m_graph->addArc();
                     m_graph_mutex.unlock();
@@ -342,10 +343,11 @@ void *threadSOG::doComputeCanonized() {
     int id_thread;
     id_thread = m_id_thread++;
     Set fire;
+    uint16_t min_charge;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
         //  printf("*******************PARALLEL*******************\n");
-        m_min_charge = 0;
+
         auto *c = new LDDState;
         MDD Complete_meta_state(Accessible_epsilon(m_initialMarking));
         //#ldd_refs_push(Complete_meta_state);
@@ -433,12 +435,12 @@ void *threadSOG::doComputeCanonized() {
                     fire = firable_obs(Complete_meta_state);
                     //if (max_succ<fire.size()) max_succ=fire.size();
                     //pthread_mutex_unlock(&m_mutex);
-                    m_min_charge = minCharge();
+                    min_charge = minCharge();
                     //m_min_charge=(m_min_charge+1) % m_nb_thread;
-                    pthread_spin_lock(&m_spin_stack[m_min_charge]);
-                    m_st[m_min_charge].push(Pair(couple(reached_class, Complete_meta_state), fire));
-                    pthread_spin_unlock(&m_spin_stack[m_min_charge]);
-                    m_charge[m_min_charge]++;
+                    pthread_spin_lock(&m_spin_stack[min_charge]);
+                    m_st[min_charge].push(Pair(couple(reached_class, Complete_meta_state), fire));
+                    pthread_spin_unlock(&m_spin_stack[min_charge]);
+                    m_charge[min_charge]++;
                 } else {
                     m_graph->addArc();
                     m_graph_mutex.unlock();
@@ -553,16 +555,17 @@ void *threadSOG::doComputePOR() {
     id_thread = m_id_thread++;
     Set fireObs;
     bool _div, _dead;
+    MDD Complete_meta_state;
+    int min_charge = 0;
     if (id_thread == 0) {
         clock_gettime(CLOCK_REALTIME, &start);
-        //  printf("*******************PARALLEL*******************\n");
-        m_min_charge = 0;
         auto *c = new LDDState;
-        MDD Complete_meta_state{saturatePOR(m_initialMarking, fireObs, _div, _dead)};
-        cout<<"Size of obs : "<<fireObs.size()<<endl;
+        Complete_meta_state=saturatePOR(m_initialMarking, fireObs, _div, _dead);
+        cout<<Complete_meta_state<<endl;
+        //cout<<"Size of Obs : "<<fireObs.size()<<endl;
         c->m_lddstate = Complete_meta_state;
-        Set cpy=fireObs;
-        m_st[0].push(Pair(couple(c, Complete_meta_state), cpy));
+
+        m_st[0].push(Pair(couple(c, Complete_meta_state), fireObs));
         m_graph->setInitialState(c);
         m_graph->insert(c);
         m_charge[0] = 1;
@@ -587,8 +590,10 @@ void *threadSOG::doComputePOR() {
                         m_gc_mutex.lock();
                     }
                 }
-                Set cpy=fireObs;
-                MDD Complete_meta_state{saturatePOR(get_successor(e.first.second, t), cpy, _div, _dead)};
+                MDD succ=get_successor(e.first.second, t);
+                Complete_meta_state=saturatePOR(succ, fireObs, _div, _dead);
+
+                //cout<<"Marks : "<<SylvanWrapper::getMarksCount(Complete_meta_state)<<endl;
                 /* if (id_thread==0)
                  {
                      m_gc_mutex.lock();
@@ -602,32 +607,24 @@ void *threadSOG::doComputePOR() {
                      m_gc_mutex.unlock();
                  }*/
                 reached_class->m_lddstate = Complete_meta_state;
-                //reached_class->m_lddstate=reduced_meta;
-                //nbnode=bdd_pathcount(reached_class->m_lddstate);
-
-                //pthread_spin_lock(&m_accessible);
                 m_graph_mutex.lock();
                 LDDState *pos = m_graph->find(reached_class);
                 if (!pos) {
                     m_graph->addArc();
                     m_graph->insert(reached_class);
-                    m_graph_mutex.unlock();
-
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(reached_class, t));
                     reached_class->Predecessors.insert(reached_class->Predecessors.begin(), LDDEdge(e.first.first, t));
-
-                    m_min_charge = minCharge();
-                    //m_min_charge=(m_min_charge+1) % m_nb_thread;
-                    pthread_spin_lock(&m_spin_stack[m_min_charge]);
-                    Set cpy=fireObs;
-                    m_st[m_min_charge].push(Pair(couple(reached_class, Complete_meta_state), cpy));
-                    pthread_spin_unlock(&m_spin_stack[m_min_charge]);
-                    m_charge[m_min_charge]++;
-                } else {
                     m_graph_mutex.unlock();
+                    min_charge = minCharge();
+                    pthread_spin_lock(&m_spin_stack[min_charge]);
+                    m_st[min_charge].push(Pair(couple(reached_class, Complete_meta_state), fireObs));
+                    pthread_spin_unlock(&m_spin_stack[min_charge]);
+                    m_charge[min_charge]++;
+                } else {
                     m_graph->addArc();
                     e.first.first->Successors.insert(e.first.first->Successors.begin(), LDDEdge(pos, t));
                     pos->Predecessors.insert(pos->Predecessors.begin(), LDDEdge(e.first.first, t));
+                    m_graph_mutex.unlock();
                     delete reached_class;
                 }
                 if (id_thread) {

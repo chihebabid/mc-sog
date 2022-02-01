@@ -59,6 +59,7 @@ protected:
     Set firable_obs(const MDD& State);
 
     MDD get_successor(const MDD &From, const int &t);
+    MDD get_pred(const MDD &From, const int &t);
 
     MDD ImageForward(const MDD& From);
 
@@ -81,11 +82,16 @@ private:
      * Compute ample set @ample for state @s
      */
     Set computeAmple(const MDD &s);
+    Set computeAmple2(const MDD &s);
 
     /*
      * Determine ample set in S for transition
      */
     void AddConflict(const MDD &S, const int &transition, Set &ample);
+    /*
+     * New version
+     */
+    void AddConflict2(const MDD &S, const int &transition, Set &ample);
 
 };
 

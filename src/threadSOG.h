@@ -35,7 +35,7 @@ class threadSOG : public CommonSOG {
         pile m_st[128];
         int m_charge[128];
         bool m_terminaison[128];
-        int m_min_charge;
+
         int m_init;
         std::atomic<int> m_id_thread;
         pthread_mutex_t m_mutex;
