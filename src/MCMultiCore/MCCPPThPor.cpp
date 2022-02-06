@@ -1,9 +1,9 @@
-#include "ModelCheckerCPPThread.h"
+#include "MCCPPThPor.h"
 //#include "sylvan.h"
 //#include <sylvan_int.h>
 #include <functional>
 #include <iostream>
-#include <unistd.h>
+
 
 #include "SylvanWrapper.h"
 
@@ -11,71 +11,57 @@
 
 using namespace std;
 
-ModelCheckerCPPThread::ModelCheckerCPPThread(const NewNet &R, int nbThread) :
+MCCPPThPor::MCCPPThPor(const NewNet &R, int nbThread) :
         ModelCheckBaseMT(R, nbThread) {
 }
 
-size_t
-getMaxMemoryV3() {
-    long pages = sysconf(_SC_PHYS_PAGES);
-    long page_size = sysconf(_SC_PAGE_SIZE);
-    return pages * page_size;
-}
 
-void ModelCheckerCPPThread::preConfigure() {
+void MCCPPThPor::preConfigure() {
     initializeLDD();
     loadNetFromFile();
     ComputeTh_Succ();
 }
 
 /*
- * Compute SOG without reduction
+ * Compute SOG with POR reduction
  */
-void ModelCheckerCPPThread::Compute_successors() {
-    int id_thread;
-
-    id_thread = m_id_thread++;
-
-    //cout<<" I'm here thread id " <<m_id_thread<<endl;
-    Set fire;
-
+void MCCPPThPor::Compute_successors() {
+    uint16_t id_thread;
+    id_thread=m_id_thread++;
+    Set fireObs;
+    bool _div,_dead;
     if (id_thread == 0) {
-        auto *c = new LDDState;
-        MDD Complete_meta_state = Accessible_epsilon(m_initialMarking);
-        SylvanWrapper::lddmc_refs_push(Complete_meta_state);
-
-        fire = firable_obs(Complete_meta_state);
-        c->m_lddstate = Complete_meta_state;
-        c->setDeadLock(Set_Bloc(Complete_meta_state));
-        c->setDiv(Set_Div(Complete_meta_state));
-        m_graph->setInitialState(c);
-        m_graph->insert(c);
-        m_common_stack.push(Pair(couple(c, Complete_meta_state), fire));
+        auto *initialNode = new LDDState;
+        initialNode->m_lddstate=saturatePOR(m_initialMarking,fireObs,_div,_dead);
+        //initialNode->setDiv(_div);
+        initialNode->setDiv(Set_Div(initialNode->m_lddstate));
+        initialNode->setDeadLock(_dead);
+        m_graph->setInitialState(initialNode);
+        m_graph->insert(initialNode);
+        m_common_stack.push(Pair(couple(initialNode, initialNode->m_lddstate), fireObs));
         m_condStack.notify_one();
         m_finish_initial = true;
     }
 
-
     Pair e;
     do {
         std::unique_lock<std::mutex> lk(m_mutexStack);
-        m_condStack.wait(lk, std::bind(&ModelCheckerCPPThread::hasToProcess, this));
+        m_condStack.wait(lk, std::bind(&MCCPPThPor::hasToProcess, this));
         lk.unlock();
-
         if (m_common_stack.try_pop(e) && !m_finish) {
             while (!e.second.empty() && !m_finish) {
                 int t = *e.second.begin();
                 e.second.erase(t);
-                MDD reduced_meta = Accessible_epsilon(get_successor(e.first.second, t));
-                SylvanWrapper::lddmc_refs_push(reduced_meta);
+                MDD reducedMS = saturatePOR(get_successor(e.first.second, t),fireObs,_div,_dead);
+                SylvanWrapper::lddmc_refs_push(reducedMS);
                 bool res;
-                LDDState *pos = m_graph->insertFindByMDD(reduced_meta, res);
+                LDDState *pos = m_graph->insertFindByMDD(reducedMS, res);
                 m_graph->addArc();
                 if (!res) {
-                    fire = firable_obs(reduced_meta);
-                    pos->setDeadLock(Set_Bloc(reduced_meta));
-                    pos->setDiv(Set_Div(reduced_meta));
-                    m_common_stack.push(Pair(couple(pos, reduced_meta), fire));
+                    pos->setDeadLock(_dead);
+                    //pos->setDiv(Set_Div(pos->m_lddstate));
+                    pos->setDiv(_div);
+                    m_common_stack.push(Pair(couple(pos, reducedMS), fireObs));
                     m_condStack.notify_one();
                 }
                 m_graph_mutex.lock();
@@ -90,12 +76,13 @@ void ModelCheckerCPPThread::Compute_successors() {
     } while (!m_finish);
 }
 
-void ModelCheckerCPPThread::threadHandler(void *context) {
+
+void MCCPPThPor::threadHandler(void *context) {
     SylvanWrapper::lddmc_refs_init();
-    ((ModelCheckerCPPThread *) context)->Compute_successors();
+    ((MCCPPThPor *) context)->Compute_successors();
 }
 
-void ModelCheckerCPPThread::ComputeTh_Succ() {
+void MCCPPThPor::ComputeTh_Succ() {
     m_id_thread = 0;
     pthread_barrier_init(&m_barrier_builder, nullptr, m_nb_thread + 1);
     m_finish = false;
@@ -107,7 +94,7 @@ void ModelCheckerCPPThread::ComputeTh_Succ() {
     }
 }
 
-ModelCheckerCPPThread::~ModelCheckerCPPThread() {
+MCCPPThPor::~MCCPPThPor() {
     m_finish = true;
     m_condStack.notify_all();
     for (int i = 0; i < m_nb_thread; i++) {
@@ -116,6 +103,6 @@ ModelCheckerCPPThread::~ModelCheckerCPPThread() {
     }
 }
 
-bool ModelCheckerCPPThread::hasToProcess() const {
+bool MCCPPThPor::hasToProcess() const {
     return m_finish || !m_common_stack.empty();
 }

@@ -22,7 +22,7 @@
 #define REDUCE 1
 using namespace std;
 
-MCHybridSOGReq::MCHybridSOGReq(const NewNet &R, MPI_Comm &comm_world, bool init):m_comm_world(comm_world) {
+MCHybridSOGReq::MCHybridSOGReq(const NewNet &R, MPI_Comm &comm_world, bool init): m_comm_world(comm_world) {
     initializeLDD();
     m_net = &R;
     m_init = init;

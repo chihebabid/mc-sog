@@ -21,7 +21,7 @@ void MCThReqPor::ComputeTh_Succ() {
     m_id_thread = 0;
     //cout<<"Enter : "<<__func__ <<endl;
     pthread_barrier_init(&m_barrier_threads, nullptr, m_nb_thread + 1);
-    for (int i = 0; i < m_nb_thread; i++) {
+    for (int i = 0; i < m_nb_thread; ++i) {
         m_list_thread[i] = new thread(threadHandler, this);
         if (m_list_thread[i] == nullptr) {
             cout << "error: pthread creation failed" << endl;
@@ -71,7 +71,7 @@ void MCThReqPor::buildSucc(LDDState *agregate) {
     if (!agregate->isVisited()) {
         agregate->setVisited();
         if (agregate->getMCurrentLevel() == 0) {
-            Set fire = firable_obs(agregate->m_lddstate);
+            Set fire = firable_obs(agregate->m_lddstate);///////////////////////////////////////////////////
             agregate->setMCurrentLevel(LEVEL);
             agregate->m_nbSuccessorsToBeProcessed = fire.size();
             if (!fire.empty()) {

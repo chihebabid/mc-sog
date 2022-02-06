@@ -173,7 +173,7 @@ public:
 
     static size_t lddmc_nodecount(MDD mdd);
 
-    static MDD lddmc_union_mono(MDD a, MDD b);
+    static MDD lddmc_union_mono(MDD a,MDD b);
     static MDD lddmc_intersect(MDD a, MDD b);
     static bool isSingleMDD(MDD mdd);
 
@@ -185,7 +185,7 @@ public:
 
     static MDD ldd_minus(MDD a, MDD b);
 
-    static MDD lddmc_firing_mono(MDD cmark, const MDD minus, const MDD plus);
+    static MDD lddmc_firing_mono(MDD cmark, const MDD& minus, const MDD& plus);
 
     static size_t lddmc_nodecount_mark(MDD mdd);
 
@@ -227,7 +227,7 @@ public:
     static inline uint64_t
     llmsset_lookup2(const llmsset2_t dbs, uint64_t a, uint64_t b, int *created, const int custom);
 
-    static uint64_t llmsset_lookup(const llmsset2_t dbs, const uint64_t a, const uint64_t b, int *created);
+    static uint64_t llmsset_lookup(const llmsset2_t& dbs, const uint64_t& a, const uint64_t& b, int *created);
 
     static uint64_t llmsset_hash(const uint64_t a, const uint64_t b, const uint64_t seed);
 

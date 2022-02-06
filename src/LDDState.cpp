@@ -5,7 +5,7 @@
 
 LDDState::~LDDState()=default;
 
-void LDDState::setLDDValue(MDD m) {
+void LDDState::setLDDValue(const MDD & m) {
     m_lddstate=m;
 }
 MDD  LDDState::getLDDValue() {

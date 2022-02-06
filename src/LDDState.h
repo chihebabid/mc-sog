@@ -22,7 +22,7 @@ class LDDState {
   vector<pair<LDDState*, int>>* getSuccessors();
   vector<pair<LDDState*, int> > Predecessors, Successors;
 
-  void setLDDValue(MDD m);
+  void setLDDValue(const MDD& m);
   MDD getLDDValue();
   MDD m_lddstate=0;
   unsigned char m_SHA2[81];
@@ -31,9 +31,9 @@ class LDDState {
   bool m_blocage=false;
   bool isVirtual() {return m_virtual;}
   void setVirtual(){m_virtual=true;}
-  void setDiv(bool di) {m_boucle=di;}
+  void setDiv(const bool& di) {m_boucle=di;}
   inline bool isDiv() {return m_boucle;}
-  void setDeadLock(bool de) {m_blocage=de;}
+  void setDeadLock(const bool& de) {m_blocage=de;}
   bool isDeadLock() {return m_blocage;}
   inline void setVisited() {m_visited=true;}
   [[nodiscard]] inline bool isVisited() const {return m_visited;}
@@ -41,7 +41,7 @@ class LDDState {
   bool isCompletedSucc() {return m_completed;}
   vector<uint16_t> getMarkedPlaces(set<uint16_t>& lplacesAP);
   vector<uint16_t> getUnmarkedPlaces(set<uint16_t>& lplacesAP);
-  void setProcess(uint16_t v) {m_process=v;}
+  void setProcess(const uint16_t& v) {m_process=v;}
   [[nodiscard]] uint16_t getProcess() const {return m_process;}
   inline void decNbSuccessors() {m_nbSuccessorsToBeProcessed--;}
  protected:

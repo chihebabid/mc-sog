@@ -27,11 +27,11 @@ SogKripkeTh::SogKripkeTh(const bdd_dict_ptr &dict_ptr,ModelCheckBaseMT *builder)
 
 SogKripkeTh::SogKripkeTh(const spot::bdd_dict_ptr& dict_ptr,ModelCheckBaseMT *builder,set<string> &l_transap,set<string> &l_placeap):SogKripkeTh(dict_ptr,builder) {
 
-    for (auto it=l_transap.begin();it!=l_transap.end();it++) {
-        register_ap(*it);
+    for (const auto& it:l_transap) {
+        register_ap(it);
     }
-    for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
-        register_ap(*it);
+    for (const auto & it: l_placeap)
+        register_ap(it);
 
 }
 
@@ -53,32 +53,14 @@ std::string SogKripkeTh::format_state(const spot::state* s) const
   }
 
 SogKripkeIteratorTh* SogKripkeTh::succ_iter(const spot::state* s) const {
-   
     auto ss = static_cast<const SogKripkeStateTh*>(s);
     LDDState *aggregate=ss->getLDDState();
     bdd cond = state_condition(ss);
-    /*if (iter_cache_)
-    {
-      auto it = static_cast<SogKripkeIteratorTh*>(iter_cache_);
-      it->recycle(aggregate, cond);
-      iter_cache_ = nullptr;    // empty the cache
-      return it;
-    }*/
-
-  return new SogKripkeIteratorTh(aggregate,cond);
-
-    
-    
-    
-/*    auto ss = static_cast<const SogKripkeStateTh*>(s);
-   //////////////////////////////////////////////
-
-    return new SogKripkeIteratorTh(ss->getLDDState(),state_condition(ss));//,b);//s state_condition(ss));*/
+    return new SogKripkeIteratorTh(aggregate,cond);
 }
 
 bdd SogKripkeTh::state_condition(const spot::state* s) const
   {
-
     auto ss = static_cast<const SogKripkeStateTh*>(s);
 	vector<uint16_t> marked_place = ss->getLDDState()->getMarkedPlaces(m_builder->getPlaceProposition());
 #ifdef TESTENABLE
@@ -88,20 +70,19 @@ bdd SogKripkeTh::state_condition(const spot::state* s) const
 #endif
     bdd result=bddtrue;
     // Marked places
-    for (auto it=marked_place.begin();it!=marked_place.end();it++) {
-        string name=string(m_builder->getPlace(*it));
+    for (const auto& it:marked_place) {
+        string name=string(m_builder->getPlace(it));
         spot::formula f=spot::formula::ap(name);
         result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
     vector<uint16_t> unmarked_place=ss->getLDDState()->getUnmarkedPlaces(m_builder->getPlaceProposition());
-    for (auto it=unmarked_place.begin();it!=unmarked_place.end();it++) {
-        string name=string(m_builder->getPlace(*it));
+    for (const auto& it: unmarked_place) {
+        string name=string(m_builder->getPlace(it));
         spot::formula f=spot::formula::ap(name);
         result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }
   return result;
   }
-
 
 SogKripkeTh::~SogKripkeTh()
 {

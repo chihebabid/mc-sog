@@ -133,11 +133,11 @@ void LDDGraph::printCompleteInformation() {
 void LDDGraph::InitVisit(LDDState *S, size_t nb) {
     if (nb <= m_nbStates) {
 
-        for (LDDEdges::const_iterator i = S->Successors.begin(); !(i == S->Successors.end()); i++) {
+        for (const auto & i : S->Successors) {
 
-            if ((*i).first->isVisited() == true) {
+            if (i.first->isVisited() == true) {
                 nb++;
-                InitVisit((*i).first, nb);
+                InitVisit(i.first, nb);
             }
         }
 
@@ -152,10 +152,10 @@ void LDDGraph::printGraph(LDDState *s, size_t &nb) {
 
         s->setVisited();
         LDDEdges::const_iterator i;
-        for (i = s->Successors.begin(); !(i == s->Successors.end()); i++) {
-            if ((*i).first->isVisited() == false) {
+        for (const auto & i:  s->Successors) {
+            if (i.first->isVisited() == false) {
                 nb++;
-                printGraph((*i).first, nb);
+                printGraph(i.first, nb);
             }
         }
 
@@ -165,11 +165,18 @@ void LDDGraph::printGraph(LDDState *s, size_t &nb) {
 
 
 /*** Giving a position in m_GONodes Returns an LDDState ****/
-LDDState *LDDGraph::getLDDStateById(unsigned int id) {
+LDDState *LDDGraph::getLDDStateById(const unsigned int& id) {
     return m_GONodes.at(id);
 }
 
 string_view LDDGraph::getTransition(uint16_t pos) {
+
+    /*for (const auto & it : m_transition) {
+        if (it.second == pos) {
+            return it.first;
+        }
+    }
+    return it.first;*/
 
     map<string, uint16_t>::iterator it = m_transition->begin();
 

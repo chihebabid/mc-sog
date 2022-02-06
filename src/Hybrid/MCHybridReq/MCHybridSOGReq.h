@@ -52,14 +52,13 @@ class MCHybridSOGReq : public CommonSOG
 {
 public:
     MCHybridSOGReq(const NewNet &, MPI_Comm &, bool init = false);
-    void buildFromNet(int index);
     /// principal functions to construct the SOG
-    void computeDSOG(LDDGraph &g);
+    void computeDSOG(LDDGraph &g) override;
     ~MCHybridSOGReq() override;
     static void *threadHandler(void *context);
-    void *doCompute();
+    virtual void *doCompute();
+
 protected:
-private:
     std::condition_variable m_condStack;
     mutable std::mutex m_mutexCond;
     MPI_Comm m_comm_world;

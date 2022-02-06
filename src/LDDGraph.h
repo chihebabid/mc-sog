@@ -28,7 +28,7 @@ class LDDGraph
         void setPlace(map<uint16_t,string>& list_places);
         void setTransition(map<string,uint16_t>& list_transitions);
         MetaLDDNodes m_GONodes;
-        LDDState *getLDDStateById(unsigned int id);
+        LDDState *getLDDStateById(const unsigned int& id);
 		LDDState *m_initialstate=nullptr;
         uint64_t m_nbStates;
 		uint64_t m_nbMarking;

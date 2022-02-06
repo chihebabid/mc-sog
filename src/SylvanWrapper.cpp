@@ -478,7 +478,7 @@ SylvanWrapper::llmsset_lookup2(const llmsset2_t dbs, uint64_t a, uint64_t b, int
     }
 }
 
-uint64_t SylvanWrapper::llmsset_lookup(const llmsset2_t dbs, const uint64_t a, const uint64_t b, int *created) {
+uint64_t SylvanWrapper::llmsset_lookup(const llmsset2_t& dbs, const uint64_t& a, const uint64_t& b, int *created) {
     return llmsset_lookup2(dbs, a, b, created, 0);
 }
 
@@ -603,7 +603,7 @@ size_t SylvanWrapper::lddmc_nodecount_mark(MDD mdd) {
     return 1 + lddmc_nodecount_mark(mddnode_getdown(n)) + lddmc_nodecount_mark(mddnode_getright(n));
 }
 
-MDD SylvanWrapper::lddmc_union_mono(MDD a, MDD b) {
+MDD SylvanWrapper::lddmc_union_mono(MDD a,MDD b) {
     /* Terminal cases */
     if (a == b) return a;
     if (a == lddmc_false) return b;
@@ -834,10 +834,10 @@ bool SylvanWrapper::isFirable(MDD cmark, MDD minus) {
     return result;
 }
 
-MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD minus, const MDD plus) {
+MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD& minus, const MDD& plus) {
     // for an empty set of source states, or an empty transition relation, return the empty set
     if (cmark == lddmc_true) return lddmc_true;
-    if (minus == lddmc_false || plus == lddmc_false) return lddmc_false;
+    if (minus == lddmc_false || plus == lddmc_false || cmark==lddmc_false) return lddmc_false;
 
     MDD result;
     MDD _cmark = cmark, _minus = minus, _plus = plus;
@@ -1192,7 +1192,7 @@ int SylvanWrapper::llmsset_mark(const llmsset2_t dbs, uint64_t index) {
  * Intersection
  */
 
-MDD SylvanWrapper::lddmc_intersect(MDD a, MDD b) {
+MDD SylvanWrapper::lddmc_intersect(MDD a,MDD b) {
 /* Terminal cases */
     if (a == b) return a;
     if (a == lddmc_false || b == lddmc_false) return lddmc_false;

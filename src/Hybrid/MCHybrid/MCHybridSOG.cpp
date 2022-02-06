@@ -385,7 +385,7 @@ void MCHybridSOG::computeDSOG(LDDGraph &g) {
     m_nbsend = 0;
     m_gc = 0;
 
-    for (uint8_t i = 0; i < m_nb_thread - 1; i++) {
+    for (uint8_t i = 0; i < m_nb_thread - 1; ++i) {
         m_list_thread[i] = new thread(threadHandler, this);
         if (m_list_thread[i] == nullptr) {
             cout << "error: thread creation failed..." << endl;
@@ -411,8 +411,8 @@ MDD MCHybridSOG::decodage_message(const char *chaine) {
     //nb_marq = (nb_marq << 7) | ((unsigned char) chaine[0] >> 1);
     unsigned int index = 2;
     uint32_t list_marq[m_nbPlaces];
-    for (unsigned int i = 0; i < nb_marq; i++) {
-        for (unsigned int j = 0; j < m_nbPlaces; j++) {
+    for (unsigned int i = 0; i < nb_marq; ++i) {
+        for (unsigned int j = 0; j < m_nbPlaces; ++j) {
             list_marq[j] = (uint32_t) ((unsigned char) chaine[index] - 1);
             index++;
         }
@@ -462,7 +462,7 @@ void MCHybridSOG::sendPropToMC(size_t pos) {
     size_t indice = 8;
     memcpy(mess_to_send + indice, &s_mp, 2);
     indice += 2;
-    for (auto it = marked_places.begin(); it != marked_places.end(); it++) {
+    for (auto it = marked_places.begin(); it != marked_places.end();++it) {
         memcpy(mess_to_send + indice, &(*it), 2);
         indice += 2;
     }

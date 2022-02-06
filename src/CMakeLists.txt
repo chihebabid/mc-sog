@@ -76,12 +76,15 @@ add_executable(mc-sog main.cpp
         MCMultiCore/ModelCheckerCPPThread.cpp MCMultiCore/ModelCheckerCPPThread.h
         MCMultiCore/ModelCheckerTh.cpp MCMultiCore/ModelCheckerTh.h
         MCMultiCore/MCThReqPor.cpp MCMultiCore/MCThReqPor.h
+        MCMultiCore/MCCPPThPor.cpp MCMultiCore/MCCPPThPor.h
         threadSOG.cpp threadSOG.h
         HybridSOG.cpp HybridSOG.h
         Hybrid/MCHybrid/MCHybridSOG.cpp Hybrid/MCHybrid/MCHybridSOG.h
         MCMultiCore/ModelCheckThReq.cpp MCMultiCore/ModelCheckThReq.h
         Hybrid/MCHybridReq/MCHybridSOGReq.cpp
         Hybrid/MCHybridReq/MCHybridSOGReq.h
+        Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.cpp
+        Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h
         misc/md5_hash.h)
 
 

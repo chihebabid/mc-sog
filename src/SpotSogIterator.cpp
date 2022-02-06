@@ -9,7 +9,7 @@ SpotSogIterator::SpotSogIterator(const LDDState* lddstate):m_lddstate(lddstate)
     //vector<pair<LDDState*, int>>
 
     m_lddstate->setDiv(true);
-    for (int i=0;i<m_lddstate->getSuccessors()->size();i++) {
+    for (int i=0;i<m_lddstate->getSuccessors()->size();++i) {
         m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
     }
    /* if (lddstate->isDeadLock()) {
