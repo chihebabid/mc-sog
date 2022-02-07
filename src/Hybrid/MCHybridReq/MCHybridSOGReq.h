@@ -59,11 +59,16 @@ public:
     virtual void *doCompute();
 
 protected:
+    /// Convert a string caracter to an MDD
+    MDD decodage_message(const char *chaine);
+    /// there is a message to receive?
+    void read_message();
+    void sendSuccToMC();
+    void sendPropToMC(size_t pos);
     std::condition_variable m_condStack;
     mutable std::mutex m_mutexCond;
     MPI_Comm m_comm_world;
-    void sendSuccToMC();
-    void sendPropToMC(size_t pos);
+
     atomic<bool> m_waitingAgregate;// (false);
     atomic<statereq> m_waitingBuildSucc;
     char m_id_md5[16];
@@ -74,11 +79,6 @@ protected:
     SafeDequeue<MSG> m_tosend_msg;
 
     int m_init;
-    /// Convert a string caracter to an MDD
-    MDD decodage_message(const char *chaine);
-    /// there is a message to receive?
-    void read_message();
-
     /// receive state message
     void send_state_message();
     thread* m_list_thread[128];

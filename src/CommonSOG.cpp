@@ -13,13 +13,13 @@ LDDGraph *CommonSOG::getGraph() {
 
 MDD CommonSOG::Accessible_epsilon(const MDD& From) {
     MDD M1;
-    MDD M2 = From;
+    MDD M2 {From};
     do {
         M1 = M2;
-        for (auto i = m_nonObservable.begin(); !(i == m_nonObservable.end()); i++) {
+        for (const auto& i: m_nonObservable) {
             //fireTransition
-            MDD succ = SylvanWrapper::lddmc_firing_mono(M2, m_tb_relation[(*i)].getMinus(),
-                                                        m_tb_relation[(*i)].getPlus());
+            MDD succ = SylvanWrapper::lddmc_firing_mono(M2, m_tb_relation[i].getMinus(),
+                                                        m_tb_relation[i].getPlus());
             M2 = SylvanWrapper::lddmc_union_mono(M2, succ);
         }
     } while (M1 != M2);
@@ -48,7 +48,7 @@ MDD CommonSOG::get_pred(const MDD &From, const int &t) {
 
 MDD CommonSOG::ImageForward(const MDD& From) {
     MDD Res = lddmc_false;
-    for (auto i: m_nonObservable) {
+    for (const auto& i: m_nonObservable) {
         MDD succ = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
         Res = SylvanWrapper::lddmc_union_mono(Res, succ);
     }
@@ -63,17 +63,17 @@ MDD CommonSOG::Canonize(const MDD& s, unsigned int level) {
     if (SylvanWrapper::isSingleMDD(s)) {
         return s;
     }
-    MDD s0 = lddmc_false, s1 = lddmc_false;
-    bool res = false;
+    MDD s0 {lddmc_false}, s1 {lddmc_false};
+    //bool res {false};
     do {
         if (SylvanWrapper::get_mddnbr(s, level) > 1) {
             s0 = SylvanWrapper::ldd_divide_rec(s, level);
             s1 = SylvanWrapper::ldd_minus(s, s0);
-            res = true;
+            break;
         } else {
-            level++;
+            ++level;
         }
-    } while (level < m_nbPlaces && !res);
+    } while (level < m_nbPlaces);
     if (s0 == lddmc_false && s1 == lddmc_false) {
         return lddmc_false;
     }
@@ -120,13 +120,13 @@ MDD CommonSOG::Canonize(const MDD& s, unsigned int level) {
 
 /**** Detect divergence in an agregate ****/
 bool CommonSOG::Set_Div(const MDD &M) const {
-    if (m_nonObservable.empty()) {
+    if (m_nonObservable.empty() || M==lddmc_false)  {
         return false;
     }
     MDD Reached, From{M};
     do {
         Reached = lddmc_false;
-        for (auto i: m_nonObservable) {
+        for (const auto&  i: m_nonObservable) {
             MDD To = SylvanWrapper::lddmc_firing_mono(From, m_tb_relation[(i)].getMinus(),
                                                       m_tb_relation[(i)].getPlus());
             Reached = SylvanWrapper::lddmc_union_mono(Reached, To);
@@ -169,7 +169,7 @@ string_view CommonSOG::getPlace(int pos) {
 }
 
 void CommonSOG::initializeLDD() {
-    SylvanWrapper::sylvan_set_limits(16LL << 30, 10, 0);
+    SylvanWrapper::sylvan_set_limits(16LL << 28, 10, 0);
     SylvanWrapper::sylvan_init_package();
     SylvanWrapper::sylvan_init_ldd();
     SylvanWrapper::init_gc_seq();
@@ -181,19 +181,19 @@ void CommonSOG::loadNetFromFile() {
     int i;
     vector<Place>::const_iterator it_places;
     m_nbPlaces = m_net->places.size();
-    m_transitions = m_net->transitions;
-    m_observable = m_net->Observable;
-    m_place_proposition = m_net->m_formula_place;
-    m_nonObservable = m_net->NonObservable;
+    m_transitions = std::move(m_net->transitions);
+    //m_observable = m_net->Observable;
+    m_observable=std::move(m_net->Observable);
+
+    m_place_proposition = std::move(m_net->m_formula_place);
+    m_nonObservable = std::move(m_net->NonObservable);
 
     m_transitionName = &m_net->transitionName;
     m_placeName = &m_net->m_placePosName;
-    for (const auto& t : m_observable) {
-        m_transitions[t].mObservable=true;
-    }
 
-    cout << "Nombre de places : " << m_nbPlaces << endl;
-    cout << "Derniere place : " << m_net->places[m_nbPlaces - 1].name << endl;
+
+    cout << "#Places : " << m_nbPlaces << endl;
+    cout << "Last inserted place : " << m_net->places[m_nbPlaces - 1].name << endl;
 
     auto *liste_marques = new uint32_t[m_net->places.size()];
     for (i = 0, it_places = m_net->places.begin(); it_places != m_net->places.end(); ++i, ++it_places) {
@@ -209,7 +209,7 @@ void CommonSOG::loadNetFromFile() {
     // Transition relation
     for (const auto & t :  m_net->transitions)  {
         // Initialisation
-        for (i = 0; i < m_nbPlaces; i++) {
+        for (i = 0; i < m_nbPlaces; ++i) {
             prec[i] = 0;
             postc[i] = 0;
         }
@@ -238,13 +238,6 @@ void CommonSOG::loadNetFromFile() {
     }
     delete[] prec;
     delete[] postc;
-    for (auto elt : m_transitions){
-        cout<<"New transition"<<endl;
-        for (auto pre:elt.pre) {
-            cout<<pre.first<<" ";
-        }
-        cout<<"\n";
-    }
 }
 void CommonSOG::AddConflict2(const MDD &S, const int &transition, Set &ample) {
     auto haveCommonPre = [&](vector<pair<int, int>> &preT1, vector<pair<int, int>> &preT2) -> bool {
@@ -338,13 +331,11 @@ Set CommonSOG::computeAmple2(const MDD &S) {
     Set ample;
     MDD pre,img;
     do {
-
        for (auto index=0;index<m_tb_relation.size();++index) {
             if (SylvanWrapper::lddmc_firing_mono(S,m_tb_relation[index].getMinus(),m_tb_relation[index].getPlus())) {
                 ample.insert(index); break;
             }
         }
-
        for (const auto& t: ample) {
            AddConflict2(S, t, ample);
        }
@@ -367,6 +358,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
     myStack.insert(s);
     tObs.clear();
     MDD To {lddmc_false};
+    dead=false;div=false;
     do {
         Reach1=Reach2;
         ample=computeAmple2(From);
@@ -377,12 +369,11 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
             for (const auto & t : ample) {
                 MDD succ=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[t].getMinus(),m_tb_relation[t].getPlus());
                 if (succ!=lddmc_false) {
-                    //cout<<"Transition of ample : "<<t<<endl;
                     if (m_transitions[t].mObservable) {
                         tObs.insert(t);
                     } else {
                        if (myStack.find(succ) != myStack.end()) {
-                            div = true;
+                           // div = true;
                             for (uint16_t i = 0; i < m_tb_relation.size(); ++i) {
                                 MDD newM=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[i].getMinus(),m_tb_relation[i].getPlus());
                                 if (newM!=lddmc_false) {
@@ -402,6 +393,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
                 }
             } //end for
         }
+        if (To==From) div=true;
         From=To;
         Reach2=SylvanWrapper::lddmc_union_mono(Reach2,To);
         To=lddmc_false;

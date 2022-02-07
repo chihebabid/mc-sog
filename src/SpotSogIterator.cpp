@@ -9,8 +9,8 @@ SpotSogIterator::SpotSogIterator(const LDDState* lddstate):m_lddstate(lddstate)
     //vector<pair<LDDState*, int>>
 
     m_lddstate->setDiv(true);
-    for (int i=0;i<m_lddstate->getSuccessors()->size();++i) {
-        m_lsucc.push_back(m_lddstate->getSuccessors()->at(i));
+    for (const auto & elt : *(m_lddstate->getSuccessors())) {
+        m_lsucc.push_back(elt);
     }
    /* if (lddstate->isDeadLock()) {
         m_lsucc.push_back(pair(,-1));
@@ -44,8 +44,8 @@ SpotSogState* SpotSogIterator::dst() const
   }
 
 bdd SpotSogIterator::cond()  const {
-    if (m_lsucc.at(m_current_edge).second==-1) return bddtrue;
-    string name=string(m_graph->getTransition(m_lsucc.at(m_current_edge).second));
+    if (m_lsucc[m_current_edge].second==-1) return bddtrue;
+    string name=string(m_graph->getTransition(m_lsucc[m_current_edge].second));
     //cout<<"Value "<<m_lddstate->getSuccessors()->at(m_current_edge).second<<" Transition name "<<name<<endl;
 
     spot::bdd_dict *p=m_dict_ptr->get();

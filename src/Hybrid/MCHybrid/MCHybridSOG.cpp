@@ -22,8 +22,7 @@
 #define REDUCE 1
 using namespace std;
 
-MCHybridSOG::MCHybridSOG(const NewNet &R, MPI_Comm &comm_world, bool init) {
-    m_comm_world = comm_world;
+MCHybridSOG::MCHybridSOG(const NewNet &R, MPI_Comm &comm_world, bool init):m_comm_world(comm_world) {
     initializeLDD();
     m_net = &R;
     m_init = init;
@@ -40,8 +39,8 @@ void *MCHybridSOG::doCompute() {
 
     /****************************************** initial state ********************************************/
     if (task_id == 0 && id_thread == 0) {
-        string *chaine = new string();
-        LDDState *c = new LDDState;
+        auto *chaine = new string();
+        auto *c = new LDDState;
         MDD Complete_meta_state = Accessible_epsilon(m_initialMarking);
         c->m_lddstate = Complete_meta_state;
         //SylvanWrapper::lddmc_refs_push ( Complete_meta_state );
@@ -63,7 +62,7 @@ void *MCHybridSOG::doCompute() {
             m_common_stack.push(Pair(couple(c, Complete_meta_state), fire));
             m_condStack.notify_one();
         } else {
-            MDD initialstate = Complete_meta_state;
+            MDD initialstate;
             m_graph->insertSHA(c);
             memcpy(c->m_SHA2, Identif, 16);
             initialstate = Canonize(Complete_meta_state, 0);
@@ -156,10 +155,10 @@ void *MCHybridSOG::doCompute() {
                         // ldd_refs_push(Reduced);
 
                         //MDD Reduced=ldd_reachedclass;
-                        string *message_to_send1 = new string();
+                        auto *message_to_send1 = new string();
                         SylvanWrapper::convert_wholemdd_stringcpp(ldd_reachedclass, *message_to_send1);
                         md5_hash::compute(*message_to_send1, Identif);
-                        uint16_t destination = (uint16_t) (Identif[0] % n_tasks);
+                        auto destination = (uint16_t) (Identif[0] % n_tasks);
                         /**************** construction local ******/
                         // cout<<"debut boucle pile process "<<task_id<< " thread "<< id_thread<<endl;
 
@@ -322,7 +321,7 @@ void MCHybridSOG::read_message() {
             char inmsg[nbytes + 1];
             MPI_Recv(inmsg, nbytes, MPI_CHAR, m_status.MPI_SOURCE, TAG_STATE, MPI_COMM_WORLD, &m_status);
             m_nbrecv++;
-            string *msg_receiv = new string(inmsg, nbytes);
+            auto *msg_receiv = new string(inmsg, nbytes);
             m_received_msg.push(MSG(msg_receiv, 0));
             m_condStack.notify_one();
         }
@@ -408,7 +407,6 @@ MCHybridSOG::~MCHybridSOG()=default;
 MDD MCHybridSOG::decodage_message(const char *chaine) {
     MDD M = lddmc_false;
     unsigned int nb_marq = (((unsigned char) chaine[1] - 1)<<7) | ((unsigned char) chaine[0] >> 1);
-    //nb_marq = (nb_marq << 7) | ((unsigned char) chaine[0] >> 1);
     unsigned int index = 2;
     uint32_t list_marq[m_nbPlaces];
     for (unsigned int i = 0; i < nb_marq; ++i) {
@@ -429,14 +427,14 @@ void *MCHybridSOG::threadHandler(void *context) {
 
 void MCHybridSOG::sendSuccToMC() {
     uint32_t nb_succ = m_aggWaiting->getSuccessors()->size();
-    uint32_t message_size = nb_succ * 20 + 4;
+    uint32_t message_size {nb_succ * 20 + 4};
     char mess_tosend[message_size];
     memcpy(mess_tosend, &nb_succ, 4);
     uint32_t i_message = 4;
     //cout<<"***************************Number of succesors to send :"<<nb_succ<<endl;
-    for (uint32_t i = 0; i < nb_succ; i++) {
+    for (uint32_t i = 0; i < nb_succ; ++i) {
         pair<LDDState *, int> elt;
-        elt = m_aggWaiting->getSuccessors()->at(i);
+        elt = (*(m_aggWaiting->getSuccessors()))[i];
         memcpy(mess_tosend + i_message, elt.first->getSHAValue(), 16);
         i_message += 16;
         uint16_t pcontainer = elt.first->getProcess();
@@ -462,14 +460,14 @@ void MCHybridSOG::sendPropToMC(size_t pos) {
     size_t indice = 8;
     memcpy(mess_to_send + indice, &s_mp, 2);
     indice += 2;
-    for (auto it = marked_places.begin(); it != marked_places.end();++it) {
-        memcpy(mess_to_send + indice, &(*it), 2);
+    for (const auto& it : marked_places) {
+        memcpy(mess_to_send + indice, &it, 2);
         indice += 2;
     }
     memcpy(mess_to_send + indice, &s_up, 2);
     indice += 2;
-    for (auto it : unmarked_places) {
-        memcpy(mess_to_send + indice, &(it), 2);
+    for (const auto& it : unmarked_places) {
+        memcpy(mess_to_send + indice, &it, 2);
         indice += 2;
     }
     uint8_t divblock = agg->isDiv();

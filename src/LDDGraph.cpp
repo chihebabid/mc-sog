@@ -24,7 +24,7 @@ LDDState *LDDGraph::find(LDDState *c) {
 
 LDDState *LDDGraph::insertFindByMDD(MDD md, bool &found) {
     std::lock_guard lock(m_mutex);
-    {
+
 
         for (auto& i : m_GONodes) {
             if (md == i->m_lddstate) {
@@ -32,7 +32,7 @@ LDDState *LDDGraph::insertFindByMDD(MDD md, bool &found) {
                 return i;
             }
         }
-    }
+
     LDDState *n = new LDDState;
     n->m_lddstate = md;
     found = false;
@@ -43,27 +43,33 @@ LDDState *LDDGraph::insertFindByMDD(MDD md, bool &found) {
 
 
 LDDState *LDDGraph::findSHA(unsigned char *c) {
-    std::shared_lock<std::shared_mutex> lock(m_mutex);
-    for (MetaLDDNodes::const_iterator i = m_GONodes.begin(); !(i == m_GONodes.end()); i++)
-        if ((*i)->isVirtual() == true)
-            if (memcmp((char*)c, (char*) (*i)->m_SHA2,16) == 0)
-                return *i;
+    {
+        std::shared_lock<std::shared_mutex> lock(m_mutex);
+        for (const auto &i: m_GONodes)
+            if (i->isVirtual() == true)
+                if (memcmp((char *) c, (char *) i->m_SHA2, 16) == 0)
+                    return i;
+    }
     return nullptr;
 }
 
 /***   Try to find an aggregate by its md5 code, else it is inserted***/
 LDDState *LDDGraph::insertFindSha(unsigned char *c, LDDState *agg) {
     LDDState *res = nullptr;
-    std::lock_guard<std::shared_mutex> lock(m_mutex);
-    for (auto i = m_GONodes.begin(); !(i == m_GONodes.end()) && !res; i++) {
-        if ((*i)->isVirtual() == true)
-            if (memcmp((char*)c, (char*) (*i)->m_SHA2,16) == 0)
-                res = *i;
-    }
-    if (res == nullptr) {
-        agg->setVirtual();
-        memcpy(agg->m_SHA2, c, 16);
-        this->m_GONodes.push_back(agg);
+    {
+        std::lock_guard<std::shared_mutex> lock(m_mutex);
+        for (const auto & i : m_GONodes) {
+            if (i->isVirtual() == true)
+                if (memcmp((char *) c, (char *) i->m_SHA2, 16) == 0) {
+                    res = i;
+                    break;
+                }
+        }
+        if (res == nullptr) {
+            agg->setVirtual();
+            memcpy(agg->m_SHA2, c, 16);
+            this->m_GONodes.push_back(agg);
+        }
     }
     return res;
 }
@@ -72,12 +78,14 @@ LDDState *LDDGraph::insertFindSha(unsigned char *c, LDDState *agg) {
 size_t LDDGraph::findSHAPos(unsigned char *c, bool &res) {
     size_t i;
     res = false;
-    std::shared_lock<std::shared_mutex> lock(m_mutex);
-    for (i = 0; i < m_GONodes.size(); i++)
-        if (memcmp(c, m_GONodes.at(i)->m_SHA2,16) == 0) {
-            res = true;
-            return i;
-        }
+    {
+        std::shared_lock<std::shared_mutex> lock(m_mutex);
+        for (i = 0; i < m_GONodes.size(); ++i)
+            if (memcmp(c, m_GONodes[i]->m_SHA2, 16) == 0) {
+                res = true;
+                return i;
+            }
+    }
     return i;
 }
 
@@ -136,7 +144,7 @@ void LDDGraph::InitVisit(LDDState *S, size_t nb) {
         for (const auto & i : S->Successors) {
 
             if (i.first->isVisited() == true) {
-                nb++;
+                ++nb;
                 InitVisit(i.first, nb);
             }
         }
@@ -154,7 +162,7 @@ void LDDGraph::printGraph(LDDState *s, size_t &nb) {
         LDDEdges::const_iterator i;
         for (const auto & i:  s->Successors) {
             if (i.first->isVisited() == false) {
-                nb++;
+                ++nb;
                 printGraph(i.first, nb);
             }
         }
@@ -166,7 +174,7 @@ void LDDGraph::printGraph(LDDState *s, size_t &nb) {
 
 /*** Giving a position in m_GONodes Returns an LDDState ****/
 LDDState *LDDGraph::getLDDStateById(const unsigned int& id) {
-    return m_GONodes.at(id);
+    return m_GONodes[id];
 }
 
 string_view LDDGraph::getTransition(uint16_t pos) {
@@ -184,7 +192,7 @@ string_view LDDGraph::getTransition(uint16_t pos) {
         if (it->second == pos) {
            return it->first;
         }
-        it++;
+        ++it;
     }
     return it->first;
 }

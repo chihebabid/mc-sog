@@ -46,7 +46,7 @@ uint64_t SylvanWrapper::getMarksCount(MDD cmark) {
     do {
         explore_mdd = local_stack.top();
         local_stack.pop();
-        compteur++;
+        ++compteur;
         while (explore_mdd != lddmc_false && explore_mdd != lddmc_true) {
             mddnode_t n_val = GETNODE(explore_mdd);
             if (mddnode_getright(n_val) != lddmc_false) {
@@ -341,11 +341,11 @@ size_t SylvanWrapper::llmsset_count_marked_seq(llmsset2_t dbs, size_t first, siz
             result += __builtin_popcountll(ptr[7]);
         } else {
             uint64_t mask = 0x8000000000000000LL >> (first & 63);
-            for (size_t k = 0; k < count; k++) {
+            for (size_t k = 0; k < count; ++k) {
                 if (*ptr & mask) result += 1;
                 mask >>= 1;
                 if (mask == 0) {
-                    ptr++;
+                    ++ptr;
                     mask = 0x8000000000000000LL;
                 }
             }
@@ -431,7 +431,7 @@ SylvanWrapper::llmsset_lookup2(const llmsset2_t dbs, uint64_t a, uint64_t b, int
             if (cas(bucket, 0, hash | cidx)) {
                 if (custom) set_custom_bucket(dbs, cidx, custom);
                 *created = 1;
-                m_g_created++;
+                ++m_g_created;
                 return cidx;
             } else {
                 v = *bucket;
@@ -509,8 +509,8 @@ uint64_t SylvanWrapper::claim_data_bucket(const llmsset2_t dbs) {
                     *ptr |= (0x8000000000000000LL >> j);
                     return (8 * my_region + i) * 64 + j;
                 }
-                i++;
-                ptr++;
+                ++i;
+                ++ptr;
             }
         } else {
             //printf("yep!");
@@ -714,7 +714,7 @@ bool SylvanWrapper::isSingleMDD(MDD mdd) {
 // Renvoie le nbre de noeuds à un niveau donné
 int SylvanWrapper::get_mddnbr(MDD mdd, unsigned int level) {
     mddnode_t node;
-    for (int j = 0; j < level; j++) {
+    for (int j = 0; j < level; ++j) {
         node = GETNODE(mdd);
         mdd = mddnode_getdown(node);
     }
@@ -723,7 +723,7 @@ int SylvanWrapper::get_mddnbr(MDD mdd, unsigned int level) {
     while (mdd != lddmc_false) {
         mddnode_t r = GETNODE(mdd);
         mdd = mddnode_getright(r);
-        i++;
+        ++i;
     }
     return i;
 }
@@ -739,8 +739,8 @@ MDD SylvanWrapper::ldd_divide_internal(MDD a, int current_level, int level) {
         return result;
     }
 
-    mddnode_t node_a = GETNODE(a);
-    const uint32_t na_value = mddnode_getvalue(node_a);
+    mddnode_t node_a {GETNODE(a)};
+    const uint32_t na_value {mddnode_getvalue(node_a)};
 
 
     /* Perform recursive calculation */
@@ -877,8 +877,8 @@ MDD SylvanWrapper::lddmc_firing_mono(MDD cmark, const MDD& minus, const MDD& plu
 MDD SylvanWrapper::lddmc_project(const MDD mdd, const MDD proj) {
     if (mdd == lddmc_false) return lddmc_false; // projection of empty is empty
     if (mdd == lddmc_true) return lddmc_true; // projection of universe is universe...
-    mddnode_t p_node = GETNODE(proj);
-    uint32_t p_val = mddnode_getvalue(p_node);
+    mddnode_t p_node {GETNODE(proj)};
+    uint32_t p_val {mddnode_getvalue(p_node)};
     if (p_val == (uint32_t) -1) return mdd;
     if (p_val == (uint32_t) -2) return lddmc_true; // because we always end with true.
 
@@ -909,7 +909,7 @@ MDD SylvanWrapper::lddmc_project(const MDD mdd, const MDD proj) {
                 //lddmc_refs_spawn(SPAWN(lddmc_project, mddnode_getdown(n), p_down));
                 MDD down = lddmc_project(mddnode_getdown(n), p_down);
                 result = lddmc_union_mono(result, down);
-                count++;
+                ++count;
                 _mdd = mddnode_getright(n);
                 assert(_mdd != lddmc_true);
                 if (_mdd == lddmc_false) break;
@@ -934,8 +934,8 @@ int SylvanWrapper::isGCRequired() {
 void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark, string &res) {
     typedef pair<string, MDD> Pair_stack;
     stack<Pair_stack> local_stack;
-    unsigned int compteur = 0;
-    MDD explore_mdd = cmark;
+    unsigned int compteur {0};
+    MDD explore_mdd {cmark};
     string chaine;
     res = "  ";
     local_stack.push(Pair_stack(chaine, cmark));
@@ -944,13 +944,13 @@ void SylvanWrapper::convert_wholemdd_stringcpp(MDD cmark, string &res) {
         chaine = element.first;
         explore_mdd = element.second;
         local_stack.pop();
-        compteur++;
+        ++compteur;
         while (explore_mdd != lddmc_false && explore_mdd != lddmc_true) {
             mddnode_t n_val = GETNODE(explore_mdd);
             if (mddnode_getright(n_val) != lddmc_false) {
                 local_stack.push(Pair_stack(chaine, mddnode_getright(n_val)));
             }
-            unsigned int val = mddnode_getvalue(n_val);
+            unsigned int val {mddnode_getvalue(n_val)};
             chaine.push_back((unsigned char) (val) + 1);
             explore_mdd = mddnode_getdown(n_val);
         }
@@ -1002,13 +1002,13 @@ int SylvanWrapper::llmsset_rehash_par_seq(llmsset2_t dbs, size_t first, size_t c
         int bad = 0;
         uint64_t *ptr = dbs->bitmap2 + (first / 64);
         uint64_t mask = 0x8000000000000000LL >> (first & 63);
-        for (size_t k = 0; k < count; k++) {
+        for (size_t k = 0; k < count; ++k) {
             if (*ptr & mask) {
                 if (llmsset_rehash_bucket(dbs, first + k) == 0) bad++;
             }
             mask >>= 1;
             if (mask == 0) {
-                ptr++;
+                ++ptr;
                 mask = 0x8000000000000000LL;
             }
         }
@@ -1096,7 +1096,7 @@ void SylvanWrapper::llmsset_destroy(llmsset2_t dbs, size_t first, size_t count) 
         llmsset_destroy(dbs, first + split, count - split);
 
     } else {
-        for (size_t k = first; k < first + count; k++) {
+        for (size_t k = first; k < first + count; ++k) {
             volatile uint64_t *ptr2 = dbs->bitmap2 + (k / 64);
             volatile uint64_t *ptrc = dbs->bitmapc + (k / 64);
             uint64_t mask = 0x8000000000000000LL >> (k & 63);
@@ -1234,9 +1234,9 @@ MDD SylvanWrapper::lddmc_intersect(MDD a,MDD b) {
 
 /* Perform recursive calculation */
 
-    MDD down = lddmc_intersect( mddnode_getdown(na), mddnode_getdown(nb));
+    MDD down {lddmc_intersect( mddnode_getdown(na), mddnode_getdown(nb))};
     //lddmc_refs_push(down);
-    MDD right = lddmc_intersect(mddnode_getright(na), mddnode_getright(nb));
+    MDD right {lddmc_intersect(mddnode_getright(na), mddnode_getright(nb))};
     //ldd_refs_pop(1);
     result = lddmc_makenode(na_value, down, right);
 

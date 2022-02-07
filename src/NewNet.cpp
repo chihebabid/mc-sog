@@ -80,8 +80,10 @@ NewNet::NewNet(const char *f, const char *Formula_trans, const char *Int_trans) 
                   inserter(Observable, Observable.begin()));
         Set_Non_Observables();
     } else
-        for (unsigned int i = 0; i < transitions.size(); i++)
+        for (unsigned int i = 0; i < transitions.size(); i++) {
             Observable.insert(i);
+            transitions[i].mObservable=true;
+        }
     cout << "FIN CREATION \n";
 }
 
@@ -155,14 +157,16 @@ void NewNet::setListObservable(const set<string> &list_t) {
             m_formula_place.insert(pi->second);
             m_lplaceAP.insert(*i);
             // Adding adjacent transitions of a place as observable transitions
-            Place p = places.at(pi->second);
+            Place p = places[pi->second];
             for (auto iter = p.post.begin(); iter != p.post.end(); iter++) {
                 Observable.insert((*iter).first);
+                transitions[(*iter).first].mObservable=true;
                 auto it = m_transitionPosName.find((*iter).first);
                 m_ltransitionAP.insert(it->second);
             }
             for (auto iter = p.pre.begin(); iter != p.pre.end(); iter++) {
                 Observable.insert((*iter).first);
+                transitions[(*iter).first].mObservable=true;
                 auto it = m_transitionPosName.find((*iter).first);
                 m_ltransitionAP.insert(it->second);
             }
@@ -171,6 +175,7 @@ void NewNet::setListObservable(const set<string> &list_t) {
             Formula_Trans.insert(pos);
             map<string, uint16_t>::iterator ti = transitionName.find(*i);
             Observable.insert(pos);
+            transitions[pos].mObservable=true;
         }
     }
 

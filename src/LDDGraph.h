@@ -46,7 +46,7 @@ class LDDGraph
 		explicit LDDGraph(CommonSOG *constuctor) {m_nbArcs=m_nbMarking=0;m_constructor=constuctor;}
 		void setInitialState(LDDState*);  //Define the initial state of this graph
         LDDState *getInitialState() const {
-            return m_GONodes.at(0);
+            return m_GONodes[0];
         }
         LDDState *getInitialAggregate() const {
             return m_initialstate;

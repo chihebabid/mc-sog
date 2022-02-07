@@ -32,13 +32,13 @@ bool HybridKripkeIterator::done() const {
 
 HybridKripkeState* HybridKripkeIterator::dst() const
 {     
-    succ_t succ_elt= m_current_state->getListSucc()->at(m_current_edge);    
+    succ_t succ_elt= (*(m_current_state->getListSucc()))[m_current_edge];
    return new HybridKripkeState(succ_elt);  
 }
 
 bdd HybridKripkeIterator::cond()  const {
     //cout<<"entering "<<__func__<<endl;
-    succ_t succ_elt=m_current_state->getListSucc()->at(m_current_edge);    
+    succ_t succ_elt=(*(m_current_state->getListSucc()))[m_current_edge];
     if (succ_elt.transition==-1) return bddtrue;    
     string name=string(m_net->getTransitionName(succ_elt.transition));
     spot::bdd_dict *p=m_dict_ptr->get();

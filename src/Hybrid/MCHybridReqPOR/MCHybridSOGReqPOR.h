@@ -32,23 +32,14 @@
 #include <condition_variable>
 #include "misc/SafeDequeue.h"
 #include "../MCHybridReq/MCHybridSOGReq.h"
-// namespace mpi = boost::mpi;
-//#define MASTER 0
-//#define large 128
-extern unsigned int nb_th;
-extern int n_tasks, task_id;
-
-
-
-typedef pair<string *, unsigned int> MSG;
-
-typedef stack<MSG> pile_msg;
 
 class MCHybridSOGReqPOR : public MCHybridSOGReq
 {
 public:
     MCHybridSOGReqPOR(const NewNet &, MPI_Comm &, bool init = false);
     ~MCHybridSOGReqPOR() override;
+    void computeDSOG(LDDGraph &g) override;
+    static void *threadHandlerPOR(void *context);
     void *doCompute() override;
 };
 

@@ -398,7 +398,7 @@ void MCHybridSOGReq::sendSuccToMC() {
     //cout<<"***************************Number of succesors to send :"<<nb_succ<<endl;
     for (uint32_t i = 0; i < nb_succ; i++) {
         pair<LDDState *, int> elt;
-        elt = m_aggWaiting->getSuccessors()->at(i);
+        elt = (*(m_aggWaiting->getSuccessors()))[i];
         memcpy(mess_tosend + i_message, elt.first->getSHAValue(), 16);
         i_message += 16;
         uint16_t pcontainer = elt.first->getProcess();

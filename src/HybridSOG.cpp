@@ -64,6 +64,7 @@ HybridSOG::HybridSOG(const NewNet &R,bool init)
 
     //_______________
     m_transitions=R.transitions;
+    //m_observable=R.Observable;
     m_observable=R.Observable;
     m_nonObservable=R.NonObservable;
     m_place_proposition=R.m_formula_place;

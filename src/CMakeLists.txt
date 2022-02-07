@@ -85,7 +85,7 @@ add_executable(mc-sog main.cpp
         Hybrid/MCHybridReq/MCHybridSOGReq.h
         Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.cpp
         Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h
-        misc/md5_hash.h)
+        misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h)
 
 
 target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")

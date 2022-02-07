@@ -73,7 +73,9 @@ Distributed execution
 mpirun -n arg0 hybrid-sog arg1 arg 2 arg3 arg4
 arg0 : specifies the number of processes must be >1
 arg1: specifies whether modelchecking should be performed on the fly. It can be set with one of the following values:
-     * otf : Construction performing Model checking on the fly
+     * otf : Construction performing Model checking on the fly while trying to build whole SOG
+     * otfPOR : Same as otf with Partial Order Reduction
+     * otfPR : Construction performing Model checking on the fly. The construction of the SOG is performed progressively alongside Model checking
      * otherwise : construction without Model checking
 arg2: specifies the number of threads/workers to be created
 arg3: specifies the net to build its SOG

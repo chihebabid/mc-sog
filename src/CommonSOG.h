@@ -31,7 +31,7 @@ public:
 
     inline string_view getTransition(int pos) {
         {
-            return string_view{m_transitions.at(pos).name};
+            return string_view{m_transitions[pos].name};
         }
     }
 
@@ -50,10 +50,8 @@ protected:
     map<uint16_t, string> *m_placeName;
     Set m_observable;
     Set m_nonObservable;
-
     set<uint16_t> m_place_proposition;
     vector<class Transition> m_transitions;
-
     MDD Accessible_epsilon(const MDD& From);
 
     Set firable_obs(const MDD& State);

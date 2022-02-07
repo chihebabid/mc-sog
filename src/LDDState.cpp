@@ -29,7 +29,7 @@ vector<uint16_t> LDDState::getMarkedPlaces(set<uint16_t>& lplacesAP) {
     int depth=0;
     for (auto & iter : lplacesAP) {
         mddnode_t node=SylvanWrapper::GETNODE(mdd);
-        for (; depth < iter; depth++) {
+        for (; depth < iter; ++depth) {
             mdd=SylvanWrapper::mddnode_getdown(node);
             node=SylvanWrapper::GETNODE(mdd);
         }
@@ -46,7 +46,7 @@ vector<uint16_t> LDDState::getUnmarkedPlaces(set<uint16_t>& lplacesAP) {
     int depth=0;
     for (auto & iter : lplacesAP) {
         mddnode_t node=SylvanWrapper::GETNODE(mdd);
-        for (; depth < iter; depth++) {
+        for (; depth < iter; ++depth) {
             mdd=SylvanWrapper::mddnode_getdown(node);
             node=SylvanWrapper::GETNODE(mdd);
         }

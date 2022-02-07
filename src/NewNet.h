@@ -60,12 +60,9 @@ class NewNet : public RdPMonteur {
     void setListObservable(const set<string> & list_t);
  private:
   /*Initialisation des attributs*/
-  bool Set_Observables(const char *file);
   bool Set_Interface_Trans(const char *file);
   bool Set_Formula_Trans(const char *file);
-  bool Set_ObsNonObservables(Set_mot obs);
   void Set_Non_Observables();
-
  public:
   /* Attributs */
   vector<class Place> places;
@@ -77,7 +74,6 @@ class NewNet : public RdPMonteur {
   Set InterfaceTrans;
   Set Formula_Trans;
   set<uint16_t> m_formula_place;
-
   /* Constructors */
   NewNet(){};
   ~NewNet(){};

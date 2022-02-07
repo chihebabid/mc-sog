@@ -33,6 +33,8 @@
 #include "Hybrid/MCHybridReq/MCHybridSOGReq.h"
 #include "SylvanWrapper.h"
 #include "PMCSOGConfig.h"
+#include "Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h"
+#include "Hybrid/MCHybridPOR/MCHybridSOGPOR.h"
 // #include "RdPBDD.h"
 
 using namespace std;
@@ -99,7 +101,7 @@ int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &n_tasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
-    n_tasks=1;
+   // n_tasks=1;
     if (!task_id) {
         cout << "PMC-SOG : Parallel Model Checking tool based on Symbolic Observation Graphs " << endl;
         cout << "Version " <<PMCSOG_VERSION_MAJOR<<"."<<PMCSOG_VERSION_MINOR<<"."<<PMCSOG_VERSION_PATCH<<endl;
@@ -266,7 +268,7 @@ int main(int argc, char **argv) {
         if (nb_th > 1) {
             if (task_id == 0)
                 cout << "**************Hybrid version**************** \n" << endl;
-            if (strcmp(argv[1], "otf") && strcmp(argv[1], "otfPR")  ) {
+            if (strcmp(argv[1], "otf") && strcmp(argv[1], "otfPR") && strcmp(argv[1], "otfPOR") && strcmp(argv[1], "otfPRPOR")  ) {
                 HybridSOG DR(Rnewnet);
                 LDDGraph g(&DR);
                 if (task_id == 0)
@@ -285,10 +287,21 @@ int main(int argc, char **argv) {
                 if (task_id != n_tasks) {
                     cout << "N task :" << n_tasks << endl;
                     CommonSOG* DR;
-                    if (strcmp(argv[1], "otf")==0) DR= new MCHybridSOG(Rnewnet, gprocess, false);
-                    else {
+                    if (strcmp(argv[1], "otf")==0) {
+                        cout<<"Normal construction..."<<endl;
+                        DR= new MCHybridSOG(Rnewnet, gprocess, false);
+                    }
+                    else if (strcmp(argv[1], "otfPOR")==0) {
+                        cout<<"Normal construction with POR"<<endl;
+                        DR= new MCHybridSOGPOR(Rnewnet, gprocess, false);
+                    }
+                    else if (strcmp(argv[1], "otfPR")==0) {
                         cout<<"Progressive construction..."<<endl;
                         DR= new MCHybridSOGReq(Rnewnet, gprocess, false);
+                    }
+                    else {
+                        cout<<"Progressive construction with POR..."<<endl;
+                        DR= new MCHybridSOGReqPOR(Rnewnet, gprocess, false);
                     }
                     LDDGraph g(DR);
                     DR->computeDSOG(g);

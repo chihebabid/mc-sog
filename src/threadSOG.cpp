@@ -42,7 +42,8 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
 
     //_______________
     m_transitions = R.transitions;
-    m_observable = R.Observable;
+   // m_observable = R.Observable;
+    m_observable=std::move(R.Observable);
     m_place_proposition = R.m_formula_place;
     m_nonObservable = R.NonObservable;
 

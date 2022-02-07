@@ -4,9 +4,6 @@
 #include <stack>
 #include <vector>
 #include "NewNet.h"
-// #include "MDD.h"
-//#include "MDGraph.h"
-//#include "bvec.h"
 #include <pthread.h>
 #include <cstdio>
 #include <sys/types.h>
@@ -34,7 +31,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "misc/SafeDequeue.h"
-// namespace mpi = boost::mpi;
+
 
 //#define MASTER 0
 //#define large 128
@@ -52,14 +49,12 @@ class MCHybridSOG : public CommonSOG
 {
 public:
     MCHybridSOG(const NewNet &, MPI_Comm &, bool init = false);
-    void buildFromNet(int index);
     /// principal functions to construct the SOG
     void computeDSOG(LDDGraph &g);
     ~MCHybridSOG() override;
     static void *threadHandler(void *context);
-    void *doCompute();
+    virtual void *doCompute();
 protected:
-private:
     std::condition_variable m_condStack;
     mutable std::mutex m_mutexCond;
     MPI_Comm m_comm_world;
