@@ -4,9 +4,6 @@
 #include <stack>
 #include <vector>
 #include "NewNet.h"
-// #include "MDD.h"
-//#include "MDGraph.h"
-//#include "bvec.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -26,7 +23,6 @@
 #include <iostream>
 #include <queue>
 #include <string>
-//#include <boost/serialization/string.hpp>
 #include <time.h>
 #include <chrono>
 #include "CommonSOG.h"
@@ -72,11 +68,6 @@ private:
     inline bool isNotTerminated();
     /// Copie string of caracter
     void strcpySHA(unsigned char *dest, const unsigned char *source);
-
-    int m_NbIt;
-    int m_itext, m_itint;
-    int m_MaxIntBdd;
-
     int m_nbmetastate;
 
     pile m_st[128];

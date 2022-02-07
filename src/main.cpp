@@ -260,8 +260,6 @@ int main(int argc, char **argv) {
 
             }
         }
-
-
     }
 
     if (n_tasks > 1) {

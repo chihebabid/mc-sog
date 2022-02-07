@@ -7,7 +7,6 @@ project(pmc-sog VERSION 0.4.2)
 
 configure_file(PMCSOGConfig.h.in src/PMCSOGConfig.h)
 
-
 #set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,7 +14,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
     #used flags -Og -DNDEBUG
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++17 -pthread -DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -fdelete-null-pointer-checks -DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -fdelete-null-pointer-checks") #
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -std=c++17 -pthread -DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves -DNDEBUG -funswitch-loops -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -fexpensive-optimizations  -fcse-follow-jumps -fthread-jumps -finline-functions -finline-small-functions -findirect-inlining -foptimize-strlen -fpartial-inlining -fexpensive-optimizations -falign-functions  -falign-jumps -falign-labels  -falign-loops -fcaller-saves") #
 
 endif()
 
@@ -24,8 +23,6 @@ set(PARSER_DIR "${CMAKE_SOURCE_DIR}/libraries/parser")
 message(STATUS "Building Petri Net parser ...")
 include_directories("${PARSER_DIR}/src")
 add_subdirectory(${PARSER_DIR})
-
-
 
 # build spot if it is not installed on the system
 find_library(SPOT_LIBRARY "spot")

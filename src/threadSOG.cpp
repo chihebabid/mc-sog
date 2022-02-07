@@ -40,10 +40,6 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     m_init = init;
     int i;
 
-    //_______________
-    m_transitions = R.transitions;
-   // m_observable = R.Observable;
-    m_observable=std::move(R.Observable);
     m_place_proposition = R.m_formula_place;
     m_nonObservable = R.NonObservable;
 
@@ -57,10 +53,10 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
     }
 
 
-    cout << "Observable transitions:" << endl;
+    cout << "mObservable transitions:" << endl;
 
-    for (const auto &it: m_observable) {
-        m_transitions[it].mObservable=true;
+    for (const auto &it: m_net->mObservable) {
+        m_net->transitions[it].mObservable=true;
         cout << it << "  ";
     }
     cout << endl;

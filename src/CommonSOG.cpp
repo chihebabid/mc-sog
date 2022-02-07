@@ -29,7 +29,7 @@ MDD CommonSOG::Accessible_epsilon(const MDD& From) {
 // Return the set of firable observable transitions from an agregate
 Set CommonSOG::firable_obs(const MDD& State) {
     Set res;
-    for (const auto& i: m_observable) {
+    for (const auto& i: m_net->mObservable) {
         MDD succ = SylvanWrapper::lddmc_firing_mono(State, m_tb_relation[i].getMinus(), m_tb_relation[i].getPlus());
         if (succ != lddmc_false) {
             res.insert(i);
@@ -159,9 +159,9 @@ LDDGraph *CommonSOG::m_graph;
 }*/
 
 //string_view CommonSOG::getTransition(int pos) {
-// cout<<"yes it is : "<<m_transitions.at(pos).name<<endl;
+// cout<<"yes it is : "<<m_net->transitions.at(pos).name<<endl;
 // cout<<"Ok "<<m_graph->getTransition(pos)<<endl;
-//    return string_view {m_transitions.at(pos).name};
+//    return string_view {m_net->transitions.at(pos).name};
 //}
 
 string_view CommonSOG::getPlace(int pos) {
@@ -181,10 +181,6 @@ void CommonSOG::loadNetFromFile() {
     int i;
     vector<Place>::const_iterator it_places;
     m_nbPlaces = m_net->places.size();
-    m_transitions = std::move(m_net->transitions);
-    //m_observable = m_net->Observable;
-    m_observable=std::move(m_net->Observable);
-
     m_place_proposition = std::move(m_net->m_formula_place);
     m_nonObservable = std::move(m_net->NonObservable);
 
@@ -250,10 +246,10 @@ void CommonSOG::AddConflict2(const MDD &S, const int &transition, Set &ample) {
         return false;
     };
     if (SylvanWrapper::lddmc_intersect(S, get_pred(get_successor(S,transition),transition))==S) {
-        for(auto i = 0; i < m_transitions.size(); ++i) {
+        for(auto i = 0; i < m_net->transitions.size(); ++i) {
             if (i!=transition) {
-                auto &preT1 = m_transitions[i].pre;
-                auto &preT2 = m_transitions[transition].pre;
+                auto &preT1 = (m_net->transitions[i]).pre;
+                auto &preT2 = (m_net->transitions[transition]).pre;
                 if (haveCommonPre(preT1, preT2)) ample.insert(i);
             }
 
@@ -261,20 +257,20 @@ void CommonSOG::AddConflict2(const MDD &S, const int &transition, Set &ample) {
     }
     else {
         if (!SylvanWrapper::SylvanWrapper::lddmc_firing_mono(S,m_tb_relation[transition].getMinus(),m_tb_relation[transition].getPlus())) {
-            for(auto i = 0; i < m_transitions.size(); ++i) {
+            for(auto i = 0; i < m_net->transitions.size(); ++i) {
                 if (i!=transition) {
-                    auto &preT = m_transitions[transition].pre;
-                    auto &postT1 = m_transitions[i].post;
+                    auto &preT = m_net->transitions[transition].pre;
+                    auto &postT1 = m_net->transitions[i].post;
                     if (haveCommonPre(preT, postT1)) ample.insert(i);
                 }
             }
         }
         else {
-            for(auto i = 0; i < m_transitions.size(); ++i) {
+            for(auto i = 0; i < m_net->transitions.size(); ++i) {
                 if (i!=transition) {
-                    auto &preT = m_transitions[transition].pre;
-                    auto &postT1 = m_transitions[i].post;
-                    auto &preT1 = m_transitions[i].pre;
+                    auto &preT = m_net->transitions[transition].pre;
+                    auto &postT1 = m_net->transitions[i].post;
+                    auto &preT1 = m_net->transitions[i].pre;
                     if (haveCommonPre(preT, postT1) || haveCommonPre(preT, preT1)) ample.insert(i);
                 }
             }
@@ -293,18 +289,18 @@ void CommonSOG::AddConflict(const MDD &S, const int &transition, Set &ample) {
     };
     if (SylvanWrapper::isFirable(S,m_tb_relation[transition].getMinus())) {
         //cout<<"Checked\n";
-        for ( auto i = 0; i < m_transitions.size(); ++i) {
+        for ( auto i = 0; i < m_net->transitions.size(); ++i) {
             if (i != transition) {
-                auto &preT1 = m_transitions[i].pre;
-                auto &preT2 = m_transitions[transition].pre;
+                auto &preT1 = m_net->transitions[i].pre;
+                auto &preT2 = m_net->transitions[transition].pre;
                 if (haveCommonPre(preT1, preT2)) ample.insert(i);
             }
         }
     } else {
-        for (auto i = 0; i < m_transitions.size(); ++i) {
+        for (auto i = 0; i < m_net->transitions.size(); ++i) {
             if (i != transition) {
-                auto &preT = m_transitions[transition].pre;
-                auto &postT1 = m_transitions[i].post;
+                auto &preT = m_net->transitions[transition].pre;
+                auto &postT1 = m_net->transitions[i].post;
                 if (haveCommonPre(preT, postT1)) ample.insert(i);
             }
         }
@@ -369,7 +365,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
             for (const auto & t : ample) {
                 MDD succ=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[t].getMinus(),m_tb_relation[t].getPlus());
                 if (succ!=lddmc_false) {
-                    if (m_transitions[t].mObservable) {
+                    if (m_net->transitions[t].mObservable) {
                         tObs.insert(t);
                     } else {
                        if (myStack.find(succ) != myStack.end()) {
@@ -377,7 +373,7 @@ MDD CommonSOG::saturatePOR(const MDD &s, Set& tObs,bool &div,bool &dead) {
                             for (uint16_t i = 0; i < m_tb_relation.size(); ++i) {
                                 MDD newM=SylvanWrapper::lddmc_firing_mono(From,m_tb_relation[i].getMinus(),m_tb_relation[i].getPlus());
                                 if (newM!=lddmc_false) {
-                                    if (m_transitions[i].mObservable) {
+                                    if (m_net->transitions[i].mObservable) {
                                         tObs.insert(i);
                                     } else {
                                         To = SylvanWrapper::lddmc_union_mono(To, newM);

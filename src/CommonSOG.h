@@ -31,7 +31,7 @@ public:
 
     inline string_view getTransition(int pos) {
         {
-            return string_view{m_transitions[pos].name};
+            return string_view{m_net->transitions[pos].name};
         }
     }
 
@@ -41,24 +41,20 @@ public:
 protected:
     static void initializeLDD();
     void loadNetFromFile();
-    const NewNet *m_net;
+    NewNet *m_net;
     int m_nbPlaces = 0;
     static LDDGraph *m_graph;
     vector<TransSylvan> m_tb_relation;
     MDD m_initialMarking;
     map<string, uint16_t> *m_transitionName;
     map<uint16_t, string> *m_placeName;
-    Set m_observable;
     Set m_nonObservable;
     set<uint16_t> m_place_proposition;
-    vector<class Transition> m_transitions;
+    //vector<class Transition> m_transitions;
     MDD Accessible_epsilon(const MDD& From);
-
     Set firable_obs(const MDD& State);
-
     MDD get_successor(const MDD &From, const int &t);
     MDD get_pred(const MDD &From, const int &t);
-
     MDD ImageForward(const MDD& From);
 
     MDD Canonize(const MDD& s, unsigned int level);

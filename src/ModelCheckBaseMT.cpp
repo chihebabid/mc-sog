@@ -1,8 +1,7 @@
 #include "ModelCheckBaseMT.h"
-
 #include "SylvanWrapper.h"
 
-ModelCheckBaseMT::ModelCheckBaseMT(const NewNet &R,int nbThread)
+ModelCheckBaseMT::ModelCheckBaseMT(NewNet &R,int nbThread)
 {
     m_nb_thread=nbThread;
     m_net=&R;

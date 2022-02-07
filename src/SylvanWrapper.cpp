@@ -595,7 +595,7 @@ void SylvanWrapper::lddmc_nodecount_unmark(MDD mdd) {
  * Count number of nodes in MDD
  */
 
-size_t SylvanWrapper::lddmc_nodecount_mark(MDD mdd) {
+size_t SylvanWrapper::lddmc_nodecount_mark(const MDD& mdd) {
     if (mdd <= lddmc_true) return 0;
     mddnode_t n = LDD_GETNODE(mdd);
     if (mddnode_getmark(n)) return 0;
@@ -719,7 +719,6 @@ int SylvanWrapper::get_mddnbr(MDD mdd, unsigned int level) {
         mdd = mddnode_getdown(node);
     }
     int i = 0;
-
     while (mdd != lddmc_false) {
         mddnode_t r = GETNODE(mdd);
         mdd = mddnode_getright(r);
@@ -764,7 +763,7 @@ MDD SylvanWrapper::ldd_divide_rec(MDD a, int level) {
     return ldd_divide_internal(a, 0, level);
 }
 
-MDD SylvanWrapper::ldd_minus(MDD a, MDD b) {
+MDD SylvanWrapper::ldd_minus(const MDD& a,const MDD& b) {
     /* Terminal cases */
     if (a == b) return lddmc_false;
     if (a == lddmc_false) return lddmc_false;
@@ -1117,7 +1116,6 @@ void SylvanWrapper::llmsset_clear_data(llmsset2_t dbs) {
              -1, 0) != (void *) -1) {
 
     } else {
-
         memset(dbs->bitmap1, 0, dbs->max_size / (512 * 8));
     }
 
@@ -1144,7 +1142,7 @@ void SylvanWrapper::ldd_refs_mark_r_par(MDD *begin, size_t count) {
     if (count < 32) {
         while (count) {
             ldd_gc_mark_rec(*begin++);
-            count--;
+            --count;
         }
     } else {
         ldd_refs_mark_r_par(begin, count / 2);
@@ -1158,7 +1156,7 @@ void SylvanWrapper::ldd_refs_mark_p_par(const MDD **begin, size_t count) {
     if (count < 32) {
         while (count) {
             ldd_gc_mark_rec(**(begin++));
-            count--;
+            --count;
         }
     } else {
         ldd_refs_mark_p_par(begin, count / 2);
@@ -1169,12 +1167,10 @@ void SylvanWrapper::ldd_refs_mark_p_par(const MDD **begin, size_t count) {
 
 void SylvanWrapper::ldd_gc_mark_rec(MDD mdd) {
     if (mdd <= lddmc_true) return;
-
     if (llmsset_mark(m_nodes, mdd)) {
         mddnode_t n = LDD_GETNODE(mdd);
         ldd_gc_mark_rec(mddnode_getright(n));
         ldd_gc_mark_rec(mddnode_getdown(n));
-
     }
 }
 
@@ -1201,8 +1197,6 @@ MDD SylvanWrapper::lddmc_intersect(MDD a,MDD b) {
 /* Test gc */
 //sylvan_gc_test();
 
-
-
 /* Get nodes */
     mddnode_t na = LDD_GETNODE(a);
     mddnode_t nb = LDD_GETNODE(b);
@@ -1228,7 +1222,6 @@ MDD SylvanWrapper::lddmc_intersect(MDD a,MDD b) {
 /* Access cache */
     MDD result;
     if (SylvanCacheWrapper::cache_get3(CACHE_MDD_INTERSECT, a, b, 0, &result)) {
-
         return result;
     }
 

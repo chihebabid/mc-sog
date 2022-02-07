@@ -11,7 +11,7 @@
 
 using namespace std;
 
-MCCPPThPor::MCCPPThPor(const NewNet &R, int nbThread) :
+MCCPPThPor::MCCPPThPor(NewNet &R, int nbThread) :
         ModelCheckBaseMT(R, nbThread) {
 }
 

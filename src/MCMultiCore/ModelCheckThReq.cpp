@@ -4,7 +4,7 @@
 
 #define LEVEL 3
 
-ModelCheckThReq::ModelCheckThReq(const NewNet &R, int nbThread) : ModelCheckBaseMT(R, nbThread) {
+ModelCheckThReq::ModelCheckThReq(NewNet &R, int nbThread) : ModelCheckBaseMT(R, nbThread) {
 }
 
 void

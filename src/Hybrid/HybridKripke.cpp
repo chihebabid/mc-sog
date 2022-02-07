@@ -30,11 +30,11 @@ HybridKripke::HybridKripke(const bdd_dict_ptr &dict_ptr): spot::kripke(dict_ptr)
 HybridKripke::HybridKripke(const spot::bdd_dict_ptr& dict_ptr, set<string> &l_transap, set<string> &l_placeap, NewNet &net_): HybridKripke(dict_ptr) {
     m_net=&net_;
     HybridKripkeIterator::m_net=&net_;
-    for (auto it:l_transap) {
+    for (const auto &it:l_transap) {
         register_ap(it);
     }
     
-    for (auto it:l_placeap)
+    for (const auto & it:l_placeap)
         register_ap(it);
     
 
@@ -92,19 +92,18 @@ bdd HybridKripke::state_condition(const spot::state* s) const
     auto ss = static_cast<const HybridKripkeState*>(s);
     list<uint16_t>* marked_place=ss->getMarkedPlaces();
     bdd result=bddtrue;     
-    for (auto it=marked_place->begin();it!=marked_place->end();it++) {
-        string name=string(m_net->getPlaceName(*it));
+    for (const auto & it: *marked_place) {
+        string name=string(m_net->getPlaceName(it));
         spot::formula f=spot::formula::ap(name);
         result&=bdd_ithvar((dict_->var_map.find(f))->second);
     }
     list<uint16_t>* unmarked_place=ss->getUnmarkedPlaces();
-    for (auto it=unmarked_place->begin();it!=unmarked_place->end();it++) {
-        string name=string(m_net->getPlaceName(*it));
+    for (const auto & it : *unmarked_place) {
+        string name=string(m_net->getPlaceName(it));
         spot::formula f=spot::formula::ap(name);
         result&=!bdd_ithvar((dict_->var_map.find(f))->second);
     }
-
-       return result;
+    return result;
   }
 
 
@@ -113,7 +112,7 @@ HybridKripke::~HybridKripke()
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     int i,v;
-    for (i = 0; i < world_size-1; i++) {      
+    for (i = 0; i < world_size-1; ++i) {
         MPI_Send( &v, 1, MPI_INT, i, TAG_FINISH, MPI_COMM_WORLD);       
     } 
    

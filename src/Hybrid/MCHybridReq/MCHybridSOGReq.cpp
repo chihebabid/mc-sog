@@ -48,7 +48,7 @@ void *MCHybridSOGReq::doCompute() {
         auto destination = (uint16_t) (Identif[0] % n_tasks);
         c->setProcess(destination);
         if (destination == 0) {
-            m_nbmetastate++;
+            ++m_nbmetastate;
             Set fire = firable_obs(Complete_meta_state);
             m_graph->setInitialState(c);
             m_graph->insert(c);
@@ -288,7 +288,7 @@ void MCHybridSOGReq::read_message() {
             MPI_Get_count(&m_status, MPI_CHAR, &nbytes);
             char inmsg[nbytes + 1];
             MPI_Recv(inmsg, nbytes, MPI_CHAR, m_status.MPI_SOURCE, TAG_STATE, MPI_COMM_WORLD, &m_status);
-            m_nbrecv++;
+            ++m_nbrecv;
             string *msg_receiv = new string(inmsg, nbytes);
             m_received_msg.push(MSG(msg_receiv, 0));
             m_condStack.notify_one();
@@ -330,7 +330,7 @@ void MCHybridSOGReq::send_state_message() {
         //MPI_Request request;
         read_message();
         MPI_Send(s.first->c_str(), message_size, MPI_CHAR, destination, TAG_STATE, MPI_COMM_WORLD);
-        m_nbsend++;
+        ++m_nbsend;
         m_size_mess += message_size;
         delete s.first;
     }
@@ -348,14 +348,14 @@ void MCHybridSOGReq::computeDSOG(LDDGraph &g) {
     m_nbsend = 0;
     m_gc = 0;
 
-    for (uint8_t i = 0; i < m_nb_thread - 1; i++) {
+    for (uint8_t i = 0; i < m_nb_thread - 1; ++i) {
         m_list_thread[i] = new thread(threadHandler, this);
         if (m_list_thread[i] == nullptr) {
             cout << "error: thread creation failed..." << endl;
         }
     }
     doCompute();
-    for (int i = 0; i < m_nb_thread - 1; i++) {
+    for (int i = 0; i < m_nb_thread - 1;++i) {
         m_list_thread[i]->join();
         delete m_list_thread[i];
     }
@@ -372,10 +372,10 @@ MDD MCHybridSOGReq::decodage_message(const char *chaine) {
     //nb_marq = (nb_marq << 7) | ((unsigned char) chaine[0] >> 1);
     unsigned int index = 2;
     uint32_t list_marq[m_nbPlaces];
-    for (unsigned int i = 0; i < nb_marq; i++) {
-        for (unsigned int j = 0; j < m_nbPlaces; j++) {
+    for (unsigned int i = 0; i < nb_marq; ++i) {
+        for (unsigned int j = 0; j < m_nbPlaces; ++j) {
             list_marq[j] = (uint32_t) ((unsigned char) chaine[index] - 1);
-            index++;
+            ++index;
         }
         MDD N = SylvanWrapper::lddmc_cube(list_marq, m_nbPlaces);
         M = SylvanWrapper::lddmc_union_mono(M, N);
@@ -396,7 +396,7 @@ void MCHybridSOGReq::sendSuccToMC() {
     memcpy(mess_tosend, &nb_succ, 4);
     uint32_t i_message = 4;
     //cout<<"***************************Number of succesors to send :"<<nb_succ<<endl;
-    for (uint32_t i = 0; i < nb_succ; i++) {
+    for (uint32_t i = 0; i < nb_succ; ++i) {
         pair<LDDState *, int> elt;
         elt = (*(m_aggWaiting->getSuccessors()))[i];
         memcpy(mess_tosend + i_message, elt.first->getSHAValue(), 16);
@@ -424,20 +424,20 @@ void MCHybridSOGReq::sendPropToMC(size_t pos) {
     size_t indice = 8;
     memcpy(mess_to_send + indice, &s_mp, 2);
     indice += 2;
-    for (auto it : marked_places) {
+    for (const auto & it : marked_places) {
         memcpy(mess_to_send + indice, &(it), 2);
         indice += 2;
     }
     memcpy(mess_to_send + indice, &s_up, 2);
     indice += 2;
-    for (auto it : unmarked_places) {
+    for (const auto & it : unmarked_places) {
         memcpy(mess_to_send + indice, &(it), 2);
         indice += 2;
     }
     uint8_t divblock = agg->isDiv();
     divblock = divblock | (agg->isDeadLock() << 1);
     memcpy(mess_to_send + indice, &divblock, 1);
-    indice++;
+    ++indice;
     read_message();
     MPI_Send(mess_to_send, indice, MPI_BYTE, n_tasks, TAG_ACK_STATE, MPI_COMM_WORLD);
 }

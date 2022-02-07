@@ -59,7 +59,7 @@ public:
 
             //cout<<" Marked places :"<<n_mp<<endl;
             uint32_t indice = 10;
-            for (uint16_t i = 0; i < n_mp; i++) {
+            for (uint16_t i = 0; i < n_mp; ++i) {
                 uint16_t val;
                 memcpy(&val, message + indice, 2);
                 m_marked_places.emplace_front(val);
@@ -69,7 +69,7 @@ public:
             memcpy(&n_up, message + indice, 2);
             //cout<<" Unmarked places :"<<n_mp<<endl;
             indice += 2;
-            for (uint16_t i = 0; i < n_up; i++) {
+            for (uint16_t i = 0; i < n_up; ++i) {
                 uint16_t val;
                 memcpy(&val, message + indice, 2);
                 m_unmarked_places.emplace_front(val);
@@ -112,7 +112,7 @@ public:
             }
             succ_t succ_elt;
             //printf("List of successors of %.16s\n",m_id);
-            for (uint32_t i = 0; i < nb_succ; i++) {
+            for (uint32_t i = 0; i < nb_succ; ++i) {
                 //succ_elt=new succ_t;
                 memcpy(succ_elt.id, inmsg + indice, 16);
                 indice += 16;

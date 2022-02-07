@@ -11,7 +11,7 @@
 
 using namespace std;
 
-ModelCheckerCPPThread::ModelCheckerCPPThread(const NewNet &R, int nbThread) :
+ModelCheckerCPPThread::ModelCheckerCPPThread(NewNet &R, int nbThread) :
         ModelCheckBaseMT(R, nbThread) {
 }
 

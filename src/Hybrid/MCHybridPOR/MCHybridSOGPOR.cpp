@@ -95,7 +95,7 @@ void *MCHybridSOGPOR::doCompute() {
             read_message();
             if (m_waitingBuildSucc==state::waitingBuild) {
                 bool res;
-                size_t pos = m_graph->findSHAPos(m_id_md5, res);
+                size_t&& pos = m_graph->findSHAPos(m_id_md5, res);
                 if (res) {
                     m_waitingBuildSucc=state::waitingSucc;
                     m_aggWaiting = m_graph->getLDDStateById(pos);
@@ -138,7 +138,7 @@ void *MCHybridSOGPOR::doCompute() {
                     while (!e.second.empty() && !m_Terminated) {
                         int t = *(e.second.begin());
                         e.second.erase(t);
-                        MDD ldd_reachedclass {saturatePOR(get_successor(e.first.second, t),fireObs,_div,_dead)};
+                        MDD&& ldd_reachedclass=saturatePOR(get_successor(e.first.second, t),fireObs,_div,_dead);
                         // SylvanWrapper::lddmc_refs_push ( ldd_reachedclass );
 
                         //if ( id_thread==1 ) {
@@ -169,7 +169,7 @@ void *MCHybridSOGPOR::doCompute() {
                         string *message_to_send1 {new string()};
                         SylvanWrapper::convert_wholemdd_stringcpp(ldd_reachedclass, *message_to_send1);
                         md5_hash::compute(*message_to_send1, Identif);
-                        uint16_t destination = (uint16_t) (Identif[0] % n_tasks);
+                        uint16_t&& destination = (uint16_t) (Identif[0] % n_tasks);
                         /**************** construction local ******/
                         // cout<<"debut boucle pile process "<<task_id<< " thread "<< id_thread<<endl;
 
@@ -235,7 +235,6 @@ void *MCHybridSOGPOR::doCompute() {
                 if (m_received_msg.try_pop(popped_msg)) {
                     MDD receivedLDD {decodage_message(popped_msg.first->c_str())};
                     delete popped_msg.first;
-
                     MDD MState=saturatePOR(receivedLDD,fireObs,_div,_dead);
                     bool res {false};
                     LDDState *Agregate {m_graph->insertFindByMDD(MState, res)};

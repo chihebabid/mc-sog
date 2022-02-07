@@ -10,7 +10,7 @@ typedef pair<LDDState *, int> couple_th;
 //typedef stack<pair<LDDState *,int>> pile_t;
 class MCThReqPor : public ModelCheckBaseMT {
 public:
-    MCThReqPor(const NewNet &R,int nbThread);
+    MCThReqPor(NewNet &R,int nbThread);
     ~MCThReqPor() override;
     void buildSucc(LDDState *agregate)  override;
     static void *threadHandler(void *context);

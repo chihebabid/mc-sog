@@ -15,7 +15,7 @@ typedef stack<pair<LDDState *,int>> pile_t;
 class ModelCheckerCPPThread : public ModelCheckBaseMT
 {
 public:
-    ModelCheckerCPPThread(const NewNet &R,int nbThread);
+    ModelCheckerCPPThread(NewNet &R,int nbThread);
     ~ModelCheckerCPPThread();
     static void threadHandler(void *context);
     void Compute_successors();

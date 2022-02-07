@@ -5,7 +5,7 @@
 #include <condition_variable>
 class ModelCheckBaseMT : public CommonSOG {
 public:
-        ModelCheckBaseMT(const NewNet &R,int nbThread);
+        ModelCheckBaseMT(NewNet &R,int nbThread);
         virtual LDDState * getInitialMetaState();
         virtual void buildSucc(LDDState *agregate);
         void loadNet();

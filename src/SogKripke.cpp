@@ -17,11 +17,11 @@ SogKripke::SogKripke(const bdd_dict_ptr &dict_ptr,LDDGraph *sog): spot::kripke(d
 }
 
 SogKripke::SogKripke(const spot::bdd_dict_ptr& dict_ptr,LDDGraph *sog,set<string> &l_transap,set<string> &l_placeap):SogKripke(dict_ptr,sog) {
-    for (auto it=l_transap.begin();it!=l_transap.end();it++) {
-        register_ap(*it);
+    for (const auto & it: l_transap) {
+        register_ap(it);
     }
-    for (auto it=l_placeap.begin();it!=l_placeap.end();it++)
-        register_ap(*it);
+    for (const auto & it: l_placeap)
+        register_ap(it);
 }
 
 

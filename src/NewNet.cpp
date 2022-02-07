@@ -77,11 +77,11 @@ NewNet::NewNet(const char *f, const char *Formula_trans, const char *Int_trans) 
         cout << "______________66666666666666666666666______________________\n";
         set_union(InterfaceTrans.begin(), InterfaceTrans.end(),
                   Formula_Trans.begin(), Formula_Trans.end(),
-                  inserter(Observable, Observable.begin()));
+                  inserter(mObservable, mObservable.begin()));
         Set_Non_Observables();
     } else
         for (unsigned int i = 0; i < transitions.size(); i++) {
-            Observable.insert(i);
+            mObservable.insert(i);
             transitions[i].mObservable=true;
         }
     cout << "FIN CREATION \n";
@@ -121,11 +121,11 @@ NewNet::NewNet(const char *f, const set<string> &f_trans) {
         cout << "Interface trans size " << InterfaceTrans.size() << endl;
         set_union(InterfaceTrans.begin(), InterfaceTrans.end(),
                   Formula_Trans.begin(), Formula_Trans.end(),
-                  inserter(Observable, Observable.begin()));
+                  inserter(mObservable, mObservable.begin()));
         Set_Non_Observables();
     } else
         for (unsigned int i = 0; i < transitions.size(); i++) {
-            Observable.insert(i);
+            mObservable.insert(i);
             transitions[i].mObservable = true;
         }
     cout << "FIN CREATION \n";
@@ -135,7 +135,7 @@ NewNet::NewNet(const char *f, const set<string> &f_trans) {
  * ------------------------------*/
 void NewNet::setListObservable(const set<string> &list_t) {
     int pos_trans(TRANSITIONS T, string trans);
-    Observable.clear();
+    mObservable.clear();
     for (auto it = m_placeName.begin(); it != m_placeName.end(); it++) {
         pair<int, string> elt((*it).second, (*it).first);
         m_placePosName.insert(elt);
@@ -159,13 +159,13 @@ void NewNet::setListObservable(const set<string> &list_t) {
             // Adding adjacent transitions of a place as observable transitions
             Place p = places[pi->second];
             for (auto iter = p.post.begin(); iter != p.post.end(); iter++) {
-                Observable.insert((*iter).first);
+                mObservable.insert((*iter).first);
                 transitions[(*iter).first].mObservable=true;
                 auto it = m_transitionPosName.find((*iter).first);
                 m_ltransitionAP.insert(it->second);
             }
             for (auto iter = p.pre.begin(); iter != p.pre.end(); iter++) {
-                Observable.insert((*iter).first);
+                mObservable.insert((*iter).first);
                 transitions[(*iter).first].mObservable=true;
                 auto it = m_transitionPosName.find((*iter).first);
                 m_ltransitionAP.insert(it->second);
@@ -174,7 +174,7 @@ void NewNet::setListObservable(const set<string> &list_t) {
         } else {
             Formula_Trans.insert(pos);
             map<string, uint16_t>::iterator ti = transitionName.find(*i);
-            Observable.insert(pos);
+            mObservable.insert(pos);
             transitions[pos].mObservable=true;
         }
     }
@@ -275,7 +275,7 @@ bool NewNet::Set_Interface_Trans(const char *f) {
 void NewNet::Set_Non_Observables() {
     NonObservable.clear();
     for (unsigned int i = 0; i < transitions.size(); i++)
-        if (Observable.find(i) == Observable.end()) {
+        if (mObservable.find(i) == mObservable.end()) {
             NonObservable.insert(i);
         }
 }
@@ -536,9 +536,9 @@ ostream &operator<<(ostream &os, const NewNet &R) {
     for (Set::const_iterator h = R.InterfaceTrans.begin();
          !(h == R.InterfaceTrans.end()); h++)
         cout << R.transitions[*h].name << endl;
-    os << "Nombre de transitions observable:" << R.Observable.size() << endl;
+    os << "Nombre de transitions observable:" << R.mObservable.size() << endl;
     os << "********** transitions observables **********" << endl;
-    for (Set::const_iterator h = R.Observable.begin(); !(h == R.Observable.end());
+    for (Set::const_iterator h = R.mObservable.begin(); !(h == R.mObservable.end());
          h++)
         cout << R.transitions[*h].name << endl;
     os << "Nombre de transitions non observees:" << R.NonObservable.size()

@@ -15,7 +15,7 @@ typedef pair<LDDState *, int> couple_th;
 class MCCPPThPor : public ModelCheckBaseMT
 {
 public:
-    MCCPPThPor(const NewNet &R,int nbThread);
+    MCCPPThPor(NewNet &R,int nbThread);
     ~MCCPPThPor();
     static void threadHandler(void *context);
     void Compute_successors();

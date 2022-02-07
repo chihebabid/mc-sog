@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 
-ModelCheckerTh::ModelCheckerTh(const NewNet &R, int nbThread) :
+ModelCheckerTh::ModelCheckerTh(NewNet &R, int nbThread) :
 		ModelCheckBaseMT(R, nbThread) {
 }
 size_t

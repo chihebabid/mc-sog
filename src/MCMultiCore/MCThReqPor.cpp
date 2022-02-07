@@ -3,7 +3,7 @@
 
 #define LEVEL 3
 
-MCThReqPor::MCThReqPor(const NewNet &R, int nbThread) : ModelCheckBaseMT(R, nbThread) {
+MCThReqPor::MCThReqPor(NewNet &R, int nbThread) : ModelCheckBaseMT(R, nbThread) {
 }
 
 

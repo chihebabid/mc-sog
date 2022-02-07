@@ -25,7 +25,6 @@ LDDState *LDDGraph::find(LDDState *c) {
 LDDState *LDDGraph::insertFindByMDD(MDD md, bool &found) {
     std::lock_guard lock(m_mutex);
 
-
         for (auto& i : m_GONodes) {
             if (md == i->m_lddstate) {
                 found = true;

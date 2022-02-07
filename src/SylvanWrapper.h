@@ -173,7 +173,7 @@ public:
 
     static size_t lddmc_nodecount(MDD mdd);
 
-    static MDD lddmc_union_mono(MDD a,MDD b);
+    static MDD lddmc_union_mono( MDD a, MDD b);
     static MDD lddmc_intersect(MDD a, MDD b);
     static bool isSingleMDD(MDD mdd);
 
@@ -183,11 +183,11 @@ public:
 
     static MDD ldd_divide_internal(MDD a, int current_level, int level);
 
-    static MDD ldd_minus(MDD a, MDD b);
+    static MDD ldd_minus(const MDD& a,const MDD& b);
 
     static MDD lddmc_firing_mono(MDD cmark, const MDD& minus, const MDD& plus);
 
-    static size_t lddmc_nodecount_mark(MDD mdd);
+    static size_t lddmc_nodecount_mark(const MDD& mdd);
 
     static void lddmc_nodecount_unmark(MDD mdd);
 
