@@ -1,13 +1,29 @@
 # set minimum cmake version
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-# include MPI
-find_package(MPI REQUIRED)
-include_directories(${MPI_INCLUDE_PATH})
+# find openssl in OSX
+if (CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+    execute_process(
+        COMMAND brew --prefix "openssl@1.1"
+        RESULT_VARIABLE BREW_OPENSSL
+        OUTPUT_VARIABLE BREW_OPENSSL_PREFIX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (BREW_OPENSSL EQUAL 0 AND EXISTS "${BREW_OPENSSL_PREFIX}")
+        set(OPENSSL_ROOT_DIR "${BREW_OPENSSL_PREFIX}/")
+        set(OPENSSL_INCLUDE_DIR "${BREW_OPENSSL_PREFIX}/include")
+        set(OPENSSL_LIBRARIES "${BREW_OPENSSL_PREFIX}/lib")
+        set(OPENSSL_CRYPTO_LIBRARY "${BREW_OPENSSL_PREFIX}/lib/libcrypto.dylib")
+    endif()
+endif()
 
 # include openssl
 find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
+
+# include MPI
+find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
 
 # include spot and bddx library
 add_library(spot SHARED IMPORTED)
@@ -20,10 +36,6 @@ else()
   set_target_properties(spot PROPERTIES IMPORTED_LOCATION ${BDDX_LIBRARY})
   set_target_properties(bddx PROPERTIES IMPORTED_LOCATION ${SPOT_LIBRARY})
 endif()
-
-
-
- 
 
 # Hybrid SOG executable
 add_executable(mc-sog main.cpp
