@@ -116,24 +116,7 @@ void LDDGraph::printCompleteInformation() {
     cout << "\n\tNB MARKING : " << m_nbMarking;
     cout << "\n\tNB NODES : " << m_GONodes.size();
     cout << "\n\tNB ARCS : " << m_nbArcs << endl;
-    /*cout << " \n\nCOMPLETE INFORMATION ?(y/n)\n";
-    char c;
-    cin >> c;*/
-    //InitVisit(initialstate,n);
 
-    /* size_t n = 1;
-     //cout<<"NB BDD NODE : "<<NbBdm_current_state->getContainerProcess()dNode(initialstate,n)<<endl;
-     NbBddNode(m_initialstate, n);
-     // cout<<"NB BDD NODE : "<<bdd_anodecount(m_Tab,(int)m_nbStates)<<endl;
-     //cout<<"Shared Nodes : "<<bdd_anodecount(Tab,nbStates)<<endl;
-     InitVisit(m_initialstate, 1);
-     //int toto;cin>>toto;
-     //bdd Union=UnionMetaState(initialstate,1);
-     //cout<<"a titre indicatif taille de l'union : "<<bdd_nodecount(Union)<<endl;
-     if (c == 'y' || c == 'Y') {
-         size_t n = 1;
-         printGraph(m_initialstate, n);
-     }*/
 }
 
 /*----------------------InitVisit()------------------------*/

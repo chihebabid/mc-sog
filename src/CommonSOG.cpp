@@ -147,7 +147,6 @@ bool CommonSOG::Set_Bloc(const MDD &M) const {
         cur = cur & (i.getMinus());
     }
     return ((M & cur) != lddmc_false);
-    //BLOCAGE
 }
 
 
@@ -169,7 +168,7 @@ string_view CommonSOG::getPlace(int pos) {
 }
 
 void CommonSOG::initializeLDD() {
-    SylvanWrapper::sylvan_set_limits(16LL << 28, 10, 0);
+    SylvanWrapper::sylvan_set_limits(16LL << 30, 10, 0);
     SylvanWrapper::sylvan_init_package();
     SylvanWrapper::sylvan_init_ldd();
     SylvanWrapper::init_gc_seq();

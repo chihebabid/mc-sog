@@ -191,7 +191,7 @@ void *MCHybridSOG::doCompute() {
                             reached_class->setProcess(destination);
                             LDDState *posV = m_graph->insertFindSha(Identif, reached_class);
                             if (!posV) {
-                                MDD reached{ldd_reachedclass};
+                                MDD reached {ldd_reachedclass};
                                 reached = Canonize(ldd_reachedclass, 0);
 #ifndef REDUCE
                                 reached = Canonize(ldd_reachedclass, 0);

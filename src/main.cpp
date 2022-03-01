@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
 
 
     if (n_tasks == 1) {
-        if (n_tasks == 1 && (!strcmp(argv[1], "otfPR") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP") || !strcmp(argv[1], "otfPOR"))) {
+        if (n_tasks == 1 && (!strcmp(argv[1], "otfPR") || !strcmp(argv[1], "otfC") || !strcmp(argv[1], "otfP") || !strcmp(argv[1], "otfCPOR"))) {
             cout << "Performing on the fly Model checking..." << endl;
             if (!strcmp(argv[1], "otfP"))
                 cout << "Multi-threaded algorithm based on Pthread library!" << endl;
@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
             else if (!strcmp(argv[1], "otfC"))
                 cout << "Multi-threaded algorithm based on C++ Thread library!" << endl;
             else
-                cout<<"Multi-threaded algorithm (progressive) with POR!"<<endl;
+                cout<<"Multi-threaded algorithm with POR!"<<endl;
             cout << "Building automata for not(formula)\n";
             auto d = spot::make_bdd_dict();
             spot::translator obj=spot::translator(d);
@@ -179,7 +179,7 @@ int main(int argc, char **argv) {
                 displayCheckResult(res);
             }
             mcl->finish();
-            cout<<"Number of built aggregates: "<<mcl->getGraph()->m_GONodes.size()<<endl;
+            mcl->getGraph()->printCompleteInformation();
             delete mcl;
         }
 
