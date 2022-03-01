@@ -39,7 +39,7 @@ if(NOT SPOT_LIBRARY)
     URL                   http://www.lrde.epita.fr/dload/spot/spot-2.9.4.tar.gz
     DOWNLOAD_NO_PROGRESS  YES
     CONFIGURE_COMMAND     ./configure --disable-doxygen --disable-python --enable-silent-rules --silent --prefix=<INSTALL_DIR>
-    BUILD_COMMAND         make -j
+    BUILD_COMMAND         make
     BUILD_IN_SOURCE       1
   )
 
@@ -60,4 +60,3 @@ add_subdirectory(src)
 # add tests
 # enable_testing()
 # add_subdirectory(tests)
-
