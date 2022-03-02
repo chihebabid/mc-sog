@@ -11,6 +11,10 @@ configure_file(PMCSOGConfig.h.in src/PMCSOGConfig.h)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Installing folder
+set(INSTALL_FOLDER ${pmc-sog_SOURCE_DIR}/assets)
+
+
 # Add compiler flags
 if(CMAKE_COMPILER_IS_GNUCC)
     #used flags -Og -DNDEBUG
