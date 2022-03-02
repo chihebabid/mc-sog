@@ -38,7 +38,7 @@ else()
 endif()
 
 # Hybrid SOG executable
-add_executable(mc-sog main.cpp
+add_executable(pmc-sog main.cpp
   PMCSOGConfig.h
   NewNet.cpp
   NewNet.h
@@ -100,12 +100,13 @@ add_executable(mc-sog main.cpp
         misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h)
 
 
-target_include_directories(mc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")
+target_include_directories(pmc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")
 
-target_link_libraries(mc-sog
+target_link_libraries(pmc-sog
   bddx
   spot
   RdP
   ${MPI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
+  cli11
 )
