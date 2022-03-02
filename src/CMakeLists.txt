@@ -110,3 +110,6 @@ target_link_libraries(pmc-sog
   ${OPENSSL_LIBRARIES}
   cli11
 )
+
+# Installation folder
+install(TARGETS pmc-sog DESTINATION ${INSTALL_FOLDER})
