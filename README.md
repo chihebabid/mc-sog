@@ -56,8 +56,6 @@ Options:
   --ltl Path:FILE REQUIRED    LTL property file
   --thread TEXT:{posix,c++}   Thread library (default: c++)
   --por,--no-por{false}       Apply partial order reductions (default: false)
-  --progressive,--no-progressive{false} Excludes: --explicit
-                              Use a progressive construction of the SOG (default: false)
 
 
 Explicit MC:
@@ -72,6 +70,8 @@ Explicit MC:
 
 
 On-the-fly MC:
+  --progressive,--no-progressive{false} Excludes: --explicit
+                              Use a progressive construction of the SOG (default: false)
   --emptiness-check TEXT Excludes: --explicit
                               Spot emptiness-check algorithm
 
@@ -81,9 +81,9 @@ Print:
   --dot-formula               Save the automata of the negated formula in a dot file
   --counter-example Needs: --explicit
                               Save the counter example in a dot file
-
 ```
 
+### Emptiness-Check algorithms
 The emptiness-check algorithms are provided by spot. For more information,
 please see https://spot.lrde.epita.fr/doxygen/group__emptiness__check.html.
 Here, some of examples:

@@ -416,7 +416,7 @@ int main(int argc, char **argv)
 
     // progressive construction can be used only when using on-the-fly model-checking
     bool progressive{false};
-    app.add_flag("--progressive,!--no-progressive", progressive, "Use a progressive construction of the SOG (default: false)")->excludes(exp_opt);
+    app.add_flag("--progressive,!--no-progressive", progressive, "Use a progressive construction of the SOG (default: false)")->excludes(exp_opt)->group("On-the-fly MC");
 
     // emptiness check algorithm is only needed when using on-the-fly model-checking
     string algorithm = "";
