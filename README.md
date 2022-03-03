@@ -62,11 +62,11 @@ Explicit MC:
   --explicit Excludes: --progressive --emptiness-check
                               Run explicit model-checking
   --lace,--no-lace{false} Needs: --explicit
-                              Use the work-stealing framework Lace (default: false)
+                              Use the work-stealing framework Lace. Available only in multi-core (default: false)
   --canonization,--no-canonization{false} Needs: --explicit
-                              Apply canonization to the SOG (default: false)
+                              Apply canonization to the SOG. Available only in multi-core (default: false)
   --only-sog Needs: --explicit
-                              Only builds the SOG
+                              Only builds the SOG. Available only in multi-core
 
 
 On-the-fly MC:
@@ -81,6 +81,7 @@ Print:
   --dot-formula               Save the automata of the negated formula in a dot file
   --counter-example Needs: --explicit
                               Save the counter example in a dot file
+
 ```
 
 ### Emptiness-Check algorithms

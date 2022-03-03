@@ -422,16 +422,17 @@ int main(int argc, char **argv)
     string algorithm = "";
     app.add_option("--emptiness-check", algorithm, "Spot emptiness-check algorithm")->excludes(exp_opt)->group("On-the-fly MC");
 
-    // lace is only needed when using explicit model-checking
+    // lace is only available when using explicit multi-core model-checking
     bool uselace{false};
-    app.add_flag("--lace,!--no-lace", uselace, "Use the work-stealing framework Lace (default: false)")->needs(exp_opt)->group("Explicit MC");
+    app.add_flag("--lace,!--no-lace", uselace, "Use the work-stealing framework Lace. Available only in multi-core (default: false)")->needs(exp_opt)->group("Explicit MC");
 
+    // canonization is only available in the explicit multi-core version. In the hybrid is always true
     bool canonization{false};
-    app.add_flag("--canonization,!--no-canonization", canonization, "Apply canonization to the SOG (default: false)")->needs(exp_opt)->group("Explicit MC");
+    app.add_flag("--canonization,!--no-canonization", canonization, "Apply canonization to the SOG. Available only in multi-core (default: false)")->needs(exp_opt)->group("Explicit MC");
 
     // build only the SOG is possible only in explicit model-checking
     bool only_sog{false};
-    app.add_flag("--only-sog", only_sog, "Only builds the SOG")->needs(exp_opt)->group("Explicit MC");
+    app.add_flag("--only-sog", only_sog, "Only builds the SOG. Available only in multi-core")->needs(exp_opt)->group("Explicit MC");
 
     bool dot_sog{false};
     app.add_flag("--dot-sog", dot_sog, "Save the SOG in a dot file")->needs(exp_opt)->group("Print");
