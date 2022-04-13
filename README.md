@@ -164,6 +164,9 @@ mpirun -n 2 ./pmc-sog \
 
 ## Publications
 
+- K. Klai, C. A. Abid, J. Arias, and S. Evangelista, "[Hybrid Parallel Model Checking of Hybrid LTL on Hybrid State Space Representation](https://link.springer.com/chapter/10.1007/978-3-030-98850-0_3)", in 14th International Conference on Verification and Evaluation of Computer and Communication Systems, VECoS 2021, Beijing, China, November 22-23, 2021, 2022, vol. 13187, pp. 27–42. doi: 10.1007/978-3-030-98850-0_3.
+
+
 - C. A. Abid, K. Klai, J. Arias, and H. Ouni, “[SOG-Based Multi-Core LTL Model Checking](https://ieeexplore.ieee.org/document/9443795),” in IEEE International Conference on Parallel & Distributed Processing with Applications, Big Data & Cloud Computing, Sustainable Computing & Communications, Social Computing & Networking, ISPA/BDCloud/SocialCom/SustainCom 2020, Exeter, United Kingdom, December 17-19, 2020, 2020, pp. 9–17. doi: 10.1109/ISPA-BDCloud-SocialCom-SustainCom51426.2020.00028.
 
 - H. Ouni, K. Klai, C. A. Abid, and B. Zouari, “[Towards Parallel Verification of Concurrent Systems using the Symbolic Observation Graph](https://ieeexplore.ieee.org/document/8843636),” in 19th International Conference on Application of Concurrency to System Design, ACSD 2019, Aachen, Germany, June 23-28, 2019, 2019, pp. 23–32. doi: 10.1109/ACSD.2019.00007.
