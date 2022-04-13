@@ -331,7 +331,7 @@ CommonSOG *getHybridMC(NewNet &net, const string &thread_library, bool progressi
 /**
  * Run the on-the-fly model-checking algorithm
  *
- * @param algorithm Emptiness-check algorithm
+ * @param algorithm Sequential emptiness-check algorithm
  * @param k Kripke structure of the SOG
  * @param af Automata  of the negated formula
  * @return bool
@@ -381,6 +381,15 @@ bool runOnTheFlyMC(const string &algorithm, auto k, spot::twa_graph_ptr af)
 
     return res;
 }
+
+/**
+ * Run the on-the-fly parallel model-checking algorithm
+ *
+ * @param algorithm Parallel emptiness-check algorithm
+ *
+ * TODO: implement this
+ */
+bool runOnTheFlyParallelMC(const string &algorithm) {}
 
 /******************************************************************************
  * Main function
@@ -501,10 +510,18 @@ int main(int argc, char **argv)
 
             // create the SOG
             mcl->loadNet();
-            auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
 
-            // run on the fly model-checking
-            runOnTheFlyMC(algorithm, k, af);
+            // run on the fly parallel model-checking
+            // TODO: Implement here Ghofrane's algorithms
+            if (algorithm == "UFSCC" || algorithm == "CNDFS")
+            {
+                runOnTheFlyParallelMC(algorithm);
+            }
+            else // run on the fly sequential model-checking
+            {
+                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
+                runOnTheFlyMC(algorithm, k, af);
+            }
 
             // stop model checker process
             mcl->finish();
