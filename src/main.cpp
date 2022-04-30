@@ -5,7 +5,6 @@
 #include <fstream>
 #include <mpi.h>
 #include <CLI11.hpp>
-
 #include "LDDGraph.h"
 #include <spot/kripke/kripke.hh>
 #include "MCMultiCore/ModelCheckerCPPThread.h"
@@ -498,6 +497,7 @@ int main(int argc, char **argv)
      **************************************************************************/
     if (n_tasks == 1)
     {
+        cout<< "Hello Multi-core version" <<endl;
         // On-the-fly multi-core model checking
         if (!explicit_mc)
         {
@@ -515,7 +515,14 @@ int main(int argc, char **argv)
             // TODO: Implement here Ghofrane's algorithms
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
-                runOnTheFlyParallelMC(algorithm);
+
+                cout << "HELLO" << endl;
+                exit(0);
+                //runOnTheFlyParallelMC(algorithm);
+//                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
+//                runOnTheFlyMC("Cou99", k, af);
+//                cout << mcl->getGraph()->getInitialAggregate()->getSuccessors() <<endl;
+//                cout << mcl->getGraph()->getInitialAggregate()->isVisited() <<endl;
             }
             else // run on the fly sequential model-checking
             {
@@ -602,6 +609,7 @@ int main(int argc, char **argv)
      **************************************************************************/
     else
     {
+        cout << "hello hybrid version" <<endl;
         if (task_id == 0)
             cout << "\n************** Hybrid version ****************\n"
                  << endl;
