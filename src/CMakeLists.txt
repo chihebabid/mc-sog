@@ -27,7 +27,7 @@ include_directories(${MPI_INCLUDE_PATH})
 
 # include spot and bddx library
 add_library(spot SHARED IMPORTED)
-add_library(bddx SHARED IMPORTED)
+add_library(bddx SHARED IMPORTED algorithm/CNDFS.cpp algorithm/CNDFS.h)
 
 if(NOT SPOT_LIBRARY)
   set_target_properties(spot PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libspot.so")

@@ -35,6 +35,8 @@
 #include "PMCSOGConfig.h"
 #include "Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h"
 #include "Hybrid/MCHybridPOR/MCHybridSOGPOR.h"
+#include "algorithm/CNDFS.h"
+
 
 using namespace std;
 
@@ -516,13 +518,12 @@ int main(int argc, char **argv)
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
 
-                cout << "HELLO" << endl;
-                exit(0);
-                //runOnTheFlyParallelMC(algorithm);
-//                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
-//                runOnTheFlyMC("Cou99", k, af);
-//                cout << mcl->getGraph()->getInitialAggregate()->getSuccessors() <<endl;
-//                cout << mcl->getGraph()->getInitialAggregate()->isVisited() <<endl;
+                 cout << "HELLO" << endl;
+                 CNDFS n;
+                 n.DfsBlue();
+                 return(0);
+                //exit(0);
+
             }
             else // run on the fly sequential model-checking
             {
@@ -546,8 +547,7 @@ int main(int argc, char **argv)
             // TODO: There is no way to run Model-checking when the SOG is built sequentially?
             if (nb_th == 1)
             {
-                cout << "\n****************** Sequential version ******************* \n"
-                     << endl;
+                cout << "\n****************** Sequential version ******************* \n"<< endl;
 
                 // build sequential SOG
                 DR.computeSeqSOG(g);
