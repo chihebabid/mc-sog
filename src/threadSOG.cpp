@@ -6,8 +6,6 @@
 #include "threadSOG.h"
 
 
-
-
 /*
 void write_to_dot(const char *ch,MDD m)
 {

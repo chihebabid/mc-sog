@@ -49,7 +49,8 @@ add_executable(pmc-sog main.cpp
   LDDState.cpp
   LDDState.h
   TransSylvan.cpp
-
+  algorithm/CNDFS.h
+  algorithm/CNDFS.cpp
   SpotSogState.cpp
   SpotSogState.h
   SpotSogIterator.cpp

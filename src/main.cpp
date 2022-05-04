@@ -36,7 +36,7 @@
 #include "Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h"
 #include "Hybrid/MCHybridPOR/MCHybridSOGPOR.h"
 #include "algorithm/CNDFS.h"
-
+#include <typeinfo>
 
 using namespace std;
 
@@ -509,6 +509,7 @@ int main(int argc, char **argv)
             // build automata of the negation of the formula
             auto d = spot::make_bdd_dict();
             spot::twa_graph_ptr af = formula2Automaton(negate_formula.f, d, dot_formula);
+            shared_ptr<spot::twa_graph> aa = formula2Automaton(negate_formula.f, d, dot_formula);
 
             // create the SOG
             mcl->loadNet();
@@ -517,10 +518,13 @@ int main(int argc, char **argv)
             // TODO: Implement here Ghofrane's algorithms
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
+                cout<<"pointeur sur le sog "<< typeid(mcl).name() <<endl;
+                //cout << "pointeur sur le BA "<< typeid(af).name() <<endl;
+                cout << "pointeur sur le BA "<< typeid(aa).name() <<endl;
 
-                 cout << "HELLO" << endl;
-                 CNDFS n;
-                 n.DfsBlue();
+                CNDFS n;
+                 //n.DfsBlue();
+                 n.DfsBlue(*mcl, aa);
                  return(0);
                 //exit(0);
 
@@ -528,7 +532,7 @@ int main(int argc, char **argv)
             else // run on the fly sequential model-checking
             {
                 auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
-                runOnTheFlyMC(algorithm, k, af);
+                //runOnTheFlyMC(algorithm, k, af);
             }
 
             // stop model checker process
