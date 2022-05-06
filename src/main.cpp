@@ -37,6 +37,7 @@
 #include "Hybrid/MCHybridPOR/MCHybridSOGPOR.h"
 #include "algorithm/CNDFS.h"
 #include <typeinfo>
+#include <atomic>
 
 using namespace std;
 
@@ -509,6 +510,7 @@ int main(int argc, char **argv)
             // build automata of the negation of the formula
             auto d = spot::make_bdd_dict();
             spot::twa_graph_ptr af = formula2Automaton(negate_formula.f, d, dot_formula);
+            // twa_graph class
             shared_ptr<spot::twa_graph> aa = formula2Automaton(negate_formula.f, d, dot_formula);
 
             // create the SOG
@@ -519,14 +521,14 @@ int main(int argc, char **argv)
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
                 cout<<"pointeur sur le sog "<< typeid(mcl).name() <<endl;
-                //cout << "pointeur sur le BA "<< typeid(af).name() <<endl;
-                cout << "pointeur sur le BA "<< typeid(aa).name() <<endl;
+                cout <<"pointeur sur le BA "<< typeid(aa).name() <<endl;
 
+                //atomic<ModelCheckBaseMT> (*mcl);
+                //shared_ptr< atomic<spot::twa_graph>> aa;
                 CNDFS n;
-                 //n.DfsBlue();
-                 n.DfsBlue(*mcl, aa);
-                 return(0);
-                //exit(0);
+                //n.DfsBlue(*mcl, aa);
+                n.spawnThreads(4,*mcl,aa);
+                return(0);
 
             }
             else // run on the fly sequential model-checking

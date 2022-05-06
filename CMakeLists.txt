@@ -68,6 +68,8 @@ target_include_directories(cli11 INTERFACE "${THIRD_PARTY_INCLUDE_DIR}/cli11")
 include_directories(src)
 add_subdirectory(src)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
 # add tests
 # enable_testing()
 # add_subdirectory(tests)

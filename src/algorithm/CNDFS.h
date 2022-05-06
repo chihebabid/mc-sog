@@ -9,7 +9,8 @@
 class CNDFS {
 public:
     virtual ~CNDFS();
-    void DfsBlue(ModelCheckBaseMT &mcl, shared_ptr<spot::twa_graph> af);
+    static void DfsBlue(ModelCheckBaseMT &mcl, shared_ptr<spot::twa_graph> af);
+    static void spawnThreads(int n, ModelCheckBaseMT &mcl, shared_ptr<spot::twa_graph> af);
 };
 
 
