@@ -527,13 +527,14 @@ int main(int argc, char **argv)
 //                cout<<"pointeur sur sog "<< typeid(mcl).name() <<endl;
 //                cout <<"pointeur sur BA "<< typeid(aa).name() <<endl;
 
-                CNDFS cndfs;
+                CNDFS cndfs(*mcl,aa,3);
+
+                // You have now to call a non static method of object cndfs that will create threads and execute your dfs algorithm
+                // Your static method should be defined as private and called by a non static method
+                // try else you send me a request tomorrw if you have pbs
                 //CNDFS cndfs(*mcl, aa);
                 //cndfs.DfsBlue(*mcl, aa);
-                thread thread_1 (cndfs.DfsBlue,ref(*mcl),ref(aa));
-                thread thread_2 (cndfs.DfsBlue,ref(*mcl),ref(aa));
-                thread_1.join();
-                thread_2.join();
+
                // n.spawnThreads(2,*mcl,aa);
                 return(0);
 

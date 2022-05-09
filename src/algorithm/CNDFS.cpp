@@ -38,8 +38,8 @@ CNDFS::~CNDFS()=default;
 
 //structure qui represente le produit de 2 états
 
- void CNDFS::DfsBlue(ModelCheckBaseMT &mcl,shared_ptr<spot::twa_graph> a) {
-     mMcl = &mcl;
+ void CNDFS::DfsBlue() {
+
     //cout << "First state SOG from CNDFS " << mMcl->getInitialMetaState() << endl;
     //cout << "First state SOG from CNDFS " << typeid(m.getGraph()->getInitialAggregate()->getSuccessors()).name() << endl;
     //cout << "First state BA from CNDFS "  << a->get_init_state()<<endl;
@@ -47,7 +47,7 @@ CNDFS::~CNDFS()=default;
 
     //iterate succ of BA initial state
     //mtx.lock();
-    spot::twa_succ_iterator* i = a->succ_iter(a->get_init_state());
+    spot::twa_succ_iterator* i = mAa->succ_iter(mAa->get_init_state());
     if (i->first())
         do
         {
@@ -56,7 +56,7 @@ CNDFS::~CNDFS()=default;
             << std::this_thread::get_id()<<   endl;
         }
         while (i->next());
-    a->release_iter(i);
+     mAa->release_iter(i);
     //mtx.unlock();
 
      //iterate succ of SOG first state
