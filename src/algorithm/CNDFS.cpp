@@ -16,19 +16,24 @@ using namespace std;
 bool red=false;
 bool blue=false;
 thread_local bool cyan = false;
-struct product_node{
+
+struct new_state{
     ModelCheckBaseMT &left;
     shared_ptr<spot::twa_graph> right;
 };
 
-struct product_node_succ{
-    vector<pair<LDDState*, int> > succ_left;
-    spot::twa_succ_iterator &sadd structures of a new node and edge of the product ucc_right;
+struct new_state_succ{
+    LDDState *succ_left;
+    spot::twa_succ_iterator *succ_right;
 };
+
+vector<new_state_succ> successors_new_node;
 
 std::mutex mtx;
 
-//CNDFS::CNDFS(auto mK, const shared_ptr<spot::twa_graph> &mAa) : mK(mK), mAa(mAa) {}
+//j'ai un problème de passage des paramétres dans le constructeur(pointeur vs adresse)
+//CNDFS::CNDFS(ModelCheckBaseMT *mMcl, const shared_ptr<spot::twa_graph> &mAa) : mMcl(mMcl), mAa(mAa) {}
+
 CNDFS::~CNDFS()=default;
 
 //structure qui represente le produit de 2 états
@@ -61,7 +66,6 @@ CNDFS::~CNDFS()=default;
        std::cout << "sog succ list "<< endl;
      }
 }
-
 
 
 //void CNDFS::spawnThreads(int n, ModelCheckBaseMT &mcl, shared_ptr<spot::twa_graph> af  )

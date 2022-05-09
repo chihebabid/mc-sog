@@ -528,6 +528,7 @@ int main(int argc, char **argv)
 //                cout <<"pointeur sur BA "<< typeid(aa).name() <<endl;
 
                 CNDFS cndfs;
+                //CNDFS cndfs(*mcl, aa);
                 //cndfs.DfsBlue(*mcl, aa);
                 thread thread_1 (cndfs.DfsBlue,ref(*mcl),ref(aa));
                 thread thread_2 (cndfs.DfsBlue,ref(*mcl),ref(aa));

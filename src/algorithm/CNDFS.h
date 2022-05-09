@@ -11,9 +11,9 @@ class CNDFS {
 
 private:
     static ModelCheckBaseMT *mMcl;
-   //shared_ptr<spot::twa_graph> mAa;
+    shared_ptr<spot::twa_graph> mAa;
 public:
-    //CNDFS(auto mK, const shared_ptr<spot::twa_graph> &mAa);
+    //CNDFS(ModelCheckBaseMT *mMcl, const shared_ptr<spot::twa_graph> &mAa);
 
     virtual ~CNDFS();
     //static void DfsBlue();
