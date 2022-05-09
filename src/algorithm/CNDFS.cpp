@@ -17,7 +17,13 @@ bool red=false;
 bool blue=false;
 thread_local bool cyan = false;
 struct product_node{
+    ModelCheckBaseMT &left;
+    shared_ptr<spot::twa_graph> right;
+};
 
+struct product_node_succ{
+    vector<pair<LDDState*, int> > succ_left;
+    spot::twa_succ_iterator &succ_right;
 };
 
 std::mutex mtx;
