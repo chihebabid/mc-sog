@@ -10,7 +10,7 @@
 class CNDFS {
 
 private:
-    //ModelCheckBaseMT& mMcl;
+    static ModelCheckBaseMT *mMcl;
    //shared_ptr<spot::twa_graph> mAa;
 public:
     //CNDFS(auto mK, const shared_ptr<spot::twa_graph> &mAa);
