@@ -60,6 +60,7 @@ CNDFS::~CNDFS()=default;
     //mtx.unlock();
 
      //iterate succ of SOG first state
+     //error: segmentation fault here don't know how to fix it
      vector<pair<LDDState*, int>> * edges =mMcl->getGraph()->getInitialAggregate()->getSuccessors();
      for (const auto& pair : *edges)
      {
