@@ -23,7 +23,7 @@ struct product_node{
 
 struct product_node_succ{
     vector<pair<LDDState*, int> > succ_left;
-    spot::twa_succ_iterator &succ_right;
+    spot::twa_succ_iterator &sadd structures of a new node and edge of the product ucc_right;
 };
 
 std::mutex mtx;
