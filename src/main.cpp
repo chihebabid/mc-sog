@@ -38,7 +38,8 @@
 #include "algorithm/CNDFS.h"
 #include <typeinfo>
 #include <atomic>
-
+#include <thread>
+#include <vector>
 using namespace std;
 
 int n_tasks, task_id;
@@ -350,6 +351,7 @@ bool runOnTheFlyMC(const string &algorithm, auto k, spot::twa_graph_ptr af)
         // set the synchronized product of the SOG and the negated formula
         shared_ptr<spot::twa_product> product = make_shared<spot::twa_product>(k, af);
 
+
         // set the emptiness check
         const char *err;
         spot::emptiness_check_instantiator_ptr echeck_inst = spot::make_emptiness_check_instantiator(algorithm.c_str(), &err);
@@ -391,7 +393,7 @@ bool runOnTheFlyMC(const string &algorithm, auto k, spot::twa_graph_ptr af)
  *
  * TODO: implement this
  */
-bool runOnTheFlyParallelMC(const string &algorithm) {}
+//bool runOnTheFlyParallelMC(const string &algorithm) {}
 
 /******************************************************************************
  * Main function
@@ -510,6 +512,7 @@ int main(int argc, char **argv)
             // build automata of the negation of the formula
             auto d = spot::make_bdd_dict();
             spot::twa_graph_ptr af = formula2Automaton(negate_formula.f, d, dot_formula);
+
             // twa_graph class
             shared_ptr<spot::twa_graph> aa = formula2Automaton(negate_formula.f, d, dot_formula);
 
@@ -520,14 +523,17 @@ int main(int argc, char **argv)
             // TODO: Implement here Ghofrane's algorithms
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
-                cout<<"pointeur sur le sog "<< typeid(mcl).name() <<endl;
-                cout <<"pointeur sur le BA "<< typeid(aa).name() <<endl;
 
-                //atomic<ModelCheckBaseMT> (*mcl);
-                //shared_ptr< atomic<spot::twa_graph>> aa;
-                CNDFS n;
-                //n.DfsBlue(*mcl, aa);
-                n.spawnThreads(4,*mcl,aa);
+//                cout<<"pointeur sur sog "<< typeid(mcl).name() <<endl;
+//                cout <<"pointeur sur BA "<< typeid(aa).name() <<endl;
+
+                CNDFS cndfs;
+                //cndfs.DfsBlue(*mcl, aa);
+                thread thread_1 (cndfs.DfsBlue,ref(*mcl),ref(aa));
+                thread thread_2 (cndfs.DfsBlue,ref(*mcl),ref(aa));
+                thread_1.join();
+                thread_2.join();
+               // n.spawnThreads(2,*mcl,aa);
                 return(0);
 
             }
@@ -575,7 +581,6 @@ int main(int argc, char **argv)
 
                 // print SOG information
                 g.printCompleteInformation();
-
                 // run model checking process
                 if (!only_sog)
                 {
@@ -655,7 +660,7 @@ int main(int argc, char **argv)
                 // build the SOG
                 auto k = std::make_shared<HybridKripke>(d, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP(), Rnewnet);
 
-                runOnTheFlyMC(algorithm, k, af);
+               // runOnTheFlyMC(algorithm, k, af);
             }
         }
         else // build only the SOG
