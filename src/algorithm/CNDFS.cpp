@@ -73,6 +73,9 @@ void CNDFS::DfsBlue() {
 }
 */
 
+/*
+ * @Brief Create threads
+ */
 void CNDFS::spawnThreads() {
     for (int i = 0; i < mNbTh; ++i) {
         mlThread[i] = new thread(threadHandler, this);
@@ -88,8 +91,9 @@ void CNDFS::threadHandler(void *context) {
 }
 
 /*
- * Compute the synchornized product
+ * @brief Compute the synchornized product
  */
 void CNDFS::computeProduct() {
+    mIdThread++;
 
 }
