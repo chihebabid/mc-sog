@@ -206,8 +206,8 @@ ModelCheckBaseMT *getMultiCoreMC(NewNet &net, int nb_th, const string &thread_li
 
     // select the right model-checking algorithm
     if (thread_library == "posix")
-    {
-        if (progressive)
+    {        if (progressive)
+
         {
             cout << "Multi-threaded algorithm (progressive) based on PThread!" << endl;
             mcl = new ModelCheckThReq(net, nb_th);
@@ -513,10 +513,7 @@ int main(int argc, char **argv)
             auto d = spot::make_bdd_dict();
             spot::twa_graph_ptr af = formula2Automaton(negate_formula.f, d, dot_formula);
 
-            // twa_graph class
-            shared_ptr<spot::twa_graph> aa = formula2Automaton(negate_formula.f, d, dot_formula);
-
-            // create the SOG
+                       // create the SOG
             mcl->loadNet();
 
             // run on the fly parallel model-checking
@@ -527,7 +524,7 @@ int main(int argc, char **argv)
 //                cout<<"pointeur sur sog "<< typeid(mcl).name() <<endl;
 //                cout <<"pointeur sur BA "<< typeid(aa).name() <<endl;
 
-                CNDFS cndfs(*mcl,aa,3);
+                CNDFS cndfs(mcl,af,3);
 
                 // You have now to call a non static method of object cndfs that will create threads and execute your dfs algorithm
                 // Your static method should be defined as private and called by a non static method

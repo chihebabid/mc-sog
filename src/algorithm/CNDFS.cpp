@@ -10,35 +10,42 @@
 #include <vector>
 #include <spot/twa/twaproduct.hh>
 #include <spot/twa/twa.hh>
+
 using namespace std;
 
 
-bool red=false;
-bool blue=false;
+bool red = false;
+bool blue = false;
 thread_local bool cyan = false;
 
-struct new_state{
+struct new_state {
     ModelCheckBaseMT &left;
     shared_ptr<spot::twa_graph> right;
 };
 
-struct new_state_succ{
+struct new_state_succ {
     LDDState *succ_left;
     spot::twa_succ_iterator *succ_right;
 };
 
 vector<new_state_succ> successors_new_node;
 
-std::mutex mtx;
 
-//j'ai un problème de passage des paramétres dans le constructeur(pointeur vs adresse)
-//CNDFS::CNDFS(ModelCheckBaseMT *mMcl, const shared_ptr<spot::twa_graph> &mAa) : mMcl(mMcl), mAa(mAa) {}
 
-CNDFS::~CNDFS()=default;
+
+CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
+                                                                                           mNbTh(nbTh) {}
+
+CNDFS::~CNDFS() {
+    for (int i = 0; i < mNbTh; ++i) {
+        mlThread[i]->join();
+        delete mlThread[i];
+    }
+}
 
 //structure qui represente le produit de 2 états
-
- void CNDFS::DfsBlue() {
+/*
+void CNDFS::DfsBlue() {
 
     //cout << "First state SOG from CNDFS " << mMcl->getInitialMetaState() << endl;
     //cout << "First state SOG from CNDFS " << typeid(m.getGraph()->getInitialAggregate()->getSuccessors()).name() << endl;
@@ -47,38 +54,42 @@ CNDFS::~CNDFS()=default;
 
     //iterate succ of BA initial state
     //mtx.lock();
-    spot::twa_succ_iterator* i = mAa->succ_iter(mAa->get_init_state());
+    spot::twa_succ_iterator *i = mAa->succ_iter(mAa->get_init_state());
     if (i->first())
-        do
-        {
-            const std::lock_guard<std::mutex> lock(mtx);
-            cout << "BA succ "<< i->dst() << "; in thread "
-            << std::this_thread::get_id()<<   endl;
-        }
-        while (i->next());
-     mAa->release_iter(i);
+        do {
+            const std::lock_guard<std::mutex> lock(mMutex);
+            cout << "BA succ " << i->dst() << "; in thread "
+                 << std::this_thread::get_id() << endl;
+        } while (i->next());
+    mAa->release_iter(i);
     //mtx.unlock();
 
-     //iterate succ of SOG first state
-     //error: segmentation fault here don't know how to fix it
-     vector<pair<LDDState*, int>> * edges =mMcl->getGraph()->getInitialAggregate()->getSuccessors();
-     for (const auto& pair : *edges)
-     {
-       std::cout << "sog succ list "<< endl;
-     }
+    //iterate succ of SOG first state
+    //error: segmentation fault here don't know how to fix it
+    vector<pair<LDDState *, int>> *edges = mMcl->getGraph()->getInitialAggregate()->getSuccessors();
+    for (const auto &pair: *edges) {
+        std::cout << "sog succ list " << endl;
+    }
+}
+*/
+
+void CNDFS::spawnThreads() {
+    for (int i = 0; i < mNbTh; ++i) {
+        mlThread[i] = new thread(threadHandler, this);
+        if (mlThread[i] == nullptr) {
+            cout << "error: pthread creation failed. " << endl;
+        }
+    }
 }
 
 
-//void CNDFS::spawnThreads(int n, ModelCheckBaseMT &mcl, shared_ptr<spot::twa_graph> af  )
-//{
-//    std::vector<thread> threads(n);
-//    // spawn n threads:
-//    for (int i = 0; i < n; i++) {
-//        threads.push_back(thread(DfsBlue,ref(mcl),af));
-//    }
-//    for (auto& th : threads) {
-//        th.join();
-//
-//    }
-//}
+void CNDFS::threadHandler(void *context) {
+    ((CNDFS *) context)->computeProduct();
+}
 
+/*
+ * Compute the synchornized product
+ */
+void CNDFS::computeProduct() {
+
+}
