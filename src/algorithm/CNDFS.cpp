@@ -101,13 +101,13 @@ void CNDFS::computeProduct() {
     while (!mMcl->getInitialMetaState());
     LDDState * initialAgg=mMcl->getInitialMetaState();
     while (!initialAgg->isCompletedSucc());
-    int transition=mMcl->getInitialMetaState()->Successors.at(0).second;
-    std::cout<<"La transition : "<<string(mMcl->getTransition ( transition ))<<std::endl;
-    auto f=spot::formula::ap (string("Catch1_3"));//string(mMcl->getTransition ( transition )));
-    auto p=mAa->get_dict();
-    if (p->var_map.find ( f )==p->var_map.end()) {
-        cout<<"Ok!";
-    }
+    int transition=mMcl->getInitialMetaState()->Successors.at(0).second; // je récupère le numéro de la première transition
+    auto name=string(mMcl->getTransition ( transition )); // récuprer le nom de la transition
+    auto f=spot::formula::ap (name);// récuperer la proposition atomique qui correspond à la transiition
+    auto p=mAa->get_dict(); // avoir le dictionnaire bdd,proposition atomique
+    if (p->var_map.find ( f )==p->var_map.end()) { // Chercher la transition
+        cout<<"trouvé!"; // p->var_map.find ( f )->second => donne la bdd
+    } else cout<<"trouvé";
     //bdd   result=bdd_ithvar ( ( p->var_map.find ( f ) )->second );
 
     //mAa->edge_data(0)
