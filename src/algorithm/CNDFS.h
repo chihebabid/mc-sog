@@ -25,6 +25,7 @@ public:
     virtual ~CNDFS();
     //static void DfsBlue();
     void computeProduct();
+    static spot::bdd_dict_ptr* m_dict_ptr;
 };
 
 

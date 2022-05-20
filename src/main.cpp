@@ -500,6 +500,7 @@ int main(int argc, char **argv)
     /**************************************************************************
      * Multi-core version
      **************************************************************************/
+     //n_tasks=1;
     if (n_tasks == 1)
     {
         cout<< "Hello Multi-core version" <<endl;
@@ -507,6 +508,7 @@ int main(int argc, char **argv)
         if (!explicit_mc)
         {
             // get the corresponding multi-core model-checker
+           // exit(0);
             ModelCheckBaseMT *mcl = getMultiCoreMC(Rnewnet, nb_th, thread_library, progressive, por);
 
             // build automata of the negation of the formula
@@ -521,8 +523,7 @@ int main(int argc, char **argv)
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
 
-//                cout<<"pointeur sur sog "<< typeid(mcl).name() <<endl;
-//                cout <<"pointeur sur BA "<< typeid(aa).name() <<endl;
+                std::cout<<"I'm here"<<std::endl;
 
                 CNDFS cndfs(mcl,af,3);
 

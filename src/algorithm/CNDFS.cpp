@@ -34,7 +34,9 @@ vector<new_state_succ> successors_new_node;
 
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
-                                                                                           mNbTh(nbTh) {}
+                                                                                           mNbTh(nbTh) {
+    spawnThreads();
+}
 
 CNDFS::~CNDFS() {
     for (int i = 0; i < mNbTh; ++i) {
@@ -94,6 +96,21 @@ void CNDFS::threadHandler(void *context) {
  * @brief Compute the synchornized product
  */
 void CNDFS::computeProduct() {
-    mIdThread++;
+    uint16_t idThread=mIdThread++;
+    //cout<<"My id : "<<mMcl;
+    while (!mMcl->getInitialMetaState());
+    LDDState * initialAgg=mMcl->getInitialMetaState();
+    while (!initialAgg->isCompletedSucc());
+    int transition=mMcl->getInitialMetaState()->Successors.at(0).second;
+    std::cout<<"La transition : "<<string(mMcl->getTransition ( transition ))<<std::endl;
+    auto f=spot::formula::ap (string("Catch1_3"));//string(mMcl->getTransition ( transition )));
+    auto p=mAa->get_dict();
+    if (p->var_map.find ( f )==p->var_map.end()) {
+        cout<<"Ok!";
+    }
+    //bdd   result=bdd_ithvar ( ( p->var_map.find ( f ) )->second );
 
+    //mAa->edge_data(0)
 }
+
+spot::bdd_dict_ptr* CNDFS::m_dict_ptr;
