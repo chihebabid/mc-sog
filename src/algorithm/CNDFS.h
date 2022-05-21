@@ -5,6 +5,7 @@
 #ifndef PMC_SOG_CNDFS_H
 #define PMC_SOG_CNDFS_H
 #include "../ModelCheckBaseMT.h"
+//#include "../SogKripkeTh.h"
 #include <spot/tl/apcollect.hh>
 #include <cstdint>
 #include <thread>
@@ -22,6 +23,7 @@ private:
     void spawnThreads();
 public:
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
+//    CNDFS(shared_ptr<SogKripkeTh> k,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
     //static void DfsBlue();
     void computeProduct();

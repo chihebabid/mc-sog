@@ -13,24 +13,10 @@
 
 using namespace std;
 
-
-bool red = false;
-bool blue = false;
-thread_local bool cyan = false;
-
-struct new_state {
-    ModelCheckBaseMT &left;
-    shared_ptr<spot::twa_graph> right;
+struct new_state{
+    LDDState *left;;
+    spot::state* right;
 };
-
-struct new_state_succ {
-    LDDState *succ_left;
-    spot::twa_succ_iterator *succ_right;
-};
-
-vector<new_state_succ> successors_new_node;
-
-
 
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
@@ -44,36 +30,6 @@ CNDFS::~CNDFS() {
         delete mlThread[i];
     }
 }
-
-//structure qui represente le produit de 2 états
-/*
-void CNDFS::DfsBlue() {
-
-    //cout << "First state SOG from CNDFS " << mMcl->getInitialMetaState() << endl;
-    //cout << "First state SOG from CNDFS " << typeid(m.getGraph()->getInitialAggregate()->getSuccessors()).name() << endl;
-    //cout << "First state BA from CNDFS "  << a->get_init_state()<<endl;
-
-
-    //iterate succ of BA initial state
-    //mtx.lock();
-    spot::twa_succ_iterator *i = mAa->succ_iter(mAa->get_init_state());
-    if (i->first())
-        do {
-            const std::lock_guard<std::mutex> lock(mMutex);
-            cout << "BA succ " << i->dst() << "; in thread "
-                 << std::this_thread::get_id() << endl;
-        } while (i->next());
-    mAa->release_iter(i);
-    //mtx.unlock();
-
-    //iterate succ of SOG first state
-    //error: segmentation fault here don't know how to fix it
-    vector<pair<LDDState *, int>> *edges = mMcl->getGraph()->getInitialAggregate()->getSuccessors();
-    for (const auto &pair: *edges) {
-        std::cout << "sog succ list " << endl;
-    }
-}
-*/
 
 /*
  * @Brief Create threads
@@ -101,16 +57,155 @@ void CNDFS::computeProduct() {
     while (!mMcl->getInitialMetaState());
     LDDState * initialAgg=mMcl->getInitialMetaState();
     while (!initialAgg->isCompletedSucc());
-    int transition=mMcl->getInitialMetaState()->Successors.at(0).second; // je récupère le numéro de la première transition
-    auto name=string(mMcl->getTransition ( transition )); // récuprer le nom de la transition
-    auto f=spot::formula::ap (name);// récuperer la proposition atomique qui correspond à la transiition
-    auto p=mAa->get_dict(); // avoir le dictionnaire bdd,proposition atomique
-    if (p->var_map.find ( f )==p->var_map.end()) { // Chercher la transition
-        cout<<"trouvé!"; // p->var_map.find ( f )->second => donne la bdd
-    } else cout<<"trouvé";
-    //bdd   result=bdd_ithvar ( ( p->var_map.find ( f ) )->second );
+    for (auto vv : mMcl->getInitialMetaState()->getMarkedPlaces(mMcl->getPlaceProposition()))
+    {
+        cout << mMcl->getPlace(vv)<< endl;
+    }
 
-    //mAa->edge_data(0)
+    for (int i=0 ; i < mMcl->getInitialMetaState()->Successors.size(); i++)
+    {
+        int transition=mMcl->getInitialMetaState()->Successors.at(i).second; // je récupère le numéro de la première transition
+        auto name=string(mMcl->getTransition ( transition )); // récuprer le nom de la transition
+        auto f=spot::formula::ap (name);// récuperer la proposition atomique qui correspond à la transiition
+       // cout << f << endl;
+        auto p=mAa->get_dict(); // avoir le dictionnaire bdd,proposition atomique
+        for (auto v : p->var_map)
+        {
+          cout << f << "-->" << v.first << endl;
+        }
+
+        if (p->var_map.find ( f )==p->var_map.end()) { // Chercher la transition
+            cout<<"non trouvé!" <<endl; // p->var_map.find ( f )->second => donne la bdd
+        } else cout<<"trouvé";
+    }
+
 }
 
 spot::bdd_dict_ptr* CNDFS::m_dict_ptr;
+
+////
+//// Created by ghofrane on 5/4/22.
+////
+//
+//#include "CNDFS.h"
+//#include "ModelCheckBaseMT.h"
+//#include <iostream>
+//#include <spot/twa/twagraph.hh>
+//#include <thread>
+//#include <vector>
+//#include <spot/twa/twa.hh>
+//
+//using namespace std;
+//
+//
+//struct new_state{
+//    LDDState *left;;
+//    spot::state* right;
+//};
+//
+////temporary list to collect the successors of a BA state
+//vector<bdd>BA_succ_temp;
+//
+////temporary list to collect the successors of a SOG aggregate
+//vector<bdd> SOG_succ_temp;
+//
+////list of new successors of the product
+//vector<bdd> successors_new_node;
+//
+//
+//CNDFS::CNDFS(shared_ptr<SogKripkeTh> k, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mK(k), mAa(af),
+//                                                                                               mNbTh(nbTh) {
+//    spawnThreads();
+//}
+//
+////CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
+////                                                                                           mNbTh(nbTh) {
+////    spawnThreads();
+////}
+//
+//CNDFS::~CNDFS() {
+//    for (int i = 0; i < mNbTh; ++i) {
+//        mlThread[i]->join();
+//        delete mlThread[i];
+//    }
+//}
+//
+///*
+// * @Brief Create threads
+// */
+//void CNDFS::spawnThreads() {
+//    for (int i = 0; i < mNbTh; ++i) {
+//        mlThread[i] = new thread(threadHandler, this);
+//        if (mlThread[i] == nullptr) {
+//            cout << "error: pthread creation failed. " << endl;
+//        }
+//    }
+//}
+//
+//
+//void CNDFS::threadHandler(void *context) {
+//    ((CNDFS *) context)->computeProduct();
+//}
+//
+///*
+// * @brief Compute the synchornized product
+// */
+//void CNDFS::computeProduct()
+//{
+//    mIdThread++;
+//    //list of successors of a BA state
+//    spot::twa_succ_iterator* i = mAa->succ_iter(mAa->get_init_state());
+//    if (i->first())
+//        do
+//        {
+//            //std::lock_guard<std::mutex> lg(mMutex);
+//            BA_succ_temp.push_back(i->cond());
+//        }
+//        while (i->next());
+//    mAa->release_iter(i);
+//
+//    for(bdd n : BA_succ_temp)
+//    {
+//        std::cout << "BA succ"<< n << endl;
+//    }
+//
+////    //list of successors of a SOG aggregate
+//    auto  edges = mK->succ_iter(mK->get_init_state());
+//    if (edges->first())
+//        do
+//        {
+//            //std::lock_guard<std::mutex> lg(mMutex);
+//            SOG_succ_temp.push_back(edges->cond());
+//        }
+//        while (edges->next());
+//    mK->release_iter(edges);
+//
+//    for(bdd m : SOG_succ_temp)
+//    {
+//        std::cout << "SOG succ"<< m << endl;
+//    }
+//
+//    for(bdd n : SOG_succ_temp)
+//    {
+//        for(bdd m : BA_succ_temp)
+//        {
+//            if (n==m)
+//            {
+//                successors_new_node.push_back(m);
+//            }
+//        }
+//    }
+//
+//    if (!successors_new_node.empty())
+//    {
+//        for(bdd k : successors_new_node)
+//        {
+////            new_state new_product_state(mK->get_init_state(),mAa->get_init_state());
+//            cout << "common succ "<< k << endl;
+//        }
+//
+//    } else{
+//        cout << "no common succ" << endl;
+//    }
+//
+//}

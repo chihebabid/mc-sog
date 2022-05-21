@@ -200,7 +200,8 @@ void displayToolInformation(const string &net, const string &formula, const stri
  * @param por Flag for partial order reduction
  * @return ModelCheckBaseMT*
  */
-ModelCheckBaseMT *getMultiCoreMC(NewNet &net, int nb_th, const string &thread_library, bool progressive, bool por)
+ModelCheckBaseMT *
+getMultiCoreMC(NewNet &net, int nb_th, const string &thread_library, bool progressive, bool por)
 {
     ModelCheckBaseMT *mcl = nullptr;
 
@@ -524,23 +525,17 @@ int main(int argc, char **argv)
             {
 
                 std::cout<<"I'm here"<<std::endl;
+//                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
+//                CNDFS cndfs(k,af,1);
+                CNDFS cndfs(mcl,af,1);
 
-                CNDFS cndfs(mcl,af,3);
-
-                // You have now to call a non static method of object cndfs that will create threads and execute your dfs algorithm
-                // Your static method should be defined as private and called by a non static method
-                // try else you send me a request tomorrw if you have pbs
-                //CNDFS cndfs(*mcl, aa);
-                //cndfs.DfsBlue(*mcl, aa);
-
-               // n.spawnThreads(2,*mcl,aa);
                 return(0);
 
             }
             else // run on the fly sequential model-checking
             {
                 auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
-                //runOnTheFlyMC(algorithm, k, af);
+                runOnTheFlyMC(algorithm, k, af);
             }
 
             // stop model checker process
