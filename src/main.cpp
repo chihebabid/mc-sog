@@ -524,7 +524,7 @@ int main(int argc, char **argv)
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
 
-                std::cout<<"I'm here"<<std::endl;
+                std::cout<<"------------CNDFS-------------"<<std::endl;
 //                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
 //                CNDFS cndfs(k,af,1);
                 CNDFS cndfs(mcl,af,1);

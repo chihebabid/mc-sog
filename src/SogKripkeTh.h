@@ -18,8 +18,6 @@ class SogKripkeTh: public spot::kripke {
         std::string format_state(const spot::state* s) const override;
         bdd state_condition(const spot::state* s) const override;
         ModelCheckBaseMT *m_builder;
-
-
 };
 
 #endif // SOGKRIPKE_H_INCLUDED

@@ -18,6 +18,7 @@ struct new_state{
     spot::state* right;
 };
 
+list<spot::formula> transitionNames;
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
                                                                                            mNbTh(nbTh) {
@@ -43,7 +44,6 @@ void CNDFS::spawnThreads() {
     }
 }
 
-
 void CNDFS::threadHandler(void *context) {
     ((CNDFS *) context)->computeProduct();
 }
@@ -52,36 +52,36 @@ void CNDFS::threadHandler(void *context) {
  * @brief Compute the synchornized product
  */
 void CNDFS::computeProduct() {
-    uint16_t idThread=mIdThread++;
-    //cout<<"My id : "<<mMcl;
+    uint16_t idThread = mIdThread++;
     while (!mMcl->getInitialMetaState());
-    LDDState * initialAgg=mMcl->getInitialMetaState();
+    LDDState *initialAgg = mMcl->getInitialMetaState();
     while (!initialAgg->isCompletedSucc());
-    for (auto vv : mMcl->getInitialMetaState()->getMarkedPlaces(mMcl->getPlaceProposition()))
+
+    //fetch the state's atomic proposition
+    for (auto vv: mMcl->getInitialMetaState()->getMarkedPlaces(mMcl->getPlaceProposition()))
     {
-        cout << mMcl->getPlace(vv)<< endl;
+        string name = string(mMcl->getPlace(vv));
+        auto f = spot::formula::ap(name);
+        transitionNames.push_back(f);
     }
 
-    for (int i=0 ; i < mMcl->getInitialMetaState()->Successors.size(); i++)
-    {
-        int transition=mMcl->getInitialMetaState()->Successors.at(i).second; // je récupère le numéro de la première transition
-        auto name=string(mMcl->getTransition ( transition )); // récuprer le nom de la transition
-        auto f=spot::formula::ap (name);// récuperer la proposition atomique qui correspond à la transiition
-       // cout << f << endl;
-        auto p=mAa->get_dict(); // avoir le dictionnaire bdd,proposition atomique
-        for (auto v : p->var_map)
-        {
-          cout << f << "-->" << v.first << endl;
+    for (int i = 0; i < mMcl->getInitialMetaState()->Successors.size(); i++) {
+        cout <<"------"<< i << " SOG's successor ------" << endl;
+        int transition = mMcl->getInitialMetaState()->Successors.at(
+                i).second; // je récupère le numéro de la première transition
+        auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
+        auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transiition
+        transitionNames.push_back(f); // push state'S AP to edge'S AP
+        auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
+        for (auto it = transitionNames.begin(); it != transitionNames.end(); ++it) {
+            if (p->var_map.find(*it) != p->var_map.end()) { // Chercher la transition
+                cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
+            } else cout << *it << " isn't a common transaction" << endl;
         }
-
-        if (p->var_map.find ( f )==p->var_map.end()) { // Chercher la transition
-            cout<<"non trouvé!" <<endl; // p->var_map.find ( f )->second => donne la bdd
-        } else cout<<"trouvé";
     }
-
 }
 
-spot::bdd_dict_ptr* CNDFS::m_dict_ptr;
+spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
 
 ////
 //// Created by ghofrane on 5/4/22.
