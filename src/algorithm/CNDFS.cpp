@@ -15,10 +15,12 @@ using namespace std;
 struct start_state{
     LDDState *left;
     const spot::twa_graph_state* right;
+    bool isAcceptance;
 };
 struct end_state{
     LDDState *left;
-    const spot::twa_succ_iterator* right;
+    const spot::state* right;
+    bool isAcceptance;
 };
 
 struct graphEdge {
@@ -26,6 +28,7 @@ struct graphEdge {
     end_state es;
     int weight;
 };
+
 
 list<spot::formula> transitionNames;
 vector<bdd>temp;
@@ -58,7 +61,7 @@ void CNDFS::threadHandler(void *context) {
 
 /*
  * @brief Compute the synchornized product
- */
+*/
 void CNDFS::computeProduct() {
     uint16_t idThread = mIdThread++;
     while (!mMcl->getInitialMetaState());
@@ -72,10 +75,9 @@ void CNDFS::computeProduct() {
         auto f = spot::formula::ap(name);
         transitionNames.push_back(f);
     }
-
-    for (int i = 0; i < mMcl->getInitialMetaState()->Successors.size(); i++) {
-        cout <<"------"<< " SOG's successor " << i << " ------" << endl;
-        int transition = mMcl->getInitialMetaState()->Successors.at(i).second; // je récupère le numéro de la première transition
+//    for (int i = 0; i < mMcl->getInitialMetaState()->Successors.size(); i++) {
+//        cout <<"------"<< " SOG's successor " << i << " ------" << endl;
+        int transition = mMcl->getInitialMetaState()->Successors.at(0).second; // je récupère le numéro de la première transition
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
         auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
         transitionNames.push_back(f); // push state'S AP to edge'S AP
@@ -97,12 +99,20 @@ void CNDFS::computeProduct() {
 
         for (auto it = transitionNames.begin(); it != transitionNames.end(); ++it) {
             if (p->var_map.find(*it) != p->var_map.end()) { // Chercher la transition
-                bdd  result=bdd_ithvar((p->var_map.find(*it))->second); // Pblm: here I want to detect the right successor of initial state BA
+                const bdd  result=bdd_ithvar((p->var_map.find(*it))->second);
                 cout << "dbb result " << result << endl;
+                //chercher les transitions en commun avec les successeurs du premier etat
+                for (auto i: temp)
+                {
+//                    if (result & (const bdd)i == bddtrue)
+                    bdd matched = i&result;
+                    if (matched!=bddfalse)
+                        cout << "matched bdd " << matched << endl;
+                }
                 //new starting state
                 struct start_state ns = {mMcl->getInitialMetaState(), mAa->get_init_state()};
                 //new terminal state
-                struct end_state nd = {mMcl->getInitialMetaState()->Successors.at(i).first, ii};
+                struct end_state nd = {mMcl->getInitialMetaState()->Successors.at(0).first, ii->dst()}; // Pblm: here I want to detect the right successor of initial state of BA
                 struct graphEdge ge = {ns,nd,1};
                 cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
             } else cout << *it << " isn't a common transaction" << endl;
@@ -110,7 +120,7 @@ void CNDFS::computeProduct() {
         transitionNames.pop_back();
     }
 
-}
+//}
 spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
 
 ////
