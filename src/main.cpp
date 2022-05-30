@@ -129,6 +129,7 @@ Formula negateFormula(const string &fileName)
 spot::twa_graph_ptr formula2Automaton(const spot::formula &f, spot::bdd_dict_ptr bdd, bool save_dot = false)
 {
     cout << "\nBuilding automata for not(formula)\n";
+
     spot::twa_graph_ptr af = spot::translator(bdd).run(f);
     cout << "Formula automata built." << endl;
 
@@ -515,7 +516,6 @@ int main(int argc, char **argv)
             // build automata of the negation of the formula
             auto d = spot::make_bdd_dict();
             spot::twa_graph_ptr af = formula2Automaton(negate_formula.f, d, dot_formula);
-
                        // create the SOG
             mcl->loadNet();
 
@@ -525,8 +525,11 @@ int main(int argc, char **argv)
             {
 
                 std::cout<<"------------CNDFS-------------"<<std::endl;
-//                auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
-//                CNDFS cndfs(k,af,1);
+//                threadSOG DR(Rnewnet, nb_th, uselace);
+//                LDDGraph g(&DR);
+//
+//                DR.computeSeqSOG(g);
+//                g.printCompleteInformation();
                 CNDFS cndfs(mcl,af,1);
 
                 return(0);

@@ -9,12 +9,15 @@
 #include <spot/tl/apcollect.hh>
 #include <cstdint>
 #include <thread>
+#include <spot/twa/twagraph.hh>
 class CNDFS {
 
 private:
     static constexpr uint8_t MAX_THREADS=64;
     ModelCheckBaseMT * mMcl;
     spot::twa_graph_ptr mAa;
+    LDDState* sog_current_state;
+    const spot::twa_graph_state* ba_current_state;
     uint16_t mNbTh;
     atomic<uint8_t> mIdThread;
     static void threadHandler(void *context);
@@ -23,9 +26,7 @@ private:
     void spawnThreads();
 public:
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
-//    CNDFS(shared_ptr<SogKripkeTh> k,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
-    //static void DfsBlue();
     void computeProduct();
     static spot::bdd_dict_ptr* m_dict_ptr;
 };
