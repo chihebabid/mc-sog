@@ -23,7 +23,7 @@ struct end_state{
     const spot::state* right;
     bool isAcceptance;
 };
-vector<pair<end_state, int> > SOG_successors;
+vector<pair<end_state, int> > new_successors;
 list<spot::formula> transitionNames;
 vector<bdd>temp;
 
@@ -74,6 +74,8 @@ void CNDFS::computeProduct() {
     {
         cout << "AP in state " << tn << endl;
     }
+    
+    //iterate over the successors of an aggregate
     for (int i = 0; i < sog_current_state->Successors.size(); i++)
     {
             cout <<"------"<< " SOG's successor " << i << " ------" << endl;
@@ -82,16 +84,6 @@ void CNDFS::computeProduct() {
             auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
             transitionNames.push_back(f); // push state'S AP to edge'S AP
             auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
-            spot::twa_succ_iterator* ii = mAa->succ_iter(ba_current_state);
-            if (ii->first())
-                do
-                {
-                    cout << "is succ acceptance " <<  mAa->state_is_accepting(ii->dst()) << endl;
-                    temp.push_back(ii->cond());
-                }
-                while (ii->next());
-            mAa->release_iter(ii);
-            //cout << temp.size() << endl;
             //cout << p->bdd_map.size() << endl;
             for (auto v: p->var_map)
             {
@@ -101,31 +93,41 @@ void CNDFS::computeProduct() {
             for (auto it = transitionNames.begin(); it != transitionNames.end(); ++it)
             {
                 if (p->var_map.find(*it) != p->var_map.end())
-                { // Chercher la transition
+                { //fetch the transition of BA that have the same AP as the SOG transition
                     const bdd  result=bdd_ithvar((p->var_map.find(*it))->second);
                     cout << "dbb result " << result << endl;
-                    //chercher les transitions en commun avec les successeurs du premier etat
-                    for (auto tr: temp)
-                    {
-                        bdd matched = tr&result;
-                        if (matched!=bddfalse)
+                    //iterate over the successors of a BA state
+                    spot::twa_succ_iterator* ii = mAa->succ_iter(ba_current_state);
+                    if (ii->first())
+                        do
                         {
-                            cout << "matched bdd " << matched << endl;
-                            //new starting state
-                            struct start_state ns = {sog_current_state, ba_current_state, mAa->state_is_accepting(ba_current_state)};
-                            //new terminal state
-                            struct end_state nd = {sog_current_state->Successors.at(i).first, ii->dst(), mAa->state_is_accepting(ii->dst())};
-                            SOG_successors.push_back(make_pair(nd,transition));
-                            cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
+                            bdd matched = ii->cond()&result;
+                            if (matched!=bddfalse)
+                            {
+                                cout << "matched bdd " << matched << endl;
+                                //new starting state
+                                struct start_state ns = {sog_current_state, ba_current_state, mAa->state_is_accepting(ba_current_state)};
+                                //new terminal state
+                                struct end_state nd = {sog_current_state->Successors.at(i).first, ii->dst(), mAa->state_is_accepting(ii->dst())};
+                                new_successors.push_back(make_pair(nd,transition));
+                                cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
+                            }
                         }
-                    }
+                    while (ii->next());
+                    mAa->release_iter(ii);
                 } else cout << *it << " isn't a common transaction" << endl;
             }
             transitionNames.pop_back();
     }
 
-    for (auto p: SOG_successors) {
+    for (auto p: new_successors) {
         std::cout << "list of successors of current state " << "({ " << p.first.right << ", " << p.first.left << ", "  << p.first.isAcceptance << " }" << ", " << p.second << ") ";
+    }
+
+    for (auto k = new_successors.begin(); k != new_successors.end(); ++k)
+    {
+        sog_current_state= k->first.left;
+        ba_current_state= dynamic_cast<const spot::twa_graph_state *>(k->first.right);
     }
 }
 spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
