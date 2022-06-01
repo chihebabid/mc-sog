@@ -525,11 +525,7 @@ int main(int argc, char **argv)
             {
 
                 std::cout<<"------------CNDFS-------------"<<std::endl;
-//                threadSOG DR(Rnewnet, nb_th, uselace);
-//                LDDGraph g(&DR);
-//
-//                DR.computeSeqSOG(g);
-//                g.printCompleteInformation();
+
                 CNDFS cndfs(mcl,af,1);
 
                 return(0);

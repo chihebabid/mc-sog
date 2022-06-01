@@ -16,18 +16,29 @@ private:
     static constexpr uint8_t MAX_THREADS=64;
     ModelCheckBaseMT * mMcl;
     spot::twa_graph_ptr mAa;
-    LDDState* sog_current_state;
-    const spot::twa_graph_state* ba_current_state;
     uint16_t mNbTh;
     atomic<uint8_t> mIdThread;
     static void threadHandler(void *context);
     std::thread* mlThread[MAX_THREADS];
     std::mutex mMutex;
     void spawnThreads();
+
 public:
+    typedef struct _state{
+        LDDState *left;
+        const spot::twa_graph_state* right;
+        bool isAcceptance;
+        bool isConstructed = false;
+    } _state;
+
+    vector<pair<_state , int>> new_successors;
+    list<spot::formula> transitionNames;
+    vector<bdd>temp;
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
-    void computeProduct();
+    void computeSuccessors(LDDState* sog_current_state,const spot::twa_graph_state* ba_current_state);
+    void dfsBlue(_state *state);
+    _state* getInitialState();
     static spot::bdd_dict_ptr* m_dict_ptr;
 };
 
