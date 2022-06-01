@@ -27,18 +27,20 @@ public:
     typedef struct _state{
         LDDState *left;
         const spot::twa_graph_state* right;
-        bool isAcceptance;
+        vector<pair<_state* , int>> new_successors ;
+        bool isAcceptance = false;
         bool isConstructed = false;
     } _state;
 
-    vector<pair<_state , int>> new_successors;
+//    vector<pair<_state , int>> new_successors;
     list<spot::formula> transitionNames;
     vector<bdd>temp;
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
-    void computeSuccessors(LDDState* sog_current_state,const spot::twa_graph_state* ba_current_state);
+    void computeSuccessors(_state *state);
     void dfsBlue(_state *state);
     _state* getInitialState();
+    _state* buildState(LDDState* left, spot::state* right, vector<pair<_state *, int>> succ, bool acc, bool constructed);
     static spot::bdd_dict_ptr* m_dict_ptr;
 };
 

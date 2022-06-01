@@ -11,6 +11,7 @@
 #include <utility>
 #include <spot/twa/twa.hh>
 #include <bddx.h>
+#include <cstddef>
 using namespace std;
 
 
@@ -47,15 +48,29 @@ CNDFS::_state* CNDFS::getInitialState(){
     _state * initStatePtr  = static_cast<_state *>(malloc(sizeof(_state)));
     initStatePtr->left = mMcl->getInitialMetaState();
     initStatePtr->right = mAa->get_init_state();
+    initStatePtr->new_successors =  static_cast<vector<pair<_state *, int>>>(NULL);
     initStatePtr->isAcceptance = mAa->state_is_accepting(mAa->get_init_state());
     initStatePtr->isConstructed = true;
     return initStatePtr;
 }
 
-//compute new successors of a product state
-void CNDFS::computeSuccessors(LDDState *sog_current_state, const spot::twa_graph_state *ba_current_state)
-{
+//this function is to build a state with list of successor initially null
+CNDFS::_state* CNDFS::buildState(LDDState* left, spot::state* right, vector<pair<_state *, int>> succ, bool acc, bool constructed){
+    _state * buildStatePtr  = static_cast<_state *>(malloc(sizeof(_state)));
+    buildStatePtr->left = left;
+    buildStatePtr->right = dynamic_cast<const spot::twa_graph_state *>(right);
+    buildStatePtr->new_successors =  static_cast<vector<pair<_state *, int>>>(NULL);
+    buildStatePtr->isAcceptance = acc;
+    buildStatePtr->isConstructed = constructed;
+    return buildStatePtr;
+}
 
+
+//compute new successors of a product state
+void CNDFS::computeSuccessors(_state *state)
+{
+    LDDState* sog_current_state = state->left;
+    const spot::twa_graph_state* ba_current_state = state->right;
     while (!sog_current_state);
     while (!sog_current_state->isCompletedSucc());
     //fetch the state's atomic proposition
@@ -101,9 +116,11 @@ void CNDFS::computeSuccessors(LDDState *sog_current_state, const spot::twa_graph
                         if (matched!=bddfalse)
                         {
                             cout << "matched bdd " << matched << endl;
-                            //new terminal state
-                            _state nd = {sog_current_state->Successors.at(i).first, dynamic_cast<const spot::twa_graph_state *> (ii->dst()), mAa->state_is_accepting(ii->dst()),true};
-                            new_successors.push_back(make_pair(nd,transition));
+                            //new terminal state without successors
+                            _state* nd = buildState(sog_current_state->Successors.at(i).first,
+                                                    const_cast<spot::state *>(ii->dst()), static_cast<vector<pair<_state *, int>>>(NULL), mAa->state_is_accepting(ii->dst()), true);
+                            //add the successor found to the vestor of successor of the current state
+                            state->new_successors.push_back(make_pair(nd,transition));
                             cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
                         }
                     }
@@ -121,9 +138,9 @@ void CNDFS::dfsBlue(_state *state) {
     uint16_t idThread = mIdThread++;
 
     cout << state->isConstructed << endl;
-    computeSuccessors(state->left,state->right);
-        for (auto p: new_successors) {
-            std::cout << "list of successors of current state  " << "({ " << p.first.right << ", " << p.first.left << ", "  << p.first.isAcceptance <<  ", "  << p.first.isConstructed << " }" << ", " << p.second << ") ";
+    computeSuccessors(state);
+        for (auto p:state->new_successors) {
+            std::cout << "list of successors of current state  " << "({ " << p.first->right << ", " << p.first->left << ", "  << p.first->isAcceptance <<  ", "  << p.first->isConstructed << " }" << ", " << p.second << ") ";
         }
 
 //        for (auto k = new_successors.begin(); k != new_successors.end(); ++k)
