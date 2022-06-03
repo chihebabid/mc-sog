@@ -12,9 +12,13 @@
 #include <spot/twa/twa.hh>
 #include <bddx.h>
 #include <cstddef>
+#include <deque>
+#include <condition_variable>
 using namespace std;
 
 
+thread_local deque<CNDFS::_state*> mydeque ;
+thread_local list<bool> mytempList ;
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af), mNbTh(nbTh)
 {
@@ -54,6 +58,7 @@ CNDFS::_state* CNDFS::getInitialState(){
     return initStatePtr;
 }
 
+
 //this function is to build a state with list of successor initially null
 CNDFS::_state* CNDFS::buildState(LDDState* left, spot::state* right, vector<pair<_state *, int>> succ, bool acc, bool constructed){
     _state * buildStatePtr  = static_cast<_state *>(malloc(sizeof(_state)));
@@ -65,6 +70,50 @@ CNDFS::_state* CNDFS::buildState(LDDState* left, spot::state* right, vector<pair
     return buildStatePtr;
 }
 
+std::ostream & operator<<(std::ostream & Str, CNDFS::_state* state) {
+     Str << "({ Sog state= " << state->left << ", BA state= " << state->right << ", acceptance= "  << state->isAcceptance <<  ", constructed= "  << state->isConstructed <<  ", cyan= "  << state->cyan << ", red= "  << state->red << ", blue= "  <<  state->blue <<" }" << endl;
+    return Str;
+}
+
+//algo line 22 test
+atomic_bool CNDFS::awaitCondition(_state* state)
+{
+    for (auto qu: mydeque)
+    {
+        if ((qu->isAcceptance) && (qu!=state))
+            mytempList.push_back(qu->red); // add all the red values
+//            return(qu->red == true);
+    }
+    //test if all elements are true
+    if (all_of(mytempList.begin(),mytempList.end(),[] (bool cond) {return cond ==true; }))
+    {
+        return true;
+    }
+    return  false;
+}
+
+
+//block all threads while awaitCondition is false
+void  CNDFS::WaitForTestCompleted(_state* state) {
+    while ( awaitCondition(state) == false) ;
+}
+
+
+void CNDFS::dfsRed(_state* state)
+{
+    cout << "dfsRed" << endl;
+    mydeque.push_back(state);
+    computeSuccessors(state);
+    for (auto p:state->new_successors) {
+      if (p.first->cyan)
+      {
+          cout << "cycle detected"  << endl;
+          exit(1);
+      }
+      if ((find(mydeque.begin(), mydeque.end(), state) != mydeque.end()) && ! p.first->red )
+          dfsRed(p.first);
+    }
+}
 
 //compute new successors of a product state
 void CNDFS::computeSuccessors(_state *state)
@@ -96,10 +145,10 @@ void CNDFS::computeSuccessors(_state *state)
         transitionNames.push_back(f); // push state'S AP to edge'S AP
         auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
         //cout << p->bdd_map.size() << endl;
-        for (auto v: p->var_map)
-        {
-            cout << v.first << "-----" << v.second << endl;
-        }
+//        for (auto v: p->var_map)
+//        {
+//            cout << v.first << "-----" << v.second << endl;
+//        }
 
         for (auto it = transitionNames.begin(); it != transitionNames.end(); ++it)
         {
@@ -117,42 +166,56 @@ void CNDFS::computeSuccessors(_state *state)
                         {
                             cout << "matched bdd " << matched << endl;
                             //new terminal state without successors
+//                            std::lock_guard<std::mutex> lg(*mMutex);
                             _state* nd = buildState(sog_current_state->Successors.at(i).first,
                                                     const_cast<spot::state *>(ii->dst()), static_cast<vector<pair<_state *, int>>>(NULL), mAa->state_is_accepting(ii->dst()), true);
-                            //add the successor found to the vestor of successor of the current state
+                            cout << "new succ state " << nd ;
+                            //add the successor found to the successor's vector of the current state
                             state->new_successors.push_back(make_pair(nd,transition));
-                            cout << *it << " is a common transaction!" << endl; // p->var_map.find ( f )->second => donne la bdd
                         }
                     }
                     while (ii->next());
                 mAa->release_iter(ii);
+                cout << *it << " is a common transaction!" << endl;
             } else cout << *it << " isn't a common transaction" << endl;
         }
         transitionNames.pop_back();
     }
-
 }
 
 //Compute the synchronized product
 void CNDFS::dfsBlue(_state *state) {
     uint16_t idThread = mIdThread++;
-
-    cout << state->isConstructed << endl;
+    cout << state;
+    state->cyan = true;
+//    cout << "first state " << "({ " << state->right << ", " << state->left << ", "  << state->isAcceptance <<  ", "  << state->isConstructed <<  ", "  << state->cyan << ", "  << state->red << ", "  <<  state->blue <<" }" << endl;
     computeSuccessors(state);
-        for (auto p:state->new_successors) {
-            std::cout << "list of successors of current state  " << "({ " << p.first->right << ", " << p.first->left << ", "  << p.first->isAcceptance <<  ", "  << p.first->isConstructed << " }" << ", " << p.second << ") ";
-        }
+    for (auto p:state->new_successors)
+    {
+        cout <<"STATE 1 " <<  state<< endl;
+        cout << "STATE 2 "<<  p.first<< endl;
+         cout << " cyan " <<  p.first->cyan << endl;
+//          cout << "list of successors of current state  " << "({ " << p.first->right << ", " << p.first->left << ", "  << p.first->isAcceptance <<  ", "  << p.first->isConstructed <<  ", "  << p.first->cyan << ", "  << p.first->red << ", "  <<  p.first->blue <<" }"  << ", " << p.second << ") " << endl;
+          while((p.first->cyan == 0) && (p.first->blue == 0))
+          {
+              cout << " appel recursive 2 " << endl;
+              dfsBlue(p.first);
+          }
 
-//        for (auto k = new_successors.begin(); k != new_successors.end(); ++k)
+    }
+    state->blue = true;
+//        if (state->isAcceptance)
 //        {
-//            sog_current_state= k->first.left;
-//            ba_current_state= dynamic_cast<const spot::twa_graph_state *>(k->first.right);
-//            //computeSuccessors(sog_current_state,ba_current_state);
-//            if (! k->first.isConstructed)
-//                dfsBlue();
+//            dfsRed(state);
+//            WaitForTestCompleted(state);
+//            std::lock_guard<std::mutex> lk(*mMutex);
+//            cv.notify_all();
+//            for (auto qu: mydeque)
+//            {
+//                qu->red = true;
+//            }
 //        }
-
-
+//        state->cyan = false;
 }
 spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
 

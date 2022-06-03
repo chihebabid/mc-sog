@@ -1,15 +1,16 @@
 //
 // Created by ghofrane on 5/4/22.
 //
-
 #ifndef PMC_SOG_CNDFS_H
 #define PMC_SOG_CNDFS_H
 #include "../ModelCheckBaseMT.h"
-//#include "../SogKripkeTh.h"
 #include <spot/tl/apcollect.hh>
 #include <cstdint>
 #include <thread>
+#include <atomic>
+#include <condition_variable>
 #include <spot/twa/twagraph.hh>
+
 class CNDFS {
 
 private:
@@ -20,7 +21,8 @@ private:
     atomic<uint8_t> mIdThread;
     static void threadHandler(void *context);
     std::thread* mlThread[MAX_THREADS];
-    std::mutex mMutex;
+    mutex *mMutex;
+    condition_variable cv;
     void spawnThreads();
 
 public:
@@ -30,16 +32,21 @@ public:
         vector<pair<_state* , int>> new_successors ;
         bool isAcceptance = false;
         bool isConstructed = false;
+        inline static thread_local atomic_bool cyan = {false};
+        bool blue = false;
+        bool red = false;
     } _state;
 
-//    vector<pair<_state , int>> new_successors;
+
     list<spot::formula> transitionNames;
-    vector<bdd>temp;
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
     void computeSuccessors(_state *state);
     void dfsBlue(_state *state);
     _state* getInitialState();
+    void dfsRed(_state* state);
+    void WaitForTestCompleted(_state* state);
+    atomic_bool awaitCondition(_state* state);
     _state* buildState(LDDState* left, spot::state* right, vector<pair<_state *, int>> succ, bool acc, bool constructed);
     static spot::bdd_dict_ptr* m_dict_ptr;
 };
