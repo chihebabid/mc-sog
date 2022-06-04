@@ -590,7 +590,7 @@ int main(int argc, char **argv)
                         spot::twa::prop_set::all(), true);
                     if (dot_sog)
                     {
-                        saveGraph(af, "SOG.dot", "ka");
+                        saveGraph(k, "SOG.dot", "ka");
                     }
                     cout << endl;
 
