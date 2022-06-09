@@ -50,7 +50,6 @@ threadSOG::threadSOG(const NewNet &R, int nbThread, bool uselace, bool init) {
         cout << it2.first << " : " << it2.second << endl;
     }
 
-
     cout << "mObservable transitions:" << endl;
 
     for (const auto &it: m_net->mObservable) {

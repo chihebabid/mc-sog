@@ -526,7 +526,7 @@ int main(int argc, char **argv)
 
                 std::cout<<"------------CNDFS-------------"<<std::endl;
 
-                CNDFS cndfs(mcl,af,1);
+                CNDFS cndfs(mcl,af,2);
 
                 return(0);
 
