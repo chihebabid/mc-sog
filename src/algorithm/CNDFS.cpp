@@ -18,9 +18,10 @@
 using namespace std;
 
 thread_local bool _cyan{false};
-thread_local deque<CNDFS::_state*> mydeque ;
+thread_local deque<CNDFS::_state*> mydeque;
 thread_local list<bool> mytempList ;
 vector<pair<LDDState*,const spot::twa_graph_state*>> sharedPool;
+//vector<CNDFS::_state*> sharedPool;
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af), mNbTh(nbTh)
 {
@@ -86,7 +87,7 @@ std::ostream & operator<<(std::ostream & Str, CNDFS::_state* state) {
     return Str;
 }
 
-//algo line 22 test
+//all visited accepting nodes (non seed, non red) should be red
 atomic_bool CNDFS::awaitCondition(_state* state)
 {
     for (auto qu: mydeque)
@@ -119,8 +120,9 @@ void CNDFS::dfsRed(_state* state)
       if (p.first->cyan)
       {
           cout << "cycle detected"  << endl;
-          exit(1);
+          exit(0);
       }
+      // unvisited and not red state
       if ((find(mydeque.begin(), mydeque.end(), state) != mydeque.end()) && ! p.first->red )
           dfsRed(p.first);
     }
@@ -176,7 +178,8 @@ void CNDFS::computeSuccessors(_state *state)
                         {
 //                            cout << "matched bdd " << matched << endl;
                             //new terminal state without successors
-                               _state* nd = buildState(sog_current_state->Successors.at(i).first,
+//                            state_is_accepting() should only be called on automata with state-based acceptance
+                            _state* nd = buildState(sog_current_state->Successors.at(i).first,
                                                     const_cast<spot::state *>(ii->dst()), static_cast<vector<pair<_state *, int>>>(NULL), mAa->state_is_accepting(ii->dst()), true, false);
                                 for (auto pool:sharedPool)
                                 {
@@ -184,7 +187,11 @@ void CNDFS::computeSuccessors(_state *state)
                                   {
                                       nd->cyan=true;
                                       state->new_successors.push_back(make_pair(nd,transition));
-                                  } else state->new_successors.push_back(make_pair(nd,transition));
+//                                      state->new_successors.push_back(make_pair(pool,transition));
+                                  } else
+                                  {
+                                      state->new_successors.push_back(make_pair(nd,transition));
+                                  }
 
                                 }
                         }
@@ -205,14 +212,15 @@ void CNDFS::dfsBlue(_state *state) {
     cout<< "appel recursif " << i  << endl ;
     i++;
     state->cyan = true;
+//    sharedPool.push_back(state);
     sharedPool.push_back(make_pair(state->left,state->right));
     computeSuccessors(state);
-//    cout << "state " << state << endl;
-//    cout << "nbr of successors of the state "<<  state->new_successors.size() << " with thread "<< idThread<< endl;
+    cout << "current state " << state << endl;
+    cout << "nbr of successors of the current state "<<  state->new_successors.size() << " with thread "<< idThread<< endl;
     for (auto p:state->new_successors)
     {
 //        cout << "state " << p.first << endl;
-        while ((p.first->cyan == false) && (p.first->blue == false))
+        while ((!p.first->cyan) && (!p.first->blue))
           {
               dfsBlue(p.first);
           }
@@ -220,18 +228,31 @@ void CNDFS::dfsBlue(_state *state) {
     state->blue = true;
     if (state->isAcceptance)
     {
-        cout << "hello redDFS " << endl;
-        dfsRed(state);
-        WaitForTestCompleted(state);
-        std::lock_guard<std::mutex> lk(*mMutex);
-        cv.notify_all();
-        for (auto qu: mydeque)
+        cout << "Acceptance state detected " << endl;
+        if (state->left->isDeadLock() || state->left->isDiv())
         {
-            qu->red = true;
+            cout << "cycle detected: an aggregate with deal_lock or live_lock"  << endl;
+            exit(0);
+        } else
+        {
+            dfsRed(state); //looking for an accepting cycle
+    //        the thread processed the current state waits for all visited accepting nodes (non seed, non red) to turn red
+    //        the late red coloring forces the other acceptance states to be processed in post-order by the other threads
+            std::unique_lock<std::mutex> lk(*mMutex);
+    //        WaitForTestCompleted(state);
+            while (!awaitCondition(state)) cv.wait(lk);
+    //        notify once we have unlocked - this is important to avoid a pessimization.
+            awaitCondition(state)=true;
+            cv.notify_all();
+            for (auto qu: mydeque) // prune other dfsRed
+            {
+                qu->red = true;
+            }
         }
+        cout << "no cycle detected" << endl;
     }
     state->cyan = false;
-    cout << state << endl;
+//    cout << state << endl;
 }
 spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
 

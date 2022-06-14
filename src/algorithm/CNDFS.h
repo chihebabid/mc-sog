@@ -27,7 +27,7 @@ private:
 
 public:
     typedef struct _state{
-        LDDState * left;
+        LDDState *left;
         const spot::twa_graph_state* right;
         vector<pair<_state*, int>> new_successors ;
         atomic_bool isAcceptance {false};

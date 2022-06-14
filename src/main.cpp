@@ -523,13 +523,9 @@ int main(int argc, char **argv)
             // TODO: Implement here Ghofrane's algorithms
             if (algorithm == "UFSCC" || algorithm == "CNDFS")
             {
-
                 std::cout<<"------------CNDFS-------------"<<std::endl;
-
-                CNDFS cndfs(mcl,af,2);
-
+                CNDFS cndfs(mcl,af,1); // If I increase the number of threads, a segmentation fault appears.
                 return(0);
-
             }
             else // run on the fly sequential model-checking
             {
