@@ -69,8 +69,42 @@ bool SafeDequeue<T>::empty() const
     return data_queue.empty();
 }
 
+template <typename T>
+T& SafeDequeue<T>::front()
+{
+    std::unique_lock<std::mutex> lk(mut);
+    while (data_queue.empty())
+    {
+        data_cond.wait(lk);
+    }
+    return data_queue.front();
+}
+
+template <typename T>
+T& SafeDequeue<T>::back()
+{
+    std::unique_lock<std::mutex> lk(mut);
+    while (data_queue.empty())
+    {
+        data_cond.wait(lk);
+    }
+    return data_queue.back();
+}
+
+template <typename T>
+int SafeDequeue<T>::size()
+{
+    std::unique_lock<std::mutex> lk(mut);
+    int size = data_queue.size();
+    lk.unlock();
+    return size;
+}
+
 
 template class SafeDequeue<Pair>;
 typedef pair<string *, unsigned int> MSG;
 template class SafeDequeue<MSG>;
 template class SafeDequeue<couple_th>;
+template class SafeDequeue<myCouple>;
+template class SafeDequeue<coupleSucc>;
+template class SafeDequeue<spot::formula>;

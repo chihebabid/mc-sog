@@ -73,32 +73,33 @@ add_executable(pmc-sog main.cpp
   SogKripkeIteratorTh.cpp
   SogKripkeIteratorTh.h
 
-        misc/stacksafe.cpp
-        misc/stacksafe.h
-        misc/SafeDequeue.cpp
-        misc/SafeDequeue.h
-        Hybrid/HybridKripke.cpp
-        Hybrid/HybridKripke.h
-        Hybrid/HybridKripkeIterator.cpp
-        Hybrid/HybridKripkeIterator.h
-        Hybrid/HybridKripkeState.cpp
-        Hybrid/HybridKripkeState.h
-        SylvanWrapper.cpp
-        SylvanWrapper.h
-        SylvanCacheWrapper.cpp SylvanCacheWrapper.h
-        MCMultiCore/ModelCheckerCPPThread.cpp MCMultiCore/ModelCheckerCPPThread.h
-        MCMultiCore/ModelCheckerTh.cpp MCMultiCore/ModelCheckerTh.h
-        MCMultiCore/MCThReqPor.cpp MCMultiCore/MCThReqPor.h
-        MCMultiCore/MCCPPThPor.cpp MCMultiCore/MCCPPThPor.h
-        threadSOG.cpp threadSOG.h
-        HybridSOG.cpp HybridSOG.h
-        Hybrid/MCHybrid/MCHybridSOG.cpp Hybrid/MCHybrid/MCHybridSOG.h
-        MCMultiCore/ModelCheckThReq.cpp MCMultiCore/ModelCheckThReq.h
-        Hybrid/MCHybridReq/MCHybridSOGReq.cpp
-        Hybrid/MCHybridReq/MCHybridSOGReq.h
-        Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.cpp
-        Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h
-        misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h)
+
+    Hybrid/HybridKripke.cpp
+    Hybrid/HybridKripke.h
+    Hybrid/HybridKripkeIterator.cpp
+    Hybrid/HybridKripkeIterator.h
+    Hybrid/HybridKripkeState.cpp
+    Hybrid/HybridKripkeState.h
+    misc/SafeDequeue.cpp
+    misc/SafeDequeue.h
+    misc/stacksafe.cpp
+    misc/stacksafe.h
+    SylvanWrapper.cpp
+    SylvanWrapper.h
+    SylvanCacheWrapper.cpp SylvanCacheWrapper.h
+    MCMultiCore/ModelCheckerCPPThread.cpp MCMultiCore/ModelCheckerCPPThread.h
+    MCMultiCore/ModelCheckerTh.cpp MCMultiCore/ModelCheckerTh.h
+    MCMultiCore/MCThReqPor.cpp MCMultiCore/MCThReqPor.h
+    MCMultiCore/MCCPPThPor.cpp MCMultiCore/MCCPPThPor.h
+    threadSOG.cpp threadSOG.h
+    HybridSOG.cpp HybridSOG.h
+    Hybrid/MCHybrid/MCHybridSOG.cpp Hybrid/MCHybrid/MCHybridSOG.h
+    MCMultiCore/ModelCheckThReq.cpp MCMultiCore/ModelCheckThReq.h
+    Hybrid/MCHybridReq/MCHybridSOGReq.cpp
+    Hybrid/MCHybridReq/MCHybridSOGReq.h
+    Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.cpp
+    Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h
+    misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h)
 
 
 target_include_directories(pmc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")

@@ -24,10 +24,14 @@
 #include <mutex>
 #include <functional>
 #include <condition_variable>
+#include <spot/twa/twagraph.hh>
+#include "algorithm/CNDFS.h";
 
 typedef pair<LDDState *, MDD> couple;
+typedef pair<LDDState*,const spot::twa_graph_state*> myCouple;
 typedef pair<couple, Set> Pair;
 typedef pair<LDDState *, int> couple_th;
+typedef pair<_state*, int> coupleSucc;
 struct empty_queue: std::exception {
     ~empty_queue() {};
     const char* what() const noexcept {return "";}
@@ -64,6 +68,9 @@ class SafeDequeue {
         void push ( T new_value );
         bool try_pop ( T& value );
         bool empty() const;
+        T& front();
+        T& back();
+        int size();
     };
 
 #endif // SAFEDEQUEUE_H

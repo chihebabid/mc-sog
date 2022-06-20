@@ -6,10 +6,13 @@
 #include "../ModelCheckBaseMT.h"
 #include <spot/tl/apcollect.hh>
 #include <cstdint>
-#include <thread>
-#include <atomic>
-#include <condition_variable>
 #include <spot/twa/twagraph.hh>
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include "misc/SafeDequeue.h"
+
 
 class CNDFS {
 
@@ -21,7 +24,7 @@ private:
     atomic<uint8_t> mIdThread;
     static void threadHandler(void *context);
     std::thread* mlThread[MAX_THREADS];
-    mutex *mMutex;
+    mutex mMutex;
     condition_variable cv;
     void spawnThreads();
 
@@ -30,6 +33,7 @@ public:
         LDDState *left;
         const spot::twa_graph_state* right;
         vector<pair<_state*, int>> new_successors ;
+//        SafeDequeue<coupleSucc> new_successors ;
         atomic_bool isAcceptance {false};
         atomic_bool isConstructed {false};
         bool cyan {false};
@@ -37,17 +41,16 @@ public:
         atomic_bool red {false};
     } _state;
 
-
-    list<spot::formula> transitionNames;
-
+    SafeDequeue<myCouple> sharedPool;
+    SafeDequeue<spot::formula> transitionNames;
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
     void computeSuccessors(_state *state);
     void dfsBlue(_state *state);
     _state* getInitialState();
-    void dfsRed(_state* state);
+    void dfsRed(_state* state, deque<CNDFS::_state*> mydeque);
     void WaitForTestCompleted(_state* state);
-    atomic_bool awaitCondition(_state* state);
+    atomic_bool awaitCondition(_state* state,deque<CNDFS::_state*> mydeque);
     _state* buildState(LDDState* left, spot::state* right, vector<pair<_state *, int>> succ, bool acc, bool constructed,bool cyan);
     static spot::bdd_dict_ptr* m_dict_ptr;
 };
