@@ -107,4 +107,5 @@ template class SafeDequeue<couple_th>;
 
 template class SafeDequeue<coupleSuccessor>;
 template class SafeDequeue<spot::formula>;
+//typedef pair<struct myState*, int> coupleSuccessor;
 template class SafeDequeue<struct myState*>;

@@ -20,7 +20,6 @@
 #define SAFEDEQUEUE_H
 #include <memory>
 #include "LDDState.h"
-#include "algorithm/CNDFS.h"
 #include <queue>
 #include <mutex>
 #include <functional>

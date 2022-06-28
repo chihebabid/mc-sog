@@ -49,8 +49,6 @@ add_executable(pmc-sog main.cpp
   LDDState.cpp
   LDDState.h
   TransSylvan.cpp
-  algorithm/CNDFS.h
-  algorithm/CNDFS.cpp
   SpotSogState.cpp
   SpotSogState.h
   SpotSogIterator.cpp
@@ -99,7 +97,10 @@ add_executable(pmc-sog main.cpp
     Hybrid/MCHybridReq/MCHybridSOGReq.h
     Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.cpp
     Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h
-    misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h)
+    misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h
+        algorithm/CNDFS.h
+        algorithm/CNDFS.cpp
+        )
 
 
 target_include_directories(pmc-sog PUBLIC  "${PROJECT_BINARY_DIR}/src")
