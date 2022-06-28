@@ -20,18 +20,20 @@
 #define SAFEDEQUEUE_H
 #include <memory>
 #include "LDDState.h"
+#include "algorithm/CNDFS.h"
 #include <queue>
 #include <mutex>
 #include <functional>
 #include <condition_variable>
 #include <spot/twa/twagraph.hh>
-#include "algorithm/CNDFS.h";
 
-typedef pair<LDDState *, MDD> couple;
-typedef pair<LDDState*,const spot::twa_graph_state*> myCouple;
+//class CNDFS;
+typedef pair<LDDState*, MDD> couple;
 typedef pair<couple, Set> Pair;
-typedef pair<LDDState *, int> couple_th;
-typedef pair<_state*, int> coupleSucc;
+typedef pair<LDDState*, int> couple_th;
+
+typedef pair<struct myState*, int> coupleSuccessor;
+
 struct empty_queue: std::exception {
     ~empty_queue() {};
     const char* what() const noexcept {return "";}

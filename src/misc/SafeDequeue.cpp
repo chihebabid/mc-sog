@@ -47,6 +47,7 @@ void SafeDequeue<T>::push ( T new_value )
 
 }
 
+
 template<typename T>
 bool SafeDequeue<T>::try_pop ( T& value )
 {
@@ -58,8 +59,6 @@ bool SafeDequeue<T>::try_pop ( T& value )
     data_queue.pop();
     return true;
 }
-
-
 
 
 template<typename T>
@@ -105,6 +104,7 @@ template class SafeDequeue<Pair>;
 typedef pair<string *, unsigned int> MSG;
 template class SafeDequeue<MSG>;
 template class SafeDequeue<couple_th>;
-template class SafeDequeue<myCouple>;
-template class SafeDequeue<coupleSucc>;
+
+template class SafeDequeue<coupleSuccessor>;
 template class SafeDequeue<spot::formula>;
+template class SafeDequeue<struct myState*>;
