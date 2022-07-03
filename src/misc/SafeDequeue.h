@@ -31,7 +31,7 @@ typedef pair<LDDState*, MDD> couple;
 typedef pair<couple, Set> Pair;
 typedef pair<LDDState*, int> couple_th;
 
-typedef pair<struct myState*, int> coupleSuccessor;
+typedef pair<struct myState_t*, int> coupleSuccessor;
 
 struct empty_queue: std::exception {
     ~empty_queue() {};

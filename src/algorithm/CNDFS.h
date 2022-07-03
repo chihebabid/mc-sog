@@ -14,19 +14,18 @@
 #include "misc/SafeDequeue.h"
 
 using namespace std ;
-typedef pair<struct myState*, int> coupleSuccessor;
+typedef pair<struct myState_t*, int> coupleSuccessor;
 
-struct myState{
+struct myState_t {
     LDDState *left;
     const spot::twa_graph_state* right;
-    vector<pair<struct myState*, int>> new_successors;
-    atomic<bool> isAcceptance {false};
-    atomic<bool> isConstructed {false};
+    vector<pair<struct myState_t*, int>> new_successors;
+    bool isAcceptance {false};
+    bool isConstructed {false};
     bool cyan {false};
     atomic<bool> blue {false};
     atomic<bool> red {false};
 };
-typedef struct myState _state; // @alias
 
 class CNDFS {
 private:
@@ -39,25 +38,24 @@ private:
     mutex mMutex;
     condition_variable cv;
     void spawnThreads();
-    _state * mInitStatePtr;
+    myState_t * mInitStatePtr;
+    SafeDequeue<struct myState_t*> mSharedPoolTemp;
+    static spot::bdd_dict_ptr* m_dict_ptr;
     void getInitialState();
     static void threadHandler(void *context);
 public:
-
-//    typedef myState _state;
-     SafeDequeue<struct myState*> sharedPoolTemp;
 //    SafeDequeue<myCouple> sharedPool;
      SafeDequeue<spot::formula> transitionNames;
      SafeDequeue<coupleSuccessor> new_successor;
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
-    void computeSuccessors(_state *state);
-    void dfsBlue(_state *state);
-    void dfsRed(_state* state, deque<_state*> mydeque);
-    void WaitForTestCompleted(_state* state);
-    atomic_bool awaitCondition(_state* state,deque<_state*> mydeque);
-    _state* buildState(LDDState* left, spot::state* right, bool acc, bool constructed,bool cyan);
-    static spot::bdd_dict_ptr* m_dict_ptr;
+    void computeSuccessors(myState_t *state);
+    void dfsBlue(myState_t *state);
+    void dfsRed(myState_t* state, deque<myState_t*> mydeque);
+    void WaitForTestCompleted(myState_t* state);
+    atomic_bool awaitCondition(myState_t* state,deque<myState_t*> mydeque);
+    myState_t* buildState(LDDState* left, spot::state* right, bool acc, bool constructed,bool cyan);
+
 };
 
 #endif //PMC_SOG_CNDFS_H

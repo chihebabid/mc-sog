@@ -49,7 +49,7 @@ void CNDFS::threadHandler(void *context) {
 
 //get initial state of the product automata
 void CNDFS::getInitialState(){
-    mInitStatePtr  = new _state; //static_cast<_state *>(malloc(sizeof(_state)));
+    mInitStatePtr  = new myState_t; //static_cast<_state *>(malloc(sizeof(_state)));
     mInitStatePtr->left = mMcl->getInitialMetaState();
     mInitStatePtr->right = mAa->get_init_state();
     //mInitStatePtr->new_successors = nullptr;
@@ -59,14 +59,13 @@ void CNDFS::getInitialState(){
 
 
 //this function is to build a state with list of successor initially null
-_state* CNDFS::buildState(LDDState* left, spot::state* right, bool acc, bool constructed, bool cyan){
+myState_t* CNDFS::buildState(LDDState* left, spot::state* right, bool acc, bool constructed, bool cyan){
     bool _cyan{false};
     mMutex.lock();
-    _state * buildStatePtr  = static_cast<_state *>(malloc(sizeof(_state)));
+    myState_t * buildStatePtr  = static_cast<myState_t *>(malloc(sizeof(myState_t)));
     _cyan = cyan;
     buildStatePtr->left = left;
     buildStatePtr->right = dynamic_cast<const spot::twa_graph_state *>(right);
-    buildStatePtr->new_successors =  static_cast<vector<pair<_state *, int>>>(NULL);
     buildStatePtr->isAcceptance = acc;
     buildStatePtr->isConstructed = constructed;
     buildStatePtr->cyan= _cyan;
@@ -74,7 +73,7 @@ _state* CNDFS::buildState(LDDState* left, spot::state* right, bool acc, bool con
     return buildStatePtr;
 }
 
-std::ostream & operator<<(std::ostream & Str,_state* state) {
+std::ostream & operator<<(std::ostream & Str,myState_t* state) {
      Str << "({ Sog state= " << state->left << ", BA state= " << state->right << ", acceptance= "  << state->isAcceptance <<  ", constructed= "  << state->isConstructed <<  ", cyan= "  << state->cyan << ", red= "  << state->red << ", blue= "  <<  state->blue <<  " }" << endl;
      int i = 0;
      for (auto ii : state->new_successors)
@@ -86,7 +85,7 @@ std::ostream & operator<<(std::ostream & Str,_state* state) {
 }
 
 //all visited accepting nodes (non seed, non red) should be red
-atomic_bool CNDFS::awaitCondition(_state* state,deque<_state*> localDeque)
+atomic_bool CNDFS::awaitCondition(myState_t* state,deque<myState_t*> localDeque)
 {
     vector<bool> localList ;
     for (auto qu: localDeque)
@@ -108,7 +107,7 @@ atomic_bool CNDFS::awaitCondition(_state* state,deque<_state*> localDeque)
 //    while ( awaitCondition(state) == false) ;
 //}
 
-void CNDFS::dfsRed(_state* state,deque<_state*> localDeque)
+void CNDFS::dfsRed(myState_t* state,deque<myState_t*> localDeque)
 {
     cout << "dfsRed" << endl;
     localDeque.push_back(state);
@@ -126,7 +125,7 @@ void CNDFS::dfsRed(_state* state,deque<_state*> localDeque)
 }
 
 //compute new successors of a product state
-void CNDFS::computeSuccessors(_state *state)
+void CNDFS::computeSuccessors(myState_t *state)
 {
     LDDState* sog_current_state = state->left;
     const spot::twa_graph_state* ba_current_state = state->right;
@@ -134,7 +133,7 @@ void CNDFS::computeSuccessors(_state *state)
     while (!sog_current_state->isCompletedSucc());
     auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
     //fetch the state's atomic proposition
-    for (auto vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
+    for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
     {
         string name = string(mMcl->getPlace(vv));
         auto f = spot::formula::ap(name);
@@ -142,9 +141,9 @@ void CNDFS::computeSuccessors(_state *state)
         cv.notify_one();
     }
     //iterate over the successors of a current aggregate
-    for (int i = 0; i < sog_current_state->Successors.size(); i++)
+    for (const auto &elt : sog_current_state->Successors)
     {
-        int transition = sog_current_state->Successors.at(i).second; // je récupère le numéro du transition
+        int transition = elt.second; // je récupère le numéro du transition
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
         auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
         transitionNames.push(f); // push state'S AP to edge'S AP
@@ -169,13 +168,13 @@ void CNDFS::computeSuccessors(_state *state)
                             {
                                 //make a copy that we can iterate
 //                              SafeDequeue<myCouple> tempSharedPool = sharedPool;
-                                SafeDequeue<_state*> tempSharedPool = sharedPoolTemp;
+                                SafeDequeue<myState_t*> tempSharedPool = mSharedPoolTemp;
                                 while (!tempSharedPool.empty())
                                 {
                                    std::lock_guard<std::mutex> guard(mMutex);
 //                                    if ((tempSharedPool.front().first == sog_current_state->Successors.at(i).first) &&
 //                                      (tempSharedPool.front().second == const_cast<spot::state *>(ii->dst())))
-                                   if ((tempSharedPool.front()->left == sog_current_state->Successors.at(i).first) && (tempSharedPool.front()->right == const_cast<spot::state *>(ii->dst())))
+                                   if ((tempSharedPool.front()->left == elt.first) && (tempSharedPool.front()->right == const_cast<spot::state *>(ii->dst())))
                                     {
 //                                        nd->cyan = true;
                                         state->new_successors.push_back(make_pair(tempSharedPool.front(), transition));
@@ -183,7 +182,7 @@ void CNDFS::computeSuccessors(_state *state)
                                     {
                                         //new terminal state without successors
                                         //state_is_accepting() should only be called on automata with state-based acceptance
-                                        _state *nd = buildState(sog_current_state->Successors.at(i).first,
+                                        myState_t *nd = buildState(elt.first,
                                                                 const_cast<spot::state *>(ii->dst()),
                                                                 mAa->state_is_accepting(ii->dst()), true, false);
                                         state->new_successors.push_back(make_pair(nd, transition));
@@ -206,14 +205,14 @@ void CNDFS::computeSuccessors(_state *state)
 int i = 1;
 
 //Perform the dfsBlue
-void CNDFS::dfsBlue(_state *state) {
-    deque<_state*> localDeque;
+void CNDFS::dfsBlue(myState_t *state) {
+    deque<myState_t*> localDeque;
     uint16_t idThread = mIdThread++;
     cout<< "appel recursif " << i  << endl;
     i++;
     state->cyan = true;
 //    sharedPool.push(myCouple (state->left,state->right));
-    sharedPoolTemp.push(state);
+    mSharedPoolTemp.push(state);
     cv.notify_one();
 //    new_successor.push(coupleSuccessor(state,2));
     computeSuccessors(state);
