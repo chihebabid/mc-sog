@@ -20,28 +20,28 @@ struct myState{
     LDDState *left;
     const spot::twa_graph_state* right;
     vector<pair<struct myState*, int>> new_successors;
-    atomic_bool isAcceptance {false};
-    atomic_bool isConstructed {false};
+    atomic<bool> isAcceptance {false};
+    atomic<bool> isConstructed {false};
     bool cyan {false};
-    atomic_bool blue {false};
-    atomic_bool red {false};
+    atomic<bool> blue {false};
+    atomic<bool> red {false};
 };
 typedef struct myState _state; // @alias
 
 class CNDFS {
-
 private:
     static constexpr uint8_t MAX_THREADS=64;
     ModelCheckBaseMT * mMcl;
     spot::twa_graph_ptr mAa;
     uint16_t mNbTh;
     atomic<uint8_t> mIdThread;
-    static void threadHandler(void *context);
     std::thread* mlThread[MAX_THREADS];
     mutex mMutex;
     condition_variable cv;
     void spawnThreads();
-
+    _state * mInitStatePtr;
+    void getInitialState();
+    static void threadHandler(void *context);
 public:
 
 //    typedef myState _state;
@@ -53,7 +53,6 @@ public:
     virtual ~CNDFS();
     void computeSuccessors(_state *state);
     void dfsBlue(_state *state);
-    _state* getInitialState();
     void dfsRed(_state* state, deque<_state*> mydeque);
     void WaitForTestCompleted(_state* state);
     atomic_bool awaitCondition(_state* state,deque<_state*> mydeque);

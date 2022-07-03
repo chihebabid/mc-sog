@@ -22,6 +22,7 @@ using namespace std;
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af), mNbTh(nbTh)
 {
+    getInitialState();
     spawnThreads();
 }
 
@@ -43,22 +44,17 @@ void CNDFS::spawnThreads() {
 }
 
 void CNDFS::threadHandler(void *context) {
-    _state* state = ((CNDFS *) context)->getInitialState();
-    ((CNDFS *) context)->dfsBlue(state);
+    ((CNDFS *) context)->dfsBlue(((CNDFS *) context)->mInitStatePtr);
 }
 
 //get initial state of the product automata
-_state* CNDFS::getInitialState(){
-    mMutex.lock();
-    _state * initStatePtr  = static_cast<_state *>(malloc(sizeof(_state)));
-    initStatePtr->left = mMcl->getInitialMetaState();
-    initStatePtr->right = mAa->get_init_state();
-    initStatePtr->new_successors =  static_cast<vector<pair<_state *, int>>>(NULL);
-    initStatePtr->isAcceptance = mAa->state_is_accepting(mAa->get_init_state());
-    initStatePtr->isConstructed = true;
-    mMutex.unlock();
-//    sharedPool.push_back(make_pair(initStatePtr->left,initStatePtr->right));
-    return initStatePtr;
+void CNDFS::getInitialState(){
+    mInitStatePtr  = new _state; //static_cast<_state *>(malloc(sizeof(_state)));
+    mInitStatePtr->left = mMcl->getInitialMetaState();
+    mInitStatePtr->right = mAa->get_init_state();
+    //mInitStatePtr->new_successors = nullptr;
+    mInitStatePtr->isAcceptance = mAa->state_is_accepting(mAa->get_init_state());
+    mInitStatePtr->isConstructed = true;
 }
 
 
