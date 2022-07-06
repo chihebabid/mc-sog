@@ -15,21 +15,21 @@
 
 using namespace std ;
 typedef pair<struct myState_t*, int> coupleSuccessor;
-
+static constexpr uint8_t MAX_THREADS=64;
 struct myState_t {
     LDDState *left;
     const spot::twa_graph_state* right;
     vector<pair<struct myState_t*, int>> new_successors;
     bool isAcceptance {false};
     bool isConstructed {false};
-    bool cyan {false};
+    array<bool,MAX_THREADS> cyan {false};
     atomic<bool> blue {false};
     atomic<bool> red {false};
 };
 
 class CNDFS {
 private:
-    static constexpr uint8_t MAX_THREADS=64;
+
     ModelCheckBaseMT * mMcl;
     spot::twa_graph_ptr mAa;
     uint16_t mNbTh;
@@ -43,6 +43,7 @@ private:
     static spot::bdd_dict_ptr* m_dict_ptr;
     void getInitialState();
     static void threadHandler(void *context);
+    void threadRun();
 public:
 //    SafeDequeue<myCouple> sharedPool;
      SafeDequeue<spot::formula> transitionNames;
@@ -50,10 +51,10 @@ public:
     CNDFS(ModelCheckBaseMT *mcl,const spot::twa_graph_ptr &af,const uint16_t& nbTh);
     virtual ~CNDFS();
     void computeSuccessors(myState_t *state);
-    void dfsBlue(myState_t *state);
-    void dfsRed(myState_t* state, deque<myState_t*> mydeque);
+    void dfsBlue(myState_t *state, vector<myState_t*>& Rp,uint8_t idThread);
+    void dfsRed(myState_t* state, vector<myState_t*>& Rp,uint8_t idThread);
     void WaitForTestCompleted(myState_t* state);
-    atomic_bool awaitCondition(myState_t* state,deque<myState_t*> mydeque);
+
     myState_t* buildState(LDDState* left, spot::state* right, bool acc, bool constructed,bool cyan);
 
 };

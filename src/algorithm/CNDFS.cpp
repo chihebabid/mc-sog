@@ -44,7 +44,12 @@ void CNDFS::spawnThreads() {
 }
 
 void CNDFS::threadHandler(void *context) {
-    ((CNDFS *) context)->dfsBlue(((CNDFS *) context)->mInitStatePtr);
+    ((CNDFS *) context)->threadRun();
+}
+void CNDFS::threadRun() {
+    uint16_t idThread = mIdThread++;
+    vector<myState_t*> Rp;
+    dfsBlue(mInitStatePtr,Rp,idThread);
 }
 
 //get initial state of the product automata
@@ -60,23 +65,19 @@ void CNDFS::getInitialState(){
 
 //this function is to build a state with list of successor initially null
 myState_t* CNDFS::buildState(LDDState* left, spot::state* right, bool acc, bool constructed, bool cyan){
-    bool _cyan{false};
-    mMutex.lock();
-    myState_t * buildStatePtr  = static_cast<myState_t *>(malloc(sizeof(myState_t)));
-    _cyan = cyan;
+    myState_t * buildStatePtr  = new myState_t;
     buildStatePtr->left = left;
     buildStatePtr->right = dynamic_cast<const spot::twa_graph_state *>(right);
     buildStatePtr->isAcceptance = acc;
     buildStatePtr->isConstructed = constructed;
-    buildStatePtr->cyan= _cyan;
-    mMutex.unlock();
+
     return buildStatePtr;
 }
 
 std::ostream & operator<<(std::ostream & Str,myState_t* state) {
-     Str << "({ Sog state= " << state->left << ", BA state= " << state->right << ", acceptance= "  << state->isAcceptance <<  ", constructed= "  << state->isConstructed <<  ", cyan= "  << state->cyan << ", red= "  << state->red << ", blue= "  <<  state->blue <<  " }" << endl;
+     Str << "({ Sog state= " << state->left << ", BA state= " << state->right << ", acceptance= "  << state->isAcceptance <<  ", constructed= "  << state->isConstructed << ", red= "  << state->red << ", blue= "  <<  state->blue <<  " }" << endl;
      int i = 0;
-     for (auto ii : state->new_successors)
+     for (const auto & ii : state->new_successors)
      {
          cout << "succ num " << i << ii.first << " with transition " << ii.second<<  endl;
          i++;
@@ -84,50 +85,34 @@ std::ostream & operator<<(std::ostream & Str,myState_t* state) {
     return Str;
 }
 
-//all visited accepting nodes (non seed, non red) should be red
-atomic_bool CNDFS::awaitCondition(myState_t* state,deque<myState_t*> localDeque)
-{
-    vector<bool> localList ;
-    for (auto qu: localDeque)
-    {
-        if ((qu->isAcceptance) && (qu!=state))
-            localList.push_back(qu->red); // add all the red values
-//            return(qu->red == true);
-    }
-    //test if all elements are true
-    if (all_of(localList.begin(),localList.end(),[] (bool cond) {return cond ==true; }))
-    {
-        return true;
-    }
-    return  false;
-}
+
 
 //block all threads while awaitCondition is false
 //void  CNDFS::WaitForTestCompleted(_state* state) {
 //    while ( awaitCondition(state) == false) ;
 //}
 
-void CNDFS::dfsRed(myState_t* state,deque<myState_t*> localDeque)
+void CNDFS::dfsRed(myState_t *state, vector<myState_t*>& Rp,uint8_t idThread)
 {
     cout << "dfsRed" << endl;
-    localDeque.push_back(state);
+    Rp.push_back(state);
     computeSuccessors(state);
-    for (auto p:state->new_successors) {
-      if (p.first->cyan)
+    for (const auto& succ:state->new_successors) {
+      if (succ.first->cyan[idThread])
       {
           cout << "cycle detected"  << endl;
           exit(0);
       }
       // unvisited and not red state
-      if ((find(localDeque.begin(), localDeque.end(), state) != localDeque.end()) && ! p.first->red )
-          dfsRed(p.first, localDeque);
+      if ((find(Rp.begin(), Rp.end(), state) != Rp.end()) && ! succ.first->red )
+          dfsRed(succ.first, Rp,idThread);
     }
 }
 
 //compute new successors of a product state
 void CNDFS::computeSuccessors(myState_t *state)
 {
-    LDDState* sog_current_state = state->left;
+    auto sog_current_state = state->left;
     const spot::twa_graph_state* ba_current_state = state->right;
     while (!sog_current_state);
     while (!sog_current_state->isCompletedSucc());
@@ -135,7 +120,7 @@ void CNDFS::computeSuccessors(myState_t *state)
     //fetch the state's atomic proposition
     for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
     {
-        string name = string(mMcl->getPlace(vv));
+        auto name = string(mMcl->getPlace(vv));
         auto f = spot::formula::ap(name);
         transitionNames.push(f);
         cv.notify_one();
@@ -143,7 +128,7 @@ void CNDFS::computeSuccessors(myState_t *state)
     //iterate over the successors of a current aggregate
     for (const auto &elt : sog_current_state->Successors)
     {
-        int transition = elt.second; // je récupère le numéro du transition
+        auto transition = elt.second; // je récupère le numéro du transition
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
         auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
         transitionNames.push(f); // push state'S AP to edge'S AP
@@ -157,7 +142,7 @@ void CNDFS::computeSuccessors(myState_t *state)
         while (!tempTransitionNames.empty())
         {
             //iterate over the successors of a BA state
-            spot::twa_succ_iterator *ii = mAa->succ_iter(ba_current_state);
+            auto ii = mAa->succ_iter(ba_current_state);
             if (ii->first())
                 do {
                     if (p->var_map.find(tempTransitionNames.front()) !=p->var_map.end())
@@ -202,29 +187,16 @@ void CNDFS::computeSuccessors(myState_t *state)
     }
 }
 
-int i = 1;
+
 
 //Perform the dfsBlue
-void CNDFS::dfsBlue(myState_t *state) {
-    deque<myState_t*> localDeque;
-    uint16_t idThread = mIdThread++;
-    cout<< "appel recursif " << i  << endl;
-    i++;
-    state->cyan = true;
-//    sharedPool.push(myCouple (state->left,state->right));
-    mSharedPoolTemp.push(state);
-    cv.notify_one();
-//    new_successor.push(coupleSuccessor(state,2));
-    computeSuccessors(state);
-    cout << " \n current state " << state << endl;
-//    cout << "nbr of successors of the current state "<<  state->new_successors.size() << " with thread "<< idThread<< endl;
-    for (auto p:state->new_successors)
+void CNDFS::dfsBlue(myState_t *state, vector<myState_t*>& Rp,uint8_t idThread) {
+
+    for (const auto & succ:state->new_successors)
     {
-//        cout << "state " << p.first << endl;
-        while ((!p.first->cyan) && (!p.first->blue))
+        if (!succ.first->blue && !succ.first->cyan[idThread])
           {
-              transitionNames.try_pop(transitionNames.front());
-              dfsBlue(p.first);
+              dfsBlue(succ.first,Rp,idThread);
           }
     }
     state->blue = true;
@@ -237,24 +209,28 @@ void CNDFS::dfsBlue(myState_t *state) {
             exit(0);
         } else
         {
-            dfsRed(state, localDeque); //looking for an accepting cycle
+            Rp.clear();
+            dfsRed(state, Rp,idThread); //looking for an accepting cycle
     //        the thread processed the current state waits for all visited accepting nodes (non seed, non red) to turn red
     //        the late red coloring forces the other acceptance states to be processed in post-order by the other threads
-            std::unique_lock<std::mutex> lk(mMutex);
-            while (!awaitCondition(state, localDeque)) cv.wait(lk);
-//         cv.wait(lk,[this] {return !awaitCondition(state, localDeque)});
-            lk.unlock();
-    //        notify once we have unlocked - this is important to avoid a pessimization.
-            awaitCondition(state,localDeque)=true;
-            cv.notify_all();
-            for (auto qu: localDeque) // prune other dfsRed
+            bool cond;
+            do {
+                cond = true;
+                for (auto iter = Rp.begin(); iter != Rp.end() && cond; ++iter) {
+                    if ((*iter)->isAcceptance && (*iter != state)) {
+                        if (!(*iter)->red) cond = false;
+                    }
+                }
+            } while (!cond);
+
+            for (const auto& qu: Rp) // prune other dfsRed
             {
                 qu->red = true;
             }
         }
         cout << "no cycle detected" << endl;
     }
-    state->cyan = false;
+    state->cyan[idThread] = false;
 }
 spot::bdd_dict_ptr *CNDFS::m_dict_ptr;
 
