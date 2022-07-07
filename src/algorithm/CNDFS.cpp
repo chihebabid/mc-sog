@@ -114,7 +114,7 @@ void CNDFS::computeSuccessors(myState_t *state)
 {
     auto sog_current_state = state->left;
     const spot::twa_graph_state* ba_current_state = state->right;
-    while (!sog_current_state);
+
     while (!sog_current_state->isCompletedSucc());
     auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
     //fetch the state's atomic proposition
@@ -123,7 +123,7 @@ void CNDFS::computeSuccessors(myState_t *state)
         auto name = string(mMcl->getPlace(vv));
         auto f = spot::formula::ap(name);
         transitionNames.push(f);
-        cv.notify_one();
+
     }
     //iterate over the successors of a current aggregate
     for (const auto &elt : sog_current_state->Successors)
@@ -132,12 +132,7 @@ void CNDFS::computeSuccessors(myState_t *state)
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
         auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
         transitionNames.push(f); // push state'S AP to edge'S AP
-        cv.notify_one();
-//        cout << " AP in state ";
-//        for (auto tn: transitionNames) {
-//            cout << tn << " ";
-//        }
-        //make a copy that we can iterate
+
         SafeDequeue<spot::formula> tempTransitionNames = transitionNames;
         while (!tempTransitionNames.empty())
         {
@@ -172,8 +167,8 @@ void CNDFS::computeSuccessors(myState_t *state)
                                                                 mAa->state_is_accepting(ii->dst()), true, false);
                                         state->new_successors.push_back(make_pair(nd, transition));
                                     }
-//                                    mMutex.unlock();
-                                    tempSharedPool.try_pop(tempSharedPool.front());
+//
+
 
                                 }
                             }
@@ -191,7 +186,7 @@ void CNDFS::computeSuccessors(myState_t *state)
 
 //Perform the dfsBlue
 void CNDFS::dfsBlue(myState_t *state, vector<myState_t*>& Rp,uint8_t idThread) {
-
+    state->cyan[idThread]=true;
     for (const auto & succ:state->new_successors)
     {
         if (!succ.first->blue && !succ.first->cyan[idThread])
