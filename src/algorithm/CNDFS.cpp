@@ -30,6 +30,9 @@ CNDFS::~CNDFS() {
         mlThread[i]->join();
         delete mlThread[i];
     }
+    // Liberate dynamic allocated memory for synchropnized product
+    for (const auto & elt : mlBuiltStates)
+        delete elt;
 }
 
 // Create threads
@@ -174,6 +177,7 @@ void CNDFS::computeSuccessors(myState_t *state) {
 //Perform the dfsBlue
 void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) {
     state->cyan[idThread] = true;
+    computeSuccessors(state);
     for (const auto &succ: state->new_successors) {
         if (!succ.first->blue && !succ.first->cyan[idThread]) {
             dfsBlue(succ.first, Rp, idThread);
