@@ -129,8 +129,10 @@ Formula negateFormula(const string &fileName)
 spot::twa_graph_ptr formula2Automaton(const spot::formula &f, spot::bdd_dict_ptr bdd, bool save_dot = false)
 {
     cout << "\nBuilding automata for not(formula)\n";
-
-    spot::twa_graph_ptr af = spot::translator(bdd).run(f);
+    spot::translator tmp = spot::translator(bdd);
+    tmp.set_type(spot::postprocessor::BA);
+    spot::twa_graph_ptr af = tmp.run(f);
+//    spot::twa_graph_ptr af = spot::translator(bdd).run(f);
     cout << "Formula automata built." << endl;
 
     // save the generated automaton in a dot file
