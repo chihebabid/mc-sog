@@ -121,8 +121,8 @@ void CNDFS::computeSuccessors(myState_t *state) {
     if (state->succState == SuccState::built) return;
     std::unique_lock lk(mMutexStatus);
     if (state->succState == SuccState::beingbuilt) {
-        mMutexStatus.unlock();
         mDataCondWait.wait(lk, [state] { return state->succState == SuccState::built; });
+        mMutexStatus.unlock();
         return;
     }
     state->succState = SuccState::beingbuilt;
