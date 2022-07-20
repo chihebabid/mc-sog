@@ -16,6 +16,10 @@
 #include <condition_variable>
 #include <algorithm>
 #include "misc/stacksafe.h"
+#include <spot/twa/formula2bdd.hh>
+#include <spot/misc/minato.hh>
+#include <spot/twaalgos/contains.hh>
+#include <spot/tl/contain.hh>
 
 using namespace std;
 
@@ -52,7 +56,8 @@ void CNDFS::threadHandler(void *context) {
 void CNDFS::threadRun() {
     uint16_t idThread = mIdThread++;
     vector<myState_t *> Rp;
-    dfsBlue(mInitStatePtr, Rp, idThread);
+    vector<spot::formula> ap_sog;
+    dfsBlue(mInitStatePtr, Rp, idThread, ap_sog);
 }
 
 /*
@@ -75,6 +80,7 @@ myState_t *CNDFS::buildState(LDDState *left, spot::state *right, bool acc, bool 
     buildStatePtr->right = (spot::twa_graph_state *) right;
     buildStatePtr->isAcceptance = acc;
     buildStatePtr->isConstructed = constructed;
+    mlBuiltStates.push_back(buildStatePtr);
     return buildStatePtr;
 }
 
@@ -84,7 +90,7 @@ std::ostream &operator<<(std::ostream &Str, myState_t *state) {
         << endl;
     int i = 0;
     for (const auto &ii: state->new_successors) {
-        cout << "succ num " << i << ii.first << " with transition " << ii.second << endl;
+        Str << "succ num " << i << ii.first << " with transition " << ii.second << endl;
         i++;
     }
     return Str;
@@ -93,7 +99,7 @@ std::ostream &operator<<(std::ostream &Str, myState_t *state) {
 void CNDFS::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) {
     cout << "dfsRed" << endl;
     Rp.push_back(state);
-    computeSuccessors(state);
+//    computeSuccessors(state);
     for (const auto &succ: state->new_successors) {
         if (succ.first->cyan[idThread]) {
             cout << "cycle detected" << endl;
@@ -117,7 +123,7 @@ myState_t *CNDFS::isStateBuilt(LDDState *sogState, spot::twa_graph_state *spotSt
 }
 
 //compute new successors of a product state
-void CNDFS::computeSuccessors(myState_t *state) {
+void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
     if (state->succState == SuccState::built) return;
     std::unique_lock lk(mMutexStatus);
     if (state->succState == SuccState::beingbuilt) {
@@ -127,60 +133,77 @@ void CNDFS::computeSuccessors(myState_t *state) {
     }
     state->succState = SuccState::beingbuilt;
     lk.unlock();
-
     auto sog_current_state = state->left;
     const spot::twa_graph_state *ba_current_state = state->right;
     while (!sog_current_state->isCompletedSucc());
-    auto p = mAa->get_dict(); //avoir le dictionnaire bdd,proposition atomique
+    auto p = mAa->get_dict();//avoir le dictionnaire bdd,proposition atomique
     //fetch the state's atomic proposition
-    /* for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
+    for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
      {
          auto name = string(mMcl->getPlace(vv));
-         auto f = spot::formula::ap(name);
-         transitionNames.push(f);
-
-     }*/
+         auto ap_state = spot::formula::ap(name);
+         if (p->var_map.find(ap_state) != p->var_map.end()) {
+             ap_sog.push_back(ap_state);
+         }
+     }
     //iterate over the successors of a current aggregate
     for (const auto &elt: sog_current_state->Successors) {
         auto transition = elt.second; // je récupère le numéro du transition
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
-        auto f = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
-
+        auto ap_edge = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
+        if (p->var_map.find(ap_edge) != p->var_map.end()) {
+            ap_sog.push_back(ap_edge);
+        }
+        spot::formula pa_sog_result = spot::formula::And(ap_sog);
+        cout << "formula 1 " << pa_sog_result << endl;
         //iterate over the successors of a BA state
         auto ii = mAa->succ_iter(ba_current_state);
-        if (ii->first())
-            do {
-                if (p->var_map.find(f) != p->var_map.end()) {
-                    //fetch the transition of BA that have the same AP as the SOG transition
-                    const bdd result = bdd_ithvar((p->var_map.find(f))->second);
-                    if ((ii->cond() & result) != bddfalse) {
-                        std::unique_lock lk(mMutex);
-                        auto result = isStateBuilt(elt.first, (spot::twa_graph_state *) ii->dst());
-                        if (result) {
-                            state->new_successors.push_back(make_pair(result, transition));
-                        } else {
-                            myState_t *nd = buildState(elt.first,
-                                                       const_cast<spot::state *>(ii->dst()),
-                                                       mAa->state_is_accepting(ii->dst()), true, false);
-                            state->new_successors.push_back(make_pair(nd, transition));
+         if (ii->first())
+                do {
+                   auto f = spot::bdd_to_formula(ii->cond(), p);
+                   cout << "formula 2 " << f << endl;
+//                    std::cout << (spot::are_equivalent(f, pa_sog_result) ?
+//                                  "Equivalent\n" : "Not equivalent\n");
+
+                    std::cout << "match " << c.contained(f, pa_sog_result) << endl;
+
+
+//                    auto form= p->var_map.find(bdd_var(ii->cond()))->second.id();
+//                   cout <<  "here " << form << endl;
+//                    if (p->var_map.find(pa_sog_result) != p->var_map.end()) {   //extra text
+//                        cout << "yes " << endl;
+//                        //fetch the transition of BA that have the same AP as the SOG transition
+//                       cout << "dbb  "<<  mAa->register_ap(pa_sog_result) << endl;  //The BDD variable number assigned for this atomic proposition.
+//                        const bdd result = bdd_ithvar((p->var_map.find(pa_sog_result))->second);
+                        if (c.contained(f, pa_sog_result)) {
+                            std::unique_lock lk(mMutex);
+                            auto result = isStateBuilt(elt.first, (spot::twa_graph_state *) ii->dst());
+                            if (result) {
+                                state->new_successors.push_back(make_pair(result, transition));
+                            } else {
+                                myState_t *nd = buildState(elt.first,
+                                                           const_cast<spot::state *>(ii->dst()),
+                                                           mAa->state_is_accepting(ii->dst()), true, false);
+                                state->new_successors.push_back(make_pair(nd, transition));
+                            }
                         }
-                    }
-                }
-            } while (ii->next());
-        mAa->release_iter(ii);
-    }
+                } while (ii->next());
+         mAa->release_iter(ii);
+        }
     state->succState = SuccState::built;
     mDataCondWait.notify_all();
 }
 
 
 //Perform the dfsBlue
-void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) {
+void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog) {
     state->cyan[idThread] = true;
-    computeSuccessors(state);
+    computeSuccessors(state, ap_sog);
+    cout << "current state " << state << " cyan " << state->cyan[idThread]<< endl;
     for (const auto &succ: state->new_successors) {
+        cout << "cyan " << succ.first->cyan[idThread] << endl;
         if (!succ.first->blue && !succ.first->cyan[idThread]) {
-            dfsBlue(succ.first, Rp, idThread);
+            dfsBlue(succ.first, Rp, idThread, ap_sog);
         }
     }
     state->blue = true;

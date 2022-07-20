@@ -13,6 +13,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "misc/SafeDequeue.h"
+#include <spot/tl/contain.hh>
 
 using namespace std;
 typedef pair<struct myState_t *, int> coupleSuccessor;
@@ -45,6 +46,7 @@ private:
     vector<myState_t *> mlBuiltStates;
     SafeDequeue<struct myState_t *> mSharedPoolTemp;
     static spot::bdd_dict_ptr *m_dict_ptr;
+    spot::language_containment_checker c;
 
     void getInitialState();
 
@@ -54,7 +56,7 @@ private:
 
     void threadRun();
 
-    void computeSuccessors(myState_t *state);
+    void computeSuccessors(myState_t *state, vector<spot::formula> ap_sog);
 
     myState_t *buildState(LDDState *left, spot::state *right, bool acc, bool constructed, bool cyan);
     myState_t* isStateBuilt(LDDState *sogState,spot::twa_graph_state *spotState);
@@ -65,7 +67,7 @@ public:
 
 
 
-    void dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread);
+    void dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread,vector<spot::formula> ap_sog);
 
     void dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread);
 
