@@ -173,18 +173,8 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
          if (ii->first())
                 do {
                    auto pa_ba_result = spot::bdd_to_formula(ii->cond(), p); // from bdd to formula
-//                   cout << "formula ba: " << pa_ba_result << endl;
-//                    std::cout << (spot::are_equivalent(pa_ba_result, pa_sog_result) ?
-//                                  "Equivalent\n" : "Not equivalent\n");
-//                    std::cout << "match " << c.contained(pa_sog_result, pa_ba_result) << endl;
-//                    auto form= p->var_map.find(bdd_var(ii->cond()))->second.id();
-//                   cout <<  "here " << form << endl;
-//                    if (p->var_map.find(pa_sog_result) != p->var_map.end()) {   //extra text
-//                        cout << "yes " << endl;
-//                        //fetch the transition of BA that have the same AP as the SOG transition
-//                       cout << "dbb  "<<  mAa->register_ap(pa_sog_result) << endl;  //The BDD variable number assigned for this atomic proposition.
-//                        const bdd result = bdd_ithvar((p->var_map.find(pa_sog_result))->second);
-                        if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result)) {
+                   if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result))
+                   {
                             std::unique_lock lk(mMutex);
                             auto result = isStateBuilt(elt.first, (spot::twa_graph_state *) ii->dst());
                             if (result) {
@@ -195,7 +185,7 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
                                                            mAa->state_is_accepting(ii->dst()), true, false);
                                 state->new_successors.push_back(make_pair(nd, transition));
                             }
-                        }
+                   }
                 } while (ii->next());
          mAa->release_iter(ii);
         }

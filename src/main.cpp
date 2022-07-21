@@ -36,6 +36,8 @@
 #include "Hybrid/MCHybridReqPOR/MCHybridSOGReqPOR.h"
 #include "Hybrid/MCHybridPOR/MCHybridSOGPOR.h"
 #include "algorithm/CNDFS.h"
+#include "algorithm/CndfsV2.h"
+#include "algorithm/UFSCC.h"
 #include <typeinfo>
 #include <atomic>
 #include <thread>
@@ -523,13 +525,24 @@ int main(int argc, char **argv)
 
             // run on the fly parallel model-checking
             // TODO: Implement here Ghofrane's algorithms
-            if (algorithm == "UFSCC" || algorithm == "CNDFS")
+            if (algorithm == "CndfsV1")
             {
-                std::cout<<"------------CNDFS-------------"<<std::endl;
+                cout<<"------------MC-CNDFS-VERSION1-------------"<<endl;
                 CNDFS cndfs(mcl,af,2); // If I increase the number of threads, a segmentation fault appears.
                 return(0);
             }
-            else // run on the fly sequential model-checking
+            else if (algorithm == "CndfsV2")// run on the fly sequential model-checking
+            {
+                cout<<"------------MC-CNDFS-VERSION2-------------"<<endl;
+                CndfsV2 cndfs2(mcl,af,2);
+                return(0);
+
+            } else if (algorithm == "UFSCC")
+            {
+                cout<<"------------MC-UFSCC-------------"<<endl;
+                return(0);
+
+            }else
             {
                 auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
                 runOnTheFlyMC(algorithm, k, af);

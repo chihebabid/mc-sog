@@ -65,15 +65,9 @@ public:
 
     virtual ~CNDFS();
 
-
-
     void dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread,vector<spot::formula> ap_sog);
 
     void dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread);
-
-
-
-
 
 };
 

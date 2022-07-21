@@ -27,7 +27,7 @@ include_directories(${MPI_INCLUDE_PATH})
 
 # include spot and bddx library
 add_library(spot SHARED IMPORTED)
-add_library(bddx SHARED IMPORTED algorithm/CNDFS.cpp algorithm/CNDFS.h)
+add_library(bddx SHARED IMPORTED algorithm/CNDFS.cpp algorithm/CNDFS.h algorithm/CndfsV2.h algorithm/CndfsV2.cpp)
 
 if(NOT SPOT_LIBRARY)
   set_target_properties(spot PROPERTIES IMPORTED_LOCATION "${SPOT_DIR}/lib/libspot.so")
@@ -100,6 +100,10 @@ add_executable(pmc-sog main.cpp
     misc/md5_hash.h Hybrid/MCHybridPOR/MCHybridSOGPOR.cpp Hybrid/MCHybridPOR/MCHybridSOGPOR.h
         algorithm/CNDFS.h
         algorithm/CNDFS.cpp
+        algorithm/CndfsV2.h
+        algorithm/CndfsV2.cpp
+        algorithm/UFSCC.h
+        algorithm/UFSCC.cpp
         )
 
 
