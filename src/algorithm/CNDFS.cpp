@@ -17,6 +17,7 @@
 #include <algorithm>
 #include "misc/stacksafe.h"
 #include <spot/twa/formula2bdd.hh>
+#include <spot/tl/formula.hh>
 #include <spot/misc/minato.hh>
 #include <spot/twaalgos/contains.hh>
 #include <spot/tl/contain.hh>
@@ -101,6 +102,7 @@ void CNDFS::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) 
     Rp.push_back(state);
 //    computeSuccessors(state);
     for (const auto &succ: state->new_successors) {
+        cout << "dfs red 1 "  << succ.first->cyan[idThread]<< endl;
         if (succ.first->cyan[idThread]) {
             cout << "cycle detected" << endl;
             exit(0);
@@ -137,6 +139,10 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
     const spot::twa_graph_state *ba_current_state = state->right;
     while (!sog_current_state->isCompletedSucc());
     auto p = mAa->get_dict();//avoir le dictionnaire bdd,proposition atomique
+//    for( auto n: p->var_map)
+//    {
+//        cout << n.first <<endl;
+//    }
     //fetch the state's atomic proposition
     for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
      {
@@ -144,6 +150,13 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
          auto ap_state = spot::formula::ap(name);
          if (p->var_map.find(ap_state) != p->var_map.end()) {
              ap_sog.push_back(ap_state);
+             for( auto n: p->var_map)
+             {
+                 if (n.first != ap_state)
+                 {
+                     ap_sog.push_back(spot::formula::Not(n.first));
+                 }
+             }
          }
      }
     //iterate over the successors of a current aggregate
@@ -154,20 +167,18 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
         if (p->var_map.find(ap_edge) != p->var_map.end()) {
             ap_sog.push_back(ap_edge);
         }
+
         spot::formula pa_sog_result = spot::formula::And(ap_sog);
-        cout << "formula 1 " << pa_sog_result << endl;
+        cout << "formula sog: " << pa_sog_result << endl;
         //iterate over the successors of a BA state
         auto ii = mAa->succ_iter(ba_current_state);
          if (ii->first())
                 do {
-                   auto f = spot::bdd_to_formula(ii->cond(), p);
-                   cout << "formula 2 " << f << endl;
-//                    std::cout << (spot::are_equivalent(f, pa_sog_result) ?
+                   auto pa_ba_result = spot::bdd_to_formula(ii->cond(), p);
+                   cout << "formula ba: " << pa_ba_result << endl;
+//                    std::cout << (spot::are_equivalent(pa_ba_result, pa_sog_result) ?
 //                                  "Equivalent\n" : "Not equivalent\n");
-
-                    std::cout << "match " << c.contained(f, pa_sog_result) << endl;
-
-
+//                    std::cout << "match " << c.contained(pa_sog_result, pa_ba_result) << endl;
 //                    auto form= p->var_map.find(bdd_var(ii->cond()))->second.id();
 //                   cout <<  "here " << form << endl;
 //                    if (p->var_map.find(pa_sog_result) != p->var_map.end()) {   //extra text
@@ -175,7 +186,7 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
 //                        //fetch the transition of BA that have the same AP as the SOG transition
 //                       cout << "dbb  "<<  mAa->register_ap(pa_sog_result) << endl;  //The BDD variable number assigned for this atomic proposition.
 //                        const bdd result = bdd_ithvar((p->var_map.find(pa_sog_result))->second);
-                        if (c.contained(f, pa_sog_result)) {
+                        if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result)) {
                             std::unique_lock lk(mMutex);
                             auto result = isStateBuilt(elt.first, (spot::twa_graph_state *) ii->dst());
                             if (result) {
@@ -194,14 +205,16 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
     mDataCondWait.notify_all();
 }
 
-
+int i =0;
 //Perform the dfsBlue
 void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog) {
+    cout << "appel " << i << endl;
+    i++;
     state->cyan[idThread] = true;
     computeSuccessors(state, ap_sog);
-    cout << "current state " << state << " cyan " << state->cyan[idThread]<< endl;
+//    cout << "current state " << state << " cyan " << state->cyan[idThread]<< endl;
     for (const auto &succ: state->new_successors) {
-        cout << "cyan " << succ.first->cyan[idThread] << endl;
+//        cout << "cyan " << succ.first->cyan[idThread] << endl;
         if (!succ.first->blue && !succ.first->cyan[idThread]) {
             dfsBlue(succ.first, Rp, idThread, ap_sog);
         }
