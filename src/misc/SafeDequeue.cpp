@@ -72,10 +72,10 @@ template <typename T>
 T& SafeDequeue<T>::front()
 {
     std::unique_lock<std::mutex> lk(mut);
-    while (data_queue.empty())
-    {
-        data_cond.wait(lk);
-    }
+//    while (data_queue.empty())
+//    {
+//        data_cond.wait(lk);
+//    }
     return data_queue.front();
 }
 

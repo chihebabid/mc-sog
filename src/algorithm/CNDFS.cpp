@@ -128,14 +128,14 @@ myState_t *CNDFS::isStateBuilt(LDDState *sogState, spot::twa_graph_state *spotSt
 
 //compute new successors of a product state
 void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
-    if (state->succState == SuccState::built) return;
+    if (state->succState == SuccState::done) return;
     std::unique_lock lk(mMutexStatus);
-    if (state->succState == SuccState::beingbuilt) {
-        mDataCondWait.wait(lk, [state] { return state->succState == SuccState::built; });
+    if (state->succState == SuccState::doing) {
+        mDataCondWait.wait(lk, [state] { return state->succState == SuccState::done; });
         mMutexStatus.unlock();
         return;
     }
-    state->succState = SuccState::beingbuilt;
+    state->succState = SuccState::doing;
     lk.unlock();
     auto sog_current_state = state->left;
     const spot::twa_graph_state *ba_current_state = state->right;
@@ -189,11 +189,11 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
                 } while (ii->next());
          mAa->release_iter(ii);
         }
-    state->succState = SuccState::built;
+    state->succState = SuccState::done;
     mDataCondWait.notify_all();
 }
 
-std::random_device rd;
+
 //Perform the dfsBlue
 void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog) {
     state->cyan[idThread] = true;

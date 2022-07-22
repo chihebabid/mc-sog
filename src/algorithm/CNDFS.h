@@ -14,12 +14,13 @@
 #include <condition_variable>
 #include "misc/SafeDequeue.h"
 #include <spot/tl/contain.hh>
+#include <random>
 
 using namespace std;
 typedef pair<struct myState_t *, int> coupleSuccessor;
 static constexpr uint8_t MAX_THREADS = 64;
 
-enum class SuccState {notyet,beingbuilt,built};
+enum class SuccState {notyet,doing,done};
 struct myState_t {
     LDDState *left;
     const spot::twa_graph_state *right;
@@ -47,6 +48,7 @@ private:
     SafeDequeue<struct myState_t *> mSharedPoolTemp;
     static spot::bdd_dict_ptr *m_dict_ptr;
     spot::language_containment_checker c;
+    std::random_device rd;
 
     void getInitialState();
 

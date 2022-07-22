@@ -22,9 +22,13 @@
 #include <spot/twaalgos/contains.hh>
 #include <spot/tl/contain.hh>
 #include  <random>
+#include <mutex>
+
+
 
 
 using namespace std;
+std::mutex mtx;
 
 CndfsV2::CndfsV2(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
                                                                                            mNbTh(nbTh) {
@@ -60,8 +64,7 @@ void CndfsV2::threadRun() {
     uint16_t idThread = mIdThread++;
     vector<myState_t *> Rp;
     vector<spot::formula> ap_sog;
-    vector <spot::formula> communTr;
-    dfsBlue(mInitStatePtr, Rp, idThread, ap_sog, communTr);
+    dfsBlue(mInitStatePtr, Rp, idThread, ap_sog);
 }
 
 /*
@@ -129,7 +132,16 @@ myState_t *CndfsV2::isStateBuilt(LDDState *sogState, const spot::twa_graph_state
 
 
 //compute new successors of a product state
-vector<spot::formula> CndfsV2::fireable(myState_t *state, vector<spot::formula> ap_sog, vector <spot::formula> communTr) {
+void CndfsV2::fireable(myState_t *state, vector<spot::formula> ap_sog,  uint8_t idThread) {
+    if (state->succState == SuccState::done) return;
+    std::unique_lock lk(mMutexStatus);
+    if (state->succState == SuccState::doing) {
+        mDataCondWait.wait(lk, [state] { return state->succState == SuccState::done; });
+        mMutexStatus.unlock();
+        return;
+    }
+    state->succState = SuccState::doing;
+    lk.unlock();
     auto sog_current_state = state->left;
     const spot::twa_graph_state *ba_current_state = state->right;
     while (!sog_current_state->isCompletedSucc());
@@ -158,6 +170,7 @@ vector<spot::formula> CndfsV2::fireable(myState_t *state, vector<spot::formula> 
         if (p->var_map.find(ap_edge) != p->var_map.end()) {
             ap_sog.push_back(ap_edge);
         }
+
         spot::formula pa_sog_result = spot::formula::And(ap_sog);
 //        cout << "formula sog: " << pa_sog_result << endl;
         //iterate over the successors of a BA state
@@ -165,44 +178,57 @@ vector<spot::formula> CndfsV2::fireable(myState_t *state, vector<spot::formula> 
         if (ii->first())
             do {
                 auto pa_ba_result = spot::bdd_to_formula(ii->cond(), p); // from bdd to formula
-                if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result)) {
-                  communTr.push_back(pa_sog_result);
+                if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result))
+                {
+                    std::unique_lock lk(mMutex);
+                    if (std::find(commonTr.begin(), commonTr.end(), pa_sog_result) == commonTr.end()) {
+                        cout << "I'm here " << unsigned (idThread) << endl;
+                        commonTr.push_back(pa_sog_result);
+                    }
                 }
             } while (ii->next());
         mAa->release_iter(ii);
     }
-    return communTr;
+    state->succState = SuccState::done;
+    mDataCondWait.notify_all();
 }
+
+
 
 int i = 0 ;
 //Perform the dfsBlue
-void CndfsV2::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog, vector <spot::formula> communTr) {
+void CndfsV2::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog) {
 
     state->cyan[idThread] = true;
-    communTr = fireable(state, ap_sog, communTr);
+    fireable(state, ap_sog, idThread);
 //    std::mt19937 g(rd());
-//    std::shuffle(communTr.begin(), communTr.end(), g);
-    mMutexStatus.lock();
-    spot::formula sel_elem = communTr[communTr.size()-1];
-    cout << "hello from thread " << unsigned(idThread) << " transition " << sel_elem << endl;
-    communTr.pop_back();
-    mMutexStatus.unlock();
+//    std::shuffle(commonTr.begin(), commonTr.end(), g);
+//
+    {
+        std::unique_lock lk(mMutex);
+        if (commonTr.size()>0)
+        {
+            spot::formula sel_elem = commonTr[commonTr.size()-1];
+            cout << "hello from thread " << unsigned(idThread) << " transition " << sel_elem << " size " << commonTr.size() << endl;
+            commonTr.pop_back();
+        }
+    }
 
-//        myState_t* st = buildState(state,tr);
-//        myState_t* s = isStateBuilt(st->left,st->right);
-//        if(s)
-//        {
+//    myState_t* st = buildState(state,sel_elem);
+//    myState_t* s = isStateBuilt(st->left,st->right);
+//    if(s)
+//    {
 //            free(st);
 //            state->new_successors.push_back(make_pair(s,0));
-//        }else
-//        {
+//    }else
+//    {
 //            mlBuiltStates.push_back(st);
 //            state->new_successors.push_back(make_pair(st,0));
-//        }
-
+//    }
+//    commonTr.pop_back();
 //    for (const auto &succ: state->new_successors) {
 //        if (!succ.first->blue && !succ.first->cyan[idThread]) {
-//            dfsBlue(succ.first, Rp, idThread, ap_sog, communTr);
+//            dfsBlue(succ.first, Rp, idThread, ap_sog, commonTr);
 //        }
 //    }
 //    state->blue = true;
