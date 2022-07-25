@@ -18,16 +18,13 @@
 #include "misc/stacksafe.h"
 #include <spot/twa/formula2bdd.hh>
 #include <spot/tl/formula.hh>
-#include <spot/misc/minato.hh>
-#include <spot/twaalgos/contains.hh>
-#include <spot/tl/contain.hh>
 #include <random>
-#include <algorithm>
 
 using namespace std;
 
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
                                                                                            mNbTh(nbTh) {
+    dict_ba = mAa->get_dict();
     getInitialState();
     spawnThreads();
 }
@@ -140,15 +137,14 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
     auto sog_current_state = state->left;
     const spot::twa_graph_state *ba_current_state = state->right;
     while (!sog_current_state->isCompletedSucc());
-    auto p = mAa->get_dict();//avoir le dictionnaire bdd,proposition atomique
     //fetch the state's atomic proposition
     for (const auto & vv: sog_current_state->getMarkedPlaces(mMcl->getPlaceProposition()))
      {
          auto name = string(mMcl->getPlace(vv));
          auto ap_state = spot::formula::ap(name);
-         if (p->var_map.find(ap_state) != p->var_map.end()) {
+         if (dict_ba->var_map.find(ap_state) != dict_ba->var_map.end()) {
              ap_sog.push_back(ap_state);
-             for( auto n: p->var_map)
+             for( auto n: dict_ba->var_map)
              {
                  if (n.first != ap_state)
                  {
@@ -162,7 +158,7 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
         auto transition = elt.second; // je récupère le numéro du transition
         auto name = string(mMcl->getTransition(transition)); // récuprer le nom de la transition
         auto ap_edge = spot::formula::ap(name);// récuperer la proposition atomique qui correspond à la transition
-        if (p->var_map.find(ap_edge) != p->var_map.end()) {
+        if (dict_ba->var_map.find(ap_edge) != dict_ba->var_map.end()) {
             ap_sog.push_back(ap_edge);
         }
 
@@ -172,7 +168,7 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
         auto ii = mAa->succ_iter(ba_current_state);
          if (ii->first())
                 do {
-                   auto pa_ba_result = spot::bdd_to_formula(ii->cond(), p); // from bdd to formula
+                   auto pa_ba_result = spot::bdd_to_formula(ii->cond(), dict_ba); // from bdd to formula
                    if (c.contained(pa_sog_result, pa_ba_result) || c.contained(pa_ba_result, pa_sog_result))
                    {
                             std::unique_lock lk(mMutex);

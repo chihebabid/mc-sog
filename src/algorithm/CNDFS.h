@@ -49,6 +49,7 @@ private:
     static spot::bdd_dict_ptr *m_dict_ptr;
     spot::language_containment_checker c;
     std::random_device rd;
+    spot::bdd_dict_ptr dict_ba;
 
     void getInitialState();
 
@@ -61,8 +62,11 @@ private:
     void computeSuccessors(myState_t *state, vector<spot::formula> ap_sog);
 
     myState_t *buildState(LDDState *left, spot::state *right, bool acc, bool constructed, bool cyan);
+
     myState_t* isStateBuilt(LDDState *sogState,spot::twa_graph_state *spotState);
+
 public:
+
     CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh);
 
     virtual ~CNDFS();

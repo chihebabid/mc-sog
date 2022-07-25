@@ -42,7 +42,8 @@ private:
     static spot::bdd_dict_ptr *m_dict_ptr;
     spot::language_containment_checker c;
     std::random_device rd;
-    vector <spot::formula> commonTr;
+    vector <pair<spot::formula, int >> commonTr;
+    spot::bdd_dict_ptr dict_ba;
 
     void getInitialState();
 
@@ -52,12 +53,17 @@ private:
 
     void threadRun();
 
-//    void computeSuccessors(myState_t *state, vector<spot::formula> ap_sog);
     void fireable(myState_t *state, vector<spot::formula> ap_sog,  uint8_t idThread);
 
-    myState_t *buildState(myState_t *state, spot::formula tr);
+    LDDState* getSuccessorFromSOG( LDDState* aggregate, pair<spot::formula, int > f);
+
+    const spot::twa_graph_state* getSuccessorFromBA(  const spot::twa_graph_state * ba_state, pair<spot::formula, int > f);
+
+    myState_t *buildState(myState_t *state, pair<spot::formula, int > tr);
+
     myState_t* isStateBuilt(LDDState *sogState,const spot::twa_graph_state *spotState);
-    public:
+
+public:
 
     CndfsV2(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh);
 

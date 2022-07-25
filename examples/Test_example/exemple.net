@@ -1,0 +1,56 @@
+#place p1 mk(<..>)
+#place p2
+#place p3
+#place p4
+#place p5
+#place p6
+#place p7
+#place p8
+#place p9
+#place p10
+#trans t1
+in {p1:<..>;}
+out {p2:<..>;}
+#endtr
+#trans t2
+in {p2:<..>;}
+out {p3:<..>;p4:<..>;}
+#endtr
+#trans t3
+in {p3:<..>;}
+out {p5:<..>;}
+#endtr
+#trans t4
+in {p5:<..>;}
+out {p7:<..>;}
+#endtr
+#trans t5
+in {p4:<..>;}
+out {p6:<..>;}
+#endtr
+#trans t6
+in {p4:<..>;}
+out {p8:<..>;}
+#endtr
+#trans t7
+in {p6:<..>;}
+out {p9:<..>;}
+#endtr
+
+#trans t8
+in {p8:<..>;}
+out {p9:<..>;}
+#endtr
+
+#trans t9
+in {p7:<..>;p9:<..>;}
+out {p10:<..>;}
+#endtr
+#trans t10
+in {p9:<..>;}
+out {p4:<..>;}
+#endtr
+#trans t11
+in {p10:<..>;}
+out {p1:<..>;}
+#endtr
