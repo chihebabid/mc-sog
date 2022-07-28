@@ -99,7 +99,6 @@ myState_t *CndfsV2::buildState(myState_t *state, pair<spot::formula, int > tr) {
     buildStatePtr->right = getSuccessorFromBA(state->right,tr);
     buildStatePtr->isAcceptance =  mAa->state_is_accepting(buildStatePtr->right);
     buildStatePtr->isConstructed = true;
-
     return buildStatePtr;
 }
 
@@ -109,6 +108,8 @@ void CndfsV2::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread
 //    cout << "dfsRed" << endl;
     Rp.push_back(state);
 //    computeSuccessors(state);
+    std::mt19937 g(rd());
+    std::shuffle(state->new_successors.begin(), state->new_successors.end(), g);
     for (const auto &succ: state->new_successors) {
 //        cout << "dfs red 1 "  << succ.first->cyan[idThread]<< endl;
         if (succ.first->cyan[idThread]) {
@@ -155,13 +156,6 @@ void CndfsV2::fireable(myState_t *state, vector<spot::formula> ap_sog,  uint8_t 
         auto ap_state = spot::formula::ap(name);
         if (dict_ba->var_map.find(ap_state) != dict_ba->var_map.end()) {
             ap_sog.push_back(ap_state);
-            for( auto n: dict_ba->var_map)
-            {
-                if (n.first != ap_state)
-                {
-                    ap_sog.push_back(spot::formula::Not(n.first));
-                }
-            }
         }
     }
     //iterate over the successors of a current aggregate
@@ -172,7 +166,12 @@ void CndfsV2::fireable(myState_t *state, vector<spot::formula> ap_sog,  uint8_t 
         if (dict_ba->var_map.find(ap_edge) != dict_ba->var_map.end()) {
             ap_sog.push_back(ap_edge);
         }
-
+        for( auto n: dict_ba->var_map)
+        {
+            if (std::find(ap_sog.begin(), ap_sog.end(), n.first) == ap_sog.end()) {
+                ap_sog.push_back(spot::formula::Not(n.first));
+            }
+        }
         spot::formula pa_sog_result = spot::formula::And(ap_sog);
 //        cout << "formula sog: " << pa_sog_result << endl;
         //iterate over the successors of a BA state

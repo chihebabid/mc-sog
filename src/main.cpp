@@ -528,7 +528,15 @@ int main(int argc, char **argv)
             if (algorithm == "CndfsV1")
             {
                 cout<<"------------MC-CNDFS-VERSION1-------------"<<endl;
-                CNDFS cndfs(mcl,af,2); // If I increase the number of threads, a segmentation fault appears.
+                //start time
+//                std::chrono::steady_clock::time_point startTime, finalTime;
+//                startTime = std::chrono::steady_clock::now();
+                CNDFS cndfs(mcl,af,2);
+//                finalTime = std::chrono::steady_clock::now();
+//                displayTime(startTime, finalTime);
+
+                //finish time
+                //diff
                 return(0);
             }
             else if (algorithm == "CndfsV2")// run on the fly sequential model-checking
@@ -545,7 +553,9 @@ int main(int argc, char **argv)
             }else
             {
                 auto k = std::make_shared<SogKripkeTh>(d, mcl, Rnewnet.getListTransitionAP(), Rnewnet.getListPlaceAP());
+                //temps depart
                 runOnTheFlyMC(algorithm, k, af);
+                //temps fin
             }
 
             // stop model checker process

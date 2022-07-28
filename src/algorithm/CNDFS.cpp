@@ -22,6 +22,8 @@
 
 using namespace std;
 
+int i=0;
+
 CNDFS::CNDFS(ModelCheckBaseMT *mcl, const spot::twa_graph_ptr &af, const uint16_t &nbTh) : mMcl(mcl), mAa(af),
                                                                                            mNbTh(nbTh) {
     dict_ba = mAa->get_dict();
@@ -100,6 +102,8 @@ void CNDFS::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) 
 //    cout << "dfsRed" << endl;
     Rp.push_back(state);
 //    computeSuccessors(state);
+    std::mt19937 g(rd());
+    std::shuffle(state->new_successors.begin(), state->new_successors.end(), g);
     for (const auto &succ: state->new_successors) {
 //        cout << "dfs red 1 "  << succ.first->cyan[idThread]<< endl;
         if (succ.first->cyan[idThread]) {
@@ -107,14 +111,16 @@ void CNDFS::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) 
             exit(0);
         }
         // unvisited and not red state
-        if ((find(Rp.begin(), Rp.end(), state) != Rp.end()) && !succ.first->red)
+        if ((find(Rp.begin(), Rp.end(), state) != Rp.end()) && !succ.first->red){
             dfsRed(succ.first, Rp, idThread);
+        }
+
     }
 }
 
 /*
  * Check whether a product state exists or not
- */
+*/
 myState_t *CNDFS::isStateBuilt(LDDState *sogState, spot::twa_graph_state *spotState) {
     auto compare = [sogState, spotState](myState_t *state) {
         return (state->left == sogState && state->right == spotState);
@@ -125,6 +131,7 @@ myState_t *CNDFS::isStateBuilt(LDDState *sogState, spot::twa_graph_state *spotSt
 
 //compute new successors of a product state
 void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
+
     if (state->succState == SuccState::done) return;
     std::unique_lock lk(mMutexStatus);
     if (state->succState == SuccState::doing) {
@@ -144,13 +151,6 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
          auto ap_state = spot::formula::ap(name);
          if (dict_ba->var_map.find(ap_state) != dict_ba->var_map.end()) {
              ap_sog.push_back(ap_state);
-             for( auto n: dict_ba->var_map)
-             {
-                 if (n.first != ap_state)
-                 {
-                     ap_sog.push_back(spot::formula::Not(n.first));
-                 }
-             }
          }
      }
     //iterate over the successors of a current aggregate
@@ -161,9 +161,13 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
         if (dict_ba->var_map.find(ap_edge) != dict_ba->var_map.end()) {
             ap_sog.push_back(ap_edge);
         }
-
-        spot::formula pa_sog_result = spot::formula::And(ap_sog);
-//        cout << "formula sog: " << pa_sog_result << endl;
+        for( auto &n: dict_ba->var_map)
+        {
+            if (std::find(ap_sog.begin(), ap_sog.end(), n.first) == ap_sog.end()) {
+                ap_sog.push_back(spot::formula::Not(n.first));
+            }
+        }
+        auto pa_sog_result = spot::formula::And(ap_sog);
         //iterate over the successors of a BA state
         auto ii = mAa->succ_iter(ba_current_state);
          if (ii->first())
