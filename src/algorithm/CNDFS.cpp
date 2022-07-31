@@ -10,7 +10,6 @@
 #include <vector>
 #include <utility>
 #include <spot/twa/twa.hh>
-#include <bddx.h>
 #include <deque>
 #include <atomic>
 #include <condition_variable>
@@ -36,6 +35,7 @@ CNDFS::~CNDFS() {
         mlThread[i]->join();
         delete mlThread[i];
     }
+    cout << "terminate " << endl;
     // Liberate dynamic allocated memory for synchropnized product
     for (const auto & elt : mlBuiltStates)
         delete elt;
@@ -99,15 +99,16 @@ std::ostream &operator<<(std::ostream &Str, myState_t *state) {
 }
 
 void CNDFS::dfsRed(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread) {
-//    cout << "dfsRed" << endl;
+//    if(finish) return;
     Rp.push_back(state);
-//    computeSuccessors(state);
     std::mt19937 g(rd());
     std::shuffle(state->new_successors.begin(), state->new_successors.end(), g);
     for (const auto &succ: state->new_successors) {
 //        cout << "dfs red 1 "  << succ.first->cyan[idThread]<< endl;
         if (succ.first->cyan[idThread]) {
             cout << "cycle detected with the thread " << unsigned(idThread) << endl;
+//            finish = true;
+//            return;
             exit(0);
         }
         // unvisited and not red state
@@ -196,6 +197,8 @@ void CNDFS::computeSuccessors(myState_t *state, vector<spot::formula> ap_sog) {
 
 //Perform the dfsBlue
 void CNDFS::dfsBlue(myState_t *state, vector<myState_t *> &Rp, uint8_t idThread, vector<spot::formula> ap_sog) {
+//    if(finish) std::terminate();  stop current thread
+//    if(finish) return;
     state->cyan[idThread] = true;
     computeSuccessors(state, ap_sog);
     std::mt19937 g(rd());

@@ -50,6 +50,7 @@ private:
     spot::language_containment_checker c;
     std::random_device rd;
     spot::bdd_dict_ptr dict_ba;
+    atomic<bool> finish = false;
 
     void getInitialState();
 
